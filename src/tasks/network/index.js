@@ -7,8 +7,8 @@ module.exports = {
     description: 'Keg CLI network-related tasks',
     example: 'keg network <command> <options>',
     tasks: {
-      ...require('./kill'),
-      ...require('./list')
+      ...require('./killProcessUsingPort'),
+      ...require('./listProcessesUsingPort')
     }
   })
 }
