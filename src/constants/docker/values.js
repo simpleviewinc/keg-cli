@@ -2,7 +2,7 @@ const path = require('path')
 const { deepFreeze, keyMap } = require('jsutils')
 const cliRootDir = path.join(__dirname, '../../../')
 const { getDefaultENVs } = require('./getDefaultENVs')
-const { getFoldersSync } = require('../../libs/fileSys/fileSys')
+const { getFoldersSync, pathExistsSync } = require('../../libs/fileSys/fileSys')
 
 /**
  * Get the default envs for the environment
@@ -11,10 +11,15 @@ const { getFoldersSync } = require('../../libs/fileSys/fileSys')
 const defaultENVs = getDefaultENVs(cliRootDir)
 
 /**
- * All folders in the CONTAINERS_PATH should be build-able images
+ * All folders in the CONTAINERS_PATH that have a Dockerfile
  * @array
  */
 const images = getFoldersSync(defaultENVs.CONTAINERS_PATH)
+  .filter(folder => pathExistsSync(path.join(
+    defaultENVs.CONTAINERS_PATH,
+    folder,
+    `context.env`
+  )))
 
 /**
  * Allowed Context types for running docker commands
