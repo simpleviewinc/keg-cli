@@ -9,7 +9,7 @@ const { getGitKey } = require('../git/getGitKey')
 const { getContainerConst } = require('../docker/getContainerConst')
 const { CONTEXT_KEYS } = require('KegConst/constants')
 const { DOCKER } = require('KegConst/docker')
-const { IMAGES, LOCATION_CONTEXT } = DOCKER
+const { IMAGES, LOCATION_CONTEXT, SYNC_LOGS } = DOCKER
 
 /**
  * Gets the location where a docker command should be executed
@@ -90,7 +90,7 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
   // Merge with any passed in envs
   const contextEnvs = {
     // Experimental docker builds. Makes docker faster and cleaner
-    ...(getSetting('docker.buildKit') ? { DOCKER_BUILDKIT: 1 } : {}),
+    ...(getSetting('docker.buildKit') ? { DOCKER_BUILDKIT: 1, COMPOSE_DOCKER_CLI_BUILD: 1 } : {}),
 
     // Get the ENV context for the command
     ...getContainerConst(cmdContext, 'env', {}),
@@ -102,6 +102,9 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
         tap,
         envs
       })),
+
+    // Get the ENV for setting the docker-sync logs
+    [SYNC_LOGS]: Boolean(params.slogs) ? '' : `-silent -terse `,
 
     // Add the git key so we can call github within the image / container
     GIT_KEY: await getGitKey(globalConfig),

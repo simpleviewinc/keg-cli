@@ -219,6 +219,10 @@ module.exports = {
         example: 'keg tap start --clean true',
         default: false
       },
+      cache: {
+        description: 'Docker will use build cache when building the image',
+        default: true
+      },
       command: {
         alias: [ 'cmd' ],
         description: 'The command to run when the container starts. Overwrites the default (yarn web)',

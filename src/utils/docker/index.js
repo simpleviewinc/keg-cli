@@ -7,8 +7,8 @@ module.exports = {
   ...require('./containerSelect'),
   ...require('./getBuildArgs'),
   ...require('./getBuildTags'),
+  ...require('./getContainerConst'),
   ...require('./getDockerArgs'),
   ...require('./getOrBuildImage'),
-  ...require('./getContainerConst'),
   ...require('./imageSelect'),
 }

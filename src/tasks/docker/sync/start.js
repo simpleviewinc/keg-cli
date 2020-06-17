@@ -180,6 +180,11 @@ module.exports = {
       example: 'keg docker sync start --install ...',
       default: false
     },
+    slog: {
+      description: 'Should unison file syncing logs be showing the in the terminal',
+      example: 'keg docker sync start --slogs ...',
+      default: false
+    },
     tap: {
       description: 'Name of the linked tap to run. Overrides the context option!',
       example: 'keg docker sync start --tap name-of-tap',

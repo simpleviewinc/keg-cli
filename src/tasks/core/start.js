@@ -148,25 +148,26 @@ module.exports = {
         example: 'keg core start --build',
         default: false
       },
-      command: {
-        alias: [ 'cmd' ],
-        description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
-        example: 'keg core start --command ios ( Runs "yarn ios" )',
-        default: 'web'
+      cache: {
+        description: 'Docker will use build cache when building the image',
+        example: 'keg tap --cache false',
+        default: true
       },
       clean: {
         description: 'Cleans docker-sync before running the keg-core',
         example: 'keg core --clean true',
         default: false
       },
+      command: {
+        alias: [ 'cmd' ],
+        description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
+        example: 'keg core start --command ios ( Runs "yarn ios" )',
+        default: 'web'
+      },
       compose: {
         description: 'Run the docker-compose up command',
         example: 'keg core start --compose',
         default: false,
-      },
-      cache: {
-        description: 'Docker will use build cache when building the image',
-        default: true
       },
       detached: {
         alias: [ 'detach', 'dt', 'de' ],
