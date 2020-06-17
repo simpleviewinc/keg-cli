@@ -1,6 +1,6 @@
 const { ask } = require('KegQuestions')
 const { getProcessesUsingPort, printProcesses, kill } = require('KegUtils')
-const { Logger } = require('KegLog')
+const { generalError } = require('KegUtils/error')
 
 /**
  * Asks user to confirm that they want the processes killed
@@ -10,8 +10,7 @@ const { Logger } = require('KegLog')
  */
 const confirmKill = async (port, processes=[]) => {
   printProcesses(`Processes using port ${port}:`, processes)
-  const answer = await ask.input(`Kill ${processes.length} processes? [y/n]`)
-  return ['y', 'yes'].includes(answer.toLowerCase())
+  return await ask.confirm(`Kill ${processes.length} processes? [y/n]`)
 }
 
 /**
@@ -28,9 +27,8 @@ const killProcessUsingPort = async args => {
   const { params } = args
   const { port, force } = params
 
-  const processes = await getProcessesUsingPort(port)
-  if (process.length === 0) 
-    return Logger.info(`No processes are using port ${port}`)
+  const processes = await getProcessesUsingPort(port);
+  (processes.length === 0) && generalError(`No processes are using port ${port}`)
 
   const shouldKill = force || await confirmKill(port, processes)
   shouldKill && processes.map(proc => kill(proc.pid))

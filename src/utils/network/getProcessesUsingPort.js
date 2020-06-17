@@ -50,12 +50,12 @@ const getProcessesUsingPort = async port => {
     {}
   )
 
-  if (error || exitCode) return []
-
-  return data
-    .split('\n')
-    .map(parseProcess)
-    .filter(p => p)
+  return (error || exitCode) 
+    ? []
+    : data
+        .split('\n')
+        .map(parseProcess)
+        .filter(p => p)
 }
 
 module.exports = { getProcessesUsingPort }

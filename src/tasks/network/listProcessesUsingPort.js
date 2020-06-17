@@ -17,10 +17,9 @@ const list = async args => {
 
   const processes = await getProcessesUsingPort(port)
 
-  if (processes.length === 0) 
-    return Logger.info(`No processes are using port ${port}`)
-  
-  printProcesses(`Processes using port ${port}:`, processes)
+  return processes.length === 0
+    ? Logger.info(`No processes are using port ${port}`)
+    : printProcesses(`Processes using port ${port}:`, processes)
 }
 
 module.exports = {

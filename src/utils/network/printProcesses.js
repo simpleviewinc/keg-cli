@@ -15,7 +15,7 @@ const printProcesses = (title, processes=[]) => {
   const procStrings = processes.map(
     proc => pickKeys(proc, ['pid', 'port', 'command', 'owner', 'protocol'])
   )
-  console.table(procStrings)
+  Logger.table(procStrings)
 }
 
 module.exports = { printProcesses }
