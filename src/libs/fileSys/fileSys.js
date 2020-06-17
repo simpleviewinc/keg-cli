@@ -1,6 +1,22 @@
 const fs = require('fs')
 const path = require('path')
-const { checkCall } = require('jsutils')
+const { checkCall, limbo } = require('jsutils')
+
+/**
+ * Wraps a method with a callback into a promise
+ * @function
+ * @param {*} cb - method to wrap in a promise
+ * @param {*} args - Arguments to pass to the callback method
+ *
+ * @returns {Promise|*} - Success response of fs.rename method
+ */
+const limboify = (cb, ...args) => {
+  return limbo(
+    new Promise((res, rej) => cb(...args, (err, success) => 
+      err? rej(err) : res(success || true) 
+    ))
+  )
+}
 
 /**
  * Copy a file from one location to another
@@ -11,9 +27,7 @@ const { checkCall } = require('jsutils')
  * @returns {Promise|*} - Success response of fs.rename method
  */
 const movePath = (oldPath, newPath) => {
-  return new Promise((res, rej) => {
-    fs.rename(oldPath, newPath, (err, success) => err ? rej(err) : res(success))
-  })
+  return limboify(fs.rename, oldPath, newPath)
 }
 
 /**
@@ -24,11 +38,7 @@ const movePath = (oldPath, newPath) => {
  * @returns {Promise|boolean} - Success creating the directory
  */
 const mkDir = filePath => {
-  return new Promise((res, rej) => {
-    fs.mkdir(filePath, { recursive: true }, err => {
-      err ? rej(err) : res(true)
-    })
-  })
+  return limboify(fs.mkdir, filePath, { recursive: true })
 }
 
 /**
@@ -41,10 +51,7 @@ const mkDir = filePath => {
  * @returns {Promise|boolean} - True if the file was written successfully
  */
 const writeFile = (filePath, data, format='utf8') => {
-  return new Promise((res, rej) => {
-    // Write the temp config file
-    fs.writeFile(filePath, data, format, (err) => err ? rej(err) : res(true))
-  })
+  return limboify(fs.writeFile, filePath, data, format)
 }
 
 /**
@@ -176,11 +183,7 @@ const pathExistsSync = checkPath => fs.existsSync(checkPath)
  * @returns {Promise|string} - Content of the file
  */
 const readFile = (filePath, format='utf8') => {
-  return new Promise((res, rej) => {
-    fs.readFile(filePath, format, (err, data) => {
-      err ? rej(err) : res(data)
-    })
-  })
+  return limboify(fs.readFile, filePath, format)
 }
 
 /**
@@ -224,13 +227,8 @@ const copyStream = (from, to, cb, format='utf8') => {
  * @returns {Promise} - Resolves after file has been copied
  */
 const copyFile = (to, from, mode) => {
-  return new Promise((res, rej) => {
-    fs.copyFile(to, from, mode, (err, copied) => {
-      err ? rej(err) : res(copied)
-    })
-  })
+  return limboify(fs.copyFile, to, from, mode)
 }
-
 
 /**
  * Copies from one file path to another synchronously
@@ -242,6 +240,24 @@ const copyFile = (to, from, mode) => {
  * @returns {void}
  */
 const copyFileSync = (from, to, mode) => fs.copyFileSync(from, to, mode)
+
+/**
+ * Removes a file from the local files system
+ * @function
+ * @param {string} file - Path to the file to be removed
+ *
+ * @returns {void}
+ */
+const removeFile = file => limboify(fs.unlink, file)
+
+/**
+ * Removes a file from the local files system synchronously
+ * @function
+ * @param {string} file - Path to the file to be removed
+ *
+ * @returns {void}
+ */
+const removeFileSync = file => fs.unlinkSync(filePath, callbackFunction)
 
 module.exports = {
   copyFile,
@@ -258,6 +274,8 @@ module.exports = {
   pathExistsSync,
   readFile,
   readFileSync,
+  removeFile,
+  removeFileSync,
   writeFile,
   writeFileSync,
 }

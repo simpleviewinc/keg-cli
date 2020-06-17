@@ -16,9 +16,8 @@ const getTemplate = async (filePath, fromRoot=false) => {
 }
 
 const fillFromPath = async (loc, data, root) => {
-  const content = await getTemplate(loc, root)
-
-  return template(content, data)
+  const [ err, content ] = await getTemplate(loc, root)
+  return err ? generalError(err) : template(content, data)
 }
 
 const fillTemplate = ({ template:tmp, loc, data={}, root }) => {

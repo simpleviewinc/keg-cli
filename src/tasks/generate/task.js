@@ -1,8 +1,10 @@
 const { get, mapObj } = require('jsutils')
 const { fillTemplate, getRootDir } = require('KegUtils')
-const { readFile, writeFile, pathExists, mkDir } = require('KegFileSys')
+const { generalError } = require('KegUtils/error/generalError')
+const { writeFile, pathExists, mkDir } = require('KegFileSys')
 const { ask, input } = require('KegQuestions')
 const { Logger } = require('KegLog')
+
 const path = require('path')
 const rootDir = getRootDir()
 
@@ -26,18 +28,22 @@ const getParentPath = (parent, name) => {
 const saveTask = async (content, { parent, name }) => {
 
   const parentPath = getParentPath(parent, name)
-  const parentExists = await pathExists(parentPath)
-  const taskFile = path.join(parentPath, `${name}.js`)
-  const taskExists = await pathExists(taskFile)
+  const [ errParent, parentExists ] = await pathExists(parentPath)
 
-  if(taskExists) throw new Error(`Can not create task. File already exists => ${taskFile}`)
+  const taskFile = path.join(parentPath, `${name}.js`)
+  const [ errTask, taskExists ] = await pathExists(taskFile)
+
+  taskExists && generalError(`Can not create task. File already exists => ${taskFile}`)
 
   let doWrite = false
 
   if(!parentExists){
     const doMkDir = await ask.confirm(`Confirm, create task parent folder => ${parentPath}`)
     if(!doMkDir) return Logger.warn(`Generate task cancelled!`) || Logger.empty()
-    await mkDir(parentPath)
+    const [ errMake, madeDir ] = await mkDir(parentPath)
+    
+    errMake && generalError(errMake)
+
     doWrite = true
   }
 

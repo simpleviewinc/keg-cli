@@ -1,6 +1,6 @@
 const { deepFreeze } = require('jsutils')
-const containers = require('./containers')
 const { defaultENVs, dockerEnv, images, locationContext } = require('./values')
+const containers = require('./containers')
 
 const DOCKER = {
   ...require('./machine'),
@@ -13,6 +13,6 @@ const DOCKER = {
 }
 
 // Add the CONTAINERS property, with a get function do it only get called when referenced
-Object.defineProperty(DOCKER, 'CONTAINERS', { get: () => containers.containers, enumerable: true })
+Object.defineProperty(DOCKER, 'CONTAINERS', { get: () => containers.CONTAINERS, enumerable: true })
 
 module.exports = deepFreeze({ DOCKER })
