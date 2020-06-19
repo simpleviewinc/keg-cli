@@ -10,7 +10,8 @@ const { NEWLINES_MATCH, SPACE_MATCH } = require('KegConst/patterns')
  *
  * @returns {string} - cmd with git added
  */
-const ensureGit = cmd => cmd.trim().indexOf('git') === 0 ? cmd : `git ${cmd}`
+const ensureMutagen = cmd => cmd.trim().indexOf('mutagen') === 0 ? cmd : `mutagen ${cmd}`
+
 
 /**
  * Calls the git cli from the command line and returns the response
@@ -27,12 +28,11 @@ const ensureGit = cmd => cmd.trim().indexOf('git') === 0 ? cmd : `git ${cmd}`
  *
  * @returns {Array|string} - JSON array of items || stdout from git cli call
  */
-const gitCli = async (args={}, cmdOpts={}, location) => {
-  const { opts, log, force, skipError } = args
+const mutagenCli = async (args={}, cmdOpts={}, location) => {
+  const { opts, log, skipError } = args
 
   const options = isArr(opts) ? opts.join(' ').trim() : toStr(opts)
-  const useForce = force ? '--force' : ''
-  const cmdToRun = ensureGit(`${ options } ${ useForce }`.trim())
+  const cmdToRun = ensureMutagen(`${ options }`.trim())
   log && Logger.spacedMsg(`  Running command: `, cmdToRun)
 
   const { error, data } = await executeCmd(cmdToRun, cmdOpts, location)
@@ -43,9 +43,9 @@ const gitCli = async (args={}, cmdOpts={}, location) => {
 
 /**
  * Runs a raw terminal command by spawning a child process
- * <br/> Auto adds git to the front of the cmd if it does not exist
+ * <br/> Auto adds mutagen to the front of the cmd if it does not exist
  * @function
- * @param {string} cmd - Git command to be run
+ * @param {string} cmd - mutagen command to be run
  * @param {string} args - Arguments to pass to the child process
  * @param {string} loc - Location where the cmd should be run
  * @param {boolean} log - Should log the output
@@ -56,20 +56,21 @@ const raw = async (cmd, args={}, loc=process.cwd(), log) => {
 
   // Build the command to be run
   // Add git if needed
-  const toRun = ensureGit(cmd)
+  const toRun = ensureMutagen(cmd)
 
   // Run the git command
   const { error, data } = await spawnProc(toRun, args, loc)
 
   error && !data
     ? cliError(error)
-    : log && Logger.success(`  Finished running Git CLI command!`)
+    : log && Logger.success(`  Finished running Mutagen CLI command!`)
   
   return data
 }
 
+
 /**
- * Error handler for error in the Git CLI
+ * Error handler for error in the Mutagen CLI
  * @function
  * @param {string|Object} error - Error that was thrown
  * @param {boolean} skip - Should error logs be skipped
@@ -86,13 +87,14 @@ const cliError = (error, skip=false) => {
       : toStr(error)
 
   Logger.empty()
-  Logger.error(`  Git CLI Error:`)
+  Logger.error(`  Mutagen CLI Error:`)
   Logger.error(` `, toLog.split(NEWLINES_MATCH).join('\n  '))
   Logger.empty()
 
 }
 
 module.exports = {
-  gitCli,
+  cliError,
+  mutagenCli,
   raw,
 }

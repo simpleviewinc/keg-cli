@@ -1,5 +1,4 @@
-const mutagen = require('./mutagen')
 
 module.exports = {
-  mutagen
+  ...require('./mutagen'),
 }

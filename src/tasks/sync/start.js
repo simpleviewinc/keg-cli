@@ -1,8 +1,8 @@
-const { executeCmd } = require('KegProc')
 const { Logger } = require('KegLog')
+const { mutagen } = require('KegMutagen')
 
 /**
- * Stop the mutagen daemon
+ * Start the mutagen daemon
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -11,22 +11,22 @@ const { Logger } = require('KegLog')
  *
  * @returns {void}
  */
-const mutagenStop = async args => {
+const mutagenStart = async args => {
   const { command, globalConfig, options, params, tasks } = args
-
-  Logger.info(`Stopping mutagen daemon...`)
-  const { err, data } = await executeCmd('mutagen daemon stop')
-  err ? Logger.error(err) : data && Logger.info(data)
+  
+  Logger.info(`Starting mutagen daemon...`)
+  data = await mutagen.start()
+  data && Logger.info(data)
 
 }
 
 module.exports = {
-  stop: {
-    name: 'stop',
-    alias: [ 'kill', 'k', 'stp' ],
-    action: mutagenStop,
+  start: {
+    name: 'start',
+    alias: [ 'st', 's' ],
+    action: mutagenStart,
     description: `Start mutagen daemon`,
-    example: 'keg mutagen stop',
+    example: 'keg mutagen start',
     options: {}
   }
 }

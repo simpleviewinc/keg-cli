@@ -64,6 +64,7 @@
     "KegLog": "src/libs/logger",
     "KegMocks": "src/__mocks__",
     "KegProc": "src/libs/process",
+    "KegMutagen": "src/libs/mutagen",
     "KegPackage": "package.json",
     "KegQuestions": "src/libs/questions",
     "KegRoot": ".",
