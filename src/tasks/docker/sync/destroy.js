@@ -52,20 +52,31 @@ const destroyDockerSync = async args => {
         skipError: true,
         type: 'container',
       })
-
+      
+      // Get any extra internal options passed from other task
+      const extraOpts = __internal.cmdOpts || {}
+      
       // Remove the docker-sync container volumes
       // Must come after removing the container
-      await spawnCmd(`docker-sync clean`, { options: { env: contextEnvs }}, location)
+      await spawnCmd(
+        `docker-sync clean`,
+        { options: { ...extraOpts, env: contextEnvs }},
+        location
+      )
 
       // Remove the docker image as well
       image && await runInternalTask('docker.tasks.image.tasks.remove', {
         ...args,
-        __internal:{ skipThrow: true },
+        __internal:{ ...__internal, skipThrow: true },
         params: { ...args.params, context: cmdContext, force: true }
       })
 
       // Stop the docker-sync daemon
-      await spawnCmd(`docker-sync stop`, { options: { env: contextEnvs }}, location)
+      await spawnCmd(
+        `docker-sync stop`,
+        { options: { ...extraOpts, env: contextEnvs }},
+        location
+      )
 
     },
   })

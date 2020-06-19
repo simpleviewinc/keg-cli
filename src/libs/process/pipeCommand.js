@@ -1,29 +1,7 @@
-
-const { FILTERS } = require('KegConst/filters')
-const { get, checkCall, deepMerge, isFunc } = require('jsutils')
+const { Loading } = require('./loading')
+const { Logger } = require('KegLog')
+const { get, checkCall, deepMerge, isFunc, isArr } = require('jsutils')
 const { spawnCmd } = require('spawn-cmd')
-
-const defLogConf = {
-  active: true,
-  setActive: undefined,
-  filters: [ ...FILTERS.DEFAULT ],
-}
-
-/**
- * Checks if logging is active, or if it should be come active
- * <br/> Checks the current data to be logged, to see if it's the logging activator
- * @param {Object} config - Log Config for the currently running process
- * @param {string} data - Text to be printed if not filtered
- *
- * @returns {boolean} - True if logging is active / False if logging is not active
- */
-const checkActive = (config, data) => {
-  !config.active &&
-    data.trim().indexOf(config.setActive) !== -1 &&
-    ( config.active = true )
-
-  return config.active
-}
 
 /**
  * Checks the passed in data to see if it should be filtered
@@ -32,13 +10,9 @@ const checkActive = (config, data) => {
  *
  * @returns {boolean} - True if the data should filtered / False if data should be printed
  */
-const filterLog = (config, data) => {
-  // Ensure filtering is active
-  // If filtering is not active, then return true to filter OUT the data
-  if(!checkActive(config, data)) return true
-
+const filterLog = (logs, data) => {
   // Check if the data is in the filters array
-  return config.filters.reduce((inFilter, filter) => {
+  return logs.filters.reduce((inFilter, filter) => {
     return inFilter || data.trim().indexOf(filter) === 0
   }, false)
 }
@@ -53,12 +27,24 @@ const filterLog = (config, data) => {
  *
  * @returns {void}
  */
-const handleLog = (eventCb, type, logConfig, data, procId) => {
-  return !filterLog(logConfig, data)
-    ? isFunc(eventCb)
-      ? eventCb(data, procId)
-      : process[type] && process[type].write(data)
-    : null
+const handleLog = (eventCb, type, loading, logs, data, procId) => {
+  try {
+    const shouldFilter = loading.active || filterLog(logs, data)
+    loading.active && loading.progress(shouldFilter && 1, data)
+
+    return !shouldFilter
+      ? isFunc(eventCb)
+        ? eventCb(data, procId)
+        : process[type] && process[type].write(data)
+      : null
+  }
+  catch(err){
+    // This should be a cli dev only error
+    // Most user should not see this displayed
+    // This throws when there is an error in the event handling code
+    // NOT when there is an error in the pipeCmd Process
+    Logger.error(err.message)
+  }
 }
 
 /**
@@ -67,21 +53,20 @@ const handleLog = (eventCb, type, logConfig, data, procId) => {
  *
  * @returns {Object} - Event listeners with filters
  */
-const buildEvents = (config={}) => {
-  const filter = get(config, 'filter')
+const buildEvents = (config={}, logs, loadingConf) => {
+  const filter = get(logs, 'filter')
   const onStdOut = get(config, 'onStdOut')
   const onStdErr = get(config, 'onStdErr')
 
   // If filter set to true, or there's no event callbacks, just return empty
   if(filter !== true && (!onStdOut && !onStdErr)) return {}
 
-  // Merge the passed in logConfig with the default
-  const logConfig = deepMerge(defLogConf, config.logConfig)
+  loading = new Loading({}, loadingConf)
 
   // Create event handler callbacks
   return {
-    onStdOut: (data, procId) => handleLog(onStdOut, 'stdout', logConfig, data, procId),
-    onStdErr: (data, procId) => handleLog(onStdErr, 'stderr', logConfig, data, procId)
+    onStdOut: (...args) => handleLog(onStdOut, 'stdout', loading, logs, ...args),
+    onStdErr: (...args) => handleLog(onStdErr, 'stderr', loading, logs, ...args)
   }
 }
 
@@ -96,12 +81,12 @@ const buildEvents = (config={}) => {
 const pipeCmd = (cmd, options={}, location=process.cwd()) => {
   // Pull the logConfig from the passed in options
   // This way we can pass all other options to the spawnCmd call
-  const { logConfig={}, ...cmdOpts } = options
+  const { logs={}, loading, ...cmdOpts } = options
 
   const spawnOpts = {
     ...cmdOpts,
     // Build the event listeners to allow log filtering
-    ...buildEvents(options),
+    ...buildEvents(options, logs, loading),
     // Set the location where the command should be run
     cwd: options.cwd || location,
     // Ensure the stdio gets set to pipe
