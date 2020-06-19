@@ -246,10 +246,11 @@ const toContainerEnvs = (envs={}, cmd='') => {
  *
  * @returns {string} - Passed in cmd, with the key/value converted to docker build-args
  */
-const asBuildArg = (key, value, cmd='') => {
-  return value && `${cmd} --build-arg ${ key }=${ value }`.trim() || cmd
+const asBuildArg = (key, value, cmd='', filters=[]) => {
+  return !filters.includes(key) && value
+    ? `${cmd} --build-arg ${ key }=${ value }`.trim()
+    : cmd
 }
-
 
 /**
  * Converts an object into docker build-args ( --build-arg key=value )
@@ -259,8 +260,14 @@ const asBuildArg = (key, value, cmd='') => {
  *
  * @returns {string} - Passed in cmd, with the envs converted to docker build-args
  */
-const toBuildArgs = (envs={}, cmd='') => {
-  return isObj(envs) ? reduceObj(envs, asBuildArg, cmd).trim() : cmd
+const toBuildArgs = (envs={}, cmd='', filters=[]) => {
+  return !isObj(envs)
+    ? cmd
+    : reduceObj(
+        envs,
+        (key, value, buildCmd) => asBuildArg(key, value, buildCmd, filters),
+        cmd
+      ).trim()
 }
 
 module.exports = {

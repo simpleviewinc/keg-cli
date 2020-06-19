@@ -25,7 +25,11 @@ const DEFAULT = {
     'GIT_KEY',
     'GIT_CLI_URL',
   ], true),
-  ENV: {}
+  ENV: {},
+  // Filter envs from becoming build-args durning the build process
+  BUILD_ARGS_FILTER: [
+    'SYNC_LOGS'
+  ],
 }
 
 /*

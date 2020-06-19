@@ -53,7 +53,7 @@ const dockerPackageRun = async args => {
   * ----------- Step 3 ----------- *
   * Build the container context information
   */
-  const { contextEnvs, location } = await buildLocationContext({
+  const { cmdContext, contextEnvs, location } = await buildLocationContext({
     globalConfig,
     params: { ...params, context: parsed.repo },
     // Need to add our packaged repo to the allow options so we can run it
@@ -71,7 +71,7 @@ const dockerPackageRun = async args => {
     opts,
     location,
     envs: contextEnvs,
-    cmd: `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/core/run.sh`,
+    cmd: `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`,
     name: `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`,
   })
 
