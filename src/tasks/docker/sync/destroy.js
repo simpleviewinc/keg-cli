@@ -2,7 +2,7 @@ const docker = require('KegDocCli')
 const { spawnCmd } = require('KegProc')
 const { DOCKER } = require('KegConst/docker')
 const { get, checkCall } = require('jsutils')
-const { confirmExec } = require('KegUtils/helpers')
+const { confirmExec, exists } = require('KegUtils/helpers')
 const { buildLocationContext } = require('KegUtils/builders')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
@@ -16,7 +16,7 @@ const { runInternalTask } = require('KegUtils/task/runInternalTask')
  * @returns {void}
  */
 const destroyDockerSync = async args => {
-  const { globalConfig, params, options, task, tasks } = args
+  const { globalConfig, params, options, task, tasks, __internal={}, } = args
   const { context, image } = params
 
   // Get the context data for the command to be run
@@ -29,11 +29,15 @@ const destroyDockerSync = async args => {
     envs: { CONTEXT_PATH: 'INITIAL' }
   })
 
+  const preConfirm = exists(__internal.preConfirm)
+    ? __internal.preConfirm
+    : getSetting('docker.preConfirm') === true
+
   confirmExec({
     confirm: `This will remove all docker items related to ${ cmdContext }. Are you sure?`,
     success: `Finished running 'docker-sync destroy' command`,
     cancel: `Command 'keg docker sync destroy' has been cancelled!`,
-    preConfirm: getSetting('docker.preConfirm') === true,
+    preConfirm: preConfirm,
     execute: async () => {
 
       // Remove the container
@@ -56,7 +60,7 @@ const destroyDockerSync = async args => {
       // Remove the docker image as well
       image && await runInternalTask('docker.tasks.image.tasks.remove', {
         ...args,
-        __skipThrow: true,
+        __internal:{ skipThrow: true },
         params: { ...args.params, context: cmdContext, force: true }
       })
 

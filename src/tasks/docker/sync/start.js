@@ -1,15 +1,48 @@
 
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { spawnCmd } = require('KegProc')
+const { spawnCmd, pipeCmd } = require('KegProc')
 const { DOCKER } = require('KegConst/docker')
-const { get, checkCall, limbo } = require('jsutils')
+const { FILTERS } = require('KegConst/filters')
 const { logVirtualUrl } = require('KegUtils/log')
+const { get, checkCall, limbo } = require('jsutils')
 const { buildLocationContext } = require('KegUtils/builders/buildLocationContext')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
-const { tryCatch } = require('KegUtils/helpers/tryCatch')
+
+
+/**
+ * Builds the config for logging the pipe command
+ * <br/> Defines an onExit event to cleanup the docker sync container as well
+ * @function
+ * @param {Object} args - arguments passed from the runTask method
+ * @param {string} logActivate - Text in a log that will turn logging on for the pipeCmd
+ *
+ * @returns {Object} - built pipeCmd config
+ */
+const pipeConfig = (args, logActivate) => {
+  return {
+    logConfig: {
+      // Logging defaults to off, when a log contains the setActive text, logging will turn on
+      active: false,
+      // Turn on filtering to filter out specific logs 
+      filter: true,
+      setActive: logActivate,
+      // Logs to filter out, regardless of if logging is turned on or not
+      filters: FILTERS.SYNC
+    },
+    // Helper to clean up / shutdown the docker-sync containers when the process exits
+    onExit: () => {
+      return get(args, 'params.destroy') &&
+        runInternalTask(`tasks.docker.tasks.sync.tasks.destroy`, {
+          ...args,
+          params: { ...args.params, image: false },
+          __internal: { preConfirm: true },
+        })
+    },
+  }
+}
 
 /**
  * Removes the current running container based on the context
@@ -72,59 +105,47 @@ const buildExtraEnvs = ({ env, command, install }) => {
 const startDockerSync = async args => {
 
   const { globalConfig, params, options, task, tasks } = args
-  const { build, clean, context, detached, destroy, ensure } = params
+  const { build, clean, context, detached, ensure } = params
 
-  return tryCatch(
-    async () => {
+  // Get the context data for the command to be run
+  const { cmdContext, contextEnvs, location, tap, image } = await buildLocationContext({
+    globalConfig,
+    task,
+    params,
+    envs: buildExtraEnvs(params)
+  })
 
-      // Get the context data for the command to be run
-      const { cmdContext, contextEnvs, location, tap } = await buildLocationContext({
-        globalConfig,
-        task,
-        params,
-        envs: buildExtraEnvs(params)
-      })
+  // Check if the base image exists, and if not then build it
+  ensure && await buildBaseImg(args)
 
-      // Check if the base image exists, and if not then build it
-      ensure && await buildBaseImg(args)
+  // Check if we should rebuild the container
+  if(build || clean) await removeCurrent(cmdContext)
 
-      // Check if we should rebuild the container
-      if(build || clean) await removeCurrent(cmdContext)
+  // Check if docker-sync should be cleaned first
+  if(clean) await checkSyncClean(cmdContext, contextEnvs, location)
 
-      // Check if docker-sync should be cleaned first
-      if(clean) await checkSyncClean(cmdContext, contextEnvs, location)
+  // Check if sync should run in detached mode 
+  // TODO: find way to validate if docker-sync is already running
+  // That way we can either kill it, or just run docker-compose up
+  const dockerCmd = `${ Boolean(detached) ? 'docker-sync' : 'docker-sync-stack' } start`
 
-      // Check if sync should run in detached mode 
-      // TODO: find way to validate if docker-sync is already running
-      // That way we can either kill it, or just run docker-compose up
-      const dockerCmd = `${ Boolean(detached) ? 'docker-sync' : 'docker-sync-stack' } start`
+  // Log the ip address so we know how to hit it in the browser
+  logVirtualUrl()
 
-      // Log the ip address so we know how to hit it in the browser
-      logVirtualUrl()
+  await pipeCmd(dockerCmd, {
+    cwd: location,
+    ...pipeConfig(args, `Starting ${image}`),
+    options: { env: contextEnvs }
+  })
 
-      const cmdOpts = [ dockerCmd, { options: { env: contextEnvs }}, location ]
-      detached ? spawnCmd(...cmdOpts) : await spawnCmd(...cmdOpts)
-
-      // Return the built context info, so it can be reused if needed
-      return {
-        tap,
-        params,
-        location,
-        cmdContext,
-        contextEnvs,
-      }
-
-    },
-    err => {
-      // Log the error message
-      Logger.error(`\n ${ err.message }\n`)
-
-      // Clean up the docker sync items
-      return err &&
-        destroy &&
-        runInternalTask(`tasks.docker.tasks.sync.tasks.destroy`, args)
-    }
-  )
+  // Return the built context info, so it can be reused if needed
+  return {
+    tap,
+    params,
+    location,
+    cmdContext,
+    contextEnvs,
+  }
 
 }
 
