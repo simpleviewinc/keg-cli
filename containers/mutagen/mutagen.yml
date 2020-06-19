@@ -6,7 +6,6 @@ beforeCreate:
 # have been established and code pushed to the shared volume.
 afterCreate:
   - docker-compose up --build --detach
-  - docker-compose exec frontend /wait-for-initial-build.sh
 
 # Pause services after pausing sessions.
 afterPause:
@@ -22,17 +21,13 @@ afterTerminate:
 
 # Define common utility commands.
 commands:
-  database: docker-compose exec database psql -U messagessvc -d messagesdb
   logs: docker-compose logs --follow
 
 # Forward local traffic to the web and API servers.
 forward:
-  api:
-    source: "tcp:localhost:8081"
-    destination: "docker://web-go-mutagen:tcp:api:8081"
-  web:
-    source: "tcp:localhost:8080"
-    destination: "docker://web-go-mutagen:tcp:web:8080"
+  kegapp:
+    source: "tcp:localhost:80"
+    destination: "docker://${CONTAINER_NAME}:tcp:kegapp:19006"
 
 # Synchronize code to the shared Docker volume via the Mutagen service.
 sync:
@@ -40,19 +35,12 @@ sync:
     flushOnCreate: true
     ignore:
       vcs: true
-  code:
-    alpha: "."
-    beta: "docker://web-go-mutagen/code"
+  keg-code:
+    alpha: "${CONTEXT_PATH}"
+    beta: "docker://${DOC_APP_PATH}"
     mode: "two-way-resolved"
     ignore:
       paths:
         - "/*"
-        - "!/api/"
-        - "/api/*"
-        - "!/api/{entrypoint.sh,go.mod,go.sum,server.go}"
-        - "!/frontend/"
-        - "/frontend/*"
-        - "!/frontend/{entrypoint.sh,gulpfile.js,index.html,package*.json}"
-        - "!/web/"
-        - "/web/*"
-        - "!/web/{entrypoint.sh,go.mod,go.sum,server.go}"
+        - "!/core/"
+        - "!/{index.js,tap.json,app.json,App.js,babelconfig.js,metro.config.js,package.json,webpack.config.js}"

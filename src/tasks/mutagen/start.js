@@ -14,7 +14,8 @@ const mutagenStart = async args => {
   const { command, globalConfig, options, params, tasks } = args
   
   Logger.info(`Starting mutagen daemon...`)
-  await executeCmd('mutagen daemon start')
+  const { err, data } = await executeCmd('mutagen daemon start')
+  err ? Logger.error(err) : data && Logger.info(data)
 
 }
 
