@@ -169,6 +169,12 @@ module.exports = {
         example: 'keg core start --compose',
         default: false,
       },
+      destroy: {
+        alias: [ 'des' ],
+        description: 'All collateral items will be destoryed if the sync task fails ( true )',
+        example: 'keg core start --destroy false',
+        default: true
+      },
       detached: {
         alias: [ 'detach', 'dt', 'de' ],
         allowed: [ true, false, 'sync', 'compose' ],

@@ -178,7 +178,9 @@ module.exports = {
       default: 'web'
     },
     destroy: {
+      alias: [ 'des' ],
       description: 'All collateral items will be destoryed if the sync task fails ( true )',
+      example: 'keg docker sync start --destroy false',
       default: true
     },
     detached: {
