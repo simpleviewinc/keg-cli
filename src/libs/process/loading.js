@@ -113,6 +113,10 @@ class Loading {
   finish = () => {
     this.isBar() && this.loader.update(this.options.total)
     isFunc(this.loader.stop) && this.loader.stop()
+    const loading = this
+    setTimeout(() => {
+      loading.finishMessage && Logger.log(loading.finishMessage)
+    }, 1000)
   }
 
   /**

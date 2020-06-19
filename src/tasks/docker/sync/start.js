@@ -21,13 +21,14 @@ const { getContainerConst } = require('KegUtils/docker/getContainerConst')
  *
  * @returns {Object} - built pipeCmd config
  */
-const pipeConfig = (args, barTitle, turnOff) => {
+const pipeConfig = (args, { title, finishMessage, offMatch }) => {
   return {
     // Loading defaults to on, when a loading matches item in offMatch, loading will turn off
     loading: {
+      title,
+      offMatch,
       active: true,
-      title: barTitle,
-      offMatch: turnOff,
+      finishMessage,
       // type: 'bouncingBall',
     },
     logs: {
@@ -140,11 +141,11 @@ const startDockerSync = async args => {
 
   await pipeCmd(dockerCmd, {
     cwd: location,
-    ...(!isDetached && pipeConfig(
-      args,
-      ` Building ${ cmdContext } environment...`,
-      [ `Starting ${image}`, `Creating ${image}`, `Attaching to ${image}` ]
-    )),
+    ...(!isDetached && pipeConfig(args, {
+      title: ` Building ${ image } environment...`,
+      finishMessage: `Running ${ image } environment...`,
+      offMatch: [ `Starting ${image}`, `Creating ${image}`, `Attaching to ${image}` ]
+    })),
     options: { env: contextEnvs }
   })
 
