@@ -1,8 +1,9 @@
 const { getTapPath } = require('../globalConfig/getTapPath')
 const { generalError } = require('../error')
 const { invoke } = require('../helpers/invoke')
-const { PACKAGE } = require('KegConst/constants')
-
+const { reduceObj } = require('jsutils')
+const { CONTAINER_PREFIXES } = require('KegConst/constants')
+const { PACKAGE } = CONTAINER_PREFIXES
 /**
  * Parse the context based on the passed in context value
  * <br/> Filters out `keg` and `tag` based on `:`
@@ -14,8 +15,14 @@ const { PACKAGE } = require('KegConst/constants')
 const parseContext = toParse => {
   if(!toParse) return {}
 
-  // Check if it's a packaged context, and if so parse the context from it
-  let { context, package } = toParse.indexOf(PACKAGE) !== 0
+  const hasPrefix = Object.values(CONTAINER_PREFIXES)
+    .reduce((hasPrefix, value) => {
+      return hasPrefix || toParse.indexOf(value) === 0
+    }, false)
+
+  // Check if it's a prefixed context, and if so parse the context from it
+  // TODO: Update package to be prefix,
+  let { context, package } = !hasPrefix
     ? { context: toParse }
     : invoke(() => {
         const [ _, context ] = toParse.split('-')

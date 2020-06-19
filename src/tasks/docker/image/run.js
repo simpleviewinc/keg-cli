@@ -6,7 +6,8 @@ const { HTTP_PORT_ENV } = require('KegConst/constants')
 const { CONTAINERS } = require('KegConst/docker/containers')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { buildLocationContext } = require('KegUtils/builders/buildLocationContext')
-
+const { CONTAINER_PREFIXES } = require('KegConst/constants')
+const { IMAGE } = CONTAINER_PREFIXES
 
 const buildContainerName = async cmdContext => {
 
@@ -16,15 +17,12 @@ const buildContainerName = async cmdContext => {
     cmdContext
   )
 
-  const imgContainer = `img-${imgName}`
+  const imgContainer = `${ IMAGE }-${ imgName }`
   const exists = await docker.container.exists(
     imgContainer,
     container => container.names === imgContainer,
     'json'
   )
-
-  // TODO: if the container already exists
-  // Ask the user if they want to kill it, or not
 
   return imgContainer
 
