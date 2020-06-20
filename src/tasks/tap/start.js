@@ -90,7 +90,7 @@ const checkForContainer = async (total) => {
 
   const exists = await docker.container.exists(
     containers,
-    container => containers.indexOf(container.names) !== -1,
+    container => containers.indexOf(container.name) !== -1,
     'json'
   )
 

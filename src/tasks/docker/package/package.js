@@ -155,7 +155,7 @@ const dockerPackage = async args => {
   */
   const exists = await docker.container.exists(
     tempContainer,
-    container => container.names === tempContainer,
+    container => container.name === tempContainer,
     'json'
   )
 

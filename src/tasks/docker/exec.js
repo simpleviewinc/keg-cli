@@ -68,7 +68,7 @@ const dockerExec = async args => {
   } = await buildLocationContext({ globalConfig, task, params: { ...params, context } })
 
   // Get the name of the container to exec
-  const containerName = container && container.names || prefix || image
+  const containerName = container && container.name || prefix || image
 
   // Run the command on the container
   await docker.container.exec(

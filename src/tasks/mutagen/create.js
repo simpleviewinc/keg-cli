@@ -1,6 +1,7 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { mutagen } = require('KegMutagen')
+const { DOCKER } = require('KegConst/docker')
 const { buildLocationContext } = require('KegUtils/builders')
 const { throwRequired, generalError } = require('KegUtils/error')
 
@@ -12,6 +13,17 @@ const getContainer = (args) => {
   
   
 }
+
+/**
+  Steps to do sync
+  * Create or start the container
+    * Need to get context first
+    * Need to check if container already exists and by pass
+  * Once container is running, get the container id
+  * Load in mutagen config for the context
+    * Should include ignores / mount locations / create args etc 
+*/
+
 
 /**
  * Start the mutagen daemon
@@ -31,13 +43,15 @@ const mutagenCreate = async args => {
   !context && !container && throwRequired(task, 'context', task.options.context)
 
   // Get the context data for the command to be run
-  const { cmdContext, contextEnvs, location, tap } = await buildLocationContext({
+  const locContext = await buildLocationContext({
     globalConfig,
     task,
     params,
   })
 
+
   console.log(`---------- create ----------`)
+  console.log(locContext)
 
 
 }
@@ -52,6 +66,7 @@ module.exports = {
     options: {
       context: {
         alias: [ 'name' ],
+        allowed: DOCKER.IMAGES,
         description: 'Context or name of the container to sync with',
         example: 'keg mutagen create --context core',
         enforced: true,
@@ -81,7 +96,10 @@ module.exports = {
         example: 'keg mutagen create --options "--ignore /ignore/path"',
         depends: { container: true },
         enforced: true,
-      }
+      },
+      tap: {
+        description: 'Name of the tap to build. Only needed if "context" argument is "tap"',
+      },
     }
   }
 }

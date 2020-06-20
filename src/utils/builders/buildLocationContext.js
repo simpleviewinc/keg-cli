@@ -69,7 +69,7 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
   if(__internal && validateInternal(__internal, CONTEXT_KEYS))
     return __internal
 
-  const { cmdContext, image:img prefix, tap } = buildCmdContext({
+  const { cmdContext, image:img, prefix, tap } = buildCmdContext({
     params,
     globalConfig,
     allowed: get(task, 'options.context.allowed', IMAGES),

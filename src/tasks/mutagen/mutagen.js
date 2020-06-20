@@ -1,5 +1,5 @@
-const { Logger } = require('KegLog')
-
+const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { create } = require('./create')
 /**
  * Mutagen commands for the Keg-CLI
  * @param {Object} args - arguments passed from the runTask method
@@ -11,9 +11,8 @@ const { Logger } = require('KegLog')
  * @returns {void}
  */
 const mutagenSync = args => {
-  const { command, globalConfig, options, params, tasks } = args
-  console.log(`---------- mutagen ----------`)
-
+  // Automatically run the create task
+  return runInternalTask('tasks.mutagen.tasks.create', args)
 }
 
 module.exports = {
@@ -24,12 +23,12 @@ module.exports = {
     description: `mutagen commands for the Keg-CLI`,
     example: 'keg mutagen <options>',
     tasks: {
-      ...require('./create'),
+      create,
       ...require('./start'),
       ...require('./stop'),
     },
     options: {
-      
+      ...create.options,
     }
   }
 }

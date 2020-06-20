@@ -62,7 +62,7 @@ const containerContext = async toFind => {
   const found = await docker.container.get(toFind)
 
   const container = found || await askWhenNoContext()
-  const { context, prefix } = checkPrefix(container.names)
+  const { context, prefix } = checkPrefix(container.name)
 
   return { ...container, context, prefix }
 

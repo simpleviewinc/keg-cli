@@ -8,7 +8,7 @@ global.testDocker = {
       labels: '',
       localVolumes: '0',
       mounts: '',
-      names: 'img-kegcore',
+      name: 'img-kegcore',
       networks: 'bridge',
       ports: '80/tcp, 443/tcp, 60710/tcp, 0.0.0.0:19002->19002/tcp, 0.0.0.0:80->19006/tcp',
       runningFor: '16 minutes ago',

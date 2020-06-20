@@ -33,8 +33,18 @@ const locationContext = keyMap([
   'containers'
 ], true)
 
+/**
+ * Maps keys from the docker cli response to a different key value
+ * @object
+ */
+const cliKeyMap = {
+  names: 'name'
+}
+
+
 module.exports = deepFreeze({
   images,
+  cliKeyMap,
   cliRootDir,
   defaultENVs,
   locationContext,

@@ -1,5 +1,6 @@
 const { Logger } = require('KegLog')
 const { NEWLINES_MATCH, SPACE_MATCH } = require('KegConst/patterns')
+const { CLI_KEY_MAP } = require('KegConst/docker')
 const {
   camelCase,
   isArr,
@@ -148,7 +149,11 @@ const jsonOutput = (data) => {
       try {
         const parsed = JSON.parse(item.replace(/\\"/g, ''))
         const built = {}
-        Object.keys(parsed).map(key => built[camelCase(snakeCase(key))] = parsed[key])
+        Object.keys(parsed).map(key => {
+          // Check if there's an alt key to use instead of the default
+          const useKey = CLI_KEY_MAP[key] || key
+          built[camelCase(snakeCase(useKey))] = parsed[useKey]
+        })
         
       // Adds rootId key, which removes and docker repository content
       // This allows us to pull from a remote provider, and compare just the original image name

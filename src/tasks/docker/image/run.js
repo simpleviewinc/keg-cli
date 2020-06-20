@@ -20,7 +20,7 @@ const buildContainerName = async cmdContext => {
   const imgContainer = `${ IMAGE }-${ imgName }`
   const exists = await docker.container.exists(
     imgContainer,
-    container => container.names === imgContainer,
+    container => container.name === imgContainer,
     'json'
   )
 

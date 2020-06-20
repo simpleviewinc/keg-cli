@@ -1,11 +1,12 @@
 const { deepFreeze } = require('jsutils')
-const { defaultENVs, dockerEnv, images, locationContext } = require('./values')
+const { cliKeyMap, defaultENVs, dockerEnv, images, locationContext } = require('./values')
 const containers = require('./containers')
 
 const DOCKER = {
   ...require('./machine'),
   ...require('./run'),
   ...require('./volumes'),
+  CLI_KEY_MAP: cliKeyMap,
   IMAGES: images,
   DOCKER_ENV: dockerEnv,
   LOCATION_CONTEXT: locationContext,
