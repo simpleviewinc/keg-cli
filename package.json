@@ -71,6 +71,7 @@
     "KegRunTask": "src/runTask",
     "KegScripts": "scripts",
     "KegSrc": "src",
+    "KegTpl": "src/templates",
     "KegTasks": "src/tasks",
     "KegUtils": "src/utils/"
   },
@@ -96,6 +97,7 @@
       "^KegRunTask(.*)$": "<rootDir>/src/runTask$1",
       "^KegScripts(.*)$": "<rootDir>/scripts$1",
       "^KegSrc(.*)$": "<rootDir>/src$1",
+      "^KegTpl(.*)$": "<rootDir>/src/templates$1",
       "^KegTasks(.*)$": "<rootDir>/src/tasks$1",
       "^KegUtils(.*)$": "<rootDir>/src/utils$1"
     },

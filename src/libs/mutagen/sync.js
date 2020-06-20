@@ -21,9 +21,11 @@ const syncDefs = {
   create: {
     defaultFileMode: 0644,
     defaultDirectoryMode: 0755,
-    syncMode: `one-way-safe`
+    syncMode: `one-way-safe`,
+    ignoreVcs: true
   }
 }
+
 
 /**
  * Builds the ignore arguments for the create command 
@@ -54,9 +56,11 @@ const buildCreateArgs = ({ ignore, create }) => {
   let createArgs = `${ buildIgnore(ignore) }`.trim()
 
   return reduceObj(create, (key, value, createdArgs) => {
-    return value
-      ? `${ createdArgs } --${ styleCase(snakeCase(key)) }=${ value }`
-      : createdArgs
+    return value === true
+      ? `${ createdArgs } --${ styleCase(snakeCase(key)) }`
+      : value !== null && value !== undefined
+        ? `${ createdArgs } --${ styleCase(snakeCase(key)) }=${ value }`
+        : createdArgs
   }, createArgs)
 }
 
@@ -85,6 +89,10 @@ class Sync {
   * <br/> First builds the args, then the full create string, then calls the mutagen CLI 
   * @function
   * @param {Object} args - Location on the local host to be synced
+  * @param {Object} args.ignore - All paths that the sync should ignore
+  * @param {string} from - Location on the local host to be synced
+  * @param {string} to - Location on the docker container to be synced
+  * @param {string} container - The id of the container to sync with
   *
   * @returns {*} - response from the mutagen CLI
   */

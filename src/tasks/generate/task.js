@@ -1,12 +1,12 @@
+const path = require('path')
+const { Logger } = require('KegLog')
 const { get, mapObj } = require('jsutils')
-const { fillTemplate, getRootDir } = require('KegUtils')
+const { getRootDir } = require('KegUtils')
+const { ask, input } = require('KegQuestions')
+const { CLI_ROOT } = require('KegConst/constants')
+const { loadTemplate } = require('KegUtils/template')
 const { generalError } = require('KegUtils/error/generalError')
 const { writeFile, pathExists, mkDir } = require('KegFileSys')
-const { ask, input } = require('KegQuestions')
-const { Logger } = require('KegLog')
-
-const path = require('path')
-const rootDir = getRootDir()
 
 const taskQuestions = {
   name: 'Enter the task name',
@@ -21,8 +21,8 @@ const buildQuestions = (questions, defaults) => {
 
 const getParentPath = (parent, name) => {
   return parent === 'keg'
-    ? path.join(rootDir, `src/tasks/${name}`)
-    : path.join(rootDir, `src/tasks/${parent}`)
+    ? path.join(CLI_ROOT, `src/tasks/${name}`)
+    : path.join(CLI_ROOT, `src/tasks/${parent}`)
 }
 
 const saveTask = async (content, { parent, name }) => {
@@ -56,7 +56,7 @@ const saveTask = async (content, { parent, name }) => {
 }
 
 /**
- * 
+ * Generates a task file from a template file
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -70,8 +70,8 @@ const generateTask = async args => {
 
   const answers = await ask(buildQuestions(taskQuestions, params))
 
-  const filled = await fillTemplate({
-    loc: path.join(__dirname, './templates/task.template.js'),
+  const filled = await loadTemplate({
+    name: 'task',
     data: answers,
   })
   

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const { checkCall, limbo } = require('jsutils')
+const { generalError } = require('KegUtils/error')
 
 /**
  * Wraps a method with a callback into a promise
@@ -67,6 +68,14 @@ const writeFileSync = (filePath, data, format='utf8') => {
   return fs.writeFileSync(filePath, data, format)
 }
 
+const readDir = (dirPath) => {
+  return limboify(fs.readdir, dirPath)
+}
+
+const stat = (path) => {
+  return limboify(fs.stat, path)
+}
+
 /**
  * Gets the content of a folder based on passed in options
  * @function
@@ -79,28 +88,36 @@ const writeFileSync = (filePath, data, format='utf8') => {
  */
 const getFolderContent = async (fromPath, opts={}) => {
 
-  const { full, type } = opts
-  const allContent = await fs.readdir(fromPath)
+  const { full, type, filters=[] } = opts
 
-  return Promise.all(
-    allFiles.reduce(async (allFound, file) => {
+  const [ err, allFiles ] = await readDir(fromPath)
+  err && generalError(err)
 
-      // Check if we should use the full path
-      const found = full ? path.join(fromPath, file) : file
+  return allFiles.reduce(async (toResolve, file) => {
+    const allFound = await toResolve
 
-      // If no type, then add and return
-      if(!type) return allFound.concat([ found ])
-      
-      // Check if the path is a directory
-      const isDir = await fs.stat(found).isDirectory()
+    // Filter out any files matching the filters
+    if(!file || filters.indexOf(file) !== -1)
+      return allFound
 
-      // Check the type and return based on type
-      return (type === 'folder' && isDir) || (type !== 'folder' && !isDir)
-        ? allFound.concat([ found ])
-        : allFound
+    // Check if we should use the full path
+    const found = full ? path.join(fromPath, file) : file
 
-    }, [])
-  )
+    // If no type, then add and return
+    if(!type) return allFound.concat([ found ])
+    
+    // Check if the path is a directory
+    const [ statErr, fileStat ] = await stat(path.join(fromPath, file))
+    statErr && generalError(statErr)
+
+    const isDir = fileStat.isDirectory()
+
+    // Check the type and return based on type
+    return (type === 'folder' && isDir) || (type !== 'folder' && !isDir)
+      ? allFound.concat([ found ])
+      : allFound
+
+  }, Promise.resolve([]))
 
 }
 
@@ -112,8 +129,8 @@ const getFolderContent = async (fromPath, opts={}) => {
  *
  * @returns {Array} - All files found in the path
  */
-const getFiles = (fromPath, full=false) => {
-  return getFolderContent(fromPath, { type: 'file', full })
+const getFiles = (fromPath, opts) => {
+  return getFolderContent(fromPath, { ...opts, type: 'file' })
 }
 
 /**
@@ -124,8 +141,8 @@ const getFiles = (fromPath, full=false) => {
  *
  * @returns {Array} - All folders found in the path
  */
-const getFolders = (fromPath, full=false) => {
-  return getFolderContent(fromPath, { type: 'folder', full })
+const getFolders = (fromPath, opts) => {
+  return getFolderContent(fromPath, { ...opts, type: 'folder' })
 }
 
 /**
