@@ -1,10 +1,19 @@
 const { Sync } = require('./sync')
+const { Config } = require('./config')
 const { mutagenCli } = require('./commands')
+const { GLOBAL_CONFIG_FOLDER, CLI_ROOT } = require('KegConst/constants')
+
+const defOptions = {
+  configFolder: GLOBAL_CONFIG_FOLDER,
+  cliRoot: CLI_ROOT,
+}
 
 class Mutagen {
 
   constructor(options={}){
-    this.sync = new Sync(options)
+    this.options = deepMerge(defOptions, options)
+    this.sync = new Sync(this)
+    this.config = new Config(this)
   }
 
   start = () => {

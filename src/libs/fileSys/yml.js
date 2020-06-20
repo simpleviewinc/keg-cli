@@ -28,15 +28,16 @@ const loadYml = async filePath => {
  * @function
  * @param {string} filePath - Location to write the YAML file to
  * @param {Object|Array} data - Data to write to the YAML file
+ * @param {boolean} preConfirm - Bypass ask to overwrite existing file
  *
  * @returns {boolean} - If the YAML file could be written
  */
-const writeYml = async (filePath, data) => {
+const writeYml = async (filePath, data, preConfirm) => {
   return confirmExec({
     confirm: `Overwrite YAML file => ${filePath}?`,
     success: `YAML file written successfully!`,
     cancel: `Write YAML file canceled!`,
-    preConfirm: !pathExistsSync(filePath),
+    preConfirm: preConfirm || !pathExistsSync(filePath),
     execute: async () => {
       const [ err, _ ] = await limbo(writeYamlFile(filePath, data))
       return err ? generalError(err.stack) : true
