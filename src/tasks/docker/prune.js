@@ -1,10 +1,5 @@
-// docker system prune  -af
-
-
-const { buildLocationContext } = require('KegUtils/builders')
-const { throwRequired, generalError } = require('KegUtils/error')
-const { isStr, get } = require('jsutils')
 const docker = require('KegDocCli')
+const { isStr, get } = require('jsutils')
 const { DOCKER } = require('KegConst/docker')
 
 /**

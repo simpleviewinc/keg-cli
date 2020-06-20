@@ -95,6 +95,7 @@ module.exports = deepFreeze({
   CONTEXT_KEYS: [
     `cmdContext`,
     'contextEnvs',
+    `image`,
     'location',
     'tap'
   ],

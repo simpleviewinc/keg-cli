@@ -1,14 +1,15 @@
 const { get } = require('jsutils')
+const { DOCKER } = require('KegConst/docker')
+const { getGitKey } = require('../git/getGitKey')
+const { CONTEXT_KEYS } = require('KegConst/constants')
 const { getPathFromConfig } = require('../globalConfig')
-const { generalError, throwNoTapLink, throwNoConfigPath } = require('../error')
+const { buildTapContext } = require('./buildTapContext')
+const { buildCmdContext } = require('./buildCmdContext')
 const { getTapPath } = require('../globalConfig/getTapPath')
 const { getSetting } = require('../globalConfig/getSetting')
-const { buildCmdContext } = require('./buildCmdContext')
-const { buildTapContext } = require('./buildTapContext')
-const { getGitKey } = require('../git/getGitKey')
 const { getContainerConst } = require('../docker/getContainerConst')
-const { CONTEXT_KEYS } = require('KegConst/constants')
-const { DOCKER } = require('KegConst/docker')
+const { generalError, throwNoTapLink, throwNoConfigPath } = require('../error')
+
 const { IMAGES, LOCATION_CONTEXT, SYNC_LOGS } = DOCKER
 
 /**
@@ -68,12 +69,15 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
   if(__internal && validateInternal(__internal, CONTEXT_KEYS))
     return __internal
 
-  const { cmdContext, package, tap } = buildCmdContext({
+  const { cmdContext, image:img prefix, tap } = buildCmdContext({
     params,
     globalConfig,
     allowed: get(task, 'options.context.allowed', IMAGES),
     defContext: get(task, 'options.context.default')
   })
+
+  // Get the image name based on the cmdContext if it wasn't found in buildCmdContext
+  const image = img || getContainerConst(cmdContext, `env.image`)
 
   // Build the location from containers path, and the context
   const location = getLocation(
@@ -82,9 +86,6 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
     cmdContext,
     tap,
   )
-
-  // Get the image name based on the cmdContext
-  const image = getContainerConst(cmdContext, `env.image`)
 
   // Get the ENV vars for the command context
   // Merge with any passed in envs
@@ -110,7 +111,7 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
     GIT_KEY: await getGitKey(globalConfig),
   }
 
-  return { cmdContext, contextEnvs, location, package, tap, image }
+  return { cmdContext, contextEnvs, location, prefix, tap, image }
 }
 
 module.exports = {

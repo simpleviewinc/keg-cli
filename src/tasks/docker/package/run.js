@@ -1,12 +1,11 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { isUrl, get, deepMerge } = require('jsutils')
 const { DOCKER } = require('KegConst/docker')
+const { isUrl, get, deepMerge } = require('jsutils')
 const { CONTAINER_PREFIXES } = require('KegConst/constants')
-const { buildLocationContext } = require('KegUtils/builders/buildLocationContext')
-const { buildCmdContext } = require('KegUtils/builders/buildCmdContext')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
+const { buildLocationContext } = require('KegUtils/builders/buildLocationContext')
 const { PACKAGE } = CONTAINER_PREFIXES
 
 /**
