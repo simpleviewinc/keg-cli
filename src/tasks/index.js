@@ -31,7 +31,7 @@ module.exports = config => {
     ...initialize(require('./git'), 'git', config),
     ...initialize(require('./global'), 'global', config),
     ...initialize(require('./generate'), 'generate', config),
-    ...initialize(require('./sync'), 'sync', config),
+    ...initialize(require('./mutagen'), 'mutagen', config),
     ...initialize(require('./tap'), 'tap', config),
     ...initialize(require('./network'), 'network', config),
   }
