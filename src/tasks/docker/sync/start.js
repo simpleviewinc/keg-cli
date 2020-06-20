@@ -6,7 +6,7 @@ const { DOCKER } = require('KegConst/docker')
 const { FILTERS } = require('KegConst/filters')
 const { logVirtualUrl } = require('KegUtils/log')
 const { get, checkCall, limbo } = require('jsutils')
-const { buildLocationContext } = require('KegUtils/builders/buildLocationContext')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
@@ -116,7 +116,7 @@ const startDockerSync = async args => {
   const { build, clean, context, detached, ensure } = params
 
   // Get the context data for the command to be run
-  const { cmdContext, contextEnvs, location, tap, image } = await buildLocationContext({
+  const { cmdContext, contextEnvs, location, tap, image } = await buildContainerContext({
     globalConfig,
     task,
     params,

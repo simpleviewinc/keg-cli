@@ -5,7 +5,7 @@ const { isUrl, get, deepMerge } = require('jsutils')
 const { CONTAINER_PREFIXES } = require('KegConst/constants')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
-const { buildLocationContext } = require('KegUtils/builders/buildLocationContext')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { PACKAGE } = CONTAINER_PREFIXES
 
 /**
@@ -53,7 +53,7 @@ const dockerPackageRun = async args => {
   * ----------- Step 3 ----------- *
   * Build the container context information
   */
-  const { cmdContext, contextEnvs, location } = await buildLocationContext({
+  const { cmdContext, contextEnvs, location } = await buildContainerContext({
     globalConfig,
     params: { ...params, context: parsed.repo },
     // Need to add our packaged repo to the allow options so we can run it

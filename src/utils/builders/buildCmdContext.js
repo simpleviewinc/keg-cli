@@ -16,11 +16,12 @@ const buildCmdContext = ({ globalConfig, params, allowed }) => {
 
   // Check if the context is prefixed with `keg`
   // If it is, remove it. This allows passing in "kegcore" or just "core"
-  const { context, image, prefix } = getContext(params)
+  const contextData = getContext(params)
+  const { context } = contextData
 
   // If context is in the allowed, and it's not a tap, then just return the cmdContext
   if(allowed.indexOf(context) !== -1 && context !== 'tap' && !tap && !container)
-    return { cmdContext: context, image, prefix, tap: context }
+    return { ...contextData, cmdContext: context, tap: context }
 
   // Check if the context or the tap, has a tap path
   // This allow passing the tap in as the context
@@ -35,7 +36,7 @@ const buildCmdContext = ({ globalConfig, params, allowed }) => {
   ;(!cmdContext || (!allowed.includes(cmdContext) && !allowed.includes(params.context))) &&
     generalError(`The context "${ context }" is invalid. A valid "context" is required!`)
 
-  return { cmdContext, image, prefix, tap: tap || context }
+  return { ...contextData, cmdContext, tap: tap || context }
 }
 
 

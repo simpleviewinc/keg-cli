@@ -91,7 +91,7 @@ module.exports = deepFreeze({
   },
 
   // Keys in the object that should be returned by
-  // the buildLocationContext method
+  // the buildContainerContext method
   CONTEXT_KEYS: [
     `cmdContext`,
     'contextEnvs',

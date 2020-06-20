@@ -1,7 +1,7 @@
 const docker = require('KegDocCli')
 const { isStr, get, checkCall } = require('jsutils')
 const { DOCKER } = require('KegConst/docker')
-const { buildLocationContext } = require('KegUtils/builders')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 
@@ -65,7 +65,7 @@ const dockerExec = async args => {
     prefix,
     tap,
     image
-  } = await buildLocationContext({ globalConfig, task, params: { ...params, context } })
+  } = await buildContainerContext({ globalConfig, task, params: { ...params, context } })
 
   // Get the name of the container to exec
   const containerName = container && container.name || prefix || image

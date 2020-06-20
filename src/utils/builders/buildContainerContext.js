@@ -61,20 +61,22 @@ const validateInternal = (__internal, keys=[]) => {
  *
  * @returns {Object} - The location, context, and envs for the context
  */
-const buildLocationContext = async ({ envs={}, globalConfig, __internal, params, task }) => {
+const buildContainerContext = async ({ envs={}, globalConfig, __internal, params, task }) => {
 
   // This is used by internal tasks.
-  // If we already have the output of buildLocationContext
+  // If we already have the output of buildContainerContext
   // No need run the code again
   if(__internal && validateInternal(__internal, CONTEXT_KEYS))
     return __internal
 
-  const { cmdContext, image:img, prefix, tap } = buildCmdContext({
+  const contextData = buildCmdContext({
     params,
     globalConfig,
     allowed: get(task, 'options.context.allowed', IMAGES),
     defContext: get(task, 'options.context.default')
   })
+
+  const { cmdContext, image:img, prefix, tap } = contextData
 
   // Get the image name based on the cmdContext if it wasn't found in buildCmdContext
   const image = img || getContainerConst(cmdContext, `env.image`)
@@ -111,9 +113,17 @@ const buildLocationContext = async ({ envs={}, globalConfig, __internal, params,
     GIT_KEY: await getGitKey(globalConfig),
   }
 
-  return { cmdContext, contextEnvs, location, prefix, tap, image }
+  return {
+    ...contextData,
+    cmdContext,
+    contextEnvs,
+    location,
+    prefix,
+    tap,
+    image
+  }
 }
 
 module.exports = {
-  buildLocationContext
+  buildContainerContext
 }

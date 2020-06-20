@@ -2,12 +2,11 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { mutagen } = require('KegMutagen')
 const { DOCKER } = require('KegConst/docker')
-const { buildLocationContext } = require('KegUtils/builders')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError } = require('KegUtils/error')
 
-const getContainer = (args) => {
-  const { globalConfig, params, task } = args
-  const { context, container } = params
+const getContainer = ({ image, cmdContext, prefix }) => {
+  
   
   container && docker.container.get(container)
   
@@ -43,16 +42,15 @@ const mutagenCreate = async args => {
   !context && !container && throwRequired(task, 'context', task.options.context)
 
   // Get the context data for the command to be run
-  const locContext = await buildLocationContext({
+  const contextData = await buildContainerContext({
     globalConfig,
     task,
     params,
   })
 
-
-  console.log(`---------- create ----------`)
-  console.log(locContext)
-
+  const container = contextData.id
+    ? contextData
+    : getContainer(contextData)
 
 }
 

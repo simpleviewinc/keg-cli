@@ -3,7 +3,7 @@ const { spawnCmd } = require('KegProc')
 const { DOCKER } = require('KegConst/docker')
 const { get, checkCall } = require('jsutils')
 const { confirmExec, exists } = require('KegUtils/helpers')
-const { buildLocationContext } = require('KegUtils/builders')
+const { buildContainerContext } = require('KegUtils/builders')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 
@@ -20,7 +20,7 @@ const destroyDockerSync = async args => {
   const { context, image } = params
 
   // Get the context data for the command to be run
-  const { location, cmdContext, contextEnvs } = await buildLocationContext({
+  const { location, cmdContext, contextEnvs } = await buildContainerContext({
     globalConfig,
     task,
     params,

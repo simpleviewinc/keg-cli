@@ -2,7 +2,7 @@ const { get } = require('jsutils')
 const { spawnCmd } = require('KegProc')
 const { Logger } = require('KegLog')
 const { buildComposeCmd } = require('KegUtils/docker')
-const { buildLocationContext, buildDockerImage } = require('KegUtils/builders')
+const { buildContainerContext, buildDockerImage } = require('KegUtils/builders')
 
 /**
  * Runs docker-compose up command for (components | core | tap)
@@ -17,7 +17,7 @@ const upDockerCompose = async args => {
   const { detached, build, context } = params
 
   // Get the context data for the command to be run
-  const { location, cmdContext, contextEnvs, tap } = await buildLocationContext({
+  const { location, cmdContext, contextEnvs, tap } = await buildContainerContext({
     globalConfig,
     task,
     params,
