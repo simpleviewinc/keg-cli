@@ -50,7 +50,7 @@ const dockerCli = async (params={}, cmdOpts={}) => {
 
   return error
     ? apiError(error, errResponse, skipError)
-    : apiSuccess(data, format)
+    : apiSuccess(data, format, skipError)
 
 }
 

@@ -8,12 +8,13 @@ const { waitForIt } = require('KegUtils/helpers/waitForIt')
 const { buildDockerCmd } = require('KegUtils/docker')
 const { getCoreVersion } = require('KegUtils/getters')
 const { generalError } = require('KegUtils/error/generalError')
+const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { getTapPath } = require('KegUtils/globalConfig/getTapPath')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { checkCall, get, reduceObj, isObj, isFunc } = require('jsutils')
 const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
-const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
+const { throwInvalidParamMatch } = require('KegUtils/error/throwInvalidParamMatch')
 
 /**
  * Starts a docker container for a tap
@@ -128,7 +129,11 @@ const checkBuildBase = async args => {
 const startTap = async (args) => {
 
   const { params } = args
-  const { attached, compose, detached, ensure, service, sync, tap } = params
+  const { attached, ensure, service, tap } = params
+
+  attached === 'sync' &&
+    service !== 'sync' &&
+    throwInvalidParamMatch(`Attempting to attach to "sync", but "service" is set to "${service}"`)
 
   // Check if the base image exists, and if not then build it
   ensure && await checkBuildBase(args)
@@ -139,51 +144,45 @@ const startTap = async (args) => {
   // Check if we are running the container with just docker
   if(service === 'container') return startContainer(args)
 
-  // Run the docker-sync task internally
-  // Capture the response in case detached is true
-  // That way we can use it with the docker-compose up command
-  const syncContextData = sync && await runInternalTask(
-    'tasks.docker.tasks.sync.tasks.start',
-    {
-      ...args,
-      command: 'start',
-      params: {
-        ...args.params,
-        detached: isDetached(`sync`, detached, attached),
-        context: 'tap'
-      },
-    }
-  )
+  const syncDetached = isDetached(`sync`, attached)
+  let syncContextData
+  
+  if(service === 'sync'){
+    // Run the docker-sync task internally
+    // Capture the response in case detached is true
+    // That way we can use it with the docker-compose up command
+    syncContextData = await runInternalTask(
+      'tasks.docker.tasks.sync.tasks.start',
+      {
+        ...args,
+        command: 'start',
+        params: {
+          ...args.params,
+          detached: syncDetached,
+          context: 'tap'
+        },
+      }
+    )
+
+  }
 
   // If sync was started with detached
   // Then we need to start docker-compose manually
-  const startedTap = compose &&
-    get(syncContextData, 'params.detached') &&
-    await waitForIt({
-      // Check for check for sync ontainers
-      check: checkForContainer,
-      // Check 5 times
-      amount: 2,
-      // Wait 5 second between each check
-      wait: 10000,
-      // It takes some time for the sync containers to boot
-      // So we need to wait a bit until the have started up
-      onFinish: async () => {
-        await runInternalTask(
-          'tasks.docker.tasks.compose.tasks.up',
-          {
-            ...args,
-            command: 'up',
-            params: {
-              ...args.params,
-              detached: isDetached(`compose`, detached, attached),
-              context: 'tap'
-            },
-            __internal: syncContextData,
-          }
-        )
+  const startedTap = syncDetached &&
+    await runInternalTask(
+      'tasks.docker.tasks.compose.tasks.up',
+      {
+        ...args,
+        command: 'up',
+        params: {
+          ...args.params,
+          sync: service === 'sync',
+          detached: isDetached(`compose`, attached),
+          context: 'tap'
+        },
+        __internal: syncContextData,
       }
-    })
+    )
 
   ;!startedTap
     ? Logger.error(`Could not start tap in docker-compose!`)

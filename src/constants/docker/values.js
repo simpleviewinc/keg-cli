@@ -38,7 +38,7 @@ const locationContext = keyMap([
  * @object
  */
 const cliKeyMap = {
-  names: 'name'
+  Names: 'name'
 }
 
 

@@ -4,6 +4,10 @@
   * Create a default init template for a tap - `create-react-tap`
 
 
+**Sync**
+* Update all compose-local.yml files to be compose-sync.yml
+
+
 **Docker**
   * Setup pushing docker images to github packages through provider
   * Setup creating an image from the currently running container
@@ -14,6 +18,9 @@
     * `re-theme`, `tap-resolver`, `keg-components`
     * Need work out a way some they don't get overwritten from `yarn install`
   * Add IMAGE_FROM as an ARG and ENV when build docker containers
+
+  * TO FIX - Stop task is not stopping the docker container
+    * `keg core stop` does not stop the container, just the sync volumes
 
 **Install**
 * Keg repos should be installed through an install command

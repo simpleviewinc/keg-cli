@@ -16,10 +16,25 @@ const { buildIgnore, buildMountPath, buildMutagenArgs } = require('./helpers')
  */
 const syncDefs = {
   create: {
-    defaultFileMode: 0644,
-    defaultDirectoryMode: 0755,
-    syncMode: `one-way-safe`,
-    ignoreVcs: true
+    args: {
+      defaultFileMode: '0644',
+      defaultDirectoryMode: '0755',
+      syncMode: `two-way-resolved`,
+      ignoreVcs: true
+    },
+    ignore: [
+      '/node_modules',
+      '/core/base/assets/*',
+      '/.*',
+      '!/.storybook',
+      '*.lock',
+      '*.md',
+      '/temp',
+      '/web-build',
+      '/reports',
+      '/build',
+      '/docs',
+    ]
   }
 }
 
@@ -36,22 +51,20 @@ class Sync {
   * @function
   * @param {Object} args - Location on the local host to be synced
   * @param {Object} args.ignore - All paths that the sync should ignore
-  * @param {string} from - Location on the local host to be synced
-  * @param {string} to - Location on the docker container to be synced
+  * @param {string} local - Location on the local host to be synced
+  * @param {string} remote - Location on the docker container to be synced
   * @param {string} container - The id of the container to sync with
   *
-  * @returns {*} - response from the mutagen CLI
+  * @returns {*} - response local the mutagen CLI
   */
   create = async (args) => {
-    const { ignore, from, container, to } = args
-    const argsStr = buildMutagenArgs({
-      ignore,
-      create: get(this, 'options.create', {}),
-    })
+    const { container, options, name } = args
+    const argsStr = buildMutagenArgs(deepMerge(get(this, 'options.create', {}), options))
     const mountPath = buildMountPath(args)
 
     return mutagenCli({
-      opts: `sync create ${ argsStr } %{ mountPath }`,
+      opts: `sync create --name=${ name } ${ argsStr } ${ mountPath }`,
+      log: true,
     })
 
   }

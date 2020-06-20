@@ -1,4 +1,4 @@
-const { reduceObj, snakeCase, styleCase } = require('jsutils')
+const { reduceObj, snakeCase, styleCase, trainCase } = require('jsutils')
 
 /**
  * Builds the mount path for the sync between the local host and docker container
@@ -10,11 +10,13 @@ const { reduceObj, snakeCase, styleCase } = require('jsutils')
  *
  * @returns {string} - Joined create arguments as a string
  */
-const buildMountPath = ({ from, to, container, type='docker' }) => {
-  const toPath = container ? `${ container }/${ to }` : to
-  const fullToPath = type ? `${ type }://${ toPath }` : toPath
+const buildMountPath = ({ local, remote, container, type='docker' }) => {
+  remote = remote[0] !== '/' ? `/${remote}` : remote
+  
+  const remotePath = container ? `${ container }${ remote }` : remote
+  const fullRemotePath = type ? `${ type }://${ remotePath }` : remotePath
 
-  return `${ from } ${ fullToPath }`
+  return `${ local } ${ fullRemotePath }`
 }
 
 
@@ -32,7 +34,7 @@ const buildIgnore = (ignore=[]) => {
       : ignored
         ? `${ ignored } --ignore=${ ignore }`.trim()
         : `--ignore=${ ignore }`.trim()
-  }, false)
+  }, '')
 }
 
 /**
@@ -43,16 +45,17 @@ const buildIgnore = (ignore=[]) => {
  *
  * @returns {string} - Joined create arguments as a string
  */
-const buildMutagenArgs = ({ ignore, create }) => {
-  let mutagenArgs = `${ buildIgnore(ignore) }`.trim()
-
-  return reduceObj(create, (key, value, args) => {
+const buildMutagenArgs = ({ ignore, args }) => {
+  const mutagenArgs = reduceObj(args, (key, value, buildArgs) => {
+    const useKey = trainCase(key)
     return value === true
-      ? `${ args } --${ styleCase(snakeCase(key)) }`
+      ? `${ buildArgs } --${ useKey }`
       : value !== null && value !== undefined
-        ? `${ args } --${ styleCase(snakeCase(key)) }=${ value }`
-        : args
-  }, mutagenArgs)
+        ? `${ buildArgs } --${ useKey }=${ value }`
+        : buildArgs
+  }, '')
+  
+  return `${ mutagenArgs } ${ buildIgnore(ignore) }`.trim()
 }
 
 module.exports = {

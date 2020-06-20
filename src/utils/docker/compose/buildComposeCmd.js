@@ -15,12 +15,12 @@ const composeArgs = {
  *
  * @returns {string} - dockerCmd string with the file paths added
  */
-const addComposeFiles = (dockerCmd, context='') => {
+const addComposeFiles = (dockerCmd, context='', sync) => {
 
   const compDefPath = get(DOCKER, `CONTAINERS.${ context.toUpperCase() }.ENV.COMPOSE_DEFAULT`)
   const defCompose = compDefPath ? `-f ${ compDefPath }` : ''
 
-  const envCompose = DOCKER.DOCKER_ENV
+  const envCompose = sync && DOCKER.DOCKER_ENV
     ? `-f ${DOCKER.CONTAINERS_PATH}/${context}/compose-${DOCKER.DOCKER_ENV}.yml`
     : ''
 
@@ -72,10 +72,10 @@ const addCmdOpts = (dockerCmd, params) => {
  * @returns {string} - Built docker command
  */
 const buildComposeCmd = async (globalConfig, cmd, cmdContext, params) => {
-  const { detached, build } = params
+  const { detached, build, sync } = params
 
   let dockerCmd = `docker-compose`
-  dockerCmd = addComposeFiles(dockerCmd, cmdContext)
+  dockerCmd = addComposeFiles(dockerCmd, cmdContext, sync)
   dockerCmd = `${dockerCmd} ${cmd}`
   
   if(cmd === 'build') return addCmdOpts(dockerCmd, params)

@@ -5,12 +5,13 @@ const { DOCKER } = require('KegConst')
 const { spawnCmd } = require('KegProc')
 const { logVirtualUrl } = require('KegUtils/log')
 const { isDetached } = require('KegUtils/helpers/isDetached')
+const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { buildDockerCmd } = require('KegUtils/docker/buildDockerCmd')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
 const { getPathFromConfig } = require('KegUtils/globalConfig/getPathFromConfig')
-const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
+const { throwInvalidParamMatch } = require('KegUtils/error/throwInvalidParamMatch')
 
 /**
  * Starts a docker container for a tap
@@ -78,7 +79,11 @@ const checkBuildImage = async (args, context) => {
  */
 const startComponents = async (args) => {
   const { params } = args
-  const { attached, build, compose, detached, ensure, service, sync } = params
+  const { attached, build, ensure, service } = params
+
+  attached === 'sync' &&
+    service !== 'sync' &&
+    throwInvalidParamMatch(`Attempting to attach to "sync", but "service" is set to "${service}"`)
 
   // Check if the base image exists, and if not then build it
   ensure && await buildBaseImg(args)
@@ -89,27 +94,32 @@ const startComponents = async (args) => {
   // Check if we are running the container with just docker
   if(service === 'container') return startContainer(args)
 
-  // Run the docker-sync task internally
-  // Capture the response in case detached is true
-  // That way we can use it with the docker-compose up command
-  const syncContextData = sync && await runInternalTask(
-    'tasks.docker.tasks.sync.tasks.start',
-    {
-      ...args,
-      command: 'start',
-      params: {
-        ...args.params,
-        detached: isDetached(`sync`, detached, attached),
-        tap: undefined,
-        context: 'components'
-      },
-    }
-  )
+  const syncDetached = isDetached(`sync`, attached)
+  let syncContextData
+  
+  if(service === 'sync'){
+    // Run the docker-sync task internally
+    // Capture the response in case detached is true
+    // That way we can use it with the docker-compose up command
+    syncContextData = await runInternalTask(
+      'tasks.docker.tasks.sync.tasks.start',
+      {
+        ...args,
+        command: 'start',
+        params: {
+          ...args.params,
+          detached: syncDetached,
+          tap: undefined,
+          context: 'components'
+        },
+      }
+    )
+
+  }
 
   // If sync was started with detached
   // Then we need to start docker-compose manually
-  compose &&
-  get(syncContextData, 'params.detached') &&
+  syncDetached &&
     runInternalTask(
       'tasks.docker.tasks.compose.tasks.up',
       {
@@ -117,7 +127,8 @@ const startComponents = async (args) => {
         command: 'up',
         params: {
           ...args.params,
-          detached: isDetached(`compose`, detached, attached),
+          sync: service === 'sync',
+          detached: isDetached(`compose`, attached),
           tap: undefined,
           context: 'components'
         },
@@ -137,10 +148,10 @@ module.exports = {
     options: {
       attached: {
         alias: [ 'attach', 'att', 'at' ],
-        allowed: [ true, false, 'sync', 'compose' ],
+        allowed: [ false, 'sync', 'compose' ],
         description: 'Attaches to a process in lieu of running in the backgound. Overrides "detached"',
         example: `keg components start --attach compose ( Runs sync in background and attaches to compose) `,
-        default: 'compose',
+        default: false,
       },
       build: {
         description: 'Removes and rebuilds the docker container before running keg-components',
@@ -158,21 +169,9 @@ module.exports = {
         example: 'keg components start --clean true',
         default: false
       },
-      compose: {
-        description: 'Run the docker-compose up command',
-        example: 'keg components start --compose false',
-        default: true,
-      },
       cache: {
         description: 'Docker will use build cache when building the image',
         default: true
-      },
-      detached: {
-        alias: [ 'detach', 'dt', 'de' ],
-        allowed: [ true, false, 'sync', 'compose' ],
-        description: 'Runs the process in the background. Boolean for sync and compose, define by name.',
-        example: 'keg components start --detached sync ( Runs sync in background and attaches to compose) ',
-        default: false
       },
       docker: {
         description: `Extra docker arguments to pass to the 'docker run command'`,
@@ -198,15 +197,10 @@ module.exports = {
         example: 'keg components start --mounts cli,retheme',
       },
       service: {
-        allowed: [ 'sync', 'container' ],
+        allowed: [ 'sync', 'container', 'compose' ],
         description: 'What docker service to build the tap with. Must be on of ( sync || container )',
         example: 'keg components start --service container',
-        default: 'sync'
-      },
-      sync: {
-        description: 'Run the docker-sync command',
-        example: 'keg components start --sync false',
-        default: true,
+        default: 'compose'
       },
     }
   }

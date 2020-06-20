@@ -1,4 +1,5 @@
 const { get } = require('jsutils')
+const docker = require('KegDocCli')
 const { DOCKER } = require('KegConst/docker')
 const { getGitKey } = require('../git/getGitKey')
 const { CONTEXT_KEYS } = require('KegConst/constants')
@@ -8,9 +9,10 @@ const { buildCmdContext } = require('./buildCmdContext')
 const { getTapPath } = require('../globalConfig/getTapPath')
 const { getSetting } = require('../globalConfig/getSetting')
 const { getContainerConst } = require('../docker/getContainerConst')
+const { getContainerFromContext } = require('../docker/getContainerFromContext')
 const { generalError, throwNoTapLink, throwNoConfigPath } = require('../error')
-
 const { IMAGES, LOCATION_CONTEXT, SYNC_LOGS } = DOCKER
+const { getPrefix } = require('../getters/getPrefix')
 
 /**
  * Gets the location where a docker command should be executed
@@ -76,7 +78,7 @@ const buildContainerContext = async ({ envs={}, globalConfig, __internal, params
     defContext: get(task, 'options.context.default')
   })
 
-  const { cmdContext, image:img, prefix, tap } = contextData
+  const { cmdContext, image:img, tap } = contextData
 
   // Get the image name based on the cmdContext if it wasn't found in buildCmdContext
   const image = img || getContainerConst(cmdContext, `env.image`)
@@ -113,15 +115,28 @@ const buildContainerContext = async ({ envs={}, globalConfig, __internal, params
     GIT_KEY: await getGitKey(globalConfig),
   }
 
-  return {
+  const builtContext = {
     ...contextData,
     cmdContext,
     contextEnvs,
     location,
-    prefix,
     tap,
     image
   }
+
+  // If we already have an id, then we already have the container info
+  // If no ID, then call getContainer to inject the container info if it exists
+  const containerContext = !builtContext.id
+    ? await getContainerFromContext(builtContext)
+    : builtContext
+
+  // Ensure the prefix is added if it exists or it's in the name
+  containerContext.prefix = containerContext.prefix ||
+    containerContext.name && 
+    getPrefix(containerContext.name)
+
+  return containerContext
+
 }
 
 module.exports = {
