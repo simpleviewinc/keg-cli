@@ -34,19 +34,19 @@
     "cli-spinners": "2.3.0",
     "colors": "1.4.0",
     "inquirer": "7.0.6",
+    "js-yaml": "^3.14.0",
     "jsutils": "git+https://github.com/lancetipton/jsutils.git",
-    "load-yaml-file": "0.2.0",
     "log-update": "4.0.0",
     "module-alias": "2.2.2",
     "recursive-readdir": "2.2.2",
     "rimraf": "2.6.3",
     "simple-git": "1.131.0",
     "spawn-cmd": "git+https://github.com/lancetipton/spawn-cmd.git",
+    "strip-bom": "^4.0.0",
     "sync-glob": "1.4.0",
     "tap-resolver": "git+https://github.com/simpleviewinc/tap-resolver.git",
     "tree-kill": "1.2.2",
-    "write-yaml-file": "4.0.0",
-    "yamljs": "0.3.0"
+    "write-yaml-file": "4.0.0"
   },
   "devDependencies": {
     "jest": "24.8.0",

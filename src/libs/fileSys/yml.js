@@ -5,7 +5,6 @@ const writeYamlFile = require('write-yaml-file')
 const { confirmExec } = require('KegUtils/helpers')
 const { parseTemplate } = require('./parseTemplate')
 const { limbo, deepMerge, isStr } = require('jsutils')
-const { stringify:toYml, } = require('yamljs')
 const { throwNoFileExists, generalError } = require('KegUtils/error')
 const { pathExistsSync, pathExists, removeFile, readFileSync, readFile } = require('./fileSys')
 
