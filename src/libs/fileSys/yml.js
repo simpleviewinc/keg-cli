@@ -1,11 +1,56 @@
-const { limbo, deepMerge, isStr } = require('jsutils')
-const loadYamlFile = require('load-yaml-file')
-const writeYamlFile = require('write-yaml-file')
-const { parse:parseYml, stringify:toYml, } = require('yamljs')
-const { pathExistsSync, removeFile } = require('./fileSys')
+const yaml = require('js-yaml')
+const stripBom = require('strip-bom')
 const { ask } = require('../questions')
-const { throwNoFileExists, generalError } = require('KegUtils/error')
+const writeYamlFile = require('write-yaml-file')
 const { confirmExec } = require('KegUtils/helpers')
+const { parseTemplate } = require('./parseTemplate')
+const { limbo, deepMerge, isStr } = require('jsutils')
+const { stringify:toYml, } = require('yamljs')
+const { throwNoFileExists, generalError } = require('KegUtils/error')
+const { pathExistsSync, pathExists, removeFile, readFileSync, readFile } = require('./fileSys')
+
+/**
+ * Parses the yml content to replaces any template values from the globalConfig
+ * <br/> Then converts it into a JS Object with the `yaml.safeLoad` call
+ * @function
+ * @param {string} content - Content of the loaded yml file
+ *
+ * @returns {Object} - Parse YAML file as a JS Object
+ */
+const loadTemplateYml = content => yaml.safeLoad(parseTemplate({ template: stripBom(content) }))
+
+/**
+ * Read the content of a yml file
+ * @function
+ * @param {string} filePath - Path to the YAML file
+ * @param {boolean} throwError - If an error should be thrown when yml file does not exist
+ *
+ * @returns {Object} - Parse YAML file
+ */
+const loadYamlFile = async (filePath, throwError=true) => {
+  const [ err, content ] = await readFile(filePath)
+  return !err
+    ? loadTemplateYml(content)
+    : throwError
+      ? throwNoFileExists(filePath, `Could not load YAML file!`)
+      : {}
+}
+
+
+/**
+ * Loads a YAML file from a path and parses it synchronously
+ * @function
+ * @param {string} filePath - Path to the YAML file
+ * @param {boolean} throwError - If an error should be thrown when yml file does not exist
+ *
+ * @returns {Object} - Parse YAML file
+ */
+const loadYmlSync = (filePath, throwError=true) => {
+  return pathExistsSync(filePath)
+    ? loadTemplateYml(readFileSync(filePath))
+    : throwError ? throwNoFileExists(filePath, `Could not load YAML file!`) : {}
+}
+
 
 /**
  * Loads a YAML file from a path and parses it
@@ -16,9 +61,12 @@ const { confirmExec } = require('KegUtils/helpers')
  * @returns {Object} - Parse YAML file
  */
 const loadYml = async (filePath, throwError=true) => {
-  const [ err, data ] = pathExistsSync(filePath)
-    ? await limbo(loadYamlFile(filePath))
-    : [ throwError ? throwNoFileExists(filePath, `Could not load YAML file!`) : null, {} ]
+  const [ err, _ ] = await limbo(pathExists(filePath))
+  const data = !err
+    ? await loadYamlFile(filePath, throwError)
+    : throwError
+      ? throwNoFileExists(filePath, `Could not load YAML file!`) 
+      : {}
 
   return data
 }
@@ -86,8 +134,8 @@ const removeYml = async filePath => {
 
 const yml = {
   load: loadYml,
+  loadSync: loadYmlSync,
   merge: mergeYml,
-  parse: parseYml,
   remove: removeYml,
   stringify: toYml,
   write: writeYml,
@@ -95,6 +143,7 @@ const yml = {
 
 module.exports = {
   loadYml,
+  loadYmlSync,
   mergeYml,
   parseYml,
   removeYml,

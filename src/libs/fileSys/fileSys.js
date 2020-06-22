@@ -184,9 +184,7 @@ const getFilesSync = fromPath => {
  * @returns {Promise|boolean} - True if the path exists, false if not
  */
 const pathExists = checkPath => {
-  return new Promise((res, rej) => {
-    return res(fs.existsSync(checkPath))
-  })
+  return limboify(fs.access, checkPath, fs.constants.F_OK)
 }
 
 /**

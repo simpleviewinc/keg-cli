@@ -3,8 +3,6 @@ const { pathExistsSync } = require('../fileSys')
 
 const path = require('path')
 const { isArr, isObj, isStr } = require('jsutils')
-const loadYamlFile = require('load-yaml-file')
-const writeYamlFile = require('write-yaml-file')
 
 const testYmlPath = path.join(__dirname, './test.yml')
 const testYmlWrite = path.join(__dirname, './writeTest.yml')

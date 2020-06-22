@@ -1,7 +1,7 @@
-const fs = require('fs')
 const path = require('path')
 const { isArr, isStrBool, toBool } = require('jsutils')
 const { KEY_VAL_MATCH, NEWLINE, NEWLINES_MATCH, NEWLINES_ESC } = require('KegConst/patterns')
+const { parseTemplate } = require('./parseTemplate')
 
 // Holds past parsed files so we don't re-parse them
 const parseENVCache = {}
@@ -54,20 +54,8 @@ const parseValue = toParse => {
  * @returns {Object} - Parse .env file content
  */
 const parseContent = (envPath, encoding) => {
-  // Load at run time to speed up other cli calls
-  const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
-  const { fillTemplate } = require('KegUtils/template/fillTemplate')
-  const globalConfig = getGlobalConfig() || {}
-  
-  return fillTemplate({
-    template: fs.readFileSync(envPath, { encoding }),
-    // Add the globalConfig, and the process.envs as the data objects
-    // This allows values in ENV templates from globalConfig || process.env
-    // In the template example: 
-    //    RN_PACKAGER_IP={{ envs.KEG_DOCKER_IP }}
-    data: { ...globalConfig, envs: { ...globalConfig.envs, ...process.env }
-    }
-  })
+  // Parse the env file as a template to replace any template strings
+  return parseTemplate({ filePath: envPath })
     // Split each line to isolate the keg value pair
     .split(NEWLINES_MATCH)
     // Loop over each line an parse the key value pair
