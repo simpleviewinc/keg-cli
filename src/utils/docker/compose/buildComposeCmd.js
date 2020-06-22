@@ -20,11 +20,11 @@ const addComposeFiles = (dockerCmd, context='', sync) => {
   const compDefPath = get(DOCKER, `CONTAINERS.${ context.toUpperCase() }.ENV.COMPOSE_DEFAULT`)
   const defCompose = compDefPath ? `-f ${ compDefPath }` : ''
 
-  const envCompose = sync && DOCKER.DOCKER_ENV
-    ? `-f ${DOCKER.CONTAINERS_PATH}/${context}/compose-${DOCKER.DOCKER_ENV}.yml`
+  const syncCompose = sync
+    ? `-f ${DOCKER.CONTAINERS_PATH}/${context}/compose-sync.yml`
     : ''
 
-  return `${dockerCmd} ${defCompose} ${envCompose}`.trim()
+  return `${dockerCmd} ${defCompose} ${syncCompose}`.trim()
 }
 
 /**

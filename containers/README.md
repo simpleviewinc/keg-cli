@@ -18,7 +18,7 @@
     * `context.env` - Environment file containing envs to pass to the docker container
   * Some folders contain
     * `compose-default.yml` - Default `docker-compose` file
-    * `compose-local.yml` - Environment specific file
+    * `compose-sync.yml` - Overrides `compose-default.yml` with `docker-sync` settings
     * `docker-sync.yml` - Docker Sync configuration file
 
 

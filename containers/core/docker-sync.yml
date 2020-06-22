@@ -1,7 +1,7 @@
 version: "2"
 options:
   compose-file-path: '${COMPOSE_DEFAULT}'
-  compose-dev-file-path: '${COMPOSE_ENV}'
+  compose-dev-file-path: '${COMPOSE_SYNC}'
   verbose: false
   project_root: '${KEG_PATH}'
 syncs:
