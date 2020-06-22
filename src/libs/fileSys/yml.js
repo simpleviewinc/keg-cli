@@ -11,13 +11,14 @@ const { confirmExec } = require('KegUtils/helpers')
  * Loads a YAML file from a path and parses it
  * @function
  * @param {string} filePath - Path to the YAML file
+ * @param {boolean} throwError - If an error should be thrown when yml file does not exist
  *
  * @returns {Object} - Parse YAML file
  */
-const loadYml = async filePath => {
+const loadYml = async (filePath, throwError=true) => {
   const [ err, data ] = pathExistsSync(filePath)
     ? await limbo(loadYamlFile(filePath))
-    : [ throwNoFileExists(filePath, `Could not load YAML file!`), undefined ]
+    : [ throwError ? throwNoFileExists(filePath, `Could not load YAML file!`) : null, {} ]
 
   return data
 }

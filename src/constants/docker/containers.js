@@ -1,8 +1,8 @@
 const path = require('path')
-const { deepFreeze, deepMerge, keyMap } = require('jsutils')
+const { deepFreeze, deepMerge, keyMap, get } = require('jsutils')
 const { cliRootDir, dockerEnv, defaultENVs, images } = require('./values')
 const { loadENV } = require('KegFileSys/env')
-const { pathExistsSync } = require('KegFileSys/fileSys')
+const { pathExistsSync, loadYml } = require('KegFileSys/fileSys')
 const { GLOBAL_CONFIG_FOLDER } = require('../constants')
 const { PREFIXED } = require('./machine')
 
@@ -71,7 +71,7 @@ const containerConfig = (container) => {
   const dockerFile = path.join(defaultENVs.CONTAINERS_PATH, container, `Dockerfile`)
 
   // Build config ENVs
-  const valuesEnv = loadENV(path.join(defaultENVs.CONTAINERS_PATH, container, 'values.yml'))
+  const valuesFile = loadYml(path.join(defaultENVs.CONTAINERS_PATH, container, 'values.yml'), false)
 
   // Merge the container config with the default config and return
   return deepMerge(DEFAULT, {
@@ -82,7 +82,7 @@ const containerConfig = (container) => {
     ENV: deepMerge(
       PREFIXED,
       defaultENVs,
-      valuesEnv,
+      get(valuesFile, 'env', {}),
       getCurrentEnvFile(container)
     ),
   })
