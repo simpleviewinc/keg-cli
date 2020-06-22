@@ -18,7 +18,7 @@ const images = getFoldersSync(defaultENVs.CONTAINERS_PATH)
   .filter(folder => pathExistsSync(path.join(
     defaultENVs.CONTAINERS_PATH,
     folder,
-    `context.env`
+    `values.yml`
   )))
 
 /**

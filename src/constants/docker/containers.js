@@ -71,7 +71,7 @@ const containerConfig = (container) => {
   const dockerFile = path.join(defaultENVs.CONTAINERS_PATH, container, `Dockerfile`)
 
   // Build config ENVs
-  const contextEnv = loadENV(path.join(defaultENVs.CONTAINERS_PATH, container, 'context.env'))
+  const valuesEnv = loadENV(path.join(defaultENVs.CONTAINERS_PATH, container, 'values.yml'))
 
   // Merge the container config with the default config and return
   return deepMerge(DEFAULT, {
@@ -82,7 +82,7 @@ const containerConfig = (container) => {
     ENV: deepMerge(
       PREFIXED,
       defaultENVs,
-      contextEnv,
+      valuesEnv,
       getCurrentEnvFile(container)
     ),
   })

@@ -11,11 +11,11 @@
   * The install path should be automatically added to both files
   * Files should be located at `~/.kegConfig/<file>`
 
-## Docker Image per Folder 
+## Folder Files
 * Each folder relates to a docker image that is built with the `keg-cli`
-  * Each Folders is required to have
+  * Folders should container the following files
     * `Dockerfile` - How to build the docker image
-    * `context.env` - Environment file containing envs to pass to the docker container
+    * `values.yml` - Environment file containing envs to pass to the docker container
   * Some folders contain
     * `compose-default.yml` - Default `docker-compose` file
     * `compose-sync.yml` - Overrides `compose-default.yml` with `docker-sync` settings
@@ -35,3 +35,7 @@
   * Required a `GIT_KEY` build-arg
   * Runs yarn install at build time
     * Copies over local `package.json` && `yarn.lock` into the container
+
+
+
+
