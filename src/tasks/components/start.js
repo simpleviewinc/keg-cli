@@ -1,71 +1,14 @@
 const { get } = require('jsutils')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { DOCKER } = require('KegConst')
-const { spawnCmd } = require('KegProc')
-const { logVirtualUrl } = require('KegUtils/log')
-const { isDetached } = require('KegUtils/helpers/isDetached')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
-const { buildDockerCmd } = require('KegUtils/docker/buildDockerCmd')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { getContainerConst } = require('KegUtils/docker/getContainerConst')
-const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
-const { getPathFromConfig } = require('KegUtils/globalConfig/getPathFromConfig')
-const { throwInvalidParamMatch } = require('KegUtils/error/throwInvalidParamMatch')
-
-/**
- * Starts a docker container for a tap
- * @param {Object} args - arguments passed from the runTask method
- * @param {Object} args.globalConfig - Global config object for the keg-cli
- * @param {Object} args.params - Formatted object of the passed in options 
- *
- * @returns {void}
- */
-const startContainer = async ({ globalConfig, params }) => {
-  const { env, docker, mounts } = params
-
-  const location = getPathFromConfig(globalConfig, 'components')
-  const dockerCmd = buildDockerCmd(globalConfig, {
-    mounts,
-    docker,
-    location,
-    cmd: `run`,
-    env: env || get(DOCKER, `DOCKER_ENV`),
-    name: get(DOCKER, `CONTAINERS.COMPONENTS.ENV.IMAGE`),
-    container: get(DOCKER, `CONTAINERS.COMPONENTS.ENV.CONTAINER_NAME`),
-    version: get(DOCKER, `CONTAINERS.COMPONENTS.ENV.VERSION`),
-  })
-
-  logVirtualUrl()
-
-  await spawnCmd(dockerCmd, location)
-}
-
-/**
- * Checks that the components image exists. If it doesn't then build it
- * @param {Object} args - arguments passed from the runTask method
- * @param {Object} context - Context for the image
- * @param {Object} tap - Name of the tap to build the image for
- *
- * @returns {void}
- */
-const checkBuildImage = async (args, context) => {
-  const componentsName = getContainerConst(context, `env.image`, 'kegcomponents')
-  const exists = await docker.image.exists(componentsName)
-
-  // If the image exists, and there's no build param, return
-  if(exists && !get(args, 'params.build')) return true
-
-  // Other wise print message about the build, then do it
-  exists
-    ? Logger.info(`  Force building image ${ componentsName }...`)
-    : Logger.info(`  Image ${ componentsName } does not exist, building now...`)
-
-  Logger.empty()
-
-  return buildDockerImage(args, context)
-
-}
+const { checkBuildImage } = require('KegUtils/builders/checkBuildImage')
+const { throwInvalidSyncParams } = require('KegUtils/error/throwInvalidSyncParams')
+const {
+  composeService,
+  containerService,
+  mutagenService,
+} = require('KegUtils/services')
 
 /**
  * Start a keg-components inside docker
@@ -79,62 +22,28 @@ const checkBuildImage = async (args, context) => {
  */
 const startComponents = async (args) => {
   const { params } = args
-  const { attached, build, ensure, service } = params
+  const { attached, build, ensure, log, service } = params
 
-  attached === 'sync' &&
-    service !== 'sync' &&
-    throwInvalidParamMatch(`Attempting to attach to "sync", but "service" is set to "${service}"`)
+  // Ensure the sync params are correct
+  throwInvalidSyncParams(params)
 
   // Check if the base image exists, and if not then build it
+  log && Logger.info(`Checking base docker image...`)
   ensure && await buildBaseImg(args)
 
   // Check if we should build the container image first
-  ;(ensure || build) && await checkBuildImage(args, 'components')
+  log && Logger.info(`Checking components docker image...`)
+  ;(ensure || build) && await checkBuildImage(args, 'components', 'kegcomponents')
 
-  // Check if we are running the container with just docker
-  if(service === 'container') return startContainer(args)
+  // Check and run the correct service
+  const serviceResp = service === 'container'
+    ? await containerService(args, { container: 'components' })
+    : await composeService(args, { context: 'components' })
 
-  const syncDetached = isDetached(`sync`, attached)
-  let syncContextData
+  // TODO: Add mutagen service here
+  // await mutagenService(args, {})
   
-  if(service === 'sync'){
-    // Run the docker-sync task internally
-    // Capture the response in case detached is true
-    // That way we can use it with the docker-compose up command
-    syncContextData = await runInternalTask(
-      'tasks.docker.tasks.sync.tasks.start',
-      {
-        ...args,
-        command: 'start',
-        params: {
-          ...args.params,
-          detached: syncDetached,
-          tap: undefined,
-          context: 'components'
-        },
-      }
-    )
-
-  }
-
-  // If sync was started with detached
-  // Then we need to start docker-compose manually
-  syncDetached &&
-    runInternalTask(
-      'tasks.docker.tasks.compose.tasks.up',
-      {
-        ...args,
-        command: 'up',
-        params: {
-          ...args.params,
-          sync: service === 'sync',
-          detached: isDetached(`compose`, attached),
-          tap: undefined,
-          context: 'components'
-        },
-        __internal: syncContextData,
-      }
-  )
+  return serviceResp
 
 }
 
@@ -156,6 +65,16 @@ module.exports = {
       build: {
         description: 'Removes and rebuilds the docker container before running keg-components',
         example: 'keg components start --build',
+        default: false,
+      },
+      cache: {
+        description: 'Docker will use build cache when building the image',
+        default: true,
+        example: `keg components start --cache false`,
+      },
+      clean: {
+        description: 'Cleans docker-sync before running the keg-components',
+        example: 'keg components start --clean true',
         default: false
       },
       command: {
@@ -164,17 +83,16 @@ module.exports = {
         example: 'keg components start --command ios ( Runs "yarn dev" )',
         default: 'storybook'
       },
-      clean: {
-        description: 'Cleans docker-sync before running the keg-components',
-        example: 'keg components start --clean true',
-        default: false
-      },
-      cache: {
-        description: 'Docker will use build cache when building the image',
+      destroy: {
+        alias: [ 'des' ],
+        description: 'All collateral items will be destoryed if the sync task fails ( true )',
+        example: 'keg core components --destroy false',
         default: true
       },
       docker: {
+        alias: [ 'doc' ],
         description: `Extra docker arguments to pass to the 'docker run command'`,
+        example: 'keg components --docker "-e MY_EXTRA_ENV=foo"'
       },
       env: {
         alias: [ 'environment' ],
@@ -192,16 +110,22 @@ module.exports = {
         example: 'keg components start --install',
         default: false
       },
+      log: {
+        alias: [ 'lg' ],
+        description: 'Prints log information as the task runs',
+        example: 'keg core start --log',
+        default: false,
+      },
       mounts: {
         description: `List of key names or folder paths to mount into the docker container`,
         example: 'keg components start --mounts cli,retheme',
       },
       service: {
-        allowed: [ 'sync', 'container', 'compose' ],
-        description: 'What docker service to build the tap with. Must be on of ( sync || container )',
-        example: 'keg components start --service container',
+        allowed: [ 'compose', 'sync', 'container' ],
+        description: 'What docker service to build the tap with. Must be on of ( sync || container ). Same as passing options "--attached sync "',
+        example: 'keg components --service container',
         default: 'compose'
-      },
+      }
     }
   }
 }

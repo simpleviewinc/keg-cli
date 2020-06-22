@@ -3,45 +3,13 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { generalError } = require('KegUtils/error/generalError')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
-const { getContainerConst } = require('KegUtils/docker/getContainerConst')
-const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
-const { throwInvalidParamMatch } = require('KegUtils/error/throwInvalidParamMatch')
+const { checkBuildImage } = require('KegUtils/builders/checkBuildImage')
+const { throwInvalidSyncParams } = require('KegUtils/error/throwInvalidSyncParams')
 const {
   composeService,
   containerService,
   mutagenService,
-  syncService,
 } = require('KegUtils/services')
-
-
-/**
- * Checks that the tap image exists. If it doesn't then build it
- * @param {Object} args - arguments passed from the runTask method
- * @param {Object} context - Context for the image
- * @param {Object} tap - Name of the tap to build the image for
- *
- * @returns {Object} - Build image object from docker CLI
- */
-const checkBuildImage = async (args, context, tap) => {
-
-  const exists = await docker.image.exists('tap')
-
-  // If the image exists, and there's no build param, return
-  if(exists && !get(args, 'params.build')) return true
-
-  // Other wise print message about the build, then do it
-  exists
-    ? Logger.info(`  Force building image ${ tap }...`)
-    : Logger.info(`  Image ${ tap } does not exist, building now...`)
-
-  Logger.empty()
-
-  const tapImg = await buildDockerImage(args, context, tap)
-
-  // TODO: Add better error message
-  return tapImg || generalError(`Could not build Docker "${tap} Tap" image!`)
-
-}
 
 
 /**
@@ -58,9 +26,8 @@ const startTap = async (args) => {
   const { params } = args
   const { attached, build, ensure, log, service, tap } = params
 
-  attached === 'sync' &&
-    service !== 'sync' &&
-    throwInvalidParamMatch(`Attempting to attach to "sync", but "service" is set to "${service}"`)
+  // Ensure the sync params are correct
+  throwInvalidSyncParams(params)
 
   // Check if the base image exists, and if not then build it
   log && Logger.info(`Checking base docker image...`)
@@ -68,7 +35,7 @@ const startTap = async (args) => {
 
   // Check if we should build the container image first
   log && Logger.info(`Checking tap docker image...`)
-  ;(ensure || build) && await checkBuildImage(args, 'tap', tap)
+  ;(ensure || build) && await checkBuildImage(args, 'tap', 'tap', tap)
 
   // Check and run the correct service
   const serviceResp = service === 'container'

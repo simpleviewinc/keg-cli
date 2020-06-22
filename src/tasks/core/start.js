@@ -2,42 +2,14 @@ const { get } = require('jsutils')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
-const { getContainerConst } = require('KegUtils/docker/getContainerConst')
-const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
-const { throwInvalidParamMatch } = require('KegUtils/error/throwInvalidParamMatch')
+const { checkBuildImage } = require('KegUtils/builders/checkBuildImage')
+const { throwInvalidSyncParams } = require('KegUtils/error/throwInvalidSyncParams')
 const {
   composeService,
   containerService,
   mutagenService,
-  syncService,
 } = require('KegUtils/services')
 
-
-/**
- * Checks that the core image exists. If it doesn't then build it
- * @param {Object} args - arguments passed from the runTask method
- * @param {Object} context - Context for the image
- * @param {Object} tap - Name of the tap to build the image for
- *
- * @returns {void}
- */
-const checkBuildImage = async (args, context) => {
-  const coreName = getContainerConst(context, `env.image`, 'kegcore')
-  const exists = await docker.image.exists(coreName)
-
-  // If the image exists, and there's no build param, return
-  if(exists && !get(args, 'params.build')) return true
-
-  // Other wise print message about the build, then do it
-  exists
-    ? Logger.info(`  Force building image ${ coreName }...`)
-    : Logger.info(`  Image ${ coreName } does not exist, building now...`)
-
-  Logger.empty()
-
-  return buildDockerImage(args, context)
-
-}
 
 /**
  * Start a docker-sync or docker container for a tap
@@ -53,9 +25,8 @@ const startCore = async (args) => {
   const { params } = args
   const { attached, build, ensure, log, service } = params
 
-  attached === 'sync' &&
-    service !== 'sync' &&
-    throwInvalidParamMatch(`Attempting to attach to "sync", but "service" is set to "${service}"`)
+  // Ensure the sync params are correct
+  throwInvalidSyncParams(params)
 
   // Check if the base image exists, and if not then build it
   log && Logger.info(`Checking base docker image...`)
@@ -63,7 +34,7 @@ const startCore = async (args) => {
 
   // Check if we should build the container image first
   log && Logger.info(`Checking core docker image...`)
-  ;(ensure || build) && await checkBuildImage(args, 'core')
+  ;(ensure || build) && await checkBuildImage(args, 'core', 'kegcore')
 
   // Check and run the correct service
   const serviceResp = service === 'container'
@@ -120,7 +91,9 @@ module.exports = {
         default: true
       },
       docker: {
+        alias: [ 'doc' ],
         description: `Extra docker arguments to pass to the 'docker run command'`,
+        example: 'keg core --docker "-e MY_EXTRA_ENV=foo"'
       },
       env: {
         alias: [ 'environment' ],
