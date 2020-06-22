@@ -29,13 +29,13 @@ const pipeConfig = (args, { title, finishMessage, offMatch }) => {
       offMatch,
       active: true,
       finishMessage,
-      // type: 'bouncingBall',
     },
     logs: {
       // Turn on filtering to filter out specific logs 
       filter: true,
       // Logs to filter out, regardless of if logging is turned on or not
       filters: FILTERS.SYNC,
+      filterBypass: FILTERS.FORCE_LOG,
     },
     // Helper to clean up / shutdown the docker-sync containers when the process exits
     onExit: (exitCode) => {

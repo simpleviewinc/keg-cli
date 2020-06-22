@@ -1,20 +1,53 @@
-const { Loading } = require('./loading')
 const { Logger } = require('KegLog')
-const { get, checkCall, deepMerge, isFunc, isArr } = require('jsutils')
+const { Loading } = require('./loading')
 const { spawnCmd } = require('spawn-cmd')
+const { get, checkCall, deepMerge, isFunc, isArr } = require('jsutils')
+
+
+/**
+ * Helper to log errors to the terminal
+ * @param {Object} logs - Log Config for the currently running process
+ * @param {string} data - Text to be printed if not filtered
+ *
+ * @returns {void}
+ */
+const logBuildError = (logs, data) => {
+  console.clear()
+  Logger.empty()
+  Logger.empty()
+  // TODO: Add log error here from logs config
+  Logger.error(`ERROR: Could not build docker environment!`)
+  Logger.log(data)
+}
 
 /**
  * Checks the passed in data to see if it should be filtered
- * @param {Object} config - Log Config for the currently running process
+ * @param {Object} logs - Log Config for the currently running process
  * @param {string} data - Text to be printed if not filtered
  *
  * @returns {boolean} - True if the data should filtered / False if data should be printed
  */
 const filterLog = (logs, data) => {
   // Check if the data is in the filters array
-  return logs.filters.reduce((inFilter, filter) => {
-    return inFilter || data.trim().indexOf(filter) === 0
-  }, false)
+  return logs.filters && logs.filters
+    .reduce((inFilter, filter) => {
+      return inFilter || data.trim().indexOf(filter) === 0
+    }, false)
+}
+
+/**
+ * Checks the passed in data to see if it should be logged even when logging is off
+ * @param {Object} logs - Log Config for the currently running process
+ * @param {string} data - Text to be printed if not filtered
+ *
+ * @returns {boolean} - False if the filter should be bypassed
+ */
+const filterBypass = (logs, data) => {
+  // Check if the data should bypass the filter and force log
+  return !(logs.filterBypass && logs.filterBypass
+    .reduce((inBypass, bypass) => {
+      return inBypass || data.trim().indexOf(bypass) === 0
+    }, false))
 }
 
 /**
@@ -29,13 +62,18 @@ const filterLog = (logs, data) => {
  */
 const handleLog = (eventCb, type, loading, logs, data, procId) => {
   try {
-    const shouldFilter = loading.active || filterLog(logs, data)
+    const shouldFilter = loading.active
+      ? filterBypass(logs, data)
+      : filterLog(logs, data)
+
     loading.active && loading.progress(shouldFilter && 1, data)
 
     return !shouldFilter
       ? isFunc(eventCb)
         ? eventCb(data, procId)
-        : process[type] && process[type].write(data)
+        : checkCall(() => {
+          loading.active ? logBuildError(logs, data) : process[type] && process[type].write(data)
+        })
       : null
   }
   catch(err){
@@ -44,6 +82,21 @@ const handleLog = (eventCb, type, loading, logs, data, procId) => {
     // This throws when there is an error in the event handling code
     // NOT when there is an error in the pipeCmd Process
     Logger.error(err.message)
+  }
+}
+
+/**
+ * Handles when the piped process exits
+ * <br/> Stops the loader and calls the passed in onExit method
+ * @param {Object} config - Log Config for the currently running process
+ * @param {Object} loading - Instance of the Loading class
+ *
+ * @returns {Object} - Event listener for onExit
+ */
+const handleExit = (config, loading) => {
+  return (...args) => {
+    isFunc(loading.loader.stop) && loading.loader.stop()
+    return checkCall(config.onExit, ...args)
   }
 }
 
@@ -66,7 +119,8 @@ const buildEvents = (config={}, logs, loadingConf) => {
   // Create event handler callbacks
   return {
     onStdOut: (...args) => handleLog(onStdOut, 'stdout', loading, logs, ...args),
-    onStdErr: (...args) => handleLog(onStdErr, 'stderr', loading, logs, ...args)
+    onStdErr: (...args) => handleLog(onStdErr, 'stderr', loading, logs, ...args),
+    onExit: handleExit(config, loading)
   }
 }
 

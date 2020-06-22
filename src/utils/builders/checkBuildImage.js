@@ -28,10 +28,12 @@ const checkBuildImage = async (args, context, defImgName, tap) => {
 
   Logger.empty()
 
+  // TODO: This is not returning the built IMG
+  // Need to investigate
   const builtImg = await buildDockerImage(args, context, tap)
 
   // TODO: Add better error message
-  return builtImg || generalError(`Could not build Docker "${ imageName } Tap" image!`)
+  return builtImg || generalError(`Could not build Docker "${ imageName }" image!`)
 
 }
 

@@ -11,5 +11,9 @@ module.exports = deepFreeze({
       '/Library/Ruby/Gems',
       'from /Users/',
     ],
+    FORCE_LOG: [
+      'EXCEPTION: ',
+      'MESSAGE: ',
+    ]
   }
 })
