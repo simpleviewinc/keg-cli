@@ -4,12 +4,7 @@
   * Create a default init template for a tap - `create-react-tap`
 
 
-**Sync**
-* Update all compose-local.yml files to be compose-sync.yml
-
-
 **Docker**
-  * Setup pushing docker images to github packages through provider
   * Setup creating an image from the currently running container
   * Setup pull a docker image from a container
     * Setup a to pull and run helper
@@ -78,9 +73,3 @@
   * Add `ask` key to option
   * If it's missing, it will ask the user for the value when the command is run
   * Add setting for no ask in globalConfig
-
-Setup - To Fix
- * `keg dcm` command needed for each terminal session
-
-
-
