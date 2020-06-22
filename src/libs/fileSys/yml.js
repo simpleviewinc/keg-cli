@@ -136,7 +136,6 @@ const yml = {
   loadSync: loadYmlSync,
   merge: mergeYml,
   remove: removeYml,
-  stringify: toYml,
   write: writeYml,
 }
 
@@ -144,9 +143,7 @@ module.exports = {
   loadYml,
   loadYmlSync,
   mergeYml,
-  parseYml,
   removeYml,
-  toYml,
   writeYml,
   yml,
 }
