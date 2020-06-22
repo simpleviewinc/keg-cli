@@ -1,46 +1,18 @@
 const { get } = require('jsutils')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { DOCKER } = require('KegConst')
-const { spawnCmd } = require('KegProc')
-const { logVirtualUrl } = require('KegUtils/log')
 const { isDetached } = require('KegUtils/helpers/isDetached')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
-const { buildDockerCmd } = require('KegUtils/docker/buildDockerCmd')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
-const { getPathFromConfig } = require('KegUtils/globalConfig/getPathFromConfig')
 const { throwInvalidParamMatch } = require('KegUtils/error/throwInvalidParamMatch')
+const {
+  composeService,
+  containerService,
+  mutagenService,
+  syncService,
+} = require('KegUtils/services')
 
-/**
- * Starts a docker container for a tap
- * @param {Object} args - arguments passed from the runTask method
- * @param {Object} args.globalConfig - Global config object for the keg-cli
- * @param {Object} args.params - Formatted object of the passed in options 
- *
- * @returns {void}
- */
-const startContainer = async ({ globalConfig, params }) => {
-  const { env, docker, mounts } = params
-
-  const location = getPathFromConfig(globalConfig, 'core')
-  const dockerCmd = buildDockerCmd(globalConfig, {
-    tap,
-    mounts,
-    docker,
-    location,
-    cmd: `run`,
-    env: env || get(DOCKER, `DOCKER_ENV`),
-    name: get(DOCKER, `CONTAINERS.CORE.ENV.IMAGE`),
-    container: get(DOCKER, `CONTAINERS.CORE.ENV.CONTAINER_NAME`),
-    version: get(DOCKER, `CONTAINERS.CORE.ENV.VERSION`),
-  })
-
-  logVirtualUrl()
-
-  await spawnCmd(dockerCmd, location)
-}
 
 /**
  * Checks that the core image exists. If it doesn't then build it
@@ -80,62 +52,30 @@ const checkBuildImage = async (args, context) => {
  */
 const startCore = async (args) => {
   const { params } = args
-  const { attached, ensure, service } = params
+  const { attached, ensure, service, log } = params
 
   attached === 'sync' &&
     service !== 'sync' &&
     throwInvalidParamMatch(`Attempting to attach to "sync", but "service" is set to "${service}"`)
 
   // Check if the base image exists, and if not then build it
+  log && Logger.info(`Checking base docker image...`)
   ensure && await buildBaseImg(args)
 
   // Check if we should build the container image first
+  log && Logger.info(`Checking core docker image...`)
   ;(ensure || build) && await checkBuildImage(args, 'core')
 
-  // Check if we are running the container with just docker
-  if(service === 'container') return startContainer(args)
+  // Check and run the correct service
+  const serviceResp = service === 'container'
+    ? await containerService(args, { container: 'core' })
+    : await composeService(args, { context: 'core' })
 
-  const syncDetached = isDetached(`sync`, attached)
-  let syncContextData
+
+  // TODO: Add mutagen service here
+  // await mutagenService(args, {})
   
-  if(service === 'sync'){
-    // Run the docker-sync task internally
-    // Capture the response in case detached is true
-    // That way we can use it with the docker-compose up command
-    syncContextData = await runInternalTask(
-      'tasks.docker.tasks.sync.tasks.start',
-      {
-        ...args,
-        command: 'start',
-        params: {
-          ...args.params,
-          tap: undefined,
-          context: 'core',
-          detached: syncDetached,
-        },
-      }
-    )
-
-  }
-
-  // If sync was started with detached
-  // Then we need to start docker-compose manually
-  syncDetached &&
-    runInternalTask(
-      'tasks.docker.tasks.compose.tasks.up',
-      {
-        ...args,
-        command: 'up',
-        params: {
-          ...args.params,
-          sync: service === 'sync',
-          detached: isDetached(`compose`, attached),
-          tap: undefined,
-          context: 'core'
-        },
-        __internal: syncContextData,
-      }
-  )
+  return serviceResp
 
 }
 
@@ -199,6 +139,12 @@ module.exports = {
         description: 'Install node_modules ( yarn install ) in the container before starting the app',
         example: 'keg core start --install',
         default: false
+      },
+      log: {
+        alias: [ 'lg' ],
+        description: 'Prints log information as the task runs',
+        example: 'keg core start --log',
+        default: false,
       },
       mounts: {
         description: `List of key names or folder paths to mount into the docker container`,

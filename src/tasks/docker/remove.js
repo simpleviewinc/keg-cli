@@ -1,6 +1,5 @@
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError } = require('KegUtils/error')
-const { getPathFromConfig, getTapPath } = require('KegUtils/globalConfig')
 const { buildDockerCmd } = require('KegUtils/docker')
 const { DOCKER } = require('KegConst/docker')
 const docker = require('KegDocCli')

@@ -9,7 +9,7 @@ env:
 
   # Docker / Docker Compose paths
   CONTEXT_DOCKER_FILE: "{{ cli.paths.containers }}/tap/Dockerfile"
-  CONTEXT_ENV_FILE: "{{ cli.paths.containers }}/tap/values.yml"
+  CONTEXT_VALUES_FILE: "{{ cli.paths.containers }}/tap/values.yml"
   COMPOSE_DEFAULT: "{{ cli.paths.containers }}/tap/compose-default.yml"
   COMPOSE_SYNC: "{{ cli.paths.containers }}/tap/compose-sync.yml"
 

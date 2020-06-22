@@ -8,7 +8,7 @@ env:
   # --- COMPONENTS ENV CONTEXT --- #
 
   CONTEXT_DOCKER_FILE: "{{ cli.paths.containers }}/components/Dockerfile"
-  CONTEXT_ENV_FILE: "{{ cli.paths.containers }}/components/values.yml"
+  CONTEXT_VALUES_FILE: "{{ cli.paths.containers }}/components/values.yml"
   COMPOSE_DEFAULT: "{{ cli.paths.containers }}/components/compose-default.yml"
   COMPOSE_SYNC: "{{ cli.paths.containers }}/components/compose-sync.yml"
 

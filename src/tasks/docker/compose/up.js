@@ -4,6 +4,7 @@ const { DOCKER } = require('KegConst')
 const { spawnCmd } = require('KegProc')
 const { buildComposeCmd } = require('KegUtils/docker')
 const { buildContainerContext, buildDockerImage } = require('KegUtils/builders')
+const { logVirtualUrl } = require('KegUtils/log')
 
 /**
  * Runs docker-compose up command for (components | core | tap)
@@ -37,6 +38,8 @@ const upDockerCompose = async args => {
     cmdContext,
     params
   )
+
+  logVirtualUrl()
 
   // Run the docker-compose up command
   await spawnCmd(
