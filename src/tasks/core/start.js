@@ -1,7 +1,6 @@
 const { get } = require('jsutils')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { isDetached } = require('KegUtils/helpers/isDetached')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 const { buildDockerImage } = require('KegUtils/builders/buildDockerImage')
@@ -52,7 +51,7 @@ const checkBuildImage = async (args, context) => {
  */
 const startCore = async (args) => {
   const { params } = args
-  const { attached, ensure, service, log } = params
+  const { attached, build, ensure, log, service } = params
 
   attached === 'sync' &&
     service !== 'sync' &&
@@ -70,7 +69,6 @@ const startCore = async (args) => {
   const serviceResp = service === 'container'
     ? await containerService(args, { container: 'core' })
     : await composeService(args, { context: 'core' })
-
 
   // TODO: Add mutagen service here
   // await mutagenService(args, {})
@@ -101,7 +99,7 @@ module.exports = {
       },
       cache: {
         description: 'Docker will use build cache when building the image',
-        example: 'keg tap --cache false',
+        example: 'keg core --cache false',
         default: true
       },
       clean: {
