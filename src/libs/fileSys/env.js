@@ -2,6 +2,7 @@ const path = require('path')
 const { isArr, isStrBool, toBool } = require('jsutils')
 const { KEY_VAL_MATCH, NEWLINE, NEWLINES_MATCH, NEWLINES_ESC } = require('KegConst/patterns')
 const { parseTemplate } = require('./parseTemplate')
+const { pathExistsSync } = require('./fileSys')
 
 // Holds past parsed files so we don't re-parse them
 const parseENVCache = {}
@@ -88,6 +89,19 @@ const loadENV = (envPath, encoding='utf8') => {
   return parseENVCache[envPath]
 }
 
+  // Try to load the file if it exists
+/**
+ * Checks if an env file exists first the tries to load it
+ * @function
+ * @param {string} envPath - Path to the .env file to parse
+ *
+ * @returns {Object} - response from the loadENV method || empty object
+ */
+const checkLoadEnv = (envPath) => {
+  return pathExistsSync(envPath) ? loadENV(envPath) : {}
+}
+
 module.exports = {
+  checkLoadEnv,
   loadENV
 }

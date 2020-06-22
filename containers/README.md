@@ -21,6 +21,28 @@
     * `compose-sync.yml` - Overrides `compose-default.yml` with `docker-sync` settings
     * `docker-sync.yml` - Docker Sync configuration file
 
+### Values / ENV files
+* See `src/constants/docker/containers.js`
+  * The `value` and `env` files are loaded dynamically based on the current env and image/container
+  * The cli will attempt to load the following `yml` file in this order
+    * `containers/< container >/values.yml`
+    * `containers/< container >/values_< env >.yml`
+      * The `_` is used to follow the [SV-Kubernetes](https://github.com/simpleviewinc/sv-kubernetes) format 
+    * `containers/< container >/values-< env >.yml` ( Uses `-` instead of `_` )
+    * `~/.kegConfig/values_< env >.yml`
+    * `~/.kegConfig/values-< env >.yml` ( Uses `-` instead of `_` )
+    * `~/.kegConfig/< container >_values_< env >.yml`
+    * `~/.kegConfig/< container >-values-< env >.yml` ( Uses `-` instead of `_` )
+  * The cli will attempt to load the following `.env` file in this order
+    * `containers/< container >/< env >.env`
+    * `~/.kegConfig/< env >.env`
+    * `~/.kegConfig/<container>-< env >.env`
+  * **IMPORTANT**
+    * `< container >` && `< env >` are replaced with the current container and environment
+    * **These files must be created manually**, then are **NOT** automatically created
+    * All loaded file are merged into a single `JS Object`
+      * The order of the loaded files is important
+      * It allows for overwriting the default ENV's with a local configuration of the machine
 
 ## Folders
 * **base**
