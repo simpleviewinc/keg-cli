@@ -27,13 +27,7 @@ const DEFAULT = {
   PATHS: {
     cli: mountPaths.base.cli,
   },
-  DEV_DEFAULTS: [
-    'cli',
-    // 'core',
-    'resolver',
-    'components',
-    'retheme'
-  ]
+  DEV_DEFAULTS: []
 }
 
 /**

@@ -13,7 +13,7 @@ const { DOCKER } = require('KegConst')
  */
 const getMountDefaults = (mounts, env, container='') => {
   const custom = mounts ? mounts.split(',') : []
-  const defMounts = get(DOCKER, `VOLUMES.${container.toUpperCase()}.DEV_DEFAULTS`, {})
+  const defMounts = get(DOCKER, `VOLUMES.${container.toUpperCase()}.DEV_DEFAULTS`, [])
 
   return !env || env === 'development'
     ? defMounts.concat(custom)
@@ -34,7 +34,7 @@ const getDirsToMount = (globalConfig, mounts, env, container='') => {
   mounts = getMountDefaults(mounts, env, container)
 
   // If nothing to mount, just return
-  if(!mounts.length) return {}
+  if(!mounts.length) return false
 
   const volPaths = get(DOCKER, `VOLUMES.${container.toUpperCase()}.PATHS`, {})
 

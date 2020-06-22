@@ -3,6 +3,7 @@ const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
 const { buildComposeCmd, buildComposeName } = require('KegUtils/docker')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
+const { DOCKER } = require('KegConst/docker')
 
 /**
  * Runs the docker-compose build command
@@ -52,14 +53,15 @@ module.exports = {
     example: 'keg docker compose build <options>',
     options: {
       context: {
-        allowed: [ 'components', 'core', 'tap' ],
+        allowed: DOCKER.IMAGES,
         description: 'Context of docker compose build command (tap || core)',
         example: 'keg docker compose build --context core',
         default: 'base'
       },
-      remove: {
+      clean: {
+        alias: [ 'remove' ],
         description: 'Always remove intermediate containers',
-        example: 'keg docker compose build --remove',
+        example: 'keg docker compose build --clean',
         default: true
       },
       cache: {

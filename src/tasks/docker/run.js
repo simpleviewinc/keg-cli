@@ -15,7 +15,7 @@ const docker = require('KegDocCli')
  *
  * @returns {void}
  */
-const dockerBuild = async args => {
+const dockerRun = async args => {
   const { command, globalConfig, options, params, task, tasks } = args
   const { context } = params
 
@@ -58,15 +58,27 @@ module.exports = {
   run: {
     name: 'run',
     alias: [ 'r' ],
-    action: dockerBuild,
-    description: `Runs docker build command for a container`,
-    example: 'keg docker build <options>',
+    action: dockerRun,
+    description: `Runs docker run command for a container`,
+    example: 'keg docker run <options>',
     location_context: DOCKER.LOCATION_CONTEXT.REPO,
     options: {
       context: {
         allowed: DOCKER.IMAGES,
         description: 'Name of the docker container to run',
         enforced: true,
+      },
+      connect: {
+        alias: [ 'conn', 'con', 'it' ],
+        description: 'Auto connects to the docker containers stdio',
+        example: 'keg docker run --connect false',
+        default: true
+      },
+      command: {
+        alias: [ 'cmd' ],
+        description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
+        example: 'keg docker run --command dev ( Runs "yarn dev" )',
+        default: 'web'
       },
       entrypoint: {
         alias: [ 'entry', 'ep' ],
@@ -89,7 +101,8 @@ module.exports = {
       },
       mounts: {
         description: `List of key names or folder paths to mount into the docker container, separated by (,)`,
-        example: 'keg docker run mounts=tap,cli,core'
+        example: 'keg docker run mounts=tap,cli,core',
+        default: false
       },
       tap: {
         description: 'Name of the tap to build. Required when "context" argument is "tap"',

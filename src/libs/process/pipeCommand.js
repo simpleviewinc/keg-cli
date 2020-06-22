@@ -11,13 +11,15 @@ const { get, checkCall, deepMerge, isFunc, isArr } = require('jsutils')
  *
  * @returns {void}
  */
-const logBuildError = (logs, data) => {
-  console.clear()
+const noBypassLog = (logs, data, type) => {
+  logs.clearOnBypassLog && console.clear()
   Logger.empty()
   Logger.empty()
-  // TODO: Add log error here from logs config
-  Logger.error(`ERROR: Could not build docker environment!`)
-  Logger.log(data)
+
+  logs.noBypassLog && Logger.error(logs.noBypassLog)
+  process[type] ? process[type].write(data) : Logger.log(data)
+
+  Logger.empty()
 }
 
 /**
@@ -72,7 +74,9 @@ const handleLog = (eventCb, type, loading, logs, data, procId) => {
       ? isFunc(eventCb)
         ? eventCb(data, procId)
         : checkCall(() => {
-          loading.active ? logBuildError(logs, data) : process[type] && process[type].write(data)
+          loading.active
+            ? noBypassLog(logs, data)
+            : process[type] && process[type].write(data)
         })
       : null
   }

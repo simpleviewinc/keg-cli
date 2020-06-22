@@ -31,6 +31,12 @@ const getDockerArgs = ({ args, cmd, context, dockerCmd='' }) => {
   // If set to true, then the value from containerOpts.VALUES is added to the cmd
   return reduceObj(containerOpts.VALUES, (key, value, joinedArgs) => {
 
+    // Only add the Dockerfile path when building, not durring run
+    if(key === 'file' && cmd === 'run')  return joinedArgs
+
+    // Only add connect '-id' when running, not durning build
+    if(key === 'connect' && cmd === 'build')  return joinedArgs
+
     // Ensure both detached and attached are not added to the docker args
     if(key === 'detached' && args.attached) return joinedArgs
     if(key === 'attached' && args.detached) return joinedArgs

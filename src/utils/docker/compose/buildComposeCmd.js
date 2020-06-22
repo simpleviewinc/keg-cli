@@ -2,7 +2,7 @@ const { DOCKER } = require('KegConst/docker')
 const { get } = require('jsutils')
 
 const composeArgs = {
-  remove: '--force-rm',
+  clean: '--force-rm',
   cache: '--no-cache',
   pull: '--pull'
 }

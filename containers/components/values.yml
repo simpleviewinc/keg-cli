@@ -25,3 +25,4 @@ env:
   IMAGE: kegcomponents
   VERSION: "0.0.1"
   CONTAINER_NAME: kegcomponents
+  STORYBOOK_PORT: "60710"

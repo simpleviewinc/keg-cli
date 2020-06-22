@@ -36,6 +36,8 @@ const pipeConfig = (args, { title, finishMessage, offMatch }) => {
       // Logs to filter out, regardless of if logging is turned on or not
       filters: FILTERS.SYNC,
       filterBypass: FILTERS.FORCE_LOG,
+      clearOnBypassLog:  true,
+      noBypassLog: 'ERROR: Could not build docker environment!'
     },
     // Helper to clean up / shutdown the docker-sync containers when the process exits
     onExit: (exitCode) => {

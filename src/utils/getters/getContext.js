@@ -1,10 +1,10 @@
 const docker = require('KegDocCli')
 const { checkCall } = require('jsutils')
-const { CONTAINER_PREFIXES } = require('KegConst/constants')
+const { CONTAINER_PREFIXES, CONTAINER_ALIAS } = require('KegConst/constants')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 
 /**
- * Helper to check if the context is prefixed with `keg`
+ * Helper to check if the context is an alias or if the context is prefixed with `keg`
  * <br/> If it is, remove it. This allows passing in "kegcore" or just "core"
  * @function
  * @param {string} context - Docker container context to use
@@ -12,9 +12,11 @@ const { containerSelect } = require('KegUtils/docker/containerSelect')
  * @returns {string} - Context without `keg`
  */
 const filterKeg = context => {
-  return context.indexOf('keg') === 0
-    ? context.replace(/^keg-/, '').replace(/^keg/, '')
-    : context
+  return CONTAINER_ALIAS[context]
+    ? CONTAINER_ALIAS[context]
+    : context.indexOf('keg') === 0
+      ? context.replace(/^keg-/, '').replace(/^keg/, '')
+      : context
 }
 
 /**

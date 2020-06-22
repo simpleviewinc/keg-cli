@@ -11,12 +11,14 @@ let __CONTAINERS
 // Default config for all containers
 const DEFAULT = {
   VALUES: {
-    clean: '--force-rm',
+    clean: '--rm',
     nocache: '--no-cache',
     entrypoint: '--entrypoint',
+    connect: '-it'
   },
   DEFAULTS: {
     clean: true,
+    connect: true,
     entrypoint: false,
     file: true,
     nocache: false,
