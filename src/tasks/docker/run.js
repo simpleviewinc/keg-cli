@@ -1,3 +1,4 @@
+const { Logger } = require('KegLog')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { logVirtualUrl } = require('KegUtils/log')
@@ -17,12 +18,13 @@ const docker = require('KegDocCli')
  */
 const dockerRun = async args => {
   const { command, globalConfig, options, params, task, tasks } = args
-  const { context } = params
+  const { context, log } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
 
   // Get the context data for the command to be run
+  log && Logger.log(`Building container context...`)
   const { cmdContext, contextEnvs, location, tap } = await buildContainerContext({
     globalConfig,
     task,
@@ -36,6 +38,7 @@ const dockerRun = async args => {
   )
 
   // Build the docker run command with options
+  log && Logger.log(`Building docker "run" command...`)
   const dockerCmd = buildDockerCmd(globalConfig, {
     ...params,
     cmd: `run`,
@@ -46,8 +49,11 @@ const dockerRun = async args => {
     ...(tap && { tap }),
   })
 
+  // Log the command if log is set
+  log && Logger.message(`Running docker cmd:`, dockerCmd)
+
   // Log out the containers ip, so we know how to connect to it in the browser
-  logVirtualUrl()
+  log && logVirtualUrl()
 
   // Run the container
   await docker.raw(dockerCmd, { options: { env: contextEnvs }}, location)
@@ -98,6 +104,12 @@ module.exports = {
       install: {
         description: `Run yarn install before starting the application`,
         example: 'keg docker run --install'
+      },
+      log: {
+        alias: [ 'lg' ],
+        description: 'Prints log information as the task runs',
+        example: 'keg docker run --log',
+        default: false,
       },
       mounts: {
         description: `List of key names or folder paths to mount into the docker container, separated by (,)`,

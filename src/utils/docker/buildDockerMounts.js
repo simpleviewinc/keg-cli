@@ -2,6 +2,23 @@ const fs = require('fs')
 const { reduceObj, isStr, isArr, get } = require('jsutils')
 const { getPathFromConfig } = require('KegUtils')
 const { DOCKER } = require('KegConst')
+const { getContainerConst } = require('./getContainerConst')
+
+/**
+ * Adds location as a mounted volume to the dockerCmd
+ * @param {string} location - Local location of the tap to mount
+ * @param {string} [dockerCmd=''] - Docker command to add the mounted tap to
+ *
+ * @returns {string} - dockerCmd with the mounted tap arg added
+ */
+const getAppMount = (dockerCmd, context, location) => {
+  const mountPath = getContainerConst(context, `ENV.DOC_APP_PATH`)
+
+  return mountPath
+    ? `${dockerCmd} -v ${location}:${ mountPath }`
+    : dockerCmd
+
+}
 
 /**
  * Gets the folders to mount from the passed in mounts argument
@@ -12,7 +29,10 @@ const { DOCKER } = require('KegConst')
  * @returns {Array} - Groups of name repos or folder paths to mount into the container
  */
 const getMountDefaults = (mounts, env, container='') => {
-  const custom = mounts ? mounts.split(',') : []
+  const custom = isStr(mounts)
+    ? mounts.split(',')
+    : []
+
   const defMounts = get(DOCKER, `VOLUMES.${container.toUpperCase()}.DEV_DEFAULTS`, [])
 
   return !env || env === 'development'
@@ -39,7 +59,6 @@ const getDirsToMount = (globalConfig, mounts, env, container='') => {
   const volPaths = get(DOCKER, `VOLUMES.${container.toUpperCase()}.PATHS`, {})
 
   return isArr(mounts) && mounts.reduce((dirs, key) => {
-
     const localPath = volPaths[key] && getPathFromConfig(globalConfig, key)
     localPath && ( dirs[localPath] = volPaths[key] )
 
@@ -63,6 +82,7 @@ const getVolumeMounts = (dirs, dockerCmd='') => {
 }
 
 module.exports = {
+  getDirsToMount,
+  getAppMount,
   getVolumeMounts,
-  getDirsToMount
 }

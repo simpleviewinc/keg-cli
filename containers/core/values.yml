@@ -18,6 +18,7 @@ env:
 
   NM_CACHE: "/keg/nm-cache/core"
   DOC_APP_PATH: "/keg/keg-core"
+  DOC_APP_PORT: 19006
   DOC_CORE_PATH: "/keg/keg-core"
   DOC_COMPONENTS_PATH: "/keg/keg-core/node_modules/@simpleviewinc/keg-components/build"
   DOC_RETHEME_PATH: "/keg/keg-core/node_modules/@simpleviewinc/re-theme/build"

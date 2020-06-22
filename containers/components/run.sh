@@ -67,6 +67,9 @@ keg_run_components(){
   cd $COMPONENTS_PATH
 
   local KEG_EXEC_CMD="$EXEC_CMD"
+
+  # Check if no exect command exists, or if it's set to web
+  # Then default it to storybook
   if [[ -z "$KEG_EXEC_CMD" || "$KEG_EXEC_CMD" == 'web' ]]; then
     KEG_EXEC_CMD="storybook"
   fi

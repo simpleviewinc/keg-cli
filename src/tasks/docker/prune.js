@@ -21,7 +21,10 @@ const dockerPrune = async args => {
   confirm && options.push('-f')
 
   // Run the prune command
-  await docker.prune(options)
+  const resp = await docker.prune(options)
+
+  // Log the docker prune response to stdout
+  Logger.stdout(resp)
 
 }
 

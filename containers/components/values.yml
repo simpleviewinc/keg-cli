@@ -16,6 +16,7 @@ env:
   # --- DOCKER ENV CONTEXT --- #
 
   DOC_APP_PATH: /keg/keg-components
+  DOC_APP_PORT: 60710
   DOC_RETHEME_PATH: /keg/keg-components/node_modules/@simpleviewinc/re-theme/build
   NM_CACHE: /keg/nm-cache/keg-components
 
@@ -25,4 +26,3 @@ env:
   IMAGE: kegcomponents
   VERSION: "0.0.1"
   CONTAINER_NAME: kegcomponents
-  STORYBOOK_PORT: "60710"
