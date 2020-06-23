@@ -179,7 +179,7 @@ const showTaskOptionDetail = (task, option, infoSpacer, dblSpacer) => {
   }
 
   // if no key found, default to showing all options
-  return showTaskOptions(task, infoSpacer, dblSpacer)
+  showTaskOptions(task, infoSpacer, dblSpacer)
 
 }
 
