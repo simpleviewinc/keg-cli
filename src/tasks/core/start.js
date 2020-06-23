@@ -70,12 +70,12 @@ module.exports = {
       },
       cache: {
         description: 'Docker will use build cache when building the image',
-        example: 'keg core --cache false',
+        example: 'keg core start --cache false',
         default: true
       },
       clean: {
         description: 'Cleans docker-sync before running the keg-core',
-        example: 'keg core --clean true',
+        example: 'keg core start --clean true',
         default: false
       },
       command: {
@@ -93,12 +93,12 @@ module.exports = {
       docker: {
         alias: [ 'doc' ],
         description: `Extra docker arguments to pass to the 'docker run command'`,
-        example: 'keg core --docker "-e MY_EXTRA_ENV=foo"'
+        example: 'keg core start --docker "-e MY_EXTRA_ENV=foo"'
       },
       env: {
         alias: [ 'environment' ],
         description: 'Environment to start the Docker service in',
-        example: 'keg core --env staging',
+        example: 'keg core start --env staging',
         default: 'development',
       },
       ensure: {
