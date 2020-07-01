@@ -8,4 +8,5 @@ module.exports = {
   ...require('./getPackage'),
   ...require('./parsePackageUrl'),
   ...require('./validatePackageVersion'),
+  ...require('./buildPackageEnvs')
 }
