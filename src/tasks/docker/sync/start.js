@@ -9,7 +9,7 @@ const { get, checkCall, limbo } = require('jsutils')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { buildPackageEnvs } = require('KegUtils/package/buildPackageEnvs')
+const { convertParamsToEnvs } = require('KegUtils/task/convertParamsToEnvs')
 
 
 /**
@@ -107,7 +107,7 @@ const startDockerSync = async args => {
     globalConfig,
     task,
     params,
-    envs: buildPackageEnvs(params)
+    envs: convertParamsToEnvs(params)
   })
 
   // Check if the base image exists, and if not then build it

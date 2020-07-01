@@ -6,7 +6,7 @@
  * @param {object} contextEnv - context env for the container to run
  * @returns {object}
  */
-const buildPackageEnvs = ({ env, command, install }, contextEnv) => {
+const convertParamsToEnvs = ({ env, command, install }, contextEnv) => {
   const extraENVs = { ENV: env, NODE_ENV: env }
   command && ( extraENVs.EXEC_CMD = command )
   install && ( extraENVs.NM_INSTALL = true )
@@ -18,5 +18,5 @@ const buildPackageEnvs = ({ env, command, install }, contextEnv) => {
 }
 
 module.exports = {
-  buildPackageEnvs
+  convertParamsToEnvs
 }
