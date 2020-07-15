@@ -164,7 +164,6 @@ keg_auto_load_envs(){
 
 # Check if we are running in the wsl environment for windows
 keg_is_windows_wsl(){
-  local OS_TYPE="linux"
   if [[ -z "$WSL_DISTRO_NAME" ]]; then
     echo "false"
   else
