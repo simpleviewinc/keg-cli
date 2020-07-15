@@ -22,9 +22,10 @@ const validateInternal = (contextObj, keys=[]) => {
   if(!contextObj) return false
 
   const internalKeys = Object.keys(contextObj)
+
   return !Boolean(keys.filter(key => internalKeys.indexOf(key) === -1).length)
-    ? false
-    : contextObj
+    ? contextObj
+    : false
 }
 
 /**
@@ -42,7 +43,8 @@ const buildContainerContext = async args => {
   const { envs={}, globalConfig, __internal, params, task } = args
 
   // Checks If we already have the containerContext
-  const contextObj = validateInternal(get(__internal, 'containerContext'), CONTEXT_KEYS)
+  const internalContext = get(__internal, 'containerContext')
+  const contextObj = internalContext && validateInternal(internalContext, CONTEXT_KEYS)
   if(contextObj) return contextObj
 
   const contextData = await buildCmdContext({

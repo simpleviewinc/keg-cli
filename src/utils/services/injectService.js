@@ -186,10 +186,10 @@ const buildOverrideParams = (app, taskOptions) => {
     tap: app,
     context: app,
     __injected: {
-      image,
       tap: app,
-      container,
       context: app,
+      image,
+      container,
     }
   }
 }

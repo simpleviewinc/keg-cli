@@ -7,7 +7,6 @@ const { CONTAINER_PREFIXES } = require('KegConst/constants')
 const { getPortMap } = require('KegUtils/docker/getDockerArgs')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
-const { convertParamsToEnvs } = require('KegUtils/task/convertParamsToEnvs')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 const { PACKAGE } = CONTAINER_PREFIXES
@@ -113,7 +112,7 @@ const dockerPackageRun = async args => {
     ...parsed,
     opts,
     location,
-    envs: convertParamsToEnvs(params, contextEnvs),
+    envs: contextEnvs,
     cmd: `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`,
     name: `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`,
   })

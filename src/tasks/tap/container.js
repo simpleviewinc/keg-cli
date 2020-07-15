@@ -1,9 +1,5 @@
-const {
-  containerService,
-  serviceOptions,
-  startService,
-} = require('KegUtils/services')
-const { buildContainerContext, buildDockerImage } = require('KegUtils/builders')
+const { Logger } = require('KegLog')
+const { buildContainerContext } = require('KegUtils/builders')
 
 /**
  * Start a tap with docker-compose
@@ -19,8 +15,7 @@ const tapContainer = async (args) => {
   const { params, globalConfig, task } = args
 
   const containerContext = await buildContainerContext(args)
-  
-  console.log(`---------- containerContext ----------`)
+  Logger.info(`Tap Container Context:`)
   console.log(containerContext)
 
 
