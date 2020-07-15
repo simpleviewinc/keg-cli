@@ -19,6 +19,7 @@ module.exports = {
   ...require('./throwNoTask'),
   ...require('./throwNoTapLoc'),
   ...require('./throwTaskFailed'),
+  ...require('./throwMissingFile'),
   ...require('./throwWrap'),
   ...require('./throwWrongPassword'),
 }

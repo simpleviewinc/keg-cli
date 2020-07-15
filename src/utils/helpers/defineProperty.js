@@ -5,7 +5,6 @@
  */
 const defOpts = {
   enumerable: true,
-  writable: false,
   configurable: false,
 }
 

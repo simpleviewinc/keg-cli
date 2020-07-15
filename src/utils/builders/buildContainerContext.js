@@ -3,41 +3,12 @@ const { get } = require('@ltipton/jsutils')
 const { DOCKER } = require('KegConst/docker')
 const { getPrefix } = require('../getters/getPrefix')
 const { CONTEXT_KEYS } = require('KegConst/constants')
-const { getPathFromConfig } = require('../globalConfig')
 const { buildCmdContext } = require('./buildCmdContext')
 const { buildContextEnvs } = require('./buildContextEnvs')
-const { getTapPath } = require('../globalConfig/getTapPath')
 const { getContainerConst } = require('../docker/getContainerConst')
+const { getLocationContext } = require('../getters/getLocationContext')
 const { getContainerFromContext } = require('../docker/getContainerFromContext')
-const { generalError, throwNoTapLink, throwNoConfigPath } = require('../error')
-const { IMAGES, LOCATION_CONTEXT } = DOCKER
-
-/**
- * Gets the location where a docker command should be executed
- * @function
- * @param {Object} globalConfig - Global config object for the keg-cli
- * @param {Object} task - Current task being run
- * @param {string} context - Context to run the docker container in
- * @param {string} tap - Name of a linked tap in the globalConfig
- *
- * @returns {string} - The location where a command should be executed
- */
-const getLocation = (globalConfig, task, context, tap) => {
-
-  // TODO: Update to use the correct container location for injected taps
-
-  let location = Boolean(task.location_context !== LOCATION_CONTEXT.REPO)
-    // For the docker-compose commands, The context to be the keg-cli/containers folder
-    ? `${ getPathFromConfig(globalConfig, 'containers') }/${ context }`
-    // If it's a repoContext, then get the location for the repo from the context
-    : context !== 'tap'
-      ? getContainerConst(context, `env.keg_context_path`)
-      : getTapPath(globalConfig, tap)
-
-  // Return the location, or throw because no location could be found
-  return location || throwNoConfigPath(globalConfig, tap || context)
-
-}
+const { IMAGES } = DOCKER
 
 /**
  * Checks that the __internal object contains all required keys
@@ -88,12 +59,13 @@ const buildContainerContext = async args => {
   const image = img || getContainerConst(cmdContext, `env.image`)
 
   // Build the location from containers path, and the context
-  const location = getLocation(
-    globalConfig,
-    task,
-    cmdContext,
+  const location = getLocationContext({
     tap,
-  )
+    task,
+    globalConfig,
+    context: cmdContext,
+    __injected: params.__injected,
+  })
 
   // Get the ENV vars for the command context and merge with any passed in envs
   const contextEnvs = await buildContextEnvs({

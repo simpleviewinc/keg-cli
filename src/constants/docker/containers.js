@@ -4,7 +4,7 @@ const { PREFIXED } = require('./machine')
 const { loadYmlSync } = require('../../libs/fileSys/yml')
 const { checkLoadEnv } = require('../../libs/fileSys/env')
 const { GLOBAL_CONFIG_FOLDER } = require('../constants')
-const { defineProperty } = require('../../helpers/defineProperty')
+const { defineProperty } = require('../../utils/helpers/defineProperty')
 const { deepFreeze, deepMerge, keyMap, get } = require('@ltipton/jsutils')
 const { cliRootDir, containersPath, dockerEnv, images } = require('./values')
 

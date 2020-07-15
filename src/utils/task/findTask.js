@@ -4,7 +4,7 @@ const { validateTask } = require('./validateTask')
 const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
 const { TAP_LINKS } = GLOBAL_CONFIG_PATHS
 const { getParams } = require('./getParams')
-const { loadTapContainer } = require('./loadTapContainer')
+const { injectService } = require('../services/injectService')
 
 /**
  * Checks if the command is a linked tap, and if so, calls the tap command on that tap
@@ -35,15 +35,15 @@ const checkLinkedTaps = async (globalConfig, tasks, command, options) => {
   // Add the tap as the second-to-last option incase last option is the help option
   taskData.options.splice(taskData.options.length - 1, 0, `tap=${ command }`)
 
-  // If we have a task to run, then check the tap for a container folder and load it
-  taskData.task && await loadTapContainer({
-    globalConfig,
-    tap: command,
-    tapPath,
-    taskData
-  })
-
-  return taskData
+  // Check if the tap task allows injection
+  // If it does, try to load the taps container folder and inject it
+  return !get(taskData, 'task.inject')
+    ? taskData
+    : await injectService({
+        taskData,
+        app: command,
+        injectPath: tapPath,
+      })
 }
 
 /**

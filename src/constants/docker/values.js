@@ -2,7 +2,7 @@ const path = require('path')
 const { KEG_ENVS } = require('../envs')
 const cliRootDir = path.join(__dirname, '../../../')
 const { deepFreeze, keyMap, isStr } = require('@ltipton/jsutils')
-const { defineProperty } = require('../../helpers/defineProperty')
+const { defineProperty } = require('../../utils/helpers/defineProperty')
 const { getFoldersSync, pathExistsSync } = require('../../libs/fileSys/fileSys')
 
 /**
@@ -41,8 +41,11 @@ const cliKeyMap = { Names: 'name' }
 const mutagenMap = { mode: 'syncMode' }
 
 /**
- * Finds all folders in the CONTAINERS_PATH that have a Dockerfile and adds them to the __IMAGES array
- * @array
+ * Finds all folders in the CONTAINERS_PATH that have a Dockerfile
+ * Then and adds them to the __IMAGES array
+ * @function
+ *
+ * @returns {Array} - built __IMAGES array
  */
 const buildImages = () => {
   __IMAGES = getFoldersSync(containersPath)
@@ -62,8 +65,8 @@ const buildImages = () => {
  */
 const injectImage = image => {
   isStr(image) &&
-    !__Images.includes(image) &&
-    __Images.push(image)
+    !__IMAGES.includes(image) &&
+    __IMAGES.push(image)
 }
 
 /**
@@ -78,13 +81,13 @@ const values = {
   locationContext,
   containersPath,
   dockerEnv: process.env.DOCKER_ENV || process.env.NODE_ENV || 'local',
-})
+}
 
 /**
  * Gets the __IMAGES array if it's defined, or builds it
  * @function
  */
-const getImages = () => (__Images || buildImages())
+const getImages = () => (__IMAGES || buildImages())
 
 /**
  * Defines the images property on the values object with a get method of getImages

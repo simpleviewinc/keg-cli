@@ -147,7 +147,7 @@ module.exports = {
     action: dockerPackage,
     description: `Packages a docker container for deploying to a docker provider`,
     example: 'keg docker package <options>',
-    location_context: DOCKER.LOCATION_CONTEXT.REPO,
+    locationContext: DOCKER.LOCATION_CONTEXT.REPO,
     tasks: {
       ...require('./run'),
     },
