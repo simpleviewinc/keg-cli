@@ -158,8 +158,11 @@ const buildContainers = (container, __internal) => {
     images.push(container)
 
   // Builds the docker locations for the container and Dockerfile
-  __CONTAINERS = images.reduce((data, container) => {
-    data[ container.toUpperCase() ] = containerConfig(container, __internal)
+  __CONTAINERS = images.reduce((data, image) => {
+    
+    data[ image.toUpperCase() ] = image === container
+      ? containerConfig(image, __internal)
+      : containerConfig(image)
 
     return data
   }, {})

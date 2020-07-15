@@ -15,8 +15,8 @@ const askWhenNoContext = async (type) => {
   return type === 'container'
     ? containerSelect(containers => {
         return containers.filter(container => !container.status.includes('Exited'))
-      })
-    : imageSelect()
+      }, false)
+    : imageSelect(false)
 }
 
 /**

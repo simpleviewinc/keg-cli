@@ -36,15 +36,14 @@ const addComposeFile = (dockerCmd='', container, ENV, composeFile) => {
  */
 const addComposeFiles = (dockerCmd, context='', __injected={}) => {
 
-  // Check if the compose file path has been injected
-  if(__injected.composePath)
-    return `${dockerCmd} -f ${ __injected.composePath }`.trim()
-
   const container = context.toUpperCase()
 
-  // Get the default docker compose file
-  dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_DEFAULT`)
-  
+  // Check if the compose file path has been injected
+  // Or get the default docker compose file
+  dockerCmd = __injected.composePath
+    ? addComposeFile(dockerCmd, container, ``, __injected.composePath )
+    : addComposeFile(dockerCmd, container, `KEG_COMPOSE_DEFAULT`)
+
   // Get the docker compose file from the repo
   dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_REPO`)
 

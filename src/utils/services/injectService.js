@@ -1,5 +1,5 @@
 const path = require('path')
-const { get } = require('@ltipton/jsutils')
+const { get, isStr } = require('@ltipton/jsutils')
 const { spawnCmd, executeCmd } = require('KegProc')
 const { readDir, pathExists } = require('KegFileSys')
 const { throwMissingFile } = require('../error/throwMissingFile')
@@ -106,6 +106,22 @@ const injectData = async ({ app, injectPath }, containerPaths) => {
 }
 
 /**
+ * Gets the mutagen config. If no config is found it uses the tap mutagen config
+ * @function
+ * @param {string} containerPath - Path to the apps container folder
+ *
+ * @returns {string} - Path to the mutagen config
+ */
+const getMutagenPath = async containerPath => {
+  const mutagenPath = await checkYmlFile(containerPath, 'mutagen')
+  if(mutagenPath) return mutagenPath
+
+  const { containersPath } = require('KegConst/docker/values')
+
+  return path.join(containersPath, 'tap', 'mutagen.yml')
+}
+
+/**
  * Checks if there is a container folder in the tap
  * <br/>Then checks if it has the correct files needed to build tap
  * <br/>If it does, then uses that container folder over the keg-cli default
@@ -135,14 +151,47 @@ const checkContainerPaths = async (app, injectPath) => {
   const valuesPath = await checkYmlFile(containerPath, 'values')
   !valuesPath && throwMissingFile(app, containerPath, `values.yml`)
 
+  // Get the mutagen config path. If not config, it uses the taps mutagen config
+  const mutagenPath = await getMutagenPath(containerPath)
+
   // If we get to here, all files exist, so return the paths object
   return {
     valuesPath,
     dockerPath,
+    mutagenPath,
     composePath,
     containerPath,
   }
 
+}
+
+/**
+ * Gets the value for the image and container names
+ * @function
+ * @param {string} app - Name of the app to be injected
+ * @param {Object} taskOptions - Allowed options defined for task to be run
+ *
+ * @returns {Object} - Extra params to be added to the tasksData's params object
+ */
+const buildOverrideParams = (app, taskOptions) => {
+  const { CONTAINERS } = require('KegConst/docker/containers')
+
+  const injectedEnv = get(CONTAINERS, `${ app.toUpperCase() }.ENV`, {})
+  const image = (isStr(injectedEnv.IMAGE) && injectedEnv.IMAGE) || app
+  const container = (isStr(injectedEnv.CONTAINER_NAME) && injectedEnv.CONTAINER_NAME) || image
+
+  return {
+    ...(taskOptions.image && { image }),
+    ...(taskOptions.container && { container }),
+    tap: app,
+    context: app,
+    __injected: {
+      image,
+      tap: app,
+      container,
+      context: app,
+    }
+  }
 }
 
 /**
@@ -156,17 +205,23 @@ const checkContainerPaths = async (app, injectPath) => {
  *
  * @returns {Object} - taskData object with the injected location context for the app
  */
-const addInjectedLocationContext = ({ taskData, injectPath }, containerPaths) => {
+const buildInjectedParams = ({ app, taskData, injectPath }, containerPaths) => {
   // Get the tasks location context
   const taskLocContext = get(taskData, 'task.locationContext')
   // Get the locationContext values
   const { locationContext:locContext } = require('KegConst/docker/values')
+  
+  // Build and add image / container name params
+  const injectedParams = buildOverrideParams(app, get(taskData, 'task.options'))
 
   // Add the __injected object to the params with the proper location set
+  // Adds some extra params to update the context and image / container names
   taskData.params = {
     ...taskData.params,
+    ...injectedParams,
     __injected: {
       ...taskData.params.__injected,
+      ...injectedParams.__injected,
       ...containerPaths,
       // Check what context should be used
       // Then add the corresponding injected location context
@@ -207,7 +262,7 @@ const injectService = async params => {
   await injectData(params, containerPaths)
 
   // Set the context for where the docker command should be run from
-  return addInjectedLocationContext(params, containerPaths)
+  return buildInjectedParams(params, containerPaths)
 
 }
 

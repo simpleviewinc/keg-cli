@@ -1,4 +1,4 @@
-
+const { get, deepMerge } = require('@ltipton/jsutils')
 
 /**
  * Builds the internal arguments for the destroy service
@@ -8,18 +8,21 @@
  *
  * @returns {Object} - Cloned arguments object
  */
-const getServiceArgs = (args, argsExt) => {
+const getServiceArgs = ({ params, __internal, ...args }, argsExt) => {
+  const { __injected } = params
   return {
     ...args,
-    __internal: { skipThrow: true, skipError: true },
-    params: {
-      ...args.params,
-      ...argsExt,
-      tap: argsExt.tap || args.params.tap,
-      context: argsExt.context || args.params.context,
-      container: argsExt.container || args.params.container,
-      force: true,
-    }
+    __internal: {
+      skipThrow: true,
+      skipError: true,
+      ...__internal,
+    },
+    params: deepMerge(
+      params,
+      argsExt,
+      __injected,
+      { force: true }
+    )
   }
 }
 
