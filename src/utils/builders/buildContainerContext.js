@@ -24,6 +24,8 @@ const { IMAGES, LOCATION_CONTEXT } = DOCKER
  */
 const getLocation = (globalConfig, task, context, tap) => {
 
+  // TODO: Update to use the correct container location for injected taps
+
   let location = Boolean(task.location_context !== LOCATION_CONTEXT.REPO)
     // For the docker-compose commands, The context to be the keg-cli/containers folder
     ? `${ getPathFromConfig(globalConfig, 'containers') }/${ context }`

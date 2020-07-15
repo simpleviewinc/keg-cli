@@ -50,13 +50,20 @@ const mutagenMap = {
   mode: 'syncMode',
 }
 
-module.exports = deepFreeze({
+
+const injectImage = image => {
+  !images.includes(image) && images.push(image)
+}
+
+
+module.exports = {
   images,
   cliKeyMap,
   mutagenMap,
   cliRootDir,
+  injectImage,
   locationContext,
   containersPath,
   dockerEnv: process.env.DOCKER_ENV || process.env.NODE_ENV || 'local',
-})
+}
 

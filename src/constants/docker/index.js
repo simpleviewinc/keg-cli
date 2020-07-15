@@ -25,4 +25,4 @@ const DOCKER = {
 // Add the CONTAINERS property, with a get function do it only get called when referenced
 Object.defineProperty(DOCKER, 'CONTAINERS', { get: () => containers.CONTAINERS, enumerable: true })
 
-module.exports = deepFreeze({ DOCKER })
+module.exports = { DOCKER }

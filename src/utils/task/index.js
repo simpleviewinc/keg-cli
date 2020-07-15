@@ -1,10 +1,11 @@
 module.exports = {
+  ...require('./convertParamsToEnvs'),
   ...require('./executeTask'),
+  ...require('./findTask'),
   ...require('./getParams'),
   ...require('./getTask'),
-  ...require('./findTask'),
-  ...require('./runInternalTask'),
+  ...require('./loadTapContainer'),
   ...require('./optionsAsk'),
+  ...require('./runInternalTask'),
   ...require('./validateTask'),
-  ...require('./convertParamsToEnvs')
 }

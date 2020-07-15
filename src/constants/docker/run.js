@@ -18,6 +18,10 @@ const DEFAULT = {
   }
 }
 
+// TODO: Inject into the RUN object
+// Setup rebuild to work like CONTAINERS property
+// This way it will call a method to get the RUN items
+
 module.exports = deepFreeze({
   RUN: images.reduce((data, image) => {
     data[image.toUpperCase()] = deepMerge(DEFAULT, {})
