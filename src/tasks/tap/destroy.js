@@ -18,6 +18,7 @@ module.exports = {
   destroy: {
     name: 'destroy',
     alias: [ 'dest', 'des', 'kill', 'down' ],
+    inject: true,
     action: destroyTap,
     description: `Destroys the docker items for a tap`,
     example: 'keg tap destroy <options>',

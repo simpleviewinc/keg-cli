@@ -21,9 +21,9 @@ const composeArgs = {
  */
 const addComposeFile = (dockerCmd='', container, ENV, composeFile) => {
   const compPath = composeFile || get(CONTAINERS, `${ container }.ENV.${ ENV }`)
-  const addComposeFile = compPath ? `-f ${ compPath }` : ''
+  const addedComposeFile = compPath ? `-f ${ compPath }` : ''
 
-  return `${dockerCmd} ${addComposeFile}`.trim()
+  return `${dockerCmd} ${ addedComposeFile }`.trim()
 }
 
 /**
@@ -34,7 +34,12 @@ const addComposeFile = (dockerCmd='', container, ENV, composeFile) => {
  *
  * @returns {string} - dockerCmd string with the file paths added
  */
-const addComposeFiles = (dockerCmd, context='') => {
+const addComposeFiles = (dockerCmd, context='', __injected={}) => {
+
+  // Check if the compose file path has been injected
+  if(__injected.composePath)
+    return `${dockerCmd} -f ${ __injected.composePath }`.trim()
+
   const container = context.toUpperCase()
 
   // Get the default docker compose file
@@ -115,11 +120,11 @@ const getDownArgs = (dockerCmd, remove) => {
  *
  * @returns {string} - Built docker command
  */
-const buildComposeCmd = async (globalConfig, cmd, cmdContext, params) => {
+const buildComposeCmd = async (globalConfig, cmd, cmdContext, params={}) => {
   const { attach, build, remove } = params
 
   let dockerCmd = `docker-compose`
-  dockerCmd = addComposeFiles(dockerCmd, cmdContext)
+  dockerCmd = addComposeFiles(dockerCmd, cmdContext, params.__injected)
   dockerCmd = `${dockerCmd} ${cmd}`
   
   if(cmd === 'up')  dockerCmd = addDockerArg(dockerCmd, '--detach', !Boolean(attach))

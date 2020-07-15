@@ -96,4 +96,4 @@ const getImages = () => (__IMAGES || buildImages())
  */
 defineProperty(values, 'images', { get: getImages })
 
-module.exports = deepFreeze(values)
+module.exports = Object.freeze(values)

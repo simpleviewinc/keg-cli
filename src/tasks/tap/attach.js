@@ -27,6 +27,7 @@ module.exports = {
   attach: {
     name: 'attach',
     alias: [ 'att' ],
+    inject: true,
     action: attach,
     description: `Attach to the running tap container`,
     example: 'keg tap attach',

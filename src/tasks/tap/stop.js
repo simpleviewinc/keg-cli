@@ -19,6 +19,7 @@ module.exports = {
   stop: {
     name: 'stop',
     alias: [ 'stp', 'halt', 'hlt' ],
+    inject: true,
     action: stopTap,
     description: `Stops tap docker containers and syncs`,
     example: 'keg tap stop <options>',

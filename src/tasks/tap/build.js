@@ -26,6 +26,7 @@ module.exports = {
   build: {
     name: 'build',
     alias: [ 'bld', 'make' ],
+    inject: true,
     action: buildTap,
     description: `Builds a taps docker container`,
     example: 'keg tap build <options>',

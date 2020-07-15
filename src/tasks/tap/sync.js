@@ -17,6 +17,8 @@ const sync = args => {
 module.exports = {
   sync: {
     name: 'sync',
+    alias: [ 'sy' ],
+    inject: true,
     action: sync,
     description: `Sync a local folder into the tap docker container`,
     example: '',

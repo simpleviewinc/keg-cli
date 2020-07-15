@@ -23,6 +23,7 @@ module.exports = {
   restart: {
     name: 'restart',
     alias: [ 'rest', 'rerun', 'rr', 'rst' ],
+    inject: true,
     action: restartTap,
     description: `Runs a tap in a docker container`,
     example: 'keg tap start <options>',

@@ -156,9 +156,9 @@ const checkContainerPaths = async (app, injectPath) => {
  *
  * @returns {Object} - taskData object with the injected location context for the app
  */
-const addInjectedLocationContext = (params, containerPaths) => {
+const addInjectedLocationContext = ({ taskData, injectPath }, containerPaths) => {
   // Get the tasks location context
-  const taskLocContext = get(params, 'taskData.task.locationContext')
+  const taskLocContext = get(taskData, 'task.locationContext')
   // Get the locationContext values
   const { locationContext:locContext } = require('KegConst/docker/values')
 
@@ -167,11 +167,12 @@ const addInjectedLocationContext = (params, containerPaths) => {
     ...taskData.params,
     __injected: {
       ...taskData.params.__injected,
+      ...containerPaths,
       // Check what context should be used
       // Then add the corresponding injected location context
       location: Boolean(taskLocContext !== locContext.REPO)
         ? get(containerPaths, 'containerPath')
-        : get(params, 'injectPath')
+        : injectPath
     }
   }
 

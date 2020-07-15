@@ -29,6 +29,7 @@ module.exports = {
   container: {
     name: 'container',
     alias: [ 'cont' ],
+    inject: true,
     action: tapContainer,
     description: `Injects a tap container folder into the docker constants`,
     example: 'keg tap container <options>',

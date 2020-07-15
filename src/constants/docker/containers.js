@@ -128,7 +128,7 @@ const getValuesFiles = (container, __internalValues) => {
 const containerConfig = (container, __internal={}) => {
   const upperCase = container.toUpperCase()
 
-  const dockerFile = __internal.dockerFile || path.join(containersPath, container, `Dockerfile`)
+  const dockerFile = __internal.dockerPath || path.join(containersPath, container, `Dockerfile`)
 
   // Merge the container config with the default config and return
   return deepMerge(DEFAULT, {
