@@ -256,7 +256,7 @@ const injectService = async params => {
 
   // If no container paths just return
   // This will use the default tap container
-  if(!containerPaths) return
+  if(!containerPaths) return taskData
 
   // Inject the app and it's paths into the docker constants
   await injectData(params, containerPaths)

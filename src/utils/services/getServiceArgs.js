@@ -11,7 +11,7 @@ const { get, deepMerge } = require('@ltipton/jsutils')
  */
 const checkInjectedParams = (params, argsExt={}) => {
   const { __injected={} } = params
-  const { image, container, ...injectedParams } = params.__injected
+  const { image, container, ...injectedParams } = __injected
 
   // Pull out the image and container from the injected params
   // Check if the current params have an image and container
@@ -48,7 +48,7 @@ const getServiceArgs = ({ params, __internal, ...args }, argsExt) => {
       params,
       { force: true },
       argsExt,
-      checkInjectedParams(params, argsExt),
+      params.__injected && checkInjectedParams(params, argsExt),
     )
   }
 }
