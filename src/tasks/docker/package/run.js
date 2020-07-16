@@ -80,7 +80,6 @@ const dockerPackageRun = async args => {
     provider: true
   })
 
-
   /*
   * ----------- Step 3 ----------- *
   * Build the container context information
@@ -99,25 +98,23 @@ const dockerPackageRun = async args => {
   const exists = await checkExists(containerName)
   if(exists) return Logger.info(`Exiting "package run" task!`)
 
-
   /*
   * ----------- Step 5 ----------- *
   * Run the image in a container without mounting any volumes
   */
   const opts = [ `-it`, getPortMap('', cmdContext) ]
   cleanup && opts.push(`--rm`)
+  const defCmd = `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`
 
   try {
     await docker.image.run({
       ...parsed,
       opts,
       location,
-      cmd: `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`,
       envs: contextEnvs,
-      // If it's an injected app then we don't want to override the default Dockerfile command
-      // So set overrideDockerfileCmd to false
-      overrideDockerfileCmd: !isInjected,
       name: `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`,
+      cmd: isInjected ? command : defCmd,
+      overrideDockerfileCmd: Boolean(!isInjected || command),
     })
   }
   catch(err){
@@ -146,7 +143,6 @@ module.exports = {
         alias: [ 'cmd' ],
         description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
         example: 'keg docker package run --command dev ( Runs "yarn dev" )',
-        default: 'web'
       },
       branch: {
         description: 'Name of branch name that exists as the image name',

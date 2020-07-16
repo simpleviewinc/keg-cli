@@ -49,7 +49,7 @@ module.exports = {
         alias: [ 'cmd' ],
         description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
         example: 'keg tap package run run --command dev ( Runs "yarn dev" )',
-        default: 'web'
+        default: false
       },
     }
   }
