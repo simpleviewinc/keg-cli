@@ -7,7 +7,6 @@ env:
 
   # --- COMPONENTS ENV CONTEXT --- #
 
-  KEG_NODE_VERSION: "12.13-alpine"
   KEG_DOCKER_FILE: "{{ cli.paths.containers }}/components/Dockerfile"
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/components/values.yml"
   # The default docker-compose file path

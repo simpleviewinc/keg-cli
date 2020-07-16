@@ -4,11 +4,9 @@ env:
 
   KEG_CONTEXT_PATH: "{{ cli.paths.cli }}"
   KEG_DOCKER_FILE: "{{ cli.paths.containers }}/base/Dockerfile"
-  KEG_NODE_VERSION: "12.13-alpine"
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/base/values.yml"
   KEG_COMPOSE_DEFAULT: "{{ cli.paths.containers }}/base/docker-compose.yml"
 
-  KEG_EXPO_CLI_VERSION: "3.22.3"
   # Can also define other an override compose files
   # Other compose files can loaded by setting an ENVS as follows:
     # KEG_COMPOSE_REPO="/path/to/override.yml"

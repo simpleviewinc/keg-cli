@@ -8,7 +8,6 @@ env:
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/regulator/values.yml"
 
   # The default docker-compose file path
-  KEG_NODE_VERSION: "12.13-alpine"
   KEG_COMPOSE_DEFAULT: "{{ cli.paths.containers }}/regulator/docker-compose.yml"
   KEG_COMPOSE_REPO: "{{ cli.paths.regulator }}/docker-compose.yml"
   # Can also define other an override compose files

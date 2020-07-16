@@ -14,13 +14,13 @@ ARG KEG_COPY_LOCAL
 ARG DOC_CLI_PATH=/keg/keg-cli
 
 # Set the default expojs version to it's locked down
-ARG KEG_EXPO_CLI_VERSION
+ARG EXPO_CLI_VERSION
 
 WORKDIR /
 
 # Install git and the expo-cli and sharp-cli
 RUN apk add --no-cache git bash; \
-    yarn global add expo-cli@$KEG_EXPO_CLI_VERSION sharp-cli nodemon
+    yarn global add expo-cli@$EXPO_CLI_VERSION sharp-cli nodemon
 
 # Copy over the local keg-components repo to a temp dir
 COPY . /keg-temp/
