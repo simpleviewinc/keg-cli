@@ -11,46 +11,46 @@ const { DOCKER } = require('KegConst/docker')
  *
  * @returns {void}
  */
-const package = async args => {
+const packageRun = async args => {
   const { params } = args
 
   const packageRes = await packageService(
     args,
-    { context: 'tap', container: 'tap', tap: params.tap }
+    { context: 'tap', container: 'tap', tap: params.tap, service: 'run' }
   )
 
   return packageRes
 }
 
 module.exports = {
-  package: {
-    name: `package`,
-    alias: [ 'pack', 'pk' ],
+  run: {
+    name: `run`,
+    alias: [ 'rn' ],
     inject: true,
-    action: package,
+    action: packageRun,
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
     description: `Package a running tap container into an image and push to the docker provider`,
-    example: 'keg tap package <options>',
+    example: 'keg tap package run <options>',
     options: {
       tap: { 
         description: 'Name of the tap to run. Must be a tap linked in the global config',
-        example: 'keg tap package --tap my-tap',
+        example: 'keg tap package run --tap my-tap',
         required: true,
       },
-      log: {
-        description: 'Log the output the of commands',
-        default: false,
-      },
-      tag: {
-        alias: [ 'tg' ],
-        description: 'Tag for the image created in the package. Defaults to the current branch of the passed in context',
-        example: 'keg tap package tag=my-tag',
-      },
-      push: {
-        description: 'Push the packaged image up to a docker provider registry',
+      package: {
+        description: 'Pull request package url or name',
+        example: `keg tap package run --package simpleviewinc/keg-packages/my-app:bug-fixes`,
         required: true,
-        default: true,
-      }
+        ask: {
+          message: 'Enter the docker package url or path (<user>/<repo>/<package>:<tag>)',
+        }
+      },
+      command: {
+        alias: [ 'cmd' ],
+        description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
+        example: 'keg tap package run run --command dev ( Runs "yarn dev" )',
+        default: 'web'
+      },
     }
   }
 }

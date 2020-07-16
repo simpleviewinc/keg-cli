@@ -15,7 +15,7 @@ const getOrBuildImage = async args => {
         __internal: {
           ...args.__internal,
           skipLog: true,
-        }
+        },
         command: 'get'
       })
 }

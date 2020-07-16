@@ -47,13 +47,13 @@ const checkExists = async container => {
  */
 const dockerPackageRun = async args => {
   const { globalConfig, options, params, task, tasks } = args
-  const { context, cleanup, package, provider, repo, user, version } = params
+  const { command, context, cleanup, package, provider, repo, user, version } = params
+  const isInjected = params.__injected ? true : false
 
   // TODO: Add check, if a context is provided, and no package
   // Then use the package utils to get a list of all packages for that context
   // Allow the user to select a package from the list
   // Or if a package is provided, build the packageUrl url
-
 
   /*
   * ----------- Step 1 ----------- *
@@ -86,12 +86,10 @@ const dockerPackageRun = async args => {
   * Build the container context information
   */
   const { cmdContext, contextEnvs, location } = await buildContainerContext({
+    task,
     globalConfig,
-    params: { ...params, context: parsed.image },
-    // Need to add our packaged repo to the allow options so we can run it
-    task: deepMerge(task, { options: { context: { allowed: [ parsed.image ] } } }),
+    params: { ...params, context: isInjected ? context : parsed.image },
   })
-
 
   /*
   * ----------- Step 4 ----------- *
@@ -108,14 +106,24 @@ const dockerPackageRun = async args => {
   */
   const opts = [ `-it`, getPortMap('', cmdContext) ]
   cleanup && opts.push(`--rm`)
-  await docker.image.run({
-    ...parsed,
-    opts,
-    location,
-    envs: contextEnvs,
-    cmd: `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`,
-    name: `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`,
-  })
+
+  try {
+    await docker.image.run({
+      ...parsed,
+      opts,
+      location,
+      cmd: `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`,
+      envs: contextEnvs,
+      // If it's an injected app then we don't want to override the default Dockerfile command
+      // So set overrideDockerfileCmd to false
+      overrideDockerfileCmd: !isInjected,
+      name: `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`,
+    })
+  }
+  catch(err){
+    Logger.error(err.stack)
+    process.exit(1)
+  }
 
 }
 
