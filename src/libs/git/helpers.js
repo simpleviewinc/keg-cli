@@ -1,4 +1,5 @@
-const { reduceObj } = require('@ltipton/jsutils')
+const { checkCall, reduceObj, isStr } = require('@ltipton/jsutils')
+const { NEWLINES_MATCH, WHITESPACE_MATCH } = require('KegConst/patterns')
 
 /**
 * Extra git log arguments map. Maps passed in arguments to the real value
