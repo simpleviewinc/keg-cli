@@ -86,7 +86,6 @@ const dockerPackage = async args => {
     params,
   })
 
-
   const useAuthor = getAuthor(globalConfig, author)
 
   const currentBranch = tag || await getCommitTag(location)
@@ -137,6 +136,8 @@ const dockerPackage = async args => {
 
   Logger.success(`  Finished pushing docker image "${ imgTag }" to provider!`)
   Logger.empty()
+
+  return true
 
 }
 
