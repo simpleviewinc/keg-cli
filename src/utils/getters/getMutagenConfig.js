@@ -43,7 +43,8 @@ const parseOptions = (options={}) => {
 const getMutagenConfig = (params) => tryCatch(async () => {
   const { context, service, overrides={}, options, __injected } = params
 
-  const ymlConfig = __injected && __injected.mutagenPath || await yml.load(
+  const ymlConfig = await yml.load(
+    __injected && __injected.mutagenPath ||
     path.join(CONTAINERS_PATH, context, 'mutagen.yml')
   )
 
