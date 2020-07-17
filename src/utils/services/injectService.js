@@ -101,7 +101,19 @@ const injectData = async ({ app, injectPath }, containerPaths) => {
   injectImage(app)
 
   // Add the app container info to the docker CONTAINERS constants
-  injectContainer(app, containerPaths)
+  injectContainer(
+    app,
+    {
+      ...containerPaths,
+      // Add the KEG ENVS for the correct paths when running docker commands
+      ENVS: {
+        KEG_DOCKER_FILE: containerPaths.dockerPath,
+        KEG_VALUES_FILE: containerPaths.valuesPath,
+        KEG_COMPOSE_DEFAULT: containerPaths.composePath,
+        KEG_CONTEXT_PATH: injectPath,
+      }
+    }
+  )
 
 }
 
@@ -161,6 +173,7 @@ const checkContainerPaths = async (app, injectPath) => {
     mutagenPath,
     composePath,
     containerPath,
+    injectPath,
   }
 
 }

@@ -134,11 +134,16 @@ const containerConfig = (container, __internal={}) => {
   return deepMerge(DEFAULT, {
     VALUES: { file: `-f ${ dockerFile }` },
     // Ensures the Git url for the container gets added as a build arg
-    ARGS: keyMap([ `GIT_${ container.toUpperCase() }_URL` ], true),
+    ARGS: keyMap([
+      `GIT_${ container.toUpperCase() }_URL`,
+      `GIT_APP_URL`,
+      `GIT_REPO_URL`,
+    ], true),
     // Build the ENVs by merging with the default, context, and environment
     ENV: deepMerge(
       PREFIXED,
       KEG_ENVS,
+      __internal.ENVS,
       getValuesFiles(container, __internal.valuesPath),
       getEnvFiles(container, __internal)
     ),

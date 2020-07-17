@@ -1,8 +1,9 @@
 const { Logger } = require('KegLog')
-const { DOCKER } = require('KegConst/docker')
 const { spawnCmd } = require('KegProc')
+const { get } = require('@ltipton/jsutils')
+const { DOCKER } = require('KegConst/docker')
+const { buildComposeCmd, removeInjected } = require('KegUtils/docker')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
-const { buildComposeCmd } = require('KegUtils/docker')
 
 /**
  * Runs the docker-compose build command
@@ -35,6 +36,9 @@ const composeDown = async args => {
     location,
     !Boolean(__internal),
   )
+
+  const image = get(params, '__injected.image')
+  image && await removeInjected(image)
 
   log && Logger.highlight(`Compose service`, `"${ cmdContext }"`, `destroyed!`)
 

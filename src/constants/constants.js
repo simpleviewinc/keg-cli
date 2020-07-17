@@ -18,6 +18,8 @@ if(KEG_GLOBAL_CONFIG){
   GLOBAL_CONFIG_FOLDER = configPathSplit.join('/')
 }
 
+let GLOBAL_INJECT_FOLDER = path.join(GLOBAL_CONFIG_FOLDER, '.tmp')
+
 module.exports = deepFreeze({
 
   // Tasks settings
@@ -41,6 +43,7 @@ module.exports = deepFreeze({
   GLOBAL_CONFIG_EDITOR_CMD: 'cli.settings.editorCmd',
   GLOBAL_CONFIG_FOLDER: GLOBAL_CONFIG_FOLDER,
   GLOBAL_CONFIG_FILE: GLOBAL_CONFIG_FILE,
+  GLOBAL_INJECT_FOLDER: GLOBAL_INJECT_FOLDER,
 
   CLI_CONFIG: `${ CLI_CONFIG }.json`,
   DEFAULT_ENV: `defaults.env`,
