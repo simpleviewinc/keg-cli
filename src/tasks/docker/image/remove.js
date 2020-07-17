@@ -1,6 +1,6 @@
-const { get, isStr } = require('@ltipton/jsutils')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
+const { get, isStr } = require('@ltipton/jsutils')
 const { generalError } = require('KegUtils/error')
 const { exists } = require('KegUtils/helpers/exists')
 const { dockerLog } = require('KegUtils/log/dockerLog')
@@ -8,6 +8,22 @@ const { CONTAINERS } = require('KegConst/docker/containers')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { buildCmdContext } = require('KegUtils/builders/buildCmdContext')
+
+/**
+ * Asks for the image to remove, then removes it
+ * @param {Object} force - Should the image be forced removed
+ *
+ * @returns {Object} - The removed image
+ */
+const askForImage = async force => {
+  const image = await imageSelect()
+  !image && generalError(`The docker "image remove" requires a context, name or tag argument!`)
+
+  await docker.image.remove({ item: image.id, force })
+
+  return image
+}
+
 /**
  * Run a docker image command
  * @param {Object} args - arguments passed from the runTask method
@@ -23,9 +39,9 @@ const removeDockerImage = async args => {
   const { globalConfig, params, __internal={} } = args
   const { context, tag } = params
 
-  ;(!params.tag && !params.context) && generalError(
-    `The docker "image remove" requires a context, name or tag argument!`
-  )
+  const force = exists(params.force) ? params.force : getSetting(`docker.force`)
+
+  if(!params.tag && !params.context)  return askForImage(force)
 
   // Get the image name from the context, or use the passed in context
   const imgRef = context &&
@@ -40,13 +56,10 @@ const removeDockerImage = async args => {
         globalConfig,
       })
 
-  // Ensure we have the image meta data, and try to remove by imageId
-  // __internal.skipThrow is an internal argument, so it's not documented
-  if(!image || !image.id)
-    return __internal.skipThrow !== true &&
-      generalError(`The docker image "${ imgRef }" does not exist!`)
+  // If we still don't have an image with an id, then again ask for the image
+  if(!image || !image.id) return askForImage(force)
 
-  const force = exists(params.force) ? params.force : getSetting(`docker.force`)
+  // If we have an image, then remove it
   const res = await docker.image.remove({ item: image.id, force })
   dockerLog(res, 'image remove')
 

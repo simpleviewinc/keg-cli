@@ -56,7 +56,6 @@ const buildContainerContext = async args => {
   })
 
   const { cmdContext, image:img, tap } = contextData
-
   // Get the image name based on the cmdContext if it wasn't found in buildCmdContext
   const image = img || getContainerConst(cmdContext, `env.image`)
 
