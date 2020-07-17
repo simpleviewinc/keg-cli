@@ -168,7 +168,6 @@ const checkContainerPaths = async (app, injectPath) => {
   const valuesPath = await checkYmlFile(containerPath, 'values')
   !valuesPath && throwMissingFile(app, containerPath, `values.yml`)
 
-
   // Get the mutagen config path. If not config, it uses the taps mutagen config
   const mutagenPath = await getMutagenPath(containerPath)
 
@@ -232,7 +231,6 @@ const buildInjectedParams = async ({ app, taskData, injectPath }, containerPaths
   const taskLocContext = get(taskData, 'task.locationContext')
   // Get the locationContext values
   const { locationContext:locContext } = require('KegConst/docker/values')
-
   // Build and add image / container name params
   const injectedParams = buildOverrideParams(app, get(taskData, 'task.options'))
 
