@@ -78,7 +78,7 @@ module.exports = {
       log: {
         description: 'Log the compose command to the terminal',
         example: 'keg docker compose build --log false',
-        default: true,
+        default: false,
       }
     }
   }

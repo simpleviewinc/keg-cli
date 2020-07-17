@@ -3,8 +3,8 @@ const { DOCKER } = require('KegConst/docker')
 const { yml } = require('KegFileSys/yml')
 const { get } = require('@ltipton/jsutils')
 const { throwNoComposeService } = require('KegUtils/error/throwNoComposeService')
-const { CONTAINERS_PATH, MUTAGEN_MAP } = DOCKER
-
+const { CONTAINERS_PATH } = DOCKER
+const { getContainerConst } = require('../getContainerConst')
 
 /**
  * Loads a docker-compose file, and finds the first service name
@@ -16,9 +16,11 @@ const { CONTAINERS_PATH, MUTAGEN_MAP } = DOCKER
  */
 const getServiceName = async ({ composePath, context }) => {
 
-  const loadPath = composePath || (context && path.join(CONTAINERS_PATH, context, 'docker-compose.yml'))
-  const composeConfig = (composePath || context) && await yml.load(loadPath) || {}
-  const services = get(composeConfig, 'services')
+  const loadPath = composePath ||
+    (context && getContainerConst(context, `ENV.KEG_COMPOSE_DEFAULT`))
+
+  const composeConfig = loadPath && await yml.load(loadPath) || {}
+  const services = composeConfig && get(composeConfig, 'services')
 
   return Object.keys(services).length
     ? Object.keys(services)[0]

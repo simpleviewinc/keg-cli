@@ -7,6 +7,7 @@ module.exports = {
   ...require('./mutagenService'),
   ...require('./remoteExecService'),
   ...require('./packageService'),
+  ...require('./restartService'),
   ...require('./serviceOptions'),
   ...require('./startService'),
   ...require('./stopService'),

@@ -37,14 +37,14 @@ const askForImage = async force => {
 const removeDockerImage = async args => {
 
   const { globalConfig, params, __internal={} } = args
-  const { context, tag } = params
+  const { context, tag, image:imageParam } = params
 
   const force = exists(params.force) ? params.force : getSetting(`docker.force`)
 
-  if(!params.tag && !params.context)  return askForImage(force)
+  if(!imageParam && !tag && !context)  return askForImage(force)
 
   // Get the image name from the context, or use the passed in context
-  const imgRef = context &&
+  const imgRef = imageParam || context &&
     get(CONTAINERS, `${context && context.toUpperCase()}.ENV.IMAGE`) || context
 
   // Get the image meta data
@@ -77,8 +77,12 @@ module.exports = {
     options: {
       context: {
         alias: [ 'name' ],
-        description: 'Name of the image to remove',
-        example: 'keg docker image remove --name core',
+        description: 'Name or ID of the image to remove',
+        example: 'keg docker image remove --context core',
+      },
+      image: {
+        description: 'Name or ID of the image to remove',
+        example: 'keg docker image remove --image my-image',
       },
       tag: {
         description: 'Tag name of the image to remove',
