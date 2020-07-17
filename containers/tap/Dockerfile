@@ -8,7 +8,7 @@ WORKDIR /
 # These args are expected to be set as --build-arg
 # Which Allow them to be used durring the build
 ARG GIT_KEY
-ARG GIT_TAP_URL=INITIAL
+ARG GIT_APP_URL=INITIAL
 
 # Should we use the local copy of the tap repo when building
 ARG KEG_COPY_LOCAL
@@ -26,8 +26,8 @@ COPY . /keg-temp/
 # Pull down the tap locally if a git tap url exists
 # Otherwise copy over the local version from keg-temp
 RUN git config --global url.https://$GIT_KEY@github.com/.insteadOf https://github.com/; \
-    if [ -z "$KEG_COPY_LOCAL" ] && [ "$GIT_TAP_URL" != "INITIAL" ]; then \
-      git clone $GIT_TAP_URL $DOC_APP_PATH; \
+    if [ -z "$KEG_COPY_LOCAL" ] && [ "$GIT_APP_URL" != "INITIAL" ]; then \
+      git clone $GIT_APP_URL $DOC_APP_PATH; \
     else \
       cp -R /keg-temp/ $DOC_APP_PATH; \
     fi; \

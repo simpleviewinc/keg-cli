@@ -41,4 +41,4 @@ env:
   CONTAINER_NAME: tap
 
   # Git tap url in github
-  GIT_TAP_URL: INITIAL
+  GIT_APP_URL: INITIAL

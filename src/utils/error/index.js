@@ -7,6 +7,7 @@ module.exports = {
   ...require('./throwGitCmd'),
   ...require('./throwInvalidParamMatch'),
   ...require('./throwNoAction'),
+  ...require('./throwNoComposeService'),
   ...require('./throwNoConfigPath'),
   ...require('./throwNoContainers'),
   ...require('./throwNoFileExists'),

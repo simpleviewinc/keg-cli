@@ -137,7 +137,6 @@ const containerConfig = (container, __internal={}) => {
     ARGS: keyMap([
       `GIT_${ container.toUpperCase() }_URL`,
       `GIT_APP_URL`,
-      `GIT_REPO_URL`,
     ], true),
     // Build the ENVs by merging with the default, context, and environment
     ENV: deepMerge(

@@ -1,6 +1,7 @@
 module.exports = {
   ...require('./buildComposeCmd'),
-  ...require('./buildComposeName'),
+  ...require('./buildServiceName'),
   ...require('./checkKillRunning'),
   ...require('./removeInjected'),
+  ...require('./getServiceName'),
 }

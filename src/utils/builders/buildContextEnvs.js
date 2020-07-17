@@ -3,6 +3,7 @@ const { buildTapContext } = require('./buildTapContext')
 const { getSetting } = require('../globalConfig/getSetting')
 const { getContainerConst } = require('../docker/getContainerConst')
 const { convertParamsToEnvs } = require('../task/convertParamsToEnvs')
+const { getServiceName } = require('../docker/compose/getServiceName')
 
 /**
  * Builds the ENVs for the passed in cmdContext
@@ -19,6 +20,9 @@ const buildContextEnvs = async ({ cmdContext, envs={}, globalConfig, params={}, 
 
   // Get the ENV vars for the command context and merge with any passed in envs
   return {
+
+    // Get the name of the docker-compose service
+    KEG_COMPOSE_SERVICE: await getServiceName({ context: cmdContext }),
 
     // Get the ENV context for the command
     ...getContainerConst(cmdContext, 'env', {}),

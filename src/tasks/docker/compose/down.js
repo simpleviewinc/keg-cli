@@ -2,7 +2,7 @@ const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
 const { get } = require('@ltipton/jsutils')
 const { DOCKER } = require('KegConst/docker')
-const { buildComposeCmd, removeInjected } = require('KegUtils/docker')
+const { buildComposeCmd, buildServiceName, removeInjected } = require('KegUtils/docker/compose')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
@@ -29,9 +29,12 @@ const composeDown = async args => {
     params
   )
 
-  // Run the docker compose build command
+  // Get the name of the docker-compose service
+  const serviceName = buildServiceName(cmdContext, contextEnvs)
+
+  // Run the docker compose down command
   await spawnCmd(
-    dockerCmd,
+    `${ dockerCmd } ${ serviceName }`,
     { options: { env: contextEnvs }},
     location,
     !Boolean(__internal),
@@ -55,7 +58,6 @@ module.exports = {
     example: 'keg docker compose down <options>',
     options: {
       context: {
-        allowed: DOCKER.IMAGES,
         description: 'Context of docker compose down command (tap | core | components)',
         example: 'keg docker compose down --context core',
         required: true

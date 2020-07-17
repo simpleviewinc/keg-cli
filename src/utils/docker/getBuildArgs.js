@@ -49,7 +49,7 @@ const getBuildArgs = async (globalConfig, params) => {
         useVal = getGitUrl({ globalConfig, repo: 'components' })
         break
       }
-      case 'GIT_TAP_URL':{
+      case 'GIT_APP_URL':{
         useVal = tapUrl
         break
       }
