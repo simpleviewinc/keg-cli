@@ -65,7 +65,9 @@ const createMutagenSync = async (args, params, skipExists) => {
 
   // Check if the sync item already exists
   const exists = await mutagen.sync.exists(params)
-  exists && !skipExists && mutagenSyncExists(params, exists, false)
+
+  if(exists && !skipExists)
+    return mutagenSyncExists(params, exists, false)
 
   // Make call to start the mutagen sync
   !exists && await mutagen.sync.create(params)
