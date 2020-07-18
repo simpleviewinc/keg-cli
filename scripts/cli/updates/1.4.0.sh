@@ -17,8 +17,6 @@ keg_cli_1_4_0_update(){
 
   keg_message "Running update for version 1.4.0..."
 
-  keg_reset_default_env
-
   local RUNNING_CONT="$(command docker ps -aq)"
   if [[ "$RUNNING_CONT" ]]; then
     keg_error "All docker containers must be stopped before updating!"
