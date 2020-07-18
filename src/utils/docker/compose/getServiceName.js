@@ -3,7 +3,6 @@ const { DOCKER } = require('KegConst/docker')
 const { yml } = require('KegFileSys/yml')
 const { get } = require('@ltipton/jsutils')
 const { throwNoComposeService } = require('KegUtils/error/throwNoComposeService')
-const { CONTAINERS_PATH } = DOCKER
 const { getContainerConst } = require('../getContainerConst')
 
 /**
@@ -15,7 +14,6 @@ const { getContainerConst } = require('../getContainerConst')
  * @returns {string} - The first found service name
  */
 const getServiceName = async ({ composePath, context }) => {
-
   const loadPath = composePath ||
     (context && getContainerConst(context, `ENV.KEG_COMPOSE_DEFAULT`))
 

@@ -4,6 +4,7 @@ module.exports = {
   ...require('./composeService'),
   ...require('./containerService'),
   ...require('./destroyService'),
+  ...require('./getServiceArgs'),
   ...require('./mutagenService'),
   ...require('./remoteExecService'),
   ...require('./packageService'),

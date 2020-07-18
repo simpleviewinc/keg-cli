@@ -109,6 +109,7 @@ const injectData = async ({ app, injectPath }, containerPaths) => {
       // Add the KEG ENVS for the correct paths when running docker commands
       ENVS: {
         KEG_CONTEXT_PATH: injectPath,
+        KEG_MUTAGEN_PATH: containerPaths.mutagenPath,
         KEG_DOCKER_FILE: containerPaths.dockerPath,
         KEG_VALUES_FILE: containerPaths.valuesPath,
         KEG_COMPOSE_DEFAULT: containerPaths.composePath,

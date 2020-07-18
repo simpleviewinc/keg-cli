@@ -29,7 +29,7 @@ const startTap = async (args) => {
 module.exports = {
   start: {
     name: 'start',
-    alias: [ 'st', 'run' ],
+    alias: [ 'st' ],
     action: startTap,
     inject: true,
     locationContext: DOCKER.LOCATION_CONTEXT.CONTAINERS,
