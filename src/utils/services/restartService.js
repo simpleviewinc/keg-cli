@@ -36,7 +36,12 @@ const restartService = async (args, exArgs) => {
     `"${ serviceArgs.params.tap || serviceArgs.params.context }"`,
     `compose environment!`
   )
+  
   Logger.empty()
+
+  // Check if we should start logging the output of the service
+  get(serviceArgs, 'params.follow') &&
+    await runInternalTask('docker.tasks.log', serviceArgs)
 
 }
 

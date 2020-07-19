@@ -30,6 +30,12 @@ module.exports = {
         example: 'keg tap restart --tap my-tap',
         required: true,
       },
+      follow: {
+        alias: [ 'f', 'tail', 't' ],
+        description: 'Automatically follow the log output of the started service',
+        example: `keg tap restart --follow false`,
+        default: true
+      },
     },
   }
 }

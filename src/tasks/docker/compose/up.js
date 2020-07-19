@@ -36,7 +36,7 @@ const composeUp = async args => {
   const alreadyRunning = await checkKillRunning(args, [ image ])
 
   alreadyRunning && checkCall(() => {
-    Logger.spaceMsg(`  Exiting Keg-CLI task!`)
+    Logger.spaceMsg(`Exiting Keg-CLI task!`)
     process.exit(0)
   })
 
