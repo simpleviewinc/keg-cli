@@ -16,19 +16,19 @@ const { isDockerId } = require('KegUtils/docker/isDockerId')
  *
  * @returns {void}
  */
-const getContainerRef = async context => {
+const getContainerRef = async (context, throwErr) => {
   // Ensure we have an container to remove by checking for a mapped context, or use original
   const containerRef = context && getContainerConst(context, `env.image`, context)
   let container = containerRef && await docker.container.get(containerRef)
 
   // Use the found container || Ask the user so select the container
-  container = container || await containerSelect()
+  container = container || await containerSelect(null, throwErr)
 
   // Return the container meta data
   // Or if still no container, throw an error
-  return container || generalError(
+  return container || (throwErr && generalError(
     `The docker container with context "${ context }" can not be found!`
-  )
+  ))
 
 }
 
@@ -46,19 +46,19 @@ const removeContainer = async args => {
   const { params, __internal={} } = args
   const { context } = params
 
+  const throwErr = !__internal.skipThrow
   const force = exists(params.force) ? params.force : getSetting(`docker.force`)
 
   const container = !context
     ? await containerSelect()
     : isDockerId(context)
       ? { id: context }
-      : await getContainerRef(context)
+      : await getContainerRef(context, throwErr)
 
   // Ensure we have the container meta data, and try to remove by containerId
   // __internal.skipThrow is an internal argument, so it's not documented
   if(!container || !container.id)
-    return __internal.skipThrow !== true &&
-      generalError(`The docker container "${ containerRef }" can not be found!`)
+    return throwErr && generalError(`The docker container "${ containerRef }" can not be found!`)
 
   const res = await docker.container.remove({ item: container.id, force })
 
