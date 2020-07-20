@@ -104,7 +104,7 @@ const dockerPackageRun = async args => {
   */
   const opts = [ `-it`, getPortMap('', cmdContext) ]
   cleanup && opts.push(`--rm`)
-  const defCmd = `/bin/sh ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`
+  const defCmd = `/bin/bash ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`
 
   try {
     await docker.image.run({
