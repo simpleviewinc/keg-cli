@@ -19,7 +19,7 @@ ARG EXPO_CLI_VERSION
 WORKDIR /
 
 # Install git and the expo-cli and sharp-cli
-RUN apk add --no-cache git bash; \
+RUN apk add --no-cache git; \
     yarn global add expo-cli@$EXPO_CLI_VERSION sharp-cli nodemon
 
 # Copy over the local keg-components repo to a temp dir

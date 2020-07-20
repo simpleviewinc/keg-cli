@@ -1,6 +1,6 @@
 
 /**
- * Default keg cli task
+ * Default keg base task
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -9,25 +9,21 @@
  *
  * @returns {void}
  */
-const cliCommand = args => {
+const baseCmd = args => {
   const { command, options, tasks, globalConfig } = args
-
-  console.log(`---------- cli command ----------`)
-  // TODO: Print cli information here from package JSON
-
+  console.log(`---------- base command ----------`)
 }
 
 module.exports = {
-  cli: {
-    name: 'cli',
+  base: {
+    name: 'base',
     alias: [],
-    action: cliCommand,
-    description: 'Keg CLI specific tasks',
-    example: 'keg cli <command> <options>',
+    action: baseCmd,
+    description: 'Keg docker base image tasks ',
+    example: 'keg base <command> <options>',
     tasks: {
-      ...require('./env'),
-      ...require('./print'),
-      ...require('./update'),
+      ...require('./build'),
+      ...require('./destroy'),
     },
   }
 }
