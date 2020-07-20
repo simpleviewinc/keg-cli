@@ -1,28 +1,24 @@
-const path = require('path')
-const { DOCKER } = require('KegConst/docker')
-const { yml } = require('KegFileSys/yml')
 const { get } = require('@ltipton/jsutils')
-const { throwNoComposeService } = require('KegUtils/error/throwNoComposeService')
-const { getContainerConst } = require('../getContainerConst')
+const { throwNoComposeService } = require('../../error/throwNoComposeService')
+const { loadComposeConfig } = require('./loadComposeConfig')
 
 /**
  * Loads a docker-compose file, and finds the first service name
  * @param {Object} args - args used to find the service name
  * @param {Object} args.composePath - Path to the docker-compose file
  * @param {Object} args.context - Container context of the docker-compose file to load
+ * @param {Object} args.skipThrow - Should skip throwing when file can't be loaded
  *
  * @returns {string} - The first found service name
  */
-const getServiceName = async ({ composePath, context }) => {
-  const loadPath = composePath ||
-    (context && getContainerConst(context, `ENV.KEG_COMPOSE_DEFAULT`))
+const getServiceName = async (args={}) => {
 
-  const composeConfig = loadPath && await yml.load(loadPath) || {}
+  const composeConfig = args.composeConfig || await loadComposeConfig(args)
   const services = composeConfig && get(composeConfig, 'services')
 
   return services && Object.keys(services).length
     ? Object.keys(services)[0]
-    : throwNoComposeService(loadPath)
+    : !args.skipThrow && throwNoComposeService(args.composePath || args.context)
 
 }
 

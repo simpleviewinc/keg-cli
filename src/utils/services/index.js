@@ -2,7 +2,6 @@ module.exports = {
   ...require('./bddService'),
   ...require('./buildService'),
   ...require('./composeService'),
-  ...require('./containerService'),
   ...require('./destroyService'),
   ...require('./getServiceArgs'),
   ...require('./mutagenService'),
