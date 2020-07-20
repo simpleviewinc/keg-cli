@@ -59,7 +59,7 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 
 # Install git and bash for the new stage
 # This is so Dockerfiles that uses "FROM keg-base", don't have to install these packages
-RUN apk add --no-cache git bash
+RUN apk add --no-cache git bash nano
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn
