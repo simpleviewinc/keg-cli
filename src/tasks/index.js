@@ -23,6 +23,7 @@ const initialize = (tasks, name, config) => {
 
 module.exports = config => {
   return {
+    ...initialize(require('./base'), 'base', config),
     ...initialize(require('./cli'), 'cli', config),
     ...initialize(require('./components'), 'components', config),
     ...initialize(require('./config'), 'config', config),

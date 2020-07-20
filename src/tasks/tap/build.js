@@ -49,8 +49,8 @@ module.exports = {
       },
       cache: {
         description: 'Docker will use build cache when building the image',
-        example: 'keg tap --cache',
-        default: false
+        example: 'keg tap --cache false',
+        default: true
       },
       core: {
         description: 'Use the local keg-core package.json when install node_modules during the build',
@@ -64,8 +64,8 @@ module.exports = {
       },
       local: {
         description: 'Copy the local repo into the docker container at build time',
-        example: `keg tap build --local`,
-        default: false,
+        example: `keg tap build --local false`,
+        default: true,
       },
       tags: {
         description: 'Extra tags to add to the docker image after its build. Uses commas (,) to separate',

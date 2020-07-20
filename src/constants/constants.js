@@ -18,6 +18,8 @@ if(KEG_GLOBAL_CONFIG){
   GLOBAL_CONFIG_FOLDER = configPathSplit.join('/')
 }
 
+let GLOBAL_INJECT_FOLDER = path.join(GLOBAL_CONFIG_FOLDER, '.tmp')
+
 module.exports = deepFreeze({
 
   // Tasks settings
@@ -37,10 +39,13 @@ module.exports = deepFreeze({
     TAP_LINKS: `cli.taps.links`,
   },
 
+  GLOBAL_CONFIG_FOLDER,
+  GLOBAL_CONFIG_FILE,
+  GLOBAL_INJECT_FOLDER,
+  CLI_ROOT: CLI_ROOT,
+
   // Sets the command to open an IDE
   GLOBAL_CONFIG_EDITOR_CMD: 'cli.settings.editorCmd',
-  GLOBAL_CONFIG_FOLDER: GLOBAL_CONFIG_FOLDER,
-  GLOBAL_CONFIG_FILE: GLOBAL_CONFIG_FILE,
 
   CLI_CONFIG: `${ CLI_CONFIG }.json`,
   DEFAULT_ENV: `defaults.env`,
@@ -74,8 +79,6 @@ module.exports = deepFreeze({
       'n'
     ]
   },
-
-  CLI_ROOT: CLI_ROOT,
 
   // --- GIT Constants --- //
   // Path the the git ssh key

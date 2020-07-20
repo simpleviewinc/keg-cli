@@ -166,6 +166,7 @@ const buildDockerCmd = (globalConfig, params) => {
   // Figure out which docker command to run
   return cmd === 'build'
     ? createBuildCmd(globalConfig, dockerCmd, params)
+    // createRunCmd not currently used!
     : createRunCmd(globalConfig, dockerCmd, params)
 
 }
