@@ -246,7 +246,7 @@ const runImage = async (args) => {
   const containerCmd = overrideDockerfileCmd && (entry || '/bin/bash') || ''
 
   // Set / overwrite the entry for the container
-  cmdToRun = `${ cmdToRun } ${ names.image } ${ containerCmd }`.trim()
+  cmdToRun = `${ cmdToRun.trim() } ${ names.image.trim() } ${ containerCmd.trim() }`.trim()
 
   log && Logger.spacedMsg(`  Running command: `, cmdToRun)
 
