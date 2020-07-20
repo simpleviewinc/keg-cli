@@ -51,7 +51,7 @@ const getDockerArgs = ({ args, cmd, context, dockerCmd='' }) => {
     // Only add the Dockerfile path when building, not durring run
     if(key === 'file' && cmd === 'run')  return joinedArgs
 
-    // Only add connect '-id' when running, not durning build
+    // Only add connect '-it' when running, not durning build
     if(key === 'connect' && cmd === 'build')  return joinedArgs
 
     // Ensure both detached and attached are not added to the docker args

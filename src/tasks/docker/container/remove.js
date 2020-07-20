@@ -77,7 +77,7 @@ module.exports = {
     options: {
       context: {
         alias: [ 'name' ],
-        description: 'Name of the container to remove',
+        description: 'Name or ID of the container to remove',
         example: 'keg docker container remove --name core',
       },
       force: {

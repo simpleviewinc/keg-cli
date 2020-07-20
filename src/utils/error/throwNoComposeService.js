@@ -11,7 +11,10 @@ const { throwTaskFailed } = require('./throwTaskFailed')
 const throwNoComposeService = loadPath => {
   
   Logger.empty()
-  Logger.error(`Error getting service in docker-compose file!\nNo services in file at ${ loadPath }!`)
+  Logger.error(`Error getting service from docker-compose file!`)
+  loadPath
+    ? Logger.error(`No services found in file at ${ loadPath }!`)
+    : Logger.error(`The docker-compose.yml file can not be found!`)
   Logger.empty()
   
   throwTaskFailed()

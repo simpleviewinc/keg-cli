@@ -1,6 +1,5 @@
+const { runService } = require('KegUtils/services')
 const { DOCKER } = require('KegConst/docker')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { getServiceArgs } = require('KegUtils/services')
 
 /**
  * Start a tap with docker-compose
@@ -12,50 +11,46 @@ const { getServiceArgs } = require('KegUtils/services')
  *
  * @returns {void}
  */
-const runTap = async (args) => {
-
-  return runInternalTask(
-    'docker.tasks.image.tasks.run',
-    getServiceArgs(args, { context: 'tap', tap: args.params.tap, image: 'tap', container: 'tap' })
-  )
-
+const runBase = async (args) => {
+  return runService(args, { context: 'base', tap: undefined })
 }
+
 module.exports = {
   run: {
     name: 'run',
-    alias: [ 'st' ],
-    action: runTap,
+    alias: [ 'start', 'st' ],
+    action: runBase,
     inject: true,
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
-    description: `Runs a tap image directly`,
-    example: 'keg tap run <options>',
+    description: `Runs the base image directly`,
+    example: 'keg base run <options>',
     options: {
-      tap: { 
-        description: 'Name of the tap to run. Must be a tap linked in the global config',
-        example: 'keg tap run --tap events-force',
-        required: true,
-      },
       cleanup: {
         alias: [ 'clean', 'rm' ],
         description: 'Auto remove the docker container after exiting',
-        example: `keg tap run  --cleanup false`,
+        example: `keg base run  --cleanup false`,
         default: true
       },
       options: {
         alias: [ 'opts' ],
         description: 'Extra docker run command options',
-        example: `keg tap run --options \\"-p 80:19006 -e MY_ENV=data\\"`,
+        example: `keg base run --options \\"-p 80:19006 -e MY_ENV=data\\"`,
         default: []
       },
       entry: {
-        description: 'Overwrite entry of the image. Use escaped quotes for spaces ( bin/bash)',
-        example: 'keg tap run --entry \\"node index.js\\"',
+        description: 'Overwrite entry of the image. Use escaped quotes for spaces ( bin/bash )',
+        example: 'keg base run --entry \\"node index.js\\"',
         default: '/bin/bash'
       },
       log: {
         description: 'Log the docker run command to the terminal',
-        example: 'keg tap run --log',
+        example: 'keg base run --log',
         default: false,
+      },
+      sync: {
+        description: 'Creates a mutagen sync between the local Keg-CLI and the docker container',
+        example: 'keg base run --sync false',
+        default: true,
       }
     }
   }

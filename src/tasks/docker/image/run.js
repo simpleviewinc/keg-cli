@@ -5,6 +5,8 @@ const { spawnCmd } = require('KegProc')
 const { HTTP_PORT_ENV } = require('KegConst/constants')
 const { CONTAINERS } = require('KegConst/docker/containers')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
+const { throwDupContainerName } = require('KegUtils/error/throwDupContainerName')
+
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { CONTAINER_PREFIXES } = require('KegConst/constants')
 const { IMAGE } = CONTAINER_PREFIXES
@@ -88,6 +90,22 @@ const addExposedPorts = envs => {
 }
 
 /**
+ * Called when the container to run already exists
+ * Default is to throw an error, unless skipError is true
+ * @param {string} container - Name of container that exists
+ * @param {Object} exists - Container json object data
+ * @param {Object} imageContext - Meta data about the image to be run
+ * @param {boolean} skipError - True the throwing an error should be skipped
+ *
+ * @returns {Object} - Joined imageContext and exists object
+ */
+const handelContainerExists = (container, exists, imageContext, skipExists) => {
+  return skipExists
+    ? { ...imageContext, ...exists, }
+    : throwDupContainerName(container)
+}
+
+/**
  * Run a docker image command
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
@@ -98,8 +116,8 @@ const addExposedPorts = envs => {
  * @returns {void}
  */
 const runDockerImage = async args => {
-  const { globalConfig, params, task } = args
-  const { context, cleanup, entry, log, options } = params
+  const { globalConfig, params, task, __internal={} } = args
+  const { context, connect, cleanup, entry, log, options } = params
 
   const imageContext = context
     ? await getImageContext(args)
@@ -107,7 +125,19 @@ const runDockerImage = async args => {
 
   const { tag, location, contextEnvs, container, image } = imageContext
 
-  let opts = options.concat([ `-it` ])
+  const exists = await docker.container.get(container)
+  if(exists)
+    return handelContainerExists(
+      container,
+      exists,
+      imageContext,
+      __internal.skipExists
+    )
+
+  let opts = connect
+    ? options.concat([ `-it` ])
+    : options.concat([ `-d` ])
+
   cleanup && opts.push(`--rm`)
   opts = opts.concat(addExposedPorts(contextEnvs))
 
@@ -121,6 +151,11 @@ const runDockerImage = async args => {
     envs: contextEnvs,
     name: container,
   })
+
+  const runningContainer = await docker.container.get(container)
+  return runningContainer
+    ? { ...imageContext, ...runningContainer }
+    : imageContext
 
 }
 
@@ -141,6 +176,12 @@ module.exports = {
         alias: [ 'clean', 'rm' ],
         description: 'Auto remove the docker container after exiting',
         example: `keg docker image run  --cleanup false`,
+        default: true
+      },
+      connect: {
+        alias: [ 'conn', 'con', 'it' ],
+        description: 'Auto connects to the docker containers stdio',
+        example: 'keg docker image run --connect false',
         default: true
       },
       image: {

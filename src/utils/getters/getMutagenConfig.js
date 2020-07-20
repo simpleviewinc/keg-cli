@@ -12,8 +12,8 @@ const { MUTAGEN_MAP } = DOCKER
  *
  * @returns {Object} - Parsed mutagen options object
  */
-const parseOptions = (options={}) => {
-  if(!options || !isStr(options)) return options
+const parseOptions = options => {
+  if(!options || !isStr(options)) return {}
   
   return options.split(' ')
     .reduce((parsed, option) => {
@@ -44,7 +44,10 @@ const parseOptions = (options={}) => {
 const getMutagenConfig = (params) => tryCatch(async () => {
   const { context, service, overrides={}, options, __injected } = params
 
-  const mutagenPath = __injected && __injected.mutagenPath || getContainerConst(context, `ENV.KEG_MUTAGEN_PATH`)
+  const mutagenPath = __injected &&
+    __injected.mutagenPath ||
+    getContainerConst(context, `ENV.KEG_MUTAGEN_PATH`)
+
   if(!mutagenPath) return deepMerge(overrides, parseOptions(options))
 
   const ymlConfig = await yml.load(mutagenPath)

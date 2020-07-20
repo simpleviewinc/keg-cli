@@ -3,6 +3,7 @@ module.exports = {
   ...require('./mutagenSyncExists'),
   ...require('./throwContainerNotFound'),
   ...require('./throwDockerCreds'),
+  ...require('./throwDupContainerName'),
   ...require('./throwExitError'),
   ...require('./throwGitCmd'),
   ...require('./throwInvalidParamMatch'),

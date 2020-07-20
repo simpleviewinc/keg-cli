@@ -20,7 +20,7 @@ const getServiceName = async ({ composePath, context }) => {
   const composeConfig = loadPath && await yml.load(loadPath) || {}
   const services = composeConfig && get(composeConfig, 'services')
 
-  return Object.keys(services).length
+  return services && Object.keys(services).length
     ? Object.keys(services)[0]
     : throwNoComposeService(loadPath)
 
