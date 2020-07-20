@@ -61,7 +61,7 @@ keg_run_components(){
   # Check if no exect command exists, or if it's set to web
   # Then default it to storybook
   if [[ -z "$KEG_EXEC_CMD" || "$KEG_EXEC_CMD" == 'web' ]]; then
-    KEG_EXEC_CMD="storybook"
+    KEG_EXEC_CMD="sb"
   fi
 
   keg_message "Running command 'yarn $KEG_EXEC_CMD'"
