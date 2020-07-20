@@ -91,7 +91,7 @@ class Sync {
   *
   * @returns {Object} - Found sync object
   */
-  exists = async ({ container, local, name, remote, byName }) => {
+  exists = async ({ container, local, name, remote }) => {
     const syncList = await this.list({ format: 'json' })
     const usePaths = Boolean(container && local && remote)
 

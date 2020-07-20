@@ -10,6 +10,7 @@ const { DOCKER } = require('KegConst/docker')
  * @returns {string} - Context without `keg`
  */
 const getKegContext = context => {
+
   const found = CONTAINER_TO_CONTEXT[context]
     ? CONTAINER_TO_CONTEXT[context]
     : context.indexOf('keg') === 0
@@ -18,7 +19,9 @@ const getKegContext = context => {
 
   // Check if the context exists in the container const
   // Injected apps should have been added by this point, so injected apps will exist as well
-  return DOCKER.CONTAINERS[found] || context
+  return DOCKER.CONTAINERS[found.toUpperCase()]
+    ? found
+    : context
 
 }
 
