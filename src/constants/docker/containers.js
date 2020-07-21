@@ -166,11 +166,8 @@ const containerConfig = (container, currentEnv, __internal={}) => {
  *
  * @returns {Object} - Built container config
 */
-const buildContainers = (container, __internal) => {
-  
-  // TODO: Update to call helper to get the current ENV
-  const currentEnv = 'local'
-  
+const buildContainers = (container, currentEnv, __internal) => {
+
   container &&
     !images.includes(container) &&
     images.push(container)
@@ -205,7 +202,11 @@ const getContainers = () => (__CONTAINERS || buildContainers())
  *
  * @returns {Object} - Built container config
 */
-const injectContainer = (container, __internal) => buildContainers(container, __internal)
+const injectContainer = (container, currentEnv, __internal) => buildContainers(
+  container,
+  currentEnv,
+  __internal,
+)
 
 /**
  * Exported object of this containers module

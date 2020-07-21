@@ -1,7 +1,6 @@
 const path = require('path')
 const { get, isStr } = require('@ltipton/jsutils')
-const { spawnCmd, executeCmd } = require('KegProc')
-const { readDir, pathExists } = require('KegFileSys')
+const { pathExists } = require('KegFileSys')
 const { throwMissingFile } = require('../error/throwMissingFile')
 const { getServiceName } = require('../docker/compose/getServiceName')
 
@@ -94,7 +93,7 @@ const checkYmlFile = async (containerPath, fileName) => {
  *
  * @returns {Void}
  */
-const injectData = async ({ app, injectPath }, containerPaths) => {
+const injectData = async ({ app, injectPath }, currentEnv, containerPaths) => {
   const { injectImage } = require('KegConst/docker/values')
   const { injectContainer } = require('KegConst/docker/containers')
 
@@ -102,22 +101,19 @@ const injectData = async ({ app, injectPath }, containerPaths) => {
   injectImage(app)
 
   // Add the app container info to the docker CONTAINERS constants
-  injectContainer(
-    app,
-    {
-      ...containerPaths,
-      // Add the KEG ENVS for the correct paths when running docker commands
-      ENVS: {
-        KEG_CONTEXT_PATH: injectPath,
-        KEG_CONTAINER_PATH: containerPaths.containerPath,
-        KEG_MUTAGEN_PATH: containerPaths.mutagenPath,
-        KEG_DOCKER_FILE: containerPaths.dockerPath,
-        KEG_VALUES_FILE: containerPaths.valuesPath,
-        KEG_COMPOSE_DEFAULT: containerPaths.composePath,
-        KEG_COMPOSE_SERVICE: containerPaths.serviceName,
-      }
+  injectContainer(app, currentEnv, {
+    ...containerPaths,
+    // Add the KEG ENVS for the correct paths when running docker commands
+    ENVS: {
+      KEG_CONTEXT_PATH: injectPath,
+      KEG_CONTAINER_PATH: containerPaths.containerPath,
+      KEG_MUTAGEN_PATH: containerPaths.mutagenPath,
+      KEG_DOCKER_FILE: containerPaths.dockerPath,
+      KEG_VALUES_FILE: containerPaths.valuesPath,
+      KEG_COMPOSE_DEFAULT: containerPaths.composePath,
+      KEG_COMPOSE_SERVICE: containerPaths.serviceName,
     }
-  )
+  })
 
 }
 
@@ -275,6 +271,7 @@ const injectService = async args => {
   if(!get(args, 'taskData.task.inject')) return args.taskData
 
   const { app, injectPath, taskData } = args
+  const { params: { env } } = taskData
 
   // Get the container paths for the app
   const containerPaths = await checkContainerPaths(app, injectPath)
@@ -284,7 +281,7 @@ const injectService = async args => {
   if(!containerPaths) return taskData
 
   // Inject the app and it's paths into the docker constants
-  await injectData(args, containerPaths)
+  await injectData(args, env, containerPaths)
 
   // Set the context for where the docker command should be run from
   return buildInjectedParams(args, containerPaths)
