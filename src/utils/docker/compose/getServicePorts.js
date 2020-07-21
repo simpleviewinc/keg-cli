@@ -1,11 +1,6 @@
 const { get, template } = require('@ltipton/jsutils')
-const { loadComposeConfig } = require('KegUtils/docker/compose/loadComposeConfig')
+const { getComposeConfig } = require('./getComposeConfig')
 const { HTTP_PORT_ENV } = require('KegConst/constants')
-
-const getConfig = contextEnvs => {
-  const composePath = get(contextEnvs, `KEG_COMPOSE_DEFAULT`)
-  return loadComposeConfig({ composePath, skipThrow: true })
-}
 
 /**
  * Maps the defined ports in the ENVS to -p docker argument
@@ -14,14 +9,14 @@ const getConfig = contextEnvs => {
  *
  * @returns {Array} - ENV ports in docker argument format
  */
-const addExposedPorts = async (contextEnvs, composeConfig) => {
+const getBoundServicePorts = async (contextEnvs, composeConfig) => {
   const servicePorts = await getServicePorts(contextEnvs, composeConfig) || []
   
   return Object.keys(contextEnvs).reduce((ports, key) => {
     const addPort = key.includes('_PORT')
       ? key === HTTP_PORT_ENV
-        ? `-p 80:${contextEnvs[key]}`
-        : `-p ${contextEnvs[key]}:${contextEnvs[key]}`
+        ? `-p 80:${contextEnvs[key]}`.trim()
+        : `-p ${contextEnvs[key]}:${contextEnvs[key]}`.trim()
       : null
 
     return addPort && ports.indexOf(addPort) === -1
@@ -41,7 +36,7 @@ const addExposedPorts = async (contextEnvs, composeConfig) => {
 const getServicePorts = async (contextEnvs, composeConfig) => {
   if(!contextEnvs) return []
 
-  composeConfig = composeConfig || await getConfig(contextEnvs)
+  composeConfig = composeConfig || await getComposeConfig(contextEnvs)
   const composeService = get(contextEnvs, `KEG_COMPOSE_SERVICE`)
 
   // If no compose config or defined service, just return empty array
@@ -60,6 +55,6 @@ const getServicePorts = async (contextEnvs, composeConfig) => {
 }
 
 module.exports = {
-  addExposedPorts,
+  getBoundServicePorts,
   getServicePorts,
 }

@@ -5,11 +5,9 @@ const { get } = require('@ltipton/jsutils')
 const { CONTAINERS } = require('KegConst/docker/containers')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
-const { HTTP_PORT_ENV, CONTAINER_PREFIXES } = require('KegConst/constants')
-const { addExposedPorts } = require('KegUtils/docker/compose/addExposedPorts')
+const { CONTAINER_PREFIXES } = require('KegConst/constants')
+const { getServiceValues } = require('KegUtils/docker/compose/getServiceValues')
 const { throwDupContainerName } = require('KegUtils/error/throwDupContainerName')
-const { getServiceVolumes } = require('KegUtils/docker/compose/getServiceVolumes')
-const { loadComposeConfig } = require('KegUtils/docker/compose/loadComposeConfig')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { IMAGE } = CONTAINER_PREFIXES
 
@@ -75,30 +73,6 @@ const getImageData = async args => {
 }
 
 /**
- * Gets values form the docker-compose.yml config based on service name
- * @param {Object} contextEnvs - Defined environment variables for the container
- * @param {Array} opts - Already added docker command arguments 
- *
- * @returns {Array} - opts array updated with docker-compose service values
- */
-const getServiceValues = async (contextEnvs, opts) => {
-
-  const composePath = get(contextEnvs, `KEG_COMPOSE_DEFAULT`)
-  if(!composePath) return opts
-  
-  const composeConfig = await loadComposeConfig({ composePath })
-
-  const ports = await addExposedPorts(contextEnvs, composeConfig)
-  opts = opts.concat(ports)
-
-  const volumes = await getServiceVolumes(contextEnvs, composeConfig)
-  opts = opts.concat(volumes)
-
-  return opts
-
-}
-
-/**
  * Called when the container to run already exists
  * Default is to throw an error, unless skipError is true
  * @param {string} container - Name of container that exists
@@ -151,8 +125,11 @@ const runDockerImage = async args => {
 
   cleanup && opts.push(`--rm`)
 
-  opts = await getServiceValues(contextEnvs, opts)
-
+  opts = await getServiceValues({
+    opts,
+    contextEnvs,
+    composePath: get(params, '__injected.composePath'),
+  })
 
   await docker.image.run({
     tag,

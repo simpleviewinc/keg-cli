@@ -1,10 +1,5 @@
 const { get, template } = require('@ltipton/jsutils')
-const { loadComposeConfig } = require('KegUtils/docker/compose/loadComposeConfig')
-
-const getConfig = contextEnvs => {
-  const composePath = get(contextEnvs, `KEG_COMPOSE_DEFAULT`)
-  return loadComposeConfig({ composePath, skipThrow: true })
-}
+const { getComposeConfig } = require('./getComposeConfig')
 
 /**
  * Loads the docker-compose.yml config. Looks for any volumes
@@ -16,7 +11,7 @@ const getConfig = contextEnvs => {
 const getServiceVolumes = async (contextEnvs, composeConfig) => {
   if(!contextEnvs) return []
 
-  composeConfig = composeConfig || await getConfig(contextEnvs)
+  composeConfig = composeConfig || await getComposeConfig(contextEnvs)
   const composeService = get(contextEnvs, `KEG_COMPOSE_SERVICE`)
 
   // If no compose config or defined service, just return empty array
