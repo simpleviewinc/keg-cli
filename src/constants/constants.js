@@ -39,17 +39,20 @@ module.exports = deepFreeze({
     TAP_LINKS: `cli.taps.links`,
   },
 
-  GLOBAL_CONFIG_FOLDER,
+  CLI_ROOT,
   GLOBAL_CONFIG_FILE,
   GLOBAL_INJECT_FOLDER,
-  CLI_ROOT: CLI_ROOT,
+  GLOBAL_CONFIG_FOLDER,
 
   // Sets the command to open an IDE
   GLOBAL_CONFIG_EDITOR_CMD: 'cli.settings.editorCmd',
 
+  // Keg global config file
   CLI_CONFIG: `${ CLI_CONFIG }.json`,
+
+  // Keg Default .env file
   DEFAULT_ENV: `defaults.env`,
-  
+
   // Check if the command should be logged
   // Passed as the last argument to the spawnCmd method
   NO_CMD_LOG: `NO_CMD_LOG`,
@@ -92,12 +95,16 @@ module.exports = deepFreeze({
   ],
 
   // Shortcuts to map env to real environment
+  ENV_OPTIONS: [ 'environment', 'env', 'e' ],
+
+  // Environment keys mapped to their shortcuts 
   ENV_MAP: {
     PRODUCTION: [ 'production', 'prod', 'p' ],
     QA: [ 'qa', 'q' ],
     STAGING: [ 'staging', 'st', 's' ],
     DEVELOPMENT: [ 'development', 'dev', 'd' ],
-    LOCAL: [ 'local', 'loc', 'l' ]
+    LOCAL: [ 'local', 'loc', 'l' ],
+    TEST: [ 'test', 'tst', 't' ]
   },
 
   // Keys in the object that should be returned by
