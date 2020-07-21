@@ -6,7 +6,7 @@ const { CONTAINERS } = require('KegConst/docker/containers')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 const { HTTP_PORT_ENV, CONTAINER_PREFIXES } = require('KegConst/constants')
-const { getServicePorts } = require('KegUtils/docker/compose/getServicePorts')
+const { addExposedPorts } = require('KegUtils/docker/compose/addExposedPorts')
 const { throwDupContainerName } = require('KegUtils/error/throwDupContainerName')
 const { getServiceVolumes } = require('KegUtils/docker/compose/getServiceVolumes')
 const { loadComposeConfig } = require('KegUtils/docker/compose/loadComposeConfig')
@@ -72,29 +72,6 @@ const getImageData = async args => {
     image: image.rootId,
   }
 
-}
-
-/**
- * Maps the defined ports in the ENVS to -p docker argument
- * <br/>This allows those ports to be exposed outside the container
- * @param {Object} envs - Defined environment variables for the container
- *
- * @returns {Array} - ENV ports in docker argument format
- */
-const addExposedPorts = async (contextEnvs, composeConfig) => {
-  const servicePorts = await getServicePorts(contextEnvs, composeConfig) || []
-  
-  return Object.keys(contextEnvs).reduce((ports, key) => {
-    const addPort = key.includes('_PORT')
-      ? key === HTTP_PORT_ENV
-        ? `-p 80:${contextEnvs[key]}`
-        : `-p ${contextEnvs[key]}:${contextEnvs[key]}`
-      : null
-
-    return addPort && ports.indexOf(addPort) === -1
-      ? ports.concat([ addPort ])
-      : ports
-  }, servicePorts)
 }
 
 /**

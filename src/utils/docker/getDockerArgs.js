@@ -2,7 +2,8 @@ const { DOCKER } = require('KegConst/docker')
 const { reduceObj, get, isStr } = require('@ltipton/jsutils')
 const { exists } = require('KegUtils/helpers/exists')
 const docker = require('KegDocCli')
-
+const { loadComposeConfig } = require('./compose/loadComposeConfig')
+const { addExposedPorts } = require('./compose/addExposedPorts')
 
 /**
  * Temp helper method to map the app port to port 80
@@ -12,12 +13,23 @@ const docker = require('KegDocCli')
  *
  * @returns {string} - dockerCmd with the port arg added
  */
-const getPortMap = (dockerCmd, context) => {
-  const appPort = get(DOCKER, `CONTAINERS.${ context.toUpperCase() }.ENV.DOC_APP_PORT`)
+const getPortMap = async (context, contextEnvs, __injected={}) => {
+  const envPath = `CONTAINERS.${context.toUpperCase()}.ENV`
 
-  return appPort
-    ? `${dockerCmd} -p 80:${appPort}`.trim()
-    : dockerCmd.trim()
+  // Get the compose path for the app
+  const composePath = __injected.composePath || get(DOCKER, `${ envPath }.KEG_COMPOSE_DEFAULT`)
+
+  // Load the docker-compose file as a json object
+  const composeConfig = composePath && await loadComposeConfig({ composePath })
+  const exposedPorts = composeConfig
+    ? await addExposedPorts(contextEnvs, composeConfig)
+    : []
+
+  // Get the doc app port and bind it to 80 if it exists
+  const appPort = get(DOCKER, `${ envPath }.DOC_APP_PORT`)
+  appPort && exposedPorts.unshift(`-p 80:${appPort}`)
+
+  return exposedPorts
 }
 
 

@@ -102,10 +102,10 @@ const dockerPackageRun = async args => {
   * ----------- Step 5 ----------- *
   * Run the image in a container without mounting any volumes
   */
-  const opts = [ `-it` ]
+  let opts = [ `-it` ]
   
-  const ports = getPortMap('', cmdContext).trim()
-  ports && opts.push(ports)
+  const ports = await getPortMap(cmdContext, contextEnvs, params.__injected) || []
+  opts = ports ? opts.concat(ports) : opts
 
   cleanup && opts.push(`--rm`)
   const defCmd = `/bin/bash ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`

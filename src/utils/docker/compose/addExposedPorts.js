@@ -1,10 +1,35 @@
 const { get, template } = require('@ltipton/jsutils')
 const { loadComposeConfig } = require('KegUtils/docker/compose/loadComposeConfig')
+const { HTTP_PORT_ENV } = require('KegConst/constants')
 
 const getConfig = contextEnvs => {
   const composePath = get(contextEnvs, `KEG_COMPOSE_DEFAULT`)
   return loadComposeConfig({ composePath, skipThrow: true })
 }
+
+/**
+ * Maps the defined ports in the ENVS to -p docker argument
+ * <br/>This allows those ports to be exposed outside the container
+ * @param {Object} envs - Defined environment variables for the container
+ *
+ * @returns {Array} - ENV ports in docker argument format
+ */
+const addExposedPorts = async (contextEnvs, composeConfig) => {
+  const servicePorts = await getServicePorts(contextEnvs, composeConfig) || []
+  
+  return Object.keys(contextEnvs).reduce((ports, key) => {
+    const addPort = key.includes('_PORT')
+      ? key === HTTP_PORT_ENV
+        ? `-p 80:${contextEnvs[key]}`
+        : `-p ${contextEnvs[key]}:${contextEnvs[key]}`
+      : null
+
+    return addPort && ports.indexOf(addPort) === -1
+      ? ports.concat([ addPort ])
+      : ports
+  }, servicePorts)
+}
+
 
 /**
  * Loads the docker-compose.yml config. Looks for any ports
@@ -35,5 +60,6 @@ const getServicePorts = async (contextEnvs, composeConfig) => {
 }
 
 module.exports = {
-  getServicePorts
+  addExposedPorts,
+  getServicePorts,
 }
