@@ -25,6 +25,7 @@ module.exports = {
       ...require('./attach'),
       ...require('./build'),
       ...require('./destroy'),
+      ...require('./package'),
       ...require('./pullrequest'),
       ...require('./restart'),
       ...require('./start'),
