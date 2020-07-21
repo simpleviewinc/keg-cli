@@ -89,16 +89,7 @@ const getEnvFiles = (container, currentEnv, __internal={}) => {
 const getValuesFiles = (container, currentEnv, __internal={}) => {
   const { valuesPath, containerPath } = __internal
 
-  const ymlPaths = [
-    // ENVs in the container folder based on current environment
-    // Example => /containers/core/values.yml
-    path.join(containersPath, container, 'values.yml'),
-
-    // ENVs in the container folder based on current environment
-    // Example => /containers/core/values_local.yml
-    path.join(containersPath, container, `values_${ currentEnv }.yml`),
-    path.join(containersPath, container, `values-${ currentEnv }.yml`),
-
+  const globalPaths = [
     // ENVs in the global config folder based on current environment
     // Example => ~/.kegConfig/values_local.yml
     path.join(GLOBAL_CONFIG_FOLDER, `values_${ currentEnv }.yml`),
@@ -108,14 +99,33 @@ const getValuesFiles = (container, currentEnv, __internal={}) => {
     // Example => ~/.kegConfig/core_values_local.yml
     path.join(GLOBAL_CONFIG_FOLDER, `${ container }_values_${ currentEnv }.yml`),
     path.join(GLOBAL_CONFIG_FOLDER, `${ container }-values-${ currentEnv }.yml`),
-
-    // Add injected values paths
-    valuesPath,
-    // Also try to load an injected ENV values file 
-    containerPath && path.join(containerPath, `values_${ currentEnv }.yml`),
-    containerPath && path.join(containerPath, `values-${ currentEnv }.yml`),
-
   ]
+
+  // If it's an injected app, load the injected values fiels
+  // Otherwise load the internal values paths
+  const ymlPaths = containerPath
+  ? [
+      // Load the global values before the external values
+      // This allows apps to overwrite global defaults
+      ...globalPaths,
+      // Add the main injected values path first
+      valuesPath,
+      // Also try to load an injected ENV values file that override the default
+      containerPath && path.join(containerPath, `values_${ currentEnv }.yml`),
+      containerPath && path.join(containerPath, `values-${ currentEnv }.yml`),
+    ]
+  : [
+      // ENVs in the container folder based on current environment
+      // Example => /containers/core/values.yml
+      path.join(containersPath, container, 'values.yml'),
+      // ENVs in the container folder based on current environment
+      // Example => /containers/core/values_local.yml
+      path.join(containersPath, container, `values_${ currentEnv }.yml`),
+      path.join(containersPath, container, `values-${ currentEnv }.yml`),
+      // Load the global values after the internal values
+      // This allows global defaults to overwrite internal values
+      ...globalPaths
+    ]
 
   // Try to load each of the envPaths if it exists, then merge and return them
   return deepMerge(
