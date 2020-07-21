@@ -60,8 +60,8 @@ const getGlobalOptions = (task, action) => {
  */
 const addGlobalOptions = (namedTask, name, parent) => {
   set(namedTask, `${ name }.options`, deepMerge(
+    get(namedTask, `${ name }.options`),
     getGlobalOptions(parent, name),
-    get(namedTask, `${ name }.options`)
   ))
 
   return namedTask
