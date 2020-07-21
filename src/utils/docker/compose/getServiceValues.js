@@ -11,17 +11,18 @@ const { getComposeConfig } = require('./getComposeConfig')
  *
  * @returns {Array} - opts array updated with docker-compose service values
  */
-const getServiceValues = async ({ composePath, contextEnvs, opts=[] }) => {
+const getServiceValues = async ({ composePath, contextEnvs, opts=[], volumes }) => {
 
   const composeConfig = await getComposeConfig(contextEnvs, composePath)
   if(!composeConfig) return opts
 
   const ports = await getBoundServicePorts(contextEnvs, composeConfig)
   opts = opts.concat(ports)
+  
+  if(!volumes) return opts
 
-  const volumes = await getServiceVolumes(contextEnvs, composeConfig)
-
-  opts = opts.concat(volumes)
+  const vols = await getServiceVolumes(contextEnvs, composeConfig)
+  opts = opts.concat(vols)
 
   return opts
 

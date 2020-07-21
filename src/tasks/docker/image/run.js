@@ -100,7 +100,7 @@ const handelContainerExists = (container, exists, imageContext, skipExists) => {
  */
 const runDockerImage = async args => {
   const { globalConfig, params, task, __internal={} } = args
-  const { context, connect, cleanup, cmd, log, options } = params
+  const { context, connect, cleanup, cmd, log, options, volumes } = params
 
   const imageContext = context
     ? await getImageContext(args)
@@ -127,6 +127,7 @@ const runDockerImage = async args => {
 
   opts = await getServiceValues({
     opts,
+    volumes,
     contextEnvs,
     composePath: get(params, '__injected.composePath'),
   })
@@ -198,7 +199,12 @@ module.exports = {
       tag: {
         description: 'Tag of the image to be run',
         example: 'keg docker image run --context core --tag updates',
-      }
+      },
+      volumes: {
+        description: 'Mount the local volumes defined in the docker-compose config.yml.',
+        example: 'keg docker package run --volumes false',
+        default: true
+      },
     },
   }
 }
