@@ -16,8 +16,8 @@ const getPortMap = (dockerCmd, context) => {
   const appPort = get(DOCKER, `CONTAINERS.${ context.toUpperCase() }.ENV.DOC_APP_PORT`)
 
   return appPort
-    ? `${dockerCmd} -p 80:${appPort}`
-    : dockerCmd
+    ? `${dockerCmd} -p 80:${appPort}`.trim()
+    : dockerCmd.trim()
 }
 
 
