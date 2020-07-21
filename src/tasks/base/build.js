@@ -30,18 +30,13 @@ module.exports = {
     options: {
       args: {
         description: 'Add docker build arguments from container env files',
-        example: 'keg base build args="--force-rm"',
+        example: 'keg base build --args false',
         default: true
       },
       cache: {
         description: 'Docker will use build cache when building the image',
         example: 'keg base build --cache false',
         default: true
-      },
-      env: {
-        description: 'Environment to build the Docker image for. Gets added as a tag to the image.',
-        example: 'keg base build --env staging',
-        default: 'development',
       },
       local: {
         description: 'Copy the local repo into the docker container at build time',

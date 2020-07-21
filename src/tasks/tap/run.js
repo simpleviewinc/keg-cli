@@ -47,9 +47,10 @@ module.exports = {
         example: `keg tap run --options \\"-p 80:19006 -e MY_ENV=data\\"`,
         default: []
       },
-      entry: {
+      cmd: {
+        alias: [ 'entry', 'command' ],
         description: 'Overwrite entry of the image. Use escaped quotes for spaces ( bin/bash)',
-        example: 'keg tap run --entry \\"node index.js\\"',
+        example: 'keg tap run --cmd \\"node index.js\\"',
         default: '/bin/bash'
       },
       log: {

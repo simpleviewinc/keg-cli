@@ -35,8 +35,8 @@ const runService = async (args, exArgs) => {
       context,
       // Set connect to false to we run it in the background
       connect: false,
-      // set the entry to tail /dev/null to keep the container running
-      entry: 'tail -f /dev/null'
+      // set the cmd to tail /dev/null to keep the container running
+      cmd: 'tail -f /dev/null'
     }
   })
 

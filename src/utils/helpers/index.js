@@ -9,6 +9,5 @@ module.exports = {
   ...require('./mapEnv'),
   ...require('./optionsHasArg'),
   ...require('./tryCatch'),
-  ...require('./updateDefaultEnv'),
   ...require('./waitForIt'),
 }

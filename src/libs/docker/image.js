@@ -207,7 +207,7 @@ const clean = async ({ force, opts='', log=false }) => {
  * Runs a built image as a container
  * @function
  * @param {Object} args - Arguments to pass to run the docker run command
- * @param {string} args.entry - Overwrite the default entry of the image
+ * @param {string} args.cmd - Overwrite the default cmd of the image
  * @param {Object} args.envs - Envs to pass to the container when run
  * @param {string|Object} args.image - Image object or image name to be run
  * @param {string} args.location - The location where the docker run command will be executed

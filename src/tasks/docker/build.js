@@ -72,7 +72,7 @@ const dockerBuild = async args => {
     context: cmdContext,
     ...(tap && { tap }),
     ...(image && { image }),
-    ...(args && { buildArgs: contextEnvs }),
+    ...(params.args && { buildArgs: contextEnvs }),
   })
 
   Logger.info(`Building docker image "${ image || cmdContext }" ...`)
@@ -102,6 +102,7 @@ module.exports = {
         enforced: true,
       },
       args: {
+        example: 'keg docker build --args false',
         description: 'Add build args from container env files',
         default: true
       },

@@ -107,8 +107,9 @@ module.exports = {
         enforced: true,
       },
       cmd: {
+        alias: [ 'entry', 'command' ],
         description: 'Docker container command to run. Default ( /bin/bash )',
-        example: 'keg docker exec ls -ls',
+        example: 'keg docker cmd ls -ls',
         default: '/bin/bash'
       },
       options: {

@@ -149,7 +149,7 @@ const handelContainerExists = (container, exists, imageContext, skipExists) => {
  */
 const runDockerImage = async args => {
   const { globalConfig, params, task, __internal={} } = args
-  const { context, connect, cleanup, entry, log, options } = params
+  const { context, connect, cleanup, cmd, log, options } = params
 
   const imageContext = context
     ? await getImageContext(args)
@@ -181,7 +181,7 @@ const runDockerImage = async args => {
     tag,
     log,
     opts,
-    entry,
+    entry: cmd,
     image,
     location,
     envs: contextEnvs,
@@ -230,9 +230,10 @@ module.exports = {
         example: `keg docker image run --options \\"-p 80:19006 -e MY_ENV=data\\"`,
         default: []
       },
-      entry: {
+      cmd: {
+        alias: [ 'command', 'entry' ],
         description: 'Overwrite entry of the image. Use escaped quotes for spaces ( bin/bash )',
-        example: 'keg docker image run --entry \\"node index.js\\"',
+        example: 'keg docker image run --cmd \\"node index.js\\"',
         default: '/bin/bash'
       },
       log: {

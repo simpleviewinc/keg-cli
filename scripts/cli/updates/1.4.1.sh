@@ -19,6 +19,7 @@ keg_cli_1_4_1_update(){
   # Resync the global config
   keg config sync --confirm false
   keg config set --key cli.settings.checkUpdates --value true --confirm false
+  keg config set --key cli.settings.defaultEnv --value development --confirm false
 
   keg d build base --cache false
 
