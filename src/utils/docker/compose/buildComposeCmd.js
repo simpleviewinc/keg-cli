@@ -3,7 +3,7 @@ const { get } = require('@ltipton/jsutils')
 const { DOCKER } = require('KegConst/docker')
 const { writeFile, mkDir, pathExists } = require('KegFileSys/fileSys')
 const { GLOBAL_INJECT_FOLDER } = require('KegConst/constants')
-const { DOCKER_ENV, CONTAINERS } = DOCKER
+const { CONTAINERS } = DOCKER
 const { loadTemplate } = require('KegUtils/template')
 const { generalError } = require('KegUtils/error/generalError')
 
@@ -53,13 +53,13 @@ const addInjectedTemplate = async (dockerCmd, data) => {
  * @function
  * @param {string} dockerCmd - Docker command to add the compile file paths to
  * @param {string} context - Context the docker command is being run in ( core / tap )
- * @param {string} ENV - Name of the ENV that defines the file path of the compose file
+ * @param {string} env - Name of the ENV that defines the file path of the compose file
  * @param {string} composeFile - compose file path to override pulling from container ENVs
  *
  * @returns {string} - dockerCmd string with the file path added
  */
-const addComposeFile = (dockerCmd='', container, ENV, composeFile) => {
-  const compPath = composeFile || get(CONTAINERS, `${ container }.ENV.${ ENV }`)
+const addComposeFile = (dockerCmd='', container, env, composeFile) => {
+  const compPath = composeFile || get(CONTAINERS, `${ container }.ENV.${ env }`)
   const addedComposeFile = compPath ? `-f ${ compPath }` : ''
 
   return `${dockerCmd} ${ addedComposeFile }`.trim()
@@ -75,6 +75,9 @@ const addComposeFile = (dockerCmd='', container, ENV, composeFile) => {
  */
 const addComposeFiles = async (dockerCmd, context='', __injected={}) => {
 
+  // TODO: add helper to env here and replace curENV
+  const curENV = 'LOCAL'
+
   const container = context.toUpperCase()
 
   // Check if the compose file path has been injected
@@ -87,10 +90,10 @@ const addComposeFiles = async (dockerCmd, context='', __injected={}) => {
   dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_REPO`)
 
   // Get the docker compose file for the environment
-  dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_${ DOCKER_ENV }`)
+  dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_${ curENV }`)
 
   // Get the docker compose file for the container and ENV
-  dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_${ container }_${ DOCKER_ENV }`)
+  dockerCmd = addComposeFile(dockerCmd, container, `KEG_COMPOSE_${ container }_${ curENV }`)
 
   return __injected.composePath
     ? addInjectedTemplate(dockerCmd, __injected)

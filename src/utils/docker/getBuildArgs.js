@@ -3,7 +3,6 @@ const { getGitUrl, getGitKey, getTapPath, exists } = require('KegUtils')
 const { getRemoteUrl } = require('KegUtils/git/getRemoteUrl')
 const docker = require('KegDocCli')
 const { DOCKER } = require('KegConst/docker')
-const { DOCKER_ENV } = DOCKER
 
 /**
  * Adds build args to the a docker the build command

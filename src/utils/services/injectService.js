@@ -109,6 +109,7 @@ const injectData = async ({ app, injectPath }, containerPaths) => {
       // Add the KEG ENVS for the correct paths when running docker commands
       ENVS: {
         KEG_CONTEXT_PATH: injectPath,
+        KEG_CONTAINER_PATH: containerPaths.containerPath,
         KEG_MUTAGEN_PATH: containerPaths.mutagenPath,
         KEG_DOCKER_FILE: containerPaths.dockerPath,
         KEG_VALUES_FILE: containerPaths.valuesPath,
@@ -171,6 +172,9 @@ const checkContainerPaths = async (app, injectPath) => {
 
   // Get the mutagen config path. If not config, it uses the taps mutagen config
   const mutagenPath = await getMutagenPath(containerPath)
+
+  // TODO: get .envs path
+  // const envsPath = await getEnvsPath(containerPath)
 
   // If we get to here, all files exist, so return the paths object
   return {
