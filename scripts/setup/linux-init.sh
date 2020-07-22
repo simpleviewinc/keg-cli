@@ -26,13 +26,6 @@ KEG_USER="$USER"
 KEG_GROUP="$(id -g -n $KEG_USER)"
 KEG_EXIT=""
 
-# Ensure a .bashrc file exists
-if [[ ! -f "$BASH_FILE" ]]; then
-  # Create the file if it does not exist
-  keg_message ".bashrc file not found, creating at $BASH_FILE"
-  touch $BASH_FILE
-fi
-
 # Prints a message to the terminal through stderr
 keg_message(){
   echo "[ KEG CLI ] $@" >&2
@@ -47,6 +40,13 @@ keg_ask_question(){
 
   echo "$ANSWER"
 }
+
+# Ensure a .bashrc file exists
+if [[ ! -f "$BASH_FILE" ]]; then
+  # Create the file if it does not exist
+  keg_message ".bashrc file not found, creating at $BASH_FILE"
+  touch $BASH_FILE
+fi
 
 # ------------ Local Machine Setup ------------ #
 
