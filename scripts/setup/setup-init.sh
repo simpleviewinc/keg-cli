@@ -40,7 +40,7 @@ keg_run_os_setup_file(){
   local SETUP_FILE=$KEG_CLI_PATH/setup/scripts/$OS_TYPE-init.sh
 
   if [[ -f "$SETUP_FILE" ]]; then
-    /bin/bash $SETUP_FILE
+    /bin/bash $SETUP_FILE "$@"
   else
     echo "[ KEG-CLI ] ERROR: Could not find setup script for $OS_TYPE."
     echo "[ KEG-CLI ] ERROR: Please ensure your Operating System is supported!"
@@ -49,4 +49,4 @@ keg_run_os_setup_file(){
 }
 
 # Run the setup script
-keg_run_os_setup_file
+keg_run_os_setup_file "$@"
