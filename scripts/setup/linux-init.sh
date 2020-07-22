@@ -117,9 +117,9 @@ keg_install_docker(){
     # sudo apt-get install --reinstall docker-ce
     /bin/sh -c "$(curl -fsSL https://get.docker.com)"
     sudo usermod -aG docker $USER
-    newgrp docker
-
-    keg_setup_static_ip
+    # TODO: update to auto-load users groups without login needed
+    newgrp - docker
+    # keg_setup_static_ip
   fi
 
 }
@@ -269,6 +269,10 @@ keg_install_github_cli(){
   if [[ -x "$(command -v gh 2>/dev/null)" ]]; then
     keg_message "Github CLI is installed"
   else
+    export LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/isl@0.18/lib"
+    export CPPFLAGS="-I/home/linuxbrew/.linuxbrew/opt/isl@0.18/include"
+    brew install patchelf
+    brew install gcc
     brew install github/gh/gh
   fi
 
