@@ -45,7 +45,6 @@ module.exports = {
     example: 'keg docker prune <options>',
     options: {
       context: {
-        allowed: DOCKER.IMAGES,
         description: 'Context of the docker container to log',
         example: `keg docker log --context core`,
         enforced: true,

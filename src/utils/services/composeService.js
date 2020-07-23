@@ -24,7 +24,8 @@ const composeService = async (args, exArgs) => {
   const containerContext = await runInternalTask('docker.tasks.compose.tasks.up', serviceArgs)
 
   // Only create syncs in the development env
-  const doSync = get(args, 'params.env') === 'development' && get(args, 'params.service') === 'mutagen'
+  const doSync = get(args, 'params.env') !== 'production' &&
+    get(args, 'params.service') === 'mutagen'
 
   // Run the mutagen service if needed
   const composeContext = doSync
