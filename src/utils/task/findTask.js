@@ -1,10 +1,22 @@
 const { get } = require('@ltipton/jsutils')
 const { getTask } = require('./getTask')
 const { validateTask } = require('./validateTask')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
-const { TAP_LINKS } = GLOBAL_CONFIG_PATHS
 const { getParams } = require('./getParams')
 const { injectService } = require('../services/injectService')
+const { 
+  GLOBAL_CONFIG_PATHS,
+  CONTEXT_TO_CONTAINER,
+  CONTAINER_TO_CONTEXT
+} = require('KegConst/constants')
+const { TAP_LINKS } = GLOBAL_CONFIG_PATHS
+
+/**
+ * Get all the possible internal apps to allow checking before checking taps
+ * This ensure internal apps are used before taps
+ * @Object
+ */
+const internal = Object.keys(CONTEXT_TO_CONTAINER)
+  .concat(Object.keys(CONTAINER_TO_CONTEXT))
 
 /**
  * Checks if the command is a linked tap, and if so, calls the tap command on that tap
@@ -59,8 +71,10 @@ const checkLinkedTaps = async (globalConfig, tasks, command, options) => {
 const findTask = async (globalConfig, tasks, command, options) => {
 
   // First check if the cmd is for a linked task
-  const tapTaskData = await checkLinkedTaps(globalConfig, tasks, command, options)
-  
+  const tapTaskData = internal.indexOf(command) === -1
+    ? await checkLinkedTaps(globalConfig, tasks, command, options)
+    : false
+
   // Get the task from available tasks
   const foundTask = tapTaskData || getTask(tasks, command, ...options)
 
