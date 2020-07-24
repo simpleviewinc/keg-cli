@@ -1,5 +1,5 @@
+const { get } = require('@ltipton/jsutils')
 const { destroyService } = require('KegUtils/services')
-
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { SYNC_PREFIXES: { BDD_SERVICE } } = require('KegConst/constants')
 
@@ -19,13 +19,17 @@ const destroyRegulator = async (args) => {
   await runInternalTask('mutagen.tasks.clean', {
     ...args,
     params: {
-      ...params,
+      ...args.params,
       context: `${ BDD_SERVICE }-`,
       force: true,
     }
   })
 
-  return destroyService(args, { context: 'regulator', container: 'keg-regulator' })
+  return destroyService(args, {
+    context: 'regulator',
+    container: 'keg-regulator',
+    ...(get(args, 'params.image') && { image: 'keg-regulator' }),
+  })
 }
 
 module.exports = {

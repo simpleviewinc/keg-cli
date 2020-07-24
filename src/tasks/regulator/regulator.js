@@ -28,6 +28,8 @@ module.exports = {
       ...require('./copy'),
       ...require('./destroy'),
       ...require('./restart'),
+      ...require('./run'),
+      ...require('./report'),
       ...require('./start'),
       ...require('./stop'),
       ...require('./sync'),

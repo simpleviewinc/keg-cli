@@ -1,16 +1,5 @@
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { DOCKER: { CONTAINERS_PATH } } = require('KegConst/docker')
-const { getRepoPath } = require('KegUtils/getters/getRepoPath')
-const { copyFile } = require('KegFileSys/fileSys')
-
-const copyRunScript = () => {
-  const regulatorPath = getRepoPath('regulator')
-  return copyFile(
-    `${ CONTAINERS_PATH }/regulator/run.sh`,
-    `${ regulatorPath }/run.sh`
-  )
-
-}
+const { copyBddRun } = require('KegUtils/helpers/copyBddRun')
+const { bddService } = require('KegUtils/services')
 
 /**
  * Restart the keg-regulator container with docker-compose
@@ -26,22 +15,11 @@ const restart = async args => {
   const { params: { log, script } } = args
 
   // Copy the run script in-case there were updates
-  script && await copyRunScript()
+  await copyBddRun()
 
-  // Run the docker-compose restart task
-  await runInternalTask('docker.tasks.compose.tasks.restart', {
-    ...args,
-    params: { ...args.params, context: 'regulator' },
-  })
-
-  // Run the docker log task
-  return log && runInternalTask('docker.tasks.log', {
-    ...args,
-    params: {
-      ...args.params,
-      context: 'regulator',
-    },
-  })
+  // Run the bddService again
+  // It will check the task name, and rerun compose restart when the task is restart
+  return bddService(args, { context: 'regulator', container: 'keg-regulator', cmd: `sh run.sh` })
 
 }
 
@@ -56,12 +34,6 @@ module.exports = {
       log: {
         description: "Auto-log the container output on restart",
         example: 'keg regulator restart --log false',
-        default: true
-      },
-      script: {
-        alias: [ 'copy' ],
-        description: "Copy the run.sh script from the container/regulator folder",
-        example: 'keg regulator restart --script false',
         default: true
       }
     }

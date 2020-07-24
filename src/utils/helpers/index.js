@@ -1,6 +1,7 @@
 module.exports = {
   ...require('./checkPathExists'),
   ...require('./confirmExec'),
+  ...require('./copyBddRun'),
   ...require('./exists'),
   ...require('./findPathByName'),
   ...require('./hasHelpArg'),

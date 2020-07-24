@@ -1,8 +1,9 @@
 const docker = require('KegDocCli')
-const { containerSelect } = require('KegUtils/docker/containerSelect')
-const { imageSelect } = require('KegUtils/docker/imageSelect')
-const { getPrefixContext } = require('./getPrefixContext')
+const { isStr } = require('@ltipton/jsutils')
 const { isDockerId } = require('../docker/isDockerId')
+const { getPrefixContext } = require('./getPrefixContext')
+const { imageSelect } = require('KegUtils/docker/imageSelect')
+const { containerSelect } = require('KegUtils/docker/containerSelect')
 
 /**
  * If no context can be found, ask the user when container they want to use
@@ -74,7 +75,12 @@ const imageContext = async (toFind, prefixData={}, __injected, askFor) => {
 const getContext = async (params, askFor) => {
   const { context, container, image, tap, __injected } = params
   const contextRef = context || container || image || (tap && 'tap')
-  const prefixData = isDockerId(contextRef) ? { id: contextRef } : getPrefixContext(contextRef)
+
+  const prefixData = isDockerId(contextRef)
+    ? { id: contextRef }
+    : isStr(contextRef)
+      ? getPrefixContext(contextRef)
+      : {}
 
   const foundContext = container
     ? await containerContext(container, prefixData, __injected, askFor)
