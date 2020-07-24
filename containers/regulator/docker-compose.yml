@@ -45,8 +45,7 @@ services:
       - "4444:4444"
 
   chrome:
-    image: selenium/node-chrome-debug:${SELENIUM_VERSION}
-    # image: selenium/node-chrome:${SELENIUM_VERSION}
+    image: selenium/node-chrome${KEG_REGULATOR_VNC}:${SELENIUM_VERSION}
     container_name: 'selenium-chrome'
     volumes:
       - /dev/shm:/dev/shm
@@ -63,8 +62,7 @@ services:
       - ${CHROME_VNC_PORT}:${CHROME_VNC_PORT}
 
   firefox:
-    image: selenium/node-firefox-debug:${SELENIUM_VERSION}
-    # image: selenium/node-firefox:${SELENIUM_VERSION}
+    image: selenium/node-firefox${KEG_REGULATOR_VNC}:${SELENIUM_VERSION}
     container_name: 'selenium-firefox'
     volumes:
       - /dev/shm:/dev/shm

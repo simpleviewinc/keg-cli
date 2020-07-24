@@ -26,13 +26,18 @@ env:
   DOC_APP_PORT: 4000
   DOC_FEATURES_PATH: /keg/keg-regulator/tests/features
   DOC_STEPS_PATH: /keg/keg-regulator/tests/steps
+
+  # --- SELENIUM SETTINGS --- #
+
   HUB_HOST: selenium-hub
   HUB_PORT: 4444
   SELENIUM_VERSION: 3.141.59-20200525
-  # SELENIUM_VERSION: 3.141.59-zirconium
+  SELENIUM__VNC: -debug
   WINDOW_WIDTH: 1280
   WINDOW_HEIGHT: 720
 
+  HEADLESS: ""
+  
   CHROME_PORT: 5555
   DOC_CHROME_PORT: 5555
   CHROME_VNC_PORT: 5900
@@ -41,6 +46,7 @@ env:
   DOC_FIREFOX_PORT: 5556
   FIREFOX_VNC_PORT: 5901
   DOC_FIREFOX_VNC_PORT: 5900
+
 
   # --- GENERAL CONTEXT ENVs --- #
 
