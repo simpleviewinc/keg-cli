@@ -76,7 +76,9 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 ENV GIT_KEY=""
 
 # Install git for the new stage
-RUN apk add --no-cache git bash
+RUN apk add --no-cache git bash python3 net-tools curl gcc g++; \
+    git clone https://github.com/novnc/noVNC.git /keg/keg-vnc; \
+    git clone https://github.com/kanaka/websockify /keg/keg-vnc/utils/websockify
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn
