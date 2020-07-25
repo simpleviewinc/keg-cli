@@ -10,7 +10,8 @@ env:
 
   # The default docker-compose file path
   KEG_COMPOSE_DEFAULT: "{{ cli.paths.containers }}/regulator/docker-compose.yml"
-  KEG_COMPOSE_REPO: "{{ cli.paths.regulator }}/docker-compose.yml"
+  KEG_COMPOSE_LOCAL: "{{ cli.paths.containers }}/regulator/docker-compose.selenium.yml"
+
   # Can also define other an override compose files
   # Other compose files can loaded by setting an ENVS as follows:
     # KEG_COMPOSE_TEST_<ENV>: "/path/to/override.yml"
@@ -32,21 +33,30 @@ env:
   HUB_HOST: selenium-hub
   HUB_PORT: 4444
   SELENIUM_VERSION: 3.141.59-20200525
-  SELENIUM__VNC: -debug
+  SELENIUM_CONTAINER: selenium-hub
   WINDOW_WIDTH: 1280
   WINDOW_HEIGHT: 720
+  SELENIUM_VNC: ""
+  HEADLESS: true
 
-  HEADLESS: ""
-  
+  DOC_BROWSER_PORT: 5555
+  DOC_VNC_PORT: 5900
+
   CHROME_PORT: 5555
-  DOC_CHROME_PORT: 5555
   CHROME_VNC_PORT: 5900
+  CHROME_CONTAINER: selenium-chrome
 
   FIREFOX_PORT: 5556
-  DOC_FIREFOX_PORT: 5556
   FIREFOX_VNC_PORT: 5901
-  DOC_FIREFOX_VNC_PORT: 5900
+  FIREFOX_CONTAINER: selenium-firefox
 
+  NO_VNC_CONTAINER: keg-novnc
+  NO_VNC_PORT: 6080
+  
+  # TODO: Need to create a run script that will run two instances of the VNC server
+  # Currently, you can only connect to the chrome instance, and not the firefox instance
+  # NO_VNC_CHROME_URL: http://regulator.kegdev.xyz:6080/vnc.html?host=regulator.kegdev.xyz&port=6080
+  # NO_VNC_FIREFOX_URL: http://regulator.kegdev.xyz:6080/vnc.html?host=regulator.kegdev.xyz&port=6081
 
   # --- GENERAL CONTEXT ENVs --- #
 
@@ -55,3 +65,4 @@ env:
   VERSION: "0.0.1"
   CONTAINER_NAME: keg-regulator
 
+ 

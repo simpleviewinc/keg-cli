@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  selenium-hub:
+    image: selenium/hub:${SELENIUM_VERSION}
+    container_name: ${SELENIUM_CONTAINER}
+    ports:
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome${SELENIUM_VNC}:${SELENIUM_VERSION}
+    container_name: ${CHROME_CONTAINER}
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - VNC_NO_PASSWORD=1
+      - WINDOW_HEIGHT
+      - WINDOW_WIDTH
+    ports:
+      - ${CHROME_PORT}:${DOC_BROWSER_PORT}
+      - ${CHROME_VNC_PORT}:${DOC_VNC_PORT}
+
+  firefox:
+    image: selenium/node-firefox${SELENIUM_VNC}:${SELENIUM_VERSION}
+    container_name: ${FIREFOX_CONTAINER}
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - VNC_NO_PASSWORD=1
+      - WINDOW_HEIGHT
+      - WINDOW_WIDTH
+    ports:
+      - ${FIREFOX_PORT}:${DOC_BROWSER_PORT}
+      - ${FIREFOX_VNC_PORT}:${DOC_VNC_PORT}

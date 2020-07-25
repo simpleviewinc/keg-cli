@@ -21,6 +21,7 @@ services:
       - DOC_APP_PORT
       - DOC_FEATURES_PATH
       - DOC_STEPS_PATH
+      - HEADLESS
       - HUB_HOST
       - HUB_PORT
       - KEG_EXEC_CMD
@@ -37,20 +38,10 @@ services:
       - "selenium-hub"
       - "chrome"
       - "firefox"
-  
-  selenium-hub:
-    image: selenium/hub:${SELENIUM_VERSION}
-    container_name: selenium-hub
-    ports:
-      - "4444:4444"
-
-  chrome:
-    image: selenium/node-chrome${KEG_REGULATOR_VNC}:${SELENIUM_VERSION}
-    container_name: 'selenium-chrome'
-    volumes:
-      - /dev/shm:/dev/shm
-    depends_on:
-      - selenium-hub
+  keg-novnc:
+    image: gotget/novnc
+    container_name: ${NO_VNC_CONTAINER}
+    command: --vnc regulator.kegdev.xyz:${DOC_VNC_PORT} --listen ${NO_VNC_PORT}
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
@@ -58,22 +49,8 @@ services:
       - WINDOW_HEIGHT
       - WINDOW_WIDTH
     ports:
-      - ${CHROME_PORT}:${DOC_CHROME_PORT}
-      - ${CHROME_VNC_PORT}:${CHROME_VNC_PORT}
-
-  firefox:
-    image: selenium/node-firefox${KEG_REGULATOR_VNC}:${SELENIUM_VERSION}
-    container_name: 'selenium-firefox'
-    volumes:
-      - /dev/shm:/dev/shm
+      - ${NO_VNC_PORT}:${NO_VNC_PORT}
     depends_on:
-      - selenium-hub
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
-      - VNC_NO_PASSWORD=1
-      - WINDOW_HEIGHT
-      - WINDOW_WIDTH
-    ports:
-      - ${FIREFOX_PORT}:${DOC_FIREFOX_PORT}
-      - ${FIREFOX_VNC_PORT}:${DOC_FIREFOX_VNC_PORT}
+      - "selenium-hub"
+      - "chrome"
+      - "firefox"

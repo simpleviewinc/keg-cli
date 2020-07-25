@@ -150,10 +150,9 @@ const buildIgnoreOpts = ({ context, location }) => {
 const bddService = async (args, { context:cmdContext, container, tap, cmd  }) => {
   const { globalConfig, params, task } = args
   const { context, location } = params
-  const isRestart = task.name === 'restart'
-  
+
   // Step 1. Remove any current bdd service syncs
-  !isRestart && await runInternalTask('mutagen.tasks.clean', {
+  await runInternalTask('mutagen.tasks.clean', {
     ...args,
     params: {
       ...params,
@@ -168,32 +167,27 @@ const bddService = async (args, { context:cmdContext, container, tap, cmd  }) =>
   // 2.1 Get the sync paths before starting the container
   // Finding the syncs paths can take a while
   // This way we already have the paths, so we can start the syncs sooner
-  const syncPaths = !isRestart && await getPathsToSync(params)
+  const syncPaths = await getPathsToSync(params)
 
   // Step 3. Run docker-compose up/restart task to start the regulator
   // Check if the service is set to restart, and run that instead of the composeService
-  const containerContext = isRestart
-    ? await runInternalTask('docker.tasks.compose.tasks.restart', {
-        ...args,
-        params: { ...args.params, context: cmdContext },
-      })
-    : await composeService(
-        { 
-          ...args,
-          params: {
-            ...params,
-            follow: false,
-            service: 'mutagen',
-            // Pass in the ignore options 
-            // To ignore the features and steps folders of the keg-regulator repo
-            options: buildIgnoreOpts(contextPath, params)
-          }
-        },
-        { context: cmdContext, container }
-      )
+  const containerContext = await composeService(
+    { 
+      ...args,
+      params: {
+        ...params,
+        follow: false,
+        service: 'mutagen',
+        // Pass in the ignore options 
+        // To ignore the features and steps folders of the keg-regulator repo
+        options: buildIgnoreOpts(contextPath, params)
+      }
+    },
+    { context: cmdContext, container }
+  )
 
   // Step 4. Create syncs for the passed in context
-  const extArgs = !isRestart && { context: cmdContext, containerContext }
+  const extArgs = { context: cmdContext, containerContext }
 
   // Build the mutagen syncs for the context/location repos features and steps folders
   syncPaths && await createSync(args, extArgs, syncPaths.features)
