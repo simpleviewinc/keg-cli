@@ -90,7 +90,7 @@ const getContext = async (params, askFor) => {
 
   return context === 'tap'
     ? { tap, context, ...foundContext }
-    : { context, tap: context, ...foundContext }
+    : { context, tap: tap || context, ...foundContext }
 
 }
 
