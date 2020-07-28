@@ -27,6 +27,7 @@ env:
   DOC_APP_PORT: 4000
   DOC_FEATURES_PATH: /keg/keg-regulator/tests/features
   DOC_STEPS_PATH: /keg/keg-regulator/tests/steps
+  DOC_NOVNC_PATH: /keg/keg-vnc
 
   # --- SELENIUM SETTINGS --- #
 
@@ -50,13 +51,9 @@ env:
   FIREFOX_VNC_PORT: 5901
   FIREFOX_CONTAINER: selenium-firefox
 
-  NO_VNC_CONTAINER: keg-novnc
-  NO_VNC_PORT: 6080
-  
-  # TODO: Need to create a run script that will run two instances of the VNC server
-  # Currently, you can only connect to the chrome instance, and not the firefox instance
-  # NO_VNC_CHROME_URL: http://regulator.kegdev.xyz:6080/vnc.html?host=regulator.kegdev.xyz&port=6080
-  # NO_VNC_FIREFOX_URL: http://regulator.kegdev.xyz:6080/vnc.html?host=regulator.kegdev.xyz&port=6081
+  NO_VNC_HOST: regulator.kegdev.xyz
+  NO_VNC_CHROME_PORT: 7070
+  NO_VNC_FIREFOX_PORT: 7071
 
   # --- GENERAL CONTEXT ENVs --- #
 

@@ -75,13 +75,18 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 # Set GIT_KEY to be empty value so yarn install doesn't fail
 ENV GIT_KEY=""
 
-# Install git for the new stage
-RUN apk add --no-cache git bash python3 net-tools curl gcc g++; \
-    git clone https://github.com/novnc/noVNC.git /keg/keg-vnc; \
-    git clone https://github.com/kanaka/websockify /keg/keg-vnc/utils/websockify
+ENV DOC_NOVNC_PATH=/keg/keg-vnc
+
+# Install dependencies for the new stage
+RUN apk add --no-cache git bash python3 net-tools curl gcc g++ py3-numpy procps; \
+    ln -s /usr/bin/python3 /usr/bin/python; \
+    ln -s /usr/bin/pip3 /usr/bin/pip; \
+    git clone https://github.com/novnc/noVNC.git $DOC_NOVNC_PATH; \
+    git clone https://github.com/kanaka/websockify $DOC_NOVNC_PATH/utils/websockify
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn
+
 # Add yarn's global bin to PATH
 ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin
 
@@ -93,8 +98,8 @@ COPY run.sh $DOC_APP_PATH/run.sh
 # Expose container ports
 EXPOSE 80
 EXPOSE 443
-EXPOSE 4000
-EXPOSE 4444
+EXPOSE $NO_VNC_CHROME_PORT
+EXPOSE $NO_VNC_FIREFOX_PORT
 
 # Set the current directory to tap repo
 WORKDIR /$DOC_APP_PATH

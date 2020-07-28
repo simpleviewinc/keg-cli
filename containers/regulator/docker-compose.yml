@@ -22,34 +22,27 @@ services:
       - DOC_FEATURES_PATH
       - DOC_STEPS_PATH
       - HEADLESS
-      - HUB_HOST
-      - HUB_PORT
       - KEG_EXEC_CMD
       - KEG_NM_INSTALL
       - NODE_ENV
       - TEST_FILTER_TAGS
       - WINDOW_HEIGHT
       - WINDOW_WIDTH
+      - HUB_HOST=${HUB_HOST}
+      - HUB_PORT=${HUB_PORT}
+      - VNC_NO_PASSWORD=1
+      - SELENIUM_VNC
+      - NO_VNC_HOST
+      - NO_VNC_CHROME_PORT
+      - NO_VNC_CHROME_URL
+      - NO_VNC_FIREFOX_PORT
+      - NO_VNC_FIREFOX_URL
     ports:
       - ${DOC_APP_PORT}:${DOC_APP_PORT}
+      - ${NO_VNC_CHROME_PORT}:${NO_VNC_CHROME_PORT}
+      - ${NO_VNC_FIREFOX_PORT}:${NO_VNC_FIREFOX_PORT}
     volumes:
       - ${KEG_CONTEXT_PATH}/tests/reports:/keg/keg-regulator/tests/reports
-    depends_on:
-      - "selenium-hub"
-      - "chrome"
-      - "firefox"
-  keg-novnc:
-    image: gotget/novnc
-    container_name: ${NO_VNC_CONTAINER}
-    command: --vnc regulator.kegdev.xyz:${DOC_VNC_PORT} --listen ${NO_VNC_PORT}
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
-      - VNC_NO_PASSWORD=1
-      - WINDOW_HEIGHT
-      - WINDOW_WIDTH
-    ports:
-      - ${NO_VNC_PORT}:${NO_VNC_PORT}
     depends_on:
       - "selenium-hub"
       - "chrome"
