@@ -156,4 +156,19 @@ module.exports = deepFreeze({
     'keg-reg': 'regulator',
   },
 
+  HOOK_TYPES: {
+    AFTER_BASE_BUILD_HOOK: 'afterBaseBuildHook',
+    AFTER_BUILD_HOOK: 'afterBuildHook',
+    AFTER_DESTROY_HOOK: 'afterDestroyHook',
+    AFTER_RUN_HOOK: 'afterRunHook',
+    AFTER_START_HOOK: 'afterStartHook',
+    AFTER_SYNC_HOOK: 'afterSyncHook',
+    BEFORE_BASE_BUILD_HOOK: 'beforeBaseBuildHook',
+    BEFORE_BUILD_HOOK: 'beforeBuildHook',
+    BEFORE_DESTROY_HOOK: 'beforeDestroyHook',
+    BEFORE_RUN_HOOK: 'beforeRunHook',
+    BEFORE_START_HOOK: 'beforeStartHook',
+    BEFORE_SYNC_HOOK: 'beforeSyncHook',
+  }
+
 })

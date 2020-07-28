@@ -1,6 +1,7 @@
 const { Logger } = require('KegLog')
 const { get } = require('@ltipton/jsutils')
 const { mutagenService } = require('./mutagenService')
+const { hooksService } = require('./hooksService')
 const { runInternalTask } = require('../task/runInternalTask')
 const { getServiceArgs } = require('./getServiceArgs')
 
@@ -21,6 +22,8 @@ const composeService = async (args, exArgs) => {
   const serviceArgs = getServiceArgs(args, exArgs)
 
   // Run the docker-compose up task
+  // const hookResp = await hooksService(serviceArgs, { hook: 'composeStart' })
+
   const containerContext = await runInternalTask('docker.tasks.compose.tasks.up', serviceArgs)
 
   // Only create syncs in the development env
