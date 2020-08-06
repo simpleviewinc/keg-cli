@@ -95,11 +95,8 @@ describe('Yaml Lib', () => {
     it('should load and merge and return multimple yml files as a JS object', async done => {
 
       await writeToYml(testYmlWrite, { test: 'data', foo: [ 'bar', 'baz' ] })
-      console.log({testYmlWrite})
+
       const merged = await yml.merge(testYmlWrite, testYmlPath)
-      console.log({merged})
-      console.log(__dirname)
-      console.log(isArr(merged.test))
       expect(isObj(merged)).toBe(true)
       expect(isArr(merged.test)).toBe(true)
 
