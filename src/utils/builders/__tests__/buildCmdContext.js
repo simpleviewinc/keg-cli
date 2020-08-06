@@ -66,46 +66,31 @@ describe('buildCmdContext', () => {
 
   })
 
-  it('should return correct context data when container param is passed in', async () => {
-
-    const res = await buildCmdContext({
-      globalConfig,
-      params: { image: 'keg-regulator' },
-      askFor: false
-    })
-
-    expect(res.cmdContext).toBe('regulator')
-    expect(res.context).toBe('regulator')
-    expect(res.tap).toBe('regulator')
-    expect(res.noPrefix).toBe('keg-regulator')
-
-  })
-
   it('should return a prefix when context has a prefix', async () => {
 
     const res = await buildCmdContext({
       globalConfig,
-      params: { image: 'img-keg-regulator' },
+      params: { image: 'img-keg-components' },
       askFor: false
     })
 
-    expect(res.prefix).toBe('img-keg-regulator')
+    expect(res.prefix).toBe('img-keg-components')
 
     const res2 = await buildCmdContext({
       globalConfig,
-      params: { context: 'img-keg-regulator' },
+      params: { context: 'img-keg-components' },
       askFor: false
     })
 
-    expect(res2.prefix).toBe('img-keg-regulator')
+    expect(res2.prefix).toBe('img-keg-components')
 
     const res3 = await buildCmdContext({
       globalConfig,
-      params: { container: 'img-keg-regulator' },
+      params: { container: 'img-keg-components' },
       askFor: false
     })
 
-    expect(res2.prefix).toBe('img-keg-regulator')
+    expect(res2.prefix).toBe('img-keg-components')
 
   })
 
