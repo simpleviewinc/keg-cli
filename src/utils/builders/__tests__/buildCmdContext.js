@@ -66,6 +66,21 @@ describe('buildCmdContext', () => {
 
   })
 
+  it('should return correct context data when container param is passed in', async () => {
+
+    const res = await buildCmdContext({
+      globalConfig,
+      params: { container: 'keg-components' },
+      askFor: false
+    })
+
+    expect(res.cmdContext).toBe('components')
+    expect(res.context).toBe('components')
+    expect(res.tap).toBe('components')
+    expect(res.noPrefix).toBe('keg-components')
+
+  })
+
   it('should return a prefix when context has a prefix', async () => {
 
     const res = await buildCmdContext({
