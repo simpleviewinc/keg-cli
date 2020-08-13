@@ -1,8 +1,32 @@
 const { Logger } = require('KegLog')
-const { get } = require('@ltipton/jsutils')
+const { get, isArr } = require('@ltipton/jsutils')
 const { mutagenService } = require('./mutagenService')
+const { syncService } = require('./syncService')
 const { runInternalTask } = require('../task/runInternalTask')
 const { getServiceArgs } = require('./getServiceArgs')
+
+/**
+ * Runs `docker-compose` up command based on the passed in args
+ * @function
+ * @param {Object} args - Default task arguments joined with the passed in exArgs
+ * @param {Object} containerContext - Context of the current container to sync with
+ *
+ * @returns {Array} - An array of promises for each sync being setup
+ */
+const createSyncs = (args, containerContext) => {
+  const { params: { sync, tap, context } } = args
+  const { cmdContext, container, id } = containerContext
+  const dockerContainer = container || id || cmdContext || context
+
+  return isArr(sync) && Promise.all(
+    sync.map(dependency => {
+      return syncService(
+        { ...args, params: { dependency, tap, context } },
+        { container: dockerContainer, dependency }
+      )
+    })
+  )
+}
 
 /**
  * Runs `docker-compose` up command based on the passed in args
@@ -44,6 +68,29 @@ const composeService = async (args, exArgs) => {
   )
 
   Logger.empty()
+
+
+  await createSyncs(serviceArgs, containerContext, exArgs)
+
+  /**
+  * TODO:
+  * Get the start command from the compose file or the Dockerfile
+  * Update the default start cmd to just tail dev/null
+  * Then run the real start command here
+  * This allows us create syncs and update files
+  * prior to running the app in the container
+  * Connect to the service and run the start cmd
+  */
+  // return runInternalTask('tasks.docker.tasks.exec', {
+  //   ...args,
+  //   __internal: { containerContext },
+  //   params: {
+  //     ...params,
+  //  
+  //     cmd: < RUN START COMMAND HERE >
+  //     context: cmdContext,
+  //   },
+  // })
 
   // Check if we should start logging the output of the service
   get(serviceArgs, 'params.follow') &&
