@@ -7,6 +7,8 @@ const { throwRequired, generalError } = require('KegUtils/error')
 
 /**
  * Copy files to and from a docker container
+ * @example
+ * keg d cp --local $(pwd)/build --remote /keg/tap/build --container 152cc51745dd
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -17,7 +19,7 @@ const { throwRequired, generalError } = require('KegUtils/error')
  */
 const copy = async args => {
   const { command, options, globalConfig, params } = args
-  const { context, container, local, log, remote } = params
+  const { context, container, local, log, remote, source } = params
 
   // Ensure we have a content to build the container
   !context && !container && throwRequired(task, 'context', task.options.context)
@@ -28,12 +30,18 @@ const copy = async args => {
     : await buildContainerContext(args)
 
   // If using a tap, and no location is found, throw an error
-  ~id && cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
+  !id && cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
 
   Logger.info(`Running docker cp command...`)
 
   // Run the built docker command
-  const response = await docker.container.copy({ container: id, local, log, remote })
+  const response = await docker.container.copy({
+    log,
+    local,
+    remote,
+    container: id,
+    fromContainer: source === 'docker'
+  })
 
   response && Logger.log(response)
 
@@ -63,7 +71,7 @@ module.exports = {
       },
       source: {
         alias: [ 'src',  ],
-        allowed: [ 'local', 'remote', 'docker', 'host' ],
+        allowed: [ 'docker', 'host' ],
         description: 'Source of the files to be copied.\nCopy from host: "local" || "host"\nCopy from docker: "docker" || "remote"',
         default: 'docker'
       },
