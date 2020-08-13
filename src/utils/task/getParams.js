@@ -14,6 +14,7 @@ const {
   checkEnvKeyValue,
   checkQuotedOptions,
   checkRequired,
+  checkValueType,
   hasKeyIdentifier,
   isOptionKey,
   optionsHasIdentifiers,
@@ -179,6 +180,7 @@ const ensureParam = async (task, params, key, meta) => {
 
   params[key] = checkBoolValue(params[key])
   params[key] = checkEnvKeyValue(key, params[key], meta)
+  params[key] = checkValueType(key, params[key], meta)
 
   if(exists(params[key])) return params
 
