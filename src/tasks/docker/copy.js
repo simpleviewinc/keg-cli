@@ -17,18 +17,18 @@ const { throwRequired, generalError } = require('KegUtils/error')
  */
 const copy = async args => {
   const { command, options, globalConfig, params } = args
-  const { context, container, local, log, remote, tap } = params
+  const { context, container, local, log, remote } = params
 
   // Ensure we have a content to build the container
   !context && !container && throwRequired(task, 'context', task.options.context)
 
   // Get the context data for the command to be run
-  const { id } = container
-    ? { id: container }
+  const { id, cmdContext, location, tap } = container
+    ? { id: container, cmdContext: context }
     : await buildContainerContext(args)
 
   // If using a tap, and no location is found, throw an error
-  cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
+  ~id && cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
 
   Logger.info(`Running docker cp command...`)
 
@@ -58,19 +58,25 @@ module.exports = {
       },
       container: {
         alias: [ 'id' ],
-        description: 'Name or Id of the container to sync with. Overrides context option',
+        description: 'Name or Id of the container to run copy command on. Overrides context option',
         example: 'keg mutagen create --container my-container',
       },
+      source: {
+        alias: [ 'src',  ],
+        allowed: [ 'local', 'remote', 'docker', 'host' ],
+        description: 'Source of the files to be copied.\nCopy from host: "local" || "host"\nCopy from docker: "docker" || "remote"',
+        default: 'docker'
+      },
       local: {
-        alias: [ 'from' ],
-        description: 'Local path to sync when container option is passed',
+        alias: [ 'loc' ],
+        description: 'Local path to copy files to and from',
         example: 'keg mutagen create --container my-container --local ~/keg/keg-core',
         depends: { container: true },
         required: true,
       },
       remote: {
-        alias: [ 'to' ],
-        description: 'Remote path to sync when container option is passed',
+        alias: [ 'rem' ],
+        description: 'Remote path to copy  files to and from',
         example: 'keg mutagen create --container my-container --remote keg/keg-core',
         depends: { container: true },
         required: true,
