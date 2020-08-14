@@ -29,6 +29,14 @@ const copyLocalPackageJson = async (globalConfig, location) => {
 
 }
 
+/**
+ * Removes the copied keg-core package.json from the taps temp folder
+ * @function
+ * @param {Object} globalConfig - Global config object for the keg-cli
+ * @param {string} location - Location of the tap on the host machine
+ *
+ * @returns {void}
+ */
 const removeLocalPackageJson = async (globalConfig, location) => {
   const corePath = getPathFromConfig(globalConfig, 'core')
   !corePath && generalError(`Could not find keg-core path in globalConfig`)
