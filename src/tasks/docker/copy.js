@@ -6,6 +6,23 @@ const { buildContainerContext } = require('KegUtils/builders/buildContainerConte
 const { throwRequired, generalError } = require('KegUtils/error')
 
 /**
+ * Ensures the required options were passed to the task
+ * @param {Object} task - Current task being executed
+ * @param {string} params.context - Context to run the command in
+ * @param {Array} params.container - Name or ID of the container to run cp on
+ * @param {Object} params.local - Location of the local copy
+ * @param {Object} params.remote - Location of the remote copy
+ *
+ * @returns {void}
+ */
+const enforceOpts = (task, { context, container, local, remote }) => {
+  // Ensure we have a content to build the container
+  !context && !container && throwRequired(task, 'context', task.options.context)
+  !remote && throwRequired(task, 'remote', task.options.remote)
+  !local && throwRequired(task, 'local', task.options.local)
+}
+
+/**
  * Copy files to and from a docker container
  * @example
  * keg d cp --local $(pwd)/build --remote /keg/tap/build --container 152cc51745dd
@@ -18,11 +35,11 @@ const { throwRequired, generalError } = require('KegUtils/error')
  * @returns {void}
  */
 const copy = async args => {
-  const { command, options, globalConfig, params } = args
-  const { context, container, local, log, remote, source } = params
+  const { command, options, globalConfig, params, task } = args
+  // Ensure all required options were passed
+  enforceOpts(task, params)
 
-  // Ensure we have a content to build the container
-  !context && !container && throwRequired(task, 'context', task.options.context)
+  const { context, container, local, log, remote, source } = params
 
   // Get the context data for the command to be run
   const { id, cmdContext, location, tap } = container
@@ -79,15 +96,13 @@ module.exports = {
         alias: [ 'loc' ],
         description: 'Local path to copy files to and from',
         example: 'keg mutagen create --container my-container --local ~/keg/keg-core',
-        depends: { container: true },
-        required: true,
+        enforced: true,
       },
       remote: {
         alias: [ 'rem' ],
         description: 'Remote path to copy  files to and from',
         example: 'keg mutagen create --container my-container --remote keg/keg-core',
-        depends: { container: true },
-        required: true,
+        enforced: true,
       },
       log: {
         description: 'Log docker command',
