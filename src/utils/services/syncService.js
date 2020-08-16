@@ -56,7 +56,7 @@ const syncService = async (args, argsExt) => {
 
   const contextPath = getGitPath(globalConfig, tap || context)
 
-  const localPath = getLocalPath(globalConfig, context, local, dependency)
+  const localPath = getLocalPath(globalConfig, context, dependency, local)
   !localPath && generalError(`Local path could not be found!`)
 
   if(!checkSyncPaths(syncForce, contextPath, localPath)) return
