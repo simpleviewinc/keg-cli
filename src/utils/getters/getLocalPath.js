@@ -11,7 +11,7 @@ const { getGitPath } = require('../git/getGitPath')
  *
  * @returns {string}
  */
-const getLocalPath = (globalConfig, context, dependency, local) => {
+const getLocalPath = (globalConfig, context, local, dependency) => {
   return local || get(
     DOCKER,
     `CONTAINERS.${ context.toUpperCase() }.ENV.${ dependency.toUpperCase() }_PATH`,

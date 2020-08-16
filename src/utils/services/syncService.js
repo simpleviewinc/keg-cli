@@ -45,11 +45,7 @@ const syncService = async (args, argsExt) => {
   const serviceArgs = getServiceArgs(args, argsExt)
 
   const { globalConfig, params } = serviceArgs
-  const { local, remote, syncForce, tap } = params
-
-  const [ dependency, syncAction ] = params.dependency.includes(':')
-    ? params.dependency.split(':')
-    : [ params.dependency ]
+  const { dependency, local, remote, syncForce, tap } = params
 
   const containerContext = await buildContainerContext(serviceArgs)
   const { context, id } = containerContext
@@ -86,18 +82,7 @@ const syncService = async (args, argsExt) => {
   })
 
   // Run any sync actions for the mutagen sync
-  await syncActionService({
-    ...serviceArgs,
-    __internal: {
-      ...serviceArgs.__internal,
-      containerContext: mutagenContext
-    },
-    params: {
-      ...serviceArgs.params,
-      dependency,
-      syncAction,
-    }
-  })
+  await syncActionService({ ...serviceArgs, ...mutagenContext })
 
   return mutagenContext
 
