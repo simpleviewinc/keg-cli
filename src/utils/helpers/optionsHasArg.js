@@ -1,5 +1,4 @@
-const { isArr, isStr } = require('@ltipton/jsutils')
-const { checkBoolValue } = require('../task/taskOptions')
+const { isArr, isStr, isBool } = require('@ltipton/jsutils')
 
 /**
  * Checks if the passed in arg is in the options array
@@ -31,7 +30,7 @@ const optionsHasArg = (options, arg) => {
 
   }, undefined)
 
-  return checkBoolValue(argValue)
+  return isBool(argValue)
 
 }
 
