@@ -3,7 +3,7 @@ const { getServiceArgs } = require('./getServiceArgs')
 const { generalError } = require('../error/generalError')
 const { getRemotePath } = require('../getters/getRemotePath')
 const { runInternalTask } = require('../task/runInternalTask')
-const { get, isArr, isStr, isBool } = require('@ltipton/jsutils')
+const { get, isArr, isStr, isBool, isObj } = require('@ltipton/jsutils')
 const { findDependencyName } = require('../helpers/findDependencyName')
 const { getMutagenConfig } = require('KegUtils/getters/getMutagenConfig')
 const { buildContainerContext } = require('../builders/buildContainerContext')
@@ -124,7 +124,7 @@ const runSyncActions = (serviceArgs, cmdContext, dependency, actions) => {
 const getSyncActions = (actions, action) => {
   return action
     ? [ { ...actions[action], name: action } ]
-    : Object.entries(actions)
+    : isObj(actions) && Object.entries(actions)
       .reduce((allActions, [ name, meta ]) => {
         return allActions.concat({ ...meta, name })
       }, [])
