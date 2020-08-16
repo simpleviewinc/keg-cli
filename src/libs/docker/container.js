@@ -206,7 +206,7 @@ const exec = async (args, cmdOpts={}) => {
   detach && options.push(`--detach`)
   workdir && options.push(`--workdir ${ workdir }`)
 
-  const toRun = `exec ${ options.join(' ') } ${ cont } ${ cmd }`.trim()
+  const toRun = `exec ${ options.join(' ').trim() } ${ cont } ${ cmd }`.trim()
 
   return raw(toRun, cmdOpts, location)
 
