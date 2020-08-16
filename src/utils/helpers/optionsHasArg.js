@@ -1,4 +1,5 @@
 const { isArr, isStr, isBool } = require('@ltipton/jsutils')
+const { checkBoolValue } = require('@ltipton/args-parse/src/options/checkBoolValue')
 
 /**
  * Checks if the passed in arg is in the options array
@@ -30,7 +31,7 @@ const optionsHasArg = (options, arg) => {
 
   }, undefined)
 
-  return isBool(argValue)
+  return Boolean(checkBoolValue(argValue))
 
 }
 
