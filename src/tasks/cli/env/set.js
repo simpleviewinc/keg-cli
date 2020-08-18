@@ -34,14 +34,16 @@ const setEnv = async args => {
   const { confirm } = params
   const { key, value } = getEnv(params, options)
 
+  const addKey = key.toUpperCase()
+
   await confirmExec({
-    execute: () => addDefaultEnv(key, value),
+    execute: () => addDefaultEnv(addKey, value),
     confirm: {
-      message: `Are you sure you want to add Global ENV ${key}?`,
+      message: `Are you sure you want to add Global ENV ${addKey}?`,
       default: true,
     },
     preConfirm: !confirm,
-    success: `The Global ENV key ${key} was removed!`,
+    success: `The Global ENV key ${addKey} was Added!`,
     cancel: `Set Global ENV key was canceled!`,
   })
 
