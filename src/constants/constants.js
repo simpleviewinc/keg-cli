@@ -6,10 +6,9 @@ const { KEG_GLOBAL_CONFIG } = process.env
 // Cache the root of the CLI for easy access
 const CLI_ROOT = path.join(__dirname, '../../')
 
-// The default global config path
-const CLI_CONFIG = 'cli.config'
+// The default global config path and config file
 let GLOBAL_CONFIG_FOLDER = path.join(homeDir, '.kegConfig')
-let GLOBAL_CONFIG_FILE = CLI_CONFIG
+let GLOBAL_CONFIG_FILE = 'cli.config.json'
 
 // If the global config path is passed in as an ENV, use that instead
 if(KEG_GLOBAL_CONFIG){
@@ -47,8 +46,6 @@ module.exports = deepFreeze({
   // Sets the command to open an IDE
   GLOBAL_CONFIG_EDITOR_CMD: 'cli.settings.editorCmd',
 
-  // Keg global config file
-  CLI_CONFIG: `${ CLI_CONFIG }.json`,
 
   // Keg Default .env file
   DEFAULT_ENV: `defaults.env`,
@@ -67,22 +64,6 @@ module.exports = deepFreeze({
     '--h',
   ],
 
-  // Option values that will be converted into booleans
-  BOOL_VALUES: {
-    truthy: [
-      'true',
-      't',
-      'yes',
-      'y',
-    ],
-    falsy: [
-      'false',
-      'f',
-      'no',
-      'n'
-    ]
-  },
-
   // --- GIT Constants --- //
   // Path the the git ssh key
   GIT_SSH_KEY_PATH: path.join(homeDir, '.ssh/github'),
@@ -100,6 +81,7 @@ module.exports = deepFreeze({
   // Environment keys mapped to their shortcuts 
   ENV_MAP: {
     PRODUCTION: [ 'production', 'prod', 'p' ],
+    CI: [ 'ci', 'c' ],
     QA: [ 'qa', 'q' ],
     STAGING: [ 'staging', 'st', 's' ],
     DEVELOPMENT: [ 'development', 'dev', 'd' ],
@@ -139,8 +121,6 @@ module.exports = deepFreeze({
     comp: 'keg-components',
     components: 'keg-components',
     core: 'keg-core',
-    regulator: 'keg-regulator',
-    reg: 'keg-regulator',
   },
 
   // Map shortcuts and variations between the container cmdContext and the container
@@ -153,10 +133,6 @@ module.exports = deepFreeze({
     'keg-components': 'components',
     kegcore: 'core',
     'keg-core': 'core',
-    kegregulator: 'regulator',
-    'kegreg': 'regulator',
-    'keg-regulator': 'regulator',
-    'keg-reg': 'regulator',
   },
 
 })

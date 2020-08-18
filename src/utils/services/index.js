@@ -1,5 +1,4 @@
 module.exports = {
-  ...require('./bddService'),
   ...require('./buildService'),
   ...require('./composeService'),
   ...require('./destroyService'),
@@ -12,5 +11,6 @@ module.exports = {
   ...require('./startService'),
   ...require('./stopService'),
   ...require('./syncService'),
+  ...require('./syncActionService'),
   ...require('./runService'),
 }

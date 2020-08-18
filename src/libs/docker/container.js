@@ -193,15 +193,22 @@ const exists = async (compare, doCompare) => {
  * @returns {void}
  */
 const exec = async (args, cmdOpts={}) => {
-  const { cmd, container, item, location, opts } = args
-  const options = isArr(opts) ? opts.join(' ') : opts
-  const cont = container || item
+  const { cmd, container, detach, item, location, opts, workdir } = args
 
-  return raw(
-    `exec ${ options } ${ cont } ${ cmd }`.trim(),
-    cmdOpts,
-    location
-  )
+  // Ensure a container is passed
+  const cont = container || item
+  if(!cont) return noItemError('exec')
+  
+  // Ensure options is an array
+  const options = isArr(opts) ? opts : [ opts ]
+
+  // Add any extra options passed
+  detach && options.push(`--detach`)
+  workdir && options.push(`--workdir ${ workdir }`)
+
+  const toRun = `exec ${ options.join(' ').trim() } ${ cont } ${ cmd }`.trim()
+
+  return raw(toRun, cmdOpts, location)
 
 }
 
@@ -313,12 +320,12 @@ const ps = (args, cmdOpts) => {
  * @param {string} args.container - Options used to build the docker command
  * @param {string} args.local - Local path for the copy command
  * @param {string} args.remote - Remote path on the container for the copy command
- * @param {boolean} [args.fromRemote=true] - Copy from remote to local
+ * @param {boolean} [args.fromContainer=true] - Copy from remote to local
  *
  * @returns {Array} - Array of objects of running containers
  */
-const copy = ({ container, local, remote, fromRemote=true, ...args }, cmdOpts) => {
-  const opts = fromRemote 
+const copy = ({ container, local, remote, fromContainer=true, ...args }, cmdOpts) => {
+  const opts = fromContainer 
     ? [ 'cp', `${ container }:${ remote }`, local ]
     : [ 'cp', local, `${ container }:${ remote }` ]
 

@@ -3,7 +3,7 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
 const { buildDockerCmd } = require('KegUtils/docker')
-const { copyFileSync } = require('KegFileSys/fileSys')
+const { copyFileSync, removeFileSync } = require('KegFileSys/fileSys')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError, throwNoTapLoc } = require('KegUtils/error')
 const { getPathFromConfig } = require('KegUtils/globalConfig/getPathFromConfig')
@@ -29,6 +29,26 @@ const copyLocalPackageJson = async (globalConfig, location) => {
 
 }
 
+/**
+ * Removes the copied keg-core package.json from the taps temp folder
+ * @function
+ * @param {Object} globalConfig - Global config object for the keg-cli
+ * @param {string} location - Location of the tap on the host machine
+ *
+ * @returns {void}
+ */
+const removeLocalPackageJson = async (globalConfig, location) => {
+  const corePath = getPathFromConfig(globalConfig, 'core')
+  !corePath && generalError(`Could not find keg-core path in globalConfig`)
+
+  // Get the temp path for the keg-core package.json
+  const tapCorePackage = path.join(location, `temp/core-package.json`)
+
+  // Remove the keg-core file from the temp path
+  return removeFileSync(tapCorePackage)
+
+}
+
 
 /**
  * Builds a docker container so it can be run
@@ -48,7 +68,7 @@ const dockerBuild = async args => {
 
   // Remove container from the params if it exists
   // Otherwise it would cause getContext to fail
-  // Because it thinks it needs to ask for the no existent container
+  // Because it thinks it needs to ask for the non-existent container
   const { container,  ...params } = args.params
   const { context, core, log } = params
 
@@ -56,17 +76,17 @@ const dockerBuild = async args => {
   !context && throwRequired(task, 'context', task.options.context)
 
   // Get the context data for the command to be run
-  const { cmdContext, contextEnvs, location, tap, image } = await buildContainerContext({
-    task,
-    params,
-    globalConfig,
-  })
+  const {
+    tap,
+    image,
+    location,
+    cmdContext,
+    contextEnvs,
+  } = await buildContainerContext({ ...args, params })
+
 
   // If using a tap, and no location is found, throw an error
   cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
-
-  // Check if we should also copy the keg-core package.json
-  tap && core && await copyLocalPackageJson(globalConfig, location)
 
   // Build the docker build command with options
   const dockerCmd = await buildDockerCmd(globalConfig, {
