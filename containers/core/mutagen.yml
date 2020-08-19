@@ -19,8 +19,12 @@ sync:
         - "/build"
         - "/docs"
 actions:
-  core:
+  retheme:
     install: 
-      location: /keg/tap/node_modules/keg-core
+      location: /keg/keg-core/node_modules/@simpleviewinc/re-theme
       cmds:
         - yarn install
+    start:
+      location: /keg/keg-core/node_modules/@simpleviewinc/re-theme
+      cmds:
+        - yarn dev
