@@ -98,7 +98,7 @@ const gitBranch = async args => {
       params: {
         tap,
         context,
-        log: log || !remove && !list && Boolean(branch || newBranch) || false,
+        log: (list || log || (!branch && !remove && !newBranch)) || false,
         location: params.location,
         ...(branch && !remove && !newBranch && { branch })
       },
