@@ -4,10 +4,11 @@ const { generalError } = require('KegUtils/error')
 const { git } = require('KegGitCli')
 
 const branchList = async (args) => {
-  const { globalConfig, params, __skipLog } = args
-  const { all, context, location } = params
+  const { globalConfig, params, __internal={} } = args
+  const { context, location, tap } = params
+  const { __skipLog } = __internal
 
-  const gitPath = getGitPath(globalConfig, context) || location
+  const gitPath = getGitPath(globalConfig, tap || context) || location
 
   if(!gitPath) throw new Error(`Git path does not exist for ${ context || location }`)
 
@@ -16,7 +17,7 @@ const branchList = async (args) => {
   // Check if we should print the branch list
   !__skipLog && printGitBranches(branches)
   
-  return branches
+  return { branches, location: gitPath }
 }
 
 module.exports = {
@@ -31,16 +32,16 @@ module.exports = {
         description: 'Name of the repo to show branches of, may also be a linked tap',
         example: 'keg git branch context=core',
       },
-      all: {
-        description: 'Print all branches for the repo',
-        example: 'keg git branch --all',
-      },
       location: {
         alias: [ 'loc' ],
         description: `Location when the git branch command will be run`,
         example: 'keg git branch location=<path/to/git/repo>',
         default: process.cwd()
-      }
+      },
+      tap: {
+        description: 'Name of the tap to build a Docker image for',
+        example: 'keg git current --tap visitapps',
+      },
     }
   }
 }

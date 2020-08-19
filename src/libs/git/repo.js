@@ -1,5 +1,5 @@
 const { gitCli, gitCmd } = require('./commands')
-const { getLogArgs, getFetchArgs } = require('./helpers')
+const { getLogArgs, getFetchArgs, getCheckoutArgs } = require('./helpers')
 
 class Repo {
 
@@ -76,6 +76,12 @@ class Repo {
     cmdOpts = location ? { ...cmdOpts, cwd: location } : cmdOpts
 
     return gitCmd(`fetch ${ getFetchArgs(params) }`.trim(), cmdOpts, log)
+  }
+
+  checkout = ({ location=process.cwd(), env, log, ...params }, cmdOpts) => {
+    cmdOpts = location ? { ...cmdOpts, cwd: location } : cmdOpts
+
+    return gitCmd(`checkout ${ getCheckoutArgs(params) }`.trim(), cmdOpts, log)
   }
 
 

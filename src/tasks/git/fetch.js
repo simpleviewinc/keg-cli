@@ -1,5 +1,6 @@
 const { Logger } = require('KegLog')
 const { git } = require('KegGitCli')
+const { exists } = require('@ltipton/jsutils')
 const { getGitPath } = require('KegUtils/git')
 const { generalError } = require('KegUtils/error')
 
@@ -14,18 +15,19 @@ const { generalError } = require('KegUtils/error')
  * @returns {void}
  */
 const gitFetch = async args => {
-  const { params,  globalConfig, __skipLog } = args
-  const { context, path: repoPath, tap, env, log, ...fetchParams } = params
+  const { params,  globalConfig, __internal={} } = args
+  const { skipLog } = __internal
+  const { context, location: repoPath, tap, env, log, ...fetchParams } = params
 
   // Get the path to the repo
   const location = repoPath || context && getGitPath(globalConfig, tap || context) || process.cwd()
 
   // Fetch the branches for the location
-  const resp = await git.repo.fetch({ ...fetchParams, log: __skipLog || log, location })
+  const resp = await git.repo.fetch({ ...fetchParams, log: exists(skipLog) && !skipLog || log, location })
 
   // Log the outcome of the git fetch command
   resp === 0
-    ? !__skipLog && Logger.spacedMsg(`Finished fetching branches!`)
+    ? !skipLog && Logger.spacedMsg(`Finished fetching branches!`)
     : generalError(`Failed fetching remote git branches.\nExit with code "${ resp }"`)
 
 }
@@ -40,12 +42,14 @@ module.exports = {
       context: {
         alias: [ 'name' ],
         description: `Name or context to use when finding the current git branch`,
-        enforce: true
       },
-      path: {
-        alias: [ 'location', 'loc' ],
+      location: {
+        alias: [ 'path', 'loc' ],
         description: `Full path location of a repository to get the current branch from. Overrides "context" option`,
-        enforce: true
+      },
+      tap: {
+        description: 'Name of the tap to build a Docker image for',
+        example: 'keg git current --tap visitapps',
       },
       all: {
         description: `Fetch all branches from all remotes`,
