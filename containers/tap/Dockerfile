@@ -9,7 +9,7 @@ WORKDIR /
 
 # These args are expected to be set as --build-arg
 # Which Allow them to be used durring the build
-ARG GIT_KEY
+ARG PUBLIC_GIT_KEY
 ARG GIT_APP_URL=INITIAL
 
 # Should we use the local copy of the tap repo when building
@@ -27,7 +27,7 @@ COPY . /keg-temp/
 # Update the build steps git config to include the key
 # Pull down the tap locally if a git tap url exists
 # Otherwise copy over the local version from keg-temp
-RUN git config --global url.https://$GIT_KEY@github.com/.insteadOf https://github.com/; \
+RUN git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/; \
     if [ -z "$KEG_COPY_LOCAL" ] && [ "$GIT_APP_URL" != "INITIAL" ]; then \
       git clone $GIT_APP_URL $DOC_APP_PATH; \
     else \
@@ -38,7 +38,7 @@ RUN git config --global url.https://$GIT_KEY@github.com/.insteadOf https://githu
 # Install the dependecies with yarn setup, then remove the .npmrc
 RUN cd $DOC_APP_PATH; \
     echo "@simpleviewinc:registry=https://npm.pkg.github.com/" > .npmrc; \
-    echo "//npm.pkg.github.com/:_authToken=${GIT_KEY}" >> .npmrc; \
+    echo "//npm.pkg.github.com/:_authToken=${PUBLIC_GIT_KEY}" >> .npmrc; \
     yarn setup; \
     yarn cache clean; \
     rm -f .npmrc
@@ -46,7 +46,6 @@ RUN cd $DOC_APP_PATH; \
 # ------- New Build Stage ------- #
 
 # Use a multi stage build for security
-# This is so GIT_KEY is not accessable in the final image
 FROM $GIT_STAGE_IMAGE_FROM as gitBuilder
 WORKDIR /
 
@@ -63,13 +62,11 @@ ARG KEG_DOCKER_IP
 # Will use the ip address of the docker container.
 ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 
-# Set GIT_KEY to be empty value so yarn install doesn't fail
-ENV GIT_KEY=""
-
 # Install git for the new stage
 RUN apk add --no-cache git bash sudo; \
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf; \
-    sudo sysctl -p
+    sudo sysctl -p; \
+    git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn

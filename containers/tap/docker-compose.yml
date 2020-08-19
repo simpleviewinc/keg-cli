@@ -18,7 +18,6 @@ services:
         - GIT_CLI_URL
         - GIT_CORE_URL
         - GIT_COMPONENTS_URL
-        - GIT_KEY
         - GIT_RETHEME_URL
         - GIT_RESOLVER_URL
         - GIT_APP_URL
@@ -26,6 +25,7 @@ services:
         - KEG_EXEC_CMD
         - KEG_NM_INSTALL
         - NODE_ENV
+        - PUBLIC_GIT_KEY
         - TAP
     container_name: ${CONTAINER_NAME}
     environment:
@@ -45,6 +45,7 @@ services:
       - KEG_EXEC_CMD
       - KEG_NM_INSTALL
       - NODE_ENV
+      - PUBLIC_GIT_KEY
       - TAP
     ports:
       - ${EXPO_DEBUG_PORT}:${EXPO_DEBUG_PORT}

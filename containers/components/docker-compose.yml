@@ -10,9 +10,9 @@ services:
       dockerfile: ${KEG_DOCKER_FILE}
       args:
         - GIT_COMPONENTS_URL
-        - GIT_KEY
         - DOC_APP_PATH
         - KEG_IMAGE_FROM
+        - PUBLIC_GIT_KEY
     container_name: ${CONTAINER_NAME}
     environment:
       - CHOKIDAR_USEPOLLING
@@ -26,5 +26,6 @@ services:
       - KEG_EXEC_CMD
       - KEG_NM_INSTALL
       - NODE_ENV
+      - PUBLIC_GIT_KEY
     ports:
       - 80:${DOC_APP_PORT}

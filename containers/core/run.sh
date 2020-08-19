@@ -17,20 +17,6 @@ keg_set_container_paths(){
 
 }
 
-# Add .npmrc so node_modules installs does not fail
-keg_add_git_key(){
-  git config --global url.https://$GIT_KEY@github.com/.insteadOf https://github.com/
-  echo "@simpleviewinc:registry=https://npm.pkg.github.com/" > .npmrc
-  echo "//npm.pkg.github.com/:_authToken=${GIT_KEY}" >> .npmrc
-}
-
-# Remove .npmrc so git key is not saved
-keg_remove_git_key(){
-  git config --global url.https://github.com/.insteadOf url.https://$GIT_KEY@github.com/
-  rm -rf .npmrc
-}
-
-
 # Runs yarn install at run time
 # Use when adding extra node_modules to keg-core without rebuilding
 keg_run_yarn_install(){
@@ -43,9 +29,7 @@ keg_run_yarn_install(){
   # Navigate to the cached directory, and run the yarn install here
   keg_message "Running yarn install for keg-core..."
   cd $DOC_APP_PATH
-  keg_add_git_key
   yarn install
-  keg_remove_git_key
 
 }
 
