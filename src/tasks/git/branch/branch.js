@@ -6,7 +6,14 @@ const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { generalError } = require('KegUtils/error')
 const { ask } = require('askIt')
 
-
+/**
+ * Get the branch name based on the branch or the params.remove value
+ * @param {string} branches - Local branches for the repo
+ * @param {Object} branch - Branch to find ( could be an index )
+ * @param {Object} params - Parsed options from the cmd line
+ *
+ * @returns {string} - Name of found branch
+ */
 const getBranchName = async (branches, branch, params) => {
   const { remove, list } = params
   // If remove is truthy, check if we should ask for the name/index
@@ -40,9 +47,7 @@ const getBranchName = async (branches, branch, params) => {
  * @returns {void}
  */
 const createNewBranch = async (newBranch, location, params, log=true) => {
-  await git.repo.checkout({ ...params, branch: newBranch, newBranch, location })
-  log && Logger.pair(`Switching to new branch:`, `"${ newBranch }"`)
-  
+  return git.repo.checkout({ ...params, log: false, branch: newBranch, newBranch, location })
 }
 
 /**
@@ -56,14 +61,18 @@ const createNewBranch = async (newBranch, location, params, log=true) => {
  */
 const doBranchAction = async (branch, branches, location, params) => {
 
-  const { remove } = params
+  const { remove, list, ...gitParams } = params
   const useBranch = await getBranchName(branches, branch, params)
 
-  return !exists(useBranch)
+  Logger.empty()
+
+  ;!exists(useBranch)
     ? generalError(`Git branch task requires a valid branch name or index!\nGot "${ useBranch }" instead!`)
-    : !remove
-      ? git.repo.checkout({ ...params, branch: useBranch, location })
-      : git.branch.delete({ ...params, branch: useBranch, location })
+    : remove
+      ? await git.branch.delete({ ...gitParams, log: false, branch: useBranch, location })
+      : await git.repo.checkout({ ...gitParams, log: false, branch: useBranch, location })
+
+  Logger.empty()
 
 }
 
@@ -79,21 +88,29 @@ const doBranchAction = async (branch, branches, location, params) => {
  */
 const gitBranch = async args => {
   const { params } = args
-  const { branch, context, list, new:newBranch, tap, delete:remove, ...gitParams } = params
-  
+  const { branch, context, list, new:newBranch, tap, delete:remove, log, ...gitParams } = params
+
   // Auto call the list task if we reach the gitBranch root task
-  const { branches, location } = await runInternalTask('tasks.git.tasks.branch.tasks.list', {
-    ...args,
-    params: { context, location: params.location, tap },
-    __internal: {
-      ...args.__internal,
-      __skipLog: !list && Boolean(branch || newBranch),
-    },
+  const { branches, location, __internal: { switched } } = await runInternalTask(
+    'tasks.git.tasks.branch.tasks.list',
+    {
+      ...args,
+      params: {
+        tap,
+        context,
+        log: log || !remove && !list && Boolean(branch || newBranch) || false,
+        location: params.location,
+        ...(branch && !remove && !newBranch && { branch })
+      },
+      __internal: { ...args.__internal },
   })
 
-  return newBranch
-    ? createNewBranch(newBranch, location, gitParams, gitParams.log)
-    : (branch || remove) && doBranchAction(branch, branches, location, { list, remove, ...gitParams })
+  // If already switched branches, just return
+  return switched
+    ? true
+    : newBranch
+      ? createNewBranch(newBranch, location, gitParams, gitParams.log)
+      : (branch || list || remove) && doBranchAction(branch, branches, location, { list, remove, ...gitParams })
 
 }
 
@@ -157,7 +174,6 @@ module.exports = {
         alias: [ 'lg' ],
         description: `Logs the git command being run`,
         example: 'keg git branch --log',
-        default: false
       },
     }
   }

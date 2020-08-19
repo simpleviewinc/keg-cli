@@ -1,5 +1,5 @@
 const { Logger } = require('KegLog')
-const { gitCli } = require('./commands')
+const { gitCli, gitCmd } = require('./commands')
 const { mapObj, reduceObj, checkCall } = require('@svkeg/jsutils')
 const { buildCmdOpts, ensureGitRemote, ensureGitBranch } = require('./helpers')
 const { NEWLINES_MATCH, WHITESPACE_MATCH } = require('KegConst/patterns')
@@ -232,9 +232,9 @@ class Branch {
   *
   * @returns {Object} - Current branch object
   */
-  delete = ({ branch, force, location }, cmdOpts={}) => {
+  delete = ({ branch, force, location, log }, cmdOpts={}) => {
     cmdOpts = location ? { ...cmdOpts, cwd: location } : cmdOpts
-    return gitCmd(`branch -D ${ branch } ${ force ? '-f' : '' }`.trim(), cmdOpts)
+    return gitCmd(`branch -D ${ branch } ${ force ? '-f' : '' }`.trim(), cmdOpts, log)
   }
 
 }

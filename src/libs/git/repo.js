@@ -80,7 +80,6 @@ class Repo {
 
   checkout = ({ location=process.cwd(), env, log, ...params }, cmdOpts) => {
     cmdOpts = location ? { ...cmdOpts, cwd: location } : cmdOpts
-
     return gitCmd(`checkout ${ getCheckoutArgs(params) }`.trim(), cmdOpts, log)
   }
 
