@@ -37,7 +37,16 @@ RUN git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https:
 
 # Install the dependecies with yarn setup, then remove the .npmrc
 RUN cd $DOC_APP_PATH; \
-    yarn setup; \
+    rm -rf .npmrc; \
+    echo "@simpleviewinc:registry=https://npm.pkg.github.com/" > .npmrc; \
+    echo "//npm.pkg.github.com/:_authToken=${PUBLIC_GIT_KEY}" >> .npmrc; \
+    yarn install; \
+    cd $DOC_APP_PATH/node_modules/keg-core; \
+    rm -rf .npmrc; \
+    echo "@simpleviewinc:registry=https://npm.pkg.github.com/" > .npmrc; \
+    echo "//npm.pkg.github.com/:_authToken=${PUBLIC_GIT_KEY}" >> .npmrc; \
+    yarn install; \
+    cd $DOC_APP_PATH; \
     yarn cache clean
 
 # ------- New Build Stage ------- #
@@ -88,4 +97,4 @@ WORKDIR /$DOC_APP_PATH
 
 # Run the start script
 # Dont use the array syntax, so we have access to the DOC_CLI_PATH ENV
-CMD /bin/bash $DOC_CLI_PATH/containers/tap/run.sh
+CMD /bin/bash $DOC_CLI_PATH/containers/tap/run.sh "sleep"

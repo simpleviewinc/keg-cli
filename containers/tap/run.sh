@@ -56,7 +56,7 @@ keg_run_the_tap(){
   cd $TAP_PATH
 
   if [[ -z "$KEG_EXEC_CMD" ]]; then
-    KEG_EXEC_CMD="web"
+    KEG_EXEC_CMD="tap:start"
   fi
 
   keg_message "Running command 'yarn $KEG_EXEC_CMD'"
@@ -64,11 +64,20 @@ keg_run_the_tap(){
 
 }
 
-# Checks for path overrides of the core, tap paths with passed in ENVs
-keg_set_container_paths
+# If the sleep arg is passed, just sleep forever
+# This is to keep our container running forever
+if [[ "$1" == "sleep" ]]; then
+  tail -f /dev/null
+  exit 0
 
-# Run yarn setup for any extra node_modules to be installed
-keg_run_tap_yarn_setup
+else
 
-# Start the keg core instance
-keg_run_the_tap
+  # Checks for path overrides of the core, tap paths with passed in ENVs
+  keg_set_container_paths
+
+  # Run yarn setup for any extra node_modules to be installed
+  keg_run_tap_yarn_setup
+
+  # Start the keg core instance
+  keg_run_the_tap
+fi

@@ -29,6 +29,9 @@ services:
     container_name: ${CONTAINER_NAME}
     environment:
       - CHOKIDAR_USEPOLLING
+      - CADDY_HOST
+      - CADDY_PROXY_PARAMS
+      - CADDY_BASIC_AUTH
       - DOC_APP_PATH
       - DOC_CLI_PATH
       - DOC_CORE_PATH

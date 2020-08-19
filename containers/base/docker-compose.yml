@@ -21,6 +21,9 @@ services:
         - PUBLIC_GIT_KEY
     container_name: ${CONTAINER_NAME}
     environment:
+      - CADDY_HOST
+      - CADDY_PROXY_PARAMS
+      - CADDY_BASIC_AUTH
       - EXPO_DEBUG_PORT
       - EXPO_APP_PORT
       - GIT_CLI_URL

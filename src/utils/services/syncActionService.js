@@ -122,10 +122,14 @@ const runSyncActions = (serviceArgs, cmdContext, dependency, actions) => {
  * @returns {Array} - Array actions to run
  */
 const getSyncActions = (actions, syncActions, dependency) => {
-
-  return isArr(syncActions) && syncActions.length
-    ? checkCall(() => {
-        return syncActions.reduce((runActions, action) => {
+  return !isArr(syncActions) || !syncActions.length || !isObj(actions)
+    ? null
+    : syncActions.includes('all')
+      ? Object.entries(actions)
+          .reduce((allActions, [ name, meta ]) => {
+            return allActions.concat({ ...meta, name })
+          }, [])
+      : syncActions.reduce((runActions, action) => {
           const valid = isObj(actions[action])
           !valid && Logger.error(`\nAction "${action}" does not exist for "${ dependency }"\n`)
 
@@ -133,13 +137,6 @@ const getSyncActions = (actions, syncActions, dependency) => {
             ? runActions.concat([ { ...actions[action], name: action } ])
             : runActions
         }, [])
-      })
-    : !syncActions
-      ? isObj(actions) && Object.entries(actions)
-          .reduce((allActions, [ name, meta ]) => {
-            return allActions.concat({ ...meta, name })
-          }, [])
-      : Logger.error(`\nsyncActions must be an array of sync action names!"\n`)
 }
 
 /**

@@ -59,3 +59,9 @@ actions:
       detach: true
       cmds:
         - yarn dev
+  tap:
+    start:
+      location: /keg/tap
+      privileged: true
+      cmds:
+        - yarn tap:start

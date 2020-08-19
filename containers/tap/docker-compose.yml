@@ -5,6 +5,8 @@ services:
     tty: true
     stdin_open: true
     privileged: true
+    volumes:
+      - ${CLI_PATH}:${DOC_CLI_PATH}
     build:
       context: ${KEG_CONTEXT_PATH}
       dockerfile: ${KEG_DOCKER_FILE}
@@ -30,6 +32,9 @@ services:
     container_name: ${CONTAINER_NAME}
     environment:
       - CHOKIDAR_USEPOLLING
+      - CADDY_HOST
+      - CADDY_PROXY_PARAMS
+      - CADDY_BASIC_AUTH
       - DOC_APP_PATH
       - DOC_CLI_PATH
       - DOC_CORE_PATH
