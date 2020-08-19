@@ -45,7 +45,7 @@ const buildContextEnvs = async (args) => {
       })),
 
     // Add the git key so we can call github within the image / container
-    PUBLIC_GIT_KEY: getPublicGitKey(cmdContext),
+    PUBLIC_GIT_KEY: await getPublicGitKey(globalConfig),
 
     // Get any params that should be converted into ENVs passed to docker
     ...convertParamsToEnvs(params),
