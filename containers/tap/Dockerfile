@@ -67,7 +67,9 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 ENV GIT_KEY=""
 
 # Install git for the new stage
-RUN apk add --no-cache git bash
+RUN apk add --no-cache git bash sudo; \
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf; \
+    sudo sysctl -p
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn

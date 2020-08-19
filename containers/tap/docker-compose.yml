@@ -29,6 +29,7 @@ services:
         - TAP
     container_name: ${CONTAINER_NAME}
     environment:
+      - CHOKIDAR_USEPOLLING
       - DOC_APP_PATH
       - DOC_CLI_PATH
       - DOC_CORE_PATH

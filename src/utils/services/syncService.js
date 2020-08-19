@@ -47,7 +47,7 @@ const syncService = async (args, argsExt) => {
   const { globalConfig, params } = serviceArgs
   const { local, remote, syncForce, tap } = params
 
-  const [ dependency, syncAction ] = params.dependency.includes(':')
+  const [ dependency, ...syncActions ] = params.dependency.includes(':')
     ? params.dependency.split(':')
     : [ params.dependency ]
 
@@ -95,7 +95,7 @@ const syncService = async (args, argsExt) => {
     params: {
       ...serviceArgs.params,
       dependency,
-      syncAction,
+      syncActions: syncActions.length ? syncActions : undefined,
     }
   })
 

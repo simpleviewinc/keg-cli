@@ -121,15 +121,25 @@ const runSyncActions = (serviceArgs, cmdContext, dependency, actions) => {
  *
  * @returns {Array} - Array actions to run
  */
-const getSyncActions = (actions, action, dependency) => {
-  return action
-    ? !isObj(actions[action])
-      ? Logger.error(`\nSync action "${action}" does not exist for "${ dependency }"\n`)
-      : [ { ...actions[action], name: action } ]
-    : isObj(actions) && Object.entries(actions)
-      .reduce((allActions, [ name, meta ]) => {
-        return allActions.concat({ ...meta, name })
-      }, [])
+const getSyncActions = (actions, syncActions, dependency) => {
+
+  return isArr(syncActions) && syncActions.length
+    ? checkCall(() => {
+        return syncActions.reduce((runActions, action) => {
+          const valid = isObj(actions[action])
+          !valid && Logger.error(`\nAction "${action}" does not exist for "${ dependency }"\n`)
+
+          return valid
+            ? runActions.concat([ { ...actions[action], name: action } ])
+            : runActions
+        }, [])
+      })
+    : !syncActions
+      ? isObj(actions) && Object.entries(actions)
+          .reduce((allActions, [ name, meta ]) => {
+            return allActions.concat({ ...meta, name })
+          }, [])
+      : Logger.error(`\nsyncActions must be an array of sync action names!"\n`)
 }
 
 /**
@@ -153,19 +163,19 @@ const syncActionService = async (args, argsExt) => {
   const { globalConfig, params } = serviceArgs
 
   // Get the actions for the sync
-  const syncActions = await getMutagenConfig({
+  const configActions = await getMutagenConfig({
     __injected: params.__injected,
     context: cmdContext,
     configPath: 'actions'
   })
 
-  if(!syncActions) return
+  if(!configActions) return
 
   // Get the container, and the repo to be synced
-  const { container, dependencyName, syncAction } = normalizeSyncData(serviceArgs)
+  const { container, dependencyName, syncActions } = normalizeSyncData(serviceArgs)
 
   // Get the actions to run based on the dependency
-  const actions = getSyncActions(syncActions[dependencyName], syncAction, dependencyName)
+  const actions = getSyncActions(configActions[dependencyName], syncActions, dependencyName)
 
   // If there's no container or actions, then just return
   if(!container || !isArr(actions) ) return actionContext
