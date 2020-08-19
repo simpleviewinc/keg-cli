@@ -72,7 +72,7 @@ const syncService = async (args, argsExt) => {
       __internal: {
         containerContext,
         skipExists: true,
-        skipLog: true
+        skipLog: false
       }
     }),
     params: {

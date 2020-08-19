@@ -37,11 +37,8 @@ RUN git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https:
 
 # Install the dependecies with yarn setup, then remove the .npmrc
 RUN cd $DOC_APP_PATH; \
-    echo "@simpleviewinc:registry=https://npm.pkg.github.com/" > .npmrc; \
-    echo "//npm.pkg.github.com/:_authToken=${PUBLIC_GIT_KEY}" >> .npmrc; \
     yarn setup; \
-    yarn cache clean; \
-    rm -f .npmrc
+    yarn cache clean
 
 # ------- New Build Stage ------- #
 
