@@ -53,3 +53,9 @@ actions:
       detach: true
       cmds:
         - yarn dev
+  core:
+    start:
+      location: /keg/keg-core
+      privileged: true
+      cmds:
+        - yarn web

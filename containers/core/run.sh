@@ -49,11 +49,22 @@ keg_run_from_core(){
 
 }
 
-# Checks for path overrides of the core, tap paths with passed in ENVs
-keg_set_container_paths
+# If the sleep arg is passed, just sleep forever
+# This is to keep our container running forever
+if [[ "$1" == "sleep" ]]; then
+  tail -f /dev/null
+  exit 0
 
-# Run yarn install for any extra node_modules to be installed form the mounted volume
-keg_run_yarn_install
+else
 
-# Start the keg core instance
-keg_run_from_core
+  # Checks for path overrides of the core, tap paths with passed in ENVs
+  keg_set_container_paths
+
+  # Run yarn install for any extra node_modules to be installed form the mounted volume
+  keg_run_yarn_install
+
+  # Start the keg core instance
+  keg_run_from_core
+
+fi
+

@@ -14,7 +14,7 @@ const { DOCKER } = require('KegConst/docker')
 const action = args => {
   return syncService(
     { ...args, __internal: { ...args.__internal, actionOnly: true } },
-    { container: 'tap', ...args.params }
+    { container: 'core', ...args.params }
   )
 }
 
@@ -25,18 +25,13 @@ module.exports = {
     inject: true,
     action: action,
     locationContext: DOCKER.LOCATION_CONTEXT.CONTAINERS,
-    description: `Run a sync action in the tap docker container`,
+    description: `Run a sync action in the keg-core docker container`,
     example: '',
     options: {
       dependency: {
         alias: [ 'act', 'action', 'actions', 'dep' ],
-        description: 'Name of the action to run in the taps docker container',
+        description: `Name of the action to run in keg-core's docker container`,
         required: true
-      },
-      tap: { 
-        description: 'Name of the tap to run. Must be a tap linked in the global config',
-        example: 'keg tap start --tap events-force',
-        required: true,
       },
     }
   }

@@ -96,4 +96,4 @@ WORKDIR /$DOC_APP_PATH
 
 # Run the start script
 # Dont use the array syntax, so we have access to the DOC_CLI_PATH ENV
-CMD /bin/bash $DOC_CLI_PATH/containers/core/run.sh
+CMD /bin/bash $DOC_CLI_PATH/containers/core/run.sh "sleep"
