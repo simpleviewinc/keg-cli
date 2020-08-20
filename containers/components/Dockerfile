@@ -97,4 +97,4 @@ WORKDIR /$DOC_APP_PATH
 SHELL [ "/bin/bash" ]
 
 # Run the start script
-CMD [ "/bin/bash", "/keg/keg-cli/containers/components/run.sh", "sleep" ]
+CMD [ "/bin/bash", "/keg/keg-cli/containers/components/run.sh" ]

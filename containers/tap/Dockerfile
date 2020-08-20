@@ -100,5 +100,4 @@ WORKDIR /$DOC_APP_PATH
 SHELL [ "/bin/bash" ]
 
 # Run the start script
-CMD [ "/bin/bash", "/keg/keg-cli/containers/tap/run.sh", "sleep" ]
-# CMD /keg/keg-cli/containers/tap/run.sh
+CMD [ "/bin/bash", "/keg/keg-cli/containers/tap/run.sh" ]

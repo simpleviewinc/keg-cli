@@ -135,4 +135,10 @@ module.exports = deepFreeze({
     'keg-core': 'core',
   },
 
+  // docker exec constants and options for the utils/services/composeService.js
+  KEG_COMPOSE_EXEC: 'KEG_COMPOSE_EXEC',
+  KEG_EXEC_COMPOSE_OPTS: {
+    start: 'compose-start',
+  }
+
 })

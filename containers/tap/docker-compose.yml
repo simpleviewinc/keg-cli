@@ -48,6 +48,7 @@ services:
       - GIT_RESOLVER_URL
       - GIT_APP_URL
       - KEG_EXEC_CMD
+      - KEG_COMPOSE_EXEC
       - KEG_NM_INSTALL
       - NODE_ENV
       - PUBLIC_GIT_KEY
