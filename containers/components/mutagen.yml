@@ -21,13 +21,19 @@ sync:
 actions:
   retheme:
     install:
-      location: "/keg/keg-components/node_modules/@simpleviewinc/re-theme"
+      location: /keg/keg-components/node_modules/@simpleviewinc/re-theme
       privileged: true
       cmds:
-        - "yarn install"
+        - yarn install
     start:
-      location: "/keg/keg-components/node_modules/@simpleviewinc/re-theme"
+      location: /keg/keg-components/node_modules/@simpleviewinc/re-theme
       privileged: true
       detach: true
       cmds:
-        - "yarn dev"
+        - yarn dev
+  components:
+    start:
+      location: /keg/keg-components
+      privileged: true
+      cmds:
+        - yarn web

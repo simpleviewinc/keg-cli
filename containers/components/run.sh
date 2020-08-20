@@ -53,17 +53,22 @@ keg_run_components(){
 
 }
 
-# Keeps the docker container running
-keg_sleep_keep_alive(){
+# If the sleep arg is passed, just sleep forever
+# This is to keep our container running forever
+if [[ "$1" == "sleep" ]]; then
   tail -f /dev/null
   exit 0
-}
 
-# Checks for path overrides of the core, tap paths with passed in ENVs
-keg_set_container_paths
+else
 
-# Run yarn install for any extra node_modules from the mounted components package.json
-keg_run_yarn_install
+  # Checks for path overrides of the core, tap paths with passed in ENVs
+  keg_set_container_paths
 
-# Start the keg core instance
-keg_run_components
+  # Run yarn install for any extra node_modules from the mounted components package.json
+  keg_run_yarn_install
+
+  # Start the keg core instance
+  keg_run_components
+
+
+fi

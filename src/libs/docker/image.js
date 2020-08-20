@@ -256,6 +256,24 @@ const runImage = async (args) => {
 }
 
 /**
+ * Gets the last Cmd of a built docker image
+ * @function
+ * @param {Object} args - Arguments to pass to the docker image command
+ * @param {string} args.image - Reference to the docker image
+ * @param {string} args.envs - ENVs to pass to the child process
+ * @param {string} args.location - Location where the docker command should be run
+ *
+ * @returns {string|Array} - Response from docker cli
+ */
+const getCmd = async ({ image, envs, location }) => {
+  const cmdToRun = `docker inspect -f {{.Config.Cmd}} ${ image }`.trim()
+  return image && dockerCli(
+    { opts: cmdToRun },
+    { options: { env: envs }, cwd: location },
+  )
+}
+
+/**
  * Root docker image method to run docker image commands
  * @function
  * @param {string} args - Arguments to pass to the docker image command
@@ -270,6 +288,7 @@ Object.assign(image, {
   exists,
   get: getImage,
   getByTag,
+  getCmd,
   list: listImages,
   run: runImage,
   remove: removeImage,

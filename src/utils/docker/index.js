@@ -9,6 +9,7 @@ module.exports = {
   ...require('./checkRemoveImage'),
   ...require('./getBuildArgs'),
   ...require('./getBuildTags'),
+  ...require('./getContainerCmd'),
   ...require('./getContainerFromContext'),
   ...require('./getContainerConst'),
   ...require('./getDockerArgs'),
