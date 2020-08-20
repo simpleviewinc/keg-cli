@@ -29,7 +29,7 @@ services:
       - GIT_COMPONENTS_URL
       - GIT_RETHEME_URL
       - KEG_EXEC_CMD
-      - KEG_COMPOSE_EXEC
+      - KEG_DOCKER_EXEC
       - KEG_NM_INSTALL
       - NODE_ENV
       - PUBLIC_GIT_KEY

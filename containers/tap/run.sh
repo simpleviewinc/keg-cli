@@ -64,9 +64,9 @@ keg_run_the_tap(){
 
 }
 
-# If the no KEG_COMPOSE_EXEC env is set, just sleep forever
+# If the no KEG_DOCKER_EXEC env is set, just sleep forever
 # This is to keep our container running forever
-if [[ -z "$KEG_COMPOSE_EXEC" ]]; then
+if [[ -z "$KEG_DOCKER_EXEC" ]]; then
   tail -f /dev/null
   exit 0
 

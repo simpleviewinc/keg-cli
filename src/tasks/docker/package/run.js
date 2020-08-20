@@ -1,11 +1,8 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { ask } = require('@svkeg/ask-it')
-const { DOCKER } = require('KegConst/docker')
-const { isUrl, get, deepMerge } = require('@svkeg/jsutils')
-const { CONTAINER_PREFIXES } = require('KegConst/constants')
-const { getPortMap } = require('KegUtils/docker/getDockerArgs')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { ask } = require('askIt')
+const { isUrl, get } = require('@ltipton/jsutils')
+const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
 const { getServiceValues } = require('KegUtils/docker/compose/getServiceValues')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
@@ -132,7 +129,7 @@ const dockerPackageRun = async args => {
       ...parsed,
       opts,
       location,
-      envs: contextEnvs,
+      envs: { ...contextEnvs, [KEG_DOCKER_EXEC]: KEG_EXEC_OPTS.packageRun },
       name: `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`,
       cmd: isInjected ? command : defCmd,
       overrideDockerfileCmd: Boolean(!isInjected || command),

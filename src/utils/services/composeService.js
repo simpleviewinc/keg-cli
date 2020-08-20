@@ -6,7 +6,7 @@ const { getServiceArgs } = require('./getServiceArgs')
 const { runInternalTask } = require('../task/runInternalTask')
 const { buildExecParams } = require('../docker/buildExecParams')
 const { getContainerCmd } = require('../docker/getContainerCmd')
-const { KEG_COMPOSE_EXEC, KEG_EXEC_COMPOSE_OPTS } = require('KegConst/constants')
+const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 /**
  * Runs `docker-compose` up command based on the passed in args
  * @function
@@ -85,7 +85,7 @@ const composeService = async (args, exArgs) => {
   // This is added so we can know when were running the exec start command over
   // the initial docker run command
   // In cases where the container starts and runs for ever with tail -f dev/null
-  set(composeContext, `contextEnvs.${KEG_COMPOSE_EXEC}`, KEG_EXEC_COMPOSE_OPTS.start)
+  set(composeContext, `contextEnvs.${KEG_DOCKER_EXEC}`, KEG_EXEC_OPTS.start)
 
   /**
   * Get the start command from the compose file or the Dockerfile
