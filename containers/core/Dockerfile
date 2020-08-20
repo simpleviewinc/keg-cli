@@ -71,7 +71,9 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 RUN apk add --no-cache git bash sudo; \
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf; \
     sudo sysctl -p; \
-    git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/
+    git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/; \
+    rm -rf /var/cache/apk/*; \
+    /bin/sed -i '1s|.*|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn
@@ -94,6 +96,7 @@ EXPOSE 60710
 # Set the current directory to keg-core repo
 WORKDIR /$DOC_APP_PATH
 
+SHELL [ "/bin/bash" ]
+
 # Run the start script
-# Dont use the array syntax, so we have access to the DOC_CLI_PATH ENV
-CMD /bin/bash $DOC_CLI_PATH/containers/core/run.sh "sleep"
+CMD [ "/bin/bash", "/keg/keg-cli/containers/core/run.sh", "sleep" ]

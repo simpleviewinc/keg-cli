@@ -1,4 +1,5 @@
 
+start: /bin/bash /keg/keg-cli/containers/tap/run.sh
 env:
   # --- LOCAL ENV CONTEXT --- #
 

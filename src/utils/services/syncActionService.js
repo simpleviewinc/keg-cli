@@ -3,11 +3,11 @@ const { getServiceArgs } = require('./getServiceArgs')
 const { generalError } = require('../error/generalError')
 const { getRemotePath } = require('../getters/getRemotePath')
 const { runInternalTask } = require('../task/runInternalTask')
-const { get, isArr, isStr, isBool, isObj } = require('@svkeg/jsutils')
+const { get, isArr, isStr,  isObj } = require('@svkeg/jsutils')
+const { buildExecParams } = require('../docker/buildExecParams')
 const { findDependencyName } = require('../helpers/findDependencyName')
 const { getMutagenConfig } = require('KegUtils/getters/getMutagenConfig')
 const { buildContainerContext } = require('../builders/buildContainerContext')
-
 /**
  * Normalizes the sync arguments to pass to the sync action
  * @function
@@ -30,27 +30,6 @@ const normalizeSyncData = serviceArgs => {
 
   const dependencyName = findDependencyName(dependency, remotePath)
   return { ...syncData, remotePath, dependencyName }
-}
-
-/**
- * Gets the arguments to pass to the docker exec command
- * @function
- * @param {Boolean} serviceArgs.detach - Should the action run in detached mode
- * @param {Object} action - Sync action to run
- *
- * @returns {Array} - Array of Promises of each sync action
- */
-const getExecParams = ({ detach }, action) => {
-  const { workdir, location, ...actionParams } = action
-  const detachMode = isBool(detach) ? detach : actionParams.detach
-
-  return {
-    ...actionParams,
-    detach: detachMode,
-    workdir: workdir || location,
-    options: detachMode ? '' : '-it',
-  }
-
 }
 
 /**
@@ -82,7 +61,7 @@ const runSyncCmds = (serviceArgs, cmdContext, dependency, action) => {
       params: {
         ...serviceArgs.params,
         context: cmdContext,
-        ...getExecParams(
+        ...buildExecParams(
           serviceArgs.params,
           actionParams
         ),

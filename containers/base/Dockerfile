@@ -61,7 +61,9 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 RUN apk add --no-cache git bash nano; \
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf; \
     sudo sysctl -p; \
-    git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/
+    git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/; \
+    rm -rf /var/cache/apk/*; \
+    /bin/sed -i '1s|.*|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
 
 # Copy over the globally installed modules from above
 COPY --from=builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn

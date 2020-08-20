@@ -1,6 +1,5 @@
 const docker = require('KegDocCli')
 const { isStr, get, checkCall } = require('@svkeg/jsutils')
-const { DOCKER } = require('KegConst/docker')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
@@ -100,7 +99,6 @@ module.exports = {
     example: 'keg docker exec <options>',
     options: {
       context: {
-        allowed: DOCKER.IMAGES,
         description: 'Context or name of the container to run the command on',
         example: 'keg docker exec --context core',
         enforced: true,

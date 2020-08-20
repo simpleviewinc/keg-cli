@@ -3,6 +3,7 @@ module.exports = {
   ...require('./buildProviderUrl'),
   ...require('./buildDockerCmd'),
   ...require('./buildDockerMounts'),
+  ...require('./buildExecParams'),
   ...require('./compose'),
   ...require('./containerSelect'),
   ...require('./checkRunningContainers'),
