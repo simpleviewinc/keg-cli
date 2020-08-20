@@ -21,7 +21,8 @@ KEG_GROUP="$(id -g -n $KEG_USER)"
 KEG_EXIT=""
 
 # Size of the docker-machien virtual box hhd
-KEG_VB_SIZE=48576
+KEG_VB_SIZE=51200
+KEG_VB_MEMORY=4096
 
 # Prints a message to the terminal through stderr
 keg_message(){
@@ -145,7 +146,7 @@ keg_setup_docker_machine(){
   fi
 
   keg_message "Creating docker-machine instance..."
-  docker-machine create --driver virtualbox --virtualbox-memory $KEG_VB_SIZE $KEG_DOCKER_NAME
+  docker-machine create --driver virtualbox --virtualbox-memory $KEG_VB_MEMORY --virtualbox-disk-size $KEG_VB_SIZE $KEG_DOCKER_NAME
 
   keg_message "Updating docker-machine environment..."
   docker-machine env $KEG_DOCKER_NAME
@@ -656,10 +657,10 @@ keg_setup(){
   # To run:
   # bash mac-init.sh gem
   #  * Runs only the gem portion of this script
-  if [[ -z "$KEG_EXIT" ]] && [[ -z "$INIT_SETUP" || "$SETUP_TYPE" == "gem" ]]; then
-    keg_message "Checking for gem path owner..."
-    keg_check_ruby_gem_owner
-  fi
+  # if [[ -z "$KEG_EXIT" ]] && [[ -z "$INIT_SETUP" || "$SETUP_TYPE" == "gem" ]]; then
+  #   keg_message "Checking for gem path owner..."
+  #   keg_check_ruby_gem_owner
+  # fi
 
   # Setup and install brew
   # To run:
