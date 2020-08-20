@@ -60,8 +60,6 @@ const syncService = async (args, argsExt) => {
   const localPath = getLocalPath(globalConfig, context, dependency, local)
   !localPath && generalError(`Local path could not be found!`)
 
-  if(!actionOnly && !checkSyncPaths(syncForce, contextPath, localPath)) return
-
   const remotePath = getRemotePath(context, dependency, remote)
 
   const dependencyName = findDependencyName(dependency, remotePath)

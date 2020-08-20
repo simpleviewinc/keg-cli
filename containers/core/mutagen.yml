@@ -26,7 +26,7 @@ actions:
       cmds:
         - yarn install
     build:
-      location: /keg/tap/node_modules/keg-core/node_modules/@simpleviewinc/re-theme
+      location: /keg/keg-core/node_modules/@simpleviewinc/re-theme
       privileged: true
       cmds:
         - yarn build
@@ -43,7 +43,7 @@ actions:
       cmds:
         - yarn install
     build:
-      location: /keg/tap/node_modules/keg-core/node_modules/@simpleviewinc/keg-components
+      location: /keg/keg-core/node_modules/@simpleviewinc/keg-components
       privileged: true
       cmds:
         - yarn build
