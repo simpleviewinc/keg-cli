@@ -21,8 +21,7 @@
         "core": "keg-core",
         "components": "keg-components",
         "proxy": "keg-proxy",
-        "resolver": "tap-resolver",
-        "retheme": "re-theme"
+        "resolver": "tap-resolver"
       }
     },
     "taps": {

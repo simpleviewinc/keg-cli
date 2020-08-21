@@ -1,4 +1,4 @@
-const { syncService } = require('KegUtils/services')
+const { actionService } = require('KegUtils/services/actionService')
 const { DOCKER } = require('KegConst/docker')
 
 /**
@@ -12,26 +12,42 @@ const { DOCKER } = require('KegConst/docker')
  * @returns {void}
  */
 const action = args => {
-  return syncService(
-    { ...args, __internal: { ...args.__internal, actionOnly: true } },
-    { container: 'tap', ...args.params }
-  )
+  return actionService(args, { container: 'tap', ...args.params })
 }
 
 module.exports = {
   action: {
     name: 'action',
-    alias: [ 'act', 'actions' ],
+    alias: [ 'actions', 'act', 'exec', 'ex' ],
     inject: true,
     action: action,
     locationContext: DOCKER.LOCATION_CONTEXT.CONTAINERS,
-    description: `Run a sync action in the tap docker container`,
+    description: `Run an action defined in a value.yml/action within a docker container`,
     example: '',
     options: {
-      dependency: {
-        alias: [ 'act', 'action', 'actions', 'dep' ],
+      action: {
+        alias: [ 'act', 'actions', 'dep' ],
         description: 'Name of the action to run in the taps docker container',
         required: true
+      },
+      location: {
+        alias: [  'location', 'loc', 'workdir', 'dir', 'd' ],
+        description: 'Directory in the docker container where the command should be run',
+        example: 'keg tap action --location /app',
+      },
+      detach: {
+        alias: [ 'detached' ],
+        description: 'Run the docker exec task in detached mode',
+        example: 'keg tap action --detach',
+      },
+      privileged: {
+        alias: [ 'priv', 'pri' ],
+        description: 'Run the docker exec task in privileged mode',
+        example: 'keg tap action --privileged',
+      },
+      options: {
+        alias: [ 'opts' ],
+        description: 'Extra docker exec command options',
       },
       tap: { 
         description: 'Name of the tap to run. Must be a tap linked in the global config',

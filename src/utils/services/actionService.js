@@ -1,36 +1,16 @@
 const { Logger } = require('KegLog')
 const { getServiceArgs } = require('./getServiceArgs')
+const { loadValuesFiles } = require('KegConst/docker/loaders')
+
+
 const { generalError } = require('../error/generalError')
 const { getRemotePath } = require('../getters/getRemotePath')
 const { runInternalTask } = require('../task/runInternalTask')
-const { get, isArr, isStr,  isObj } = require('@svkeg/jsutils')
 const { buildExecParams } = require('../docker/buildExecParams')
 const { findDependencyName } = require('../helpers/findDependencyName')
-const { getMutagenConfig } = require('KegUtils/getters/getMutagenConfig')
+
+const { get, isArr, isStr, isObj, checkCall } = require('@ltipton/jsutils')
 const { buildContainerContext } = require('../builders/buildContainerContext')
-/**
- * Normalizes the sync arguments to pass to the sync action
- * @function
- * @param {Object} serviceArgs - arguments passed from the runTask method
- *
- * @returns {Array} - Array of Promises of each sync action
- */
-const normalizeSyncData = serviceArgs => {
-  const { params } = serviceArgs
-  const mutagen = get(serviceArgs, '__internal.containerContext.mutagen', {})
-
-  const { env, force, dependency, context, ...syncParams } = params
-
-  const syncData = { ...syncParams, ...mutagen }
-  if(!syncData.remote && !syncData.remotePath) return {}
-
-  const remotePath = syncData.remote.includes('/')
-    ? syncData.remote
-    : remotePath || getRemotePath(context, dependency, remote)
-
-  const dependencyName = findDependencyName(dependency, remotePath)
-  return { ...syncData, remotePath, dependencyName }
-}
 
 /**
  * Runs the sync actions defined in the mutagen.yml sync config
@@ -42,7 +22,7 @@ const normalizeSyncData = serviceArgs => {
  *
  * @returns {Array} - Array of Promises of each sync action
  */
-const runSyncCmds = (serviceArgs, cmdContext, dependency, action) => {
+const runActionCmds = (serviceArgs, cmdContext, dependency, action) => {
 
   // Get the cmd || cmds to run
   const { cmds, cmd, ...actionParams } = action
@@ -51,10 +31,10 @@ const runSyncCmds = (serviceArgs, cmdContext, dependency, action) => {
   const allCmds = isArr(cmds) ? cmds : isStr(cmds) ? [ cmds ] : []
   isStr(cmd) && allCmds.unshift(cmd)
 
-  return allCmds.reduce(async (toResolve, cmd) => {
+  return allCmds.reduce(async (toResolve, toRun) => {
     await toResolve
 
-    Logger.highlight(`Running ${ dependency } sync action:`, `"${ cmd }"`)
+    Logger.highlight(`Running action:`, `"${ cmd }"`)
 
     // Run the docker exec task for each cmd
     return runInternalTask('tasks.docker.tasks.exec', {
@@ -66,7 +46,7 @@ const runSyncCmds = (serviceArgs, cmdContext, dependency, action) => {
           serviceArgs.params,
           actionParams
         ),
-        cmd,
+        cmd: toRun,
       },
     })
 
@@ -84,10 +64,10 @@ const runSyncCmds = (serviceArgs, cmdContext, dependency, action) => {
  *
  * @returns {Array} - Array of Promises of each sync action
  */
-const runSyncActions = (serviceArgs, cmdContext, dependency, actions) => {
+const runActions = (serviceArgs, cmdContext, dependency, actions) => {
   return actions.reduce(async (toResolve, action) => {
     await toResolve
-    return runSyncCmds(serviceArgs, cmdContext, dependency, action)
+    return runActionCmds(serviceArgs, cmdContext, dependency, action)
   }, Promise.resolve())
 }
 
@@ -101,15 +81,15 @@ const runSyncActions = (serviceArgs, cmdContext, dependency, actions) => {
  *
  * @returns {Array} - Array actions to run
  */
-const getSyncActions = (actions, syncActions, dependency) => {
-  return !isArr(syncActions) || !syncActions.length || !isObj(actions)
+const getActions = (actions, actionToRun, dependency) => {
+  return !isArr(actionToRun) || !actionToRun.length || !isObj(actions)
     ? null
-    : syncActions.includes('all')
+    : actionToRun.includes('all')
       ? Object.entries(actions)
           .reduce((allActions, [ name, meta ]) => {
             return allActions.concat({ ...meta, name })
           }, [])
-      : syncActions.reduce((runActions, action) => {
+      : actionToRun.reduce((runActions, action) => {
           const valid = isObj(actions[action])
           !valid && Logger.error(`\nAction "${action}" does not exist for "${ dependency }"\n`)
 
@@ -131,38 +111,34 @@ const getSyncActions = (actions, syncActions, dependency) => {
  *
  * @returns {void}
  */
-const syncActionService = async (args, argsExt) => {
+const actionService = async (args, argsExt) => {
 
   const serviceArgs = getServiceArgs(args, argsExt)
+  const { params } = serviceArgs
   const actionContext = await buildContainerContext(serviceArgs)
 
-  const { cmdContext, context, id } = actionContext
-  const { globalConfig, params } = serviceArgs
-
-  // Get the actions for the sync
-  const configActions = await getMutagenConfig({
-    __injected: params.__injected,
-    context: cmdContext,
-    configPath: 'actions'
+  // TODO:
+  // Get the actions from the values.yml files
+  const { container, env, __injected } = params
+  const actions = await loadValuesFiles({
+    env,
+    container,
+    loadPath: 'actions',
+    __internal: __injected,
   })
 
-  if(!configActions) return
+  console.log(`---------- actions ----------`)
+  console.log(actions)
 
-  // Get the container, and the repo to be synced
-  const { container, dependencyName, syncActions } = normalizeSyncData(serviceArgs)
+  // Compare them to the passed in actions
+  // Get only the passed in actions, in the correct order
+  // const actionsToRun = getActions(actions, get(serviceArgs, 'params.action'))
 
-  // Get the actions to run based on the dependency
-  const actions = getSyncActions(configActions[dependencyName], syncActions, dependencyName)
+  // Run the actions on the container
+  // await runActions(serviceArgs, actionContext.cmdContext, action, actions)
 
-  // If there's no container or actions, then just return
-  if(!container || !isArr(actions) ) return actionContext
-
-  // Run the actions for the dependency
-  await runSyncActions(serviceArgs, cmdContext, dependencyName, actions)
-
-  return actionContext
 }
 
 module.exports = {
-  syncActionService
+  actionService
 }

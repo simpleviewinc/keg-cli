@@ -20,7 +20,6 @@ module.exports = {
         cli: 'keg-cli',
         core: 'keg-core',
         components: 'keg-components',
-        retheme: 're-theme',
         base: 'keg-core',
         resolver: 'tap-resolver',
         proxy: 'keg-proxy'
@@ -36,7 +35,6 @@ module.exports = {
       keg: path.join(homeDir, '/keg'),
       proxy: path.join(homeDir, '/keg/keg-proxy'),
       resolver: path.join(homeDir, '/keg/tap-resolver'),
-      retheme: path.join(homeDir, '/keg/re-theme'),
       customTasks: ''
     },
     settings: {

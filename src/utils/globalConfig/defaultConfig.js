@@ -15,7 +15,6 @@ const defPaths = {
   core: path.join(cliParent, 'keg-core'),
   proxy: path.join(cliParent, 'keg-proxy'),
   resolver: path.join(cliParent, 'tap-resolver'),
-  retheme: path.join(cliParent, 're-theme'),
 }
 
 /**
@@ -62,7 +61,6 @@ const defaultConfig = (args={}) => {
           cli: "keg-cli",
           core: "keg-core",
           components: "keg-components",
-          retheme: "re-theme",
           resolver: "tap-resolver",
         }
       },
