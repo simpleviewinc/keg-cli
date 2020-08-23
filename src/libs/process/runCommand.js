@@ -1,4 +1,4 @@
-const { isObj, isArr, isBool } = require('@ltipton/jsutils')
+const { isObj, isArr, isBool } = require('@svkeg/jsutils')
 const { spawnCmd, asyncCmd } = require('spawn-cmd')
 const { Logger } = require('KegLog')
 
