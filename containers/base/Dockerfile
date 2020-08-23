@@ -59,7 +59,7 @@ ENV REACT_NATIVE_PACKAGER_HOSTNAME $KEG_DOCKER_IP
 # Install git and bash for the new stage
 # This is so Dockerfiles that uses "FROM keg-base", don't have to install these packages
 RUN apk add --no-cache git bash nano; \
-    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf; \
+    echo fs.inotify.max_user_watches=1048576 | sudo tee -a /etc/sysctl.conf; \
     sudo sysctl -p; \
     git config --global url.https://$PUBLIC_GIT_KEY@github.com/.insteadOf https://github.com/; \
     rm -rf /var/cache/apk/*; \
