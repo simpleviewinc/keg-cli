@@ -1,5 +1,5 @@
 const { isObj, isArr, isBool } = require('@svkeg/jsutils')
-const { spawnCmd, asyncCmd } = require('spawn-cmd')
+const { spawnCmd, asyncCmd } = require('@svkeg/spawn-cmd')
 const { Logger } = require('KegLog')
 
 /**
