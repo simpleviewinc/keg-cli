@@ -21,7 +21,7 @@ const { generalError } = require('KegUtils/error')
  */
 const currentBranch = async args => {
 
-  const { params,  globalConfig, __internal } = args
+  const { params,  globalConfig, __internal={} } = args
   const { skipLog } = __internal
   const { context, path: repoPath, tap } = params
 
