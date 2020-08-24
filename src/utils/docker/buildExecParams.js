@@ -1,4 +1,4 @@
-const { isBool } = require('@ltipton/jsutils')
+const { isBool } = require('@svkeg/jsutils')
 
 /**
  * Gets the arguments to pass to the docker exec command

@@ -1,4 +1,4 @@
-const { get } = require('@ltipton/jsutils')
+const { get } = require('@svkeg/jsutils')
 const { decrypt } = require('KegCrypto')
 const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
 

@@ -1,7 +1,7 @@
 const path = require('path')
 const { KEG_ENVS } = require('../envs')
 const { PREFIXED } = require('./machine')
-const { deepMerge } = require('@ltipton/jsutils')
+const { deepMerge } = require('@svkeg/jsutils')
 const { GLOBAL_CONFIG_FOLDER } = require('../constants')
 const { loadYmlSync } = require('../../libs/fileSys/yml')
 const { checkLoadEnv } = require('../../libs/fileSys/env')

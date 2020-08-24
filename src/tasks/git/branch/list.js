@@ -1,7 +1,7 @@
 const { ask } = require('askIt')
 const { Logger } = require('KegLog')
 const { git } = require('KegGitCli')
-const { isNum, exists } = require('@ltipton/jsutils')
+const { isNum, exists } = require('@svkeg/jsutils')
 const { getGitPath } = require('KegUtils/git/getGitPath')
 const { printGitBranches } = require('KegUtils/git/printGitBranches')
 const { generalError } = require('KegUtils/error')

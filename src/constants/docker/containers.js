@@ -4,7 +4,7 @@ const { PREFIXED } = require('./machine')
 const { loadValuesFiles, loadEnvFiles } = require('./loaders')
 const { cliRootDir, containersPath, images } = require('./values')
 const { defineProperty } = require('../../utils/helpers/defineProperty')
-const { deepFreeze, deepMerge, keyMap, get } = require('@ltipton/jsutils')
+const { deepFreeze, deepMerge, keyMap, get } = require('@svkeg/jsutils')
 
 /**
  * Holds each docker containers meta data that can be built by the CLI

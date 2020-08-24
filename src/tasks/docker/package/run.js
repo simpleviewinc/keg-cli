@@ -1,7 +1,7 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { ask } = require('askIt')
-const { isUrl, get } = require('@ltipton/jsutils')
+const { isUrl, get } = require('@svkeg/jsutils')
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
 const { getServiceValues } = require('KegUtils/docker/compose/getServiceValues')

@@ -1,8 +1,8 @@
 const { spawnCmd } = require('spawn-cmd')
-const { reduceObj, isStr, toBool, isBool } = require('@ltipton/jsutils')
+const { reduceObj, isStr, toBool, isBool } = require('@svkeg/jsutils')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
 const { throwNoConfigPath } = require('KegUtils/error/throwNoConfigPath')
-const { checkBoolValue } = require('@ltipton/args-parse/src/options/checkBoolValue')
+const { checkBoolValue } = require('@svkeg/args-parse/src/options/checkBoolValue')
 
 /**
  * NP options map - Maps keg-cli task options to np options
