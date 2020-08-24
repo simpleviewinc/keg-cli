@@ -1,6 +1,6 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { ask } = require('askIt')
+const { ask } = require('@svkeg/ask-it')
 const { isUrl, get } = require('@svkeg/jsutils')
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')

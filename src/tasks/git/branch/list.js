@@ -1,4 +1,4 @@
-const { ask } = require('askIt')
+const { ask } = require('@svkeg/ask-it')
 const { Logger } = require('KegLog')
 const { git } = require('KegGitCli')
 const { isNum, exists } = require('@svkeg/jsutils')

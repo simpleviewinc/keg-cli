@@ -4,7 +4,7 @@ const { Logger } = require('KegLog')
 const { git } = require('KegGitCli')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { generalError } = require('KegUtils/error')
-const { ask } = require('askIt')
+const { ask } = require('@svkeg/ask-it')
 
 /**
  * Get the branch name based on the branch or the params.remove value
