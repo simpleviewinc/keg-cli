@@ -1,6 +1,6 @@
-const { spawnCmd } = require('spawn-cmd')
-const { reduceObj, isStr, toBool, isBool } = require('@svkeg/jsutils')
+const { spawnCmd } = require('@svkeg/spawn-cmd')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
+const { reduceObj, isStr, toBool, isBool } = require('@svkeg/jsutils')
 const { throwNoConfigPath } = require('KegUtils/error/throwNoConfigPath')
 const { checkBoolValue } = require('@svkeg/args-parse/src/options/checkBoolValue')
 
