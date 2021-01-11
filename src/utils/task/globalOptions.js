@@ -46,7 +46,7 @@ const getGlobalOptions = (task, action) => {
       allowed: envOpts,
       description: 'Environment to run the task in',
       example: 'keg ${ task } ${ action } --env staging',
-      default: getDefaultEnv() || 'development',
+      default: getDefaultEnv() || 'develop',
     },
   }
 }

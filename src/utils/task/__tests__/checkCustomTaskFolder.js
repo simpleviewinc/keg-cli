@@ -5,8 +5,8 @@ describe('checkCustomTaskFolder', () => {
 
   afterAll(() => jest.resetAllMocks())
 
-  it('should find a custom tasks folder', () => {
-    // TODO
+  it('should find a custom tasks folder', async () => {
+    // await checkCustomTaskFolder(globalConfig, tapObj)
   })
 
 })
