@@ -1,6 +1,7 @@
 
 const globalConfig = global.getGlobalCliConfig()
 const testTask = global.getTask()
+jest.setTimeout(15000)
 
 const { buildCmdContext } = require('../buildCmdContext')
 
@@ -105,7 +106,7 @@ describe('buildCmdContext', () => {
       askFor: false
     })
 
-    expect(res2.withPrefix).toBe('img-keg-components')
+    expect(res3.withPrefix).toBe('img-keg-components')
 
   })
 
