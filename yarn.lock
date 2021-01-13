@@ -1972,6 +1972,11 @@ detect-newline@^2.1.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-2.1.0.tgz#f41f1c10be4b00e87b5f13da680759f2c5bfd3e2"
   integrity sha1-9B8cEL5LAOh7XxPaaAdZ8sW/0+I=
 
+didyoumean3@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.npmjs.org/didyoumean3/-/didyoumean3-1.2.5.tgz#a54bcd83c681708b7c0f7e1efa5db261334c6fca"
+  integrity sha512-ROol2k9IQ04NjrCiB98knunQ1cOmoXdYaGFjMfDIcXl9PuaxNVHxAZrG163aWkrRq5jIL+LatmqCgPasOvRwSQ==
+
 diff-sequences@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-24.9.0.tgz#5715d6244e2aa65f48bba0bc972db0b0b11e95b5"
@@ -3339,6 +3344,11 @@ just-extend@^4.0.2:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-4.1.0.tgz#7278a4027d889601640ee0ce0e5a00b992467da4"
   integrity sha512-ApcjaOdVTJ7y4r08xI5wIqpvwS48Q0PBG4DJROcEkH1f8MdAiNFyFxz3xoL0LWAVwjrwPYZdVHHxhRHcx/uGLA==
+
+keypress@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/keypress/-/keypress-0.2.1.tgz#1e80454250018dbad4c3fe94497d6e67b6269c77"
+  integrity sha1-HoBFQlABjbrUw/6USX1uZ7YmnHc=
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
