@@ -11,6 +11,9 @@ jest.setMock('KegLog', { Logger })
 const Tasks = require('KegTasks')
 const { getTask } = require('KegMocks/helpers/testTasks')
 
+// Globally set the timeout
+jest.setTimeout(15000)
+
 global.cliTasks = Tasks
 global.getTask = getTask
 global.testMocks = global.testMocks || {}

@@ -125,7 +125,7 @@ describe('addProviderTags', () => {
       { ...compArgs.args, params: compParams }
     )
 
-    expect(resp).toBe(`test.provider.url/tests/keg-components:${curBranch.name}`)
+    expect(resp.toLowerCase()).toBe(`test.provider.url/tests/keg-components:${curBranch.name}`.toLowerCase())
 
     console.log = oldLog
 
