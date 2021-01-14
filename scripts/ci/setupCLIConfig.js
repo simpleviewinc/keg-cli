@@ -95,14 +95,14 @@ const buildCIConfig = (customConfig) => {
 (async () => {
 
   // Ensure the global keg config folder path exists
-  console.log(`Creating directory ${KEG_CONFIG_PATH}...`)
+  process.stdout.write(`::debug::Creating directory ${KEG_CONFIG_PATH}\n`)
   !fs.existsSync(KEG_CONFIG_PATH) && fs.mkdirSync(KEG_CONFIG_PATH)
  
-  const ciENVFrom = path.join(__dirname, 'ci.env'),
+  const ciENVFrom = path.join(__dirname, 'ci.env')
   const ciENVTo = path.join(KEG_CONFIG_PATH, 'defaults.env')
 
   // Copy over the CI defaults.env file
-  console.log(`Creating ci.env file at path ${ciENVTo}`)
+  process.stdout.write(`::debug::Creating ci.env file at path ${ciENVTo}\n`)
   fs.copySync(ciENVFrom, ciENVTo) 
 
   // Try to load a custom config file
@@ -110,13 +110,13 @@ const buildCIConfig = (customConfig) => {
   const ciConfigTo = path.join(KEG_CONFIG_PATH, KEG_CONFIG_FILE)
 
   // Build then wright the cli config file to the config path
-  console.log(`Creating ci cli.config.json file at path ${ciConfigTo}`)
+  process.stdout.write(`::debug::Creating ci cli.config.json file at path ${ciConfigTo}\n`)
   fs.writeFileSync(
     ciConfigTo,
     buildCIConfig(customConfig),
     'utf8'
   )
 
-  console.log(`Finished creating Keg-CLI config files!`)
+  process.stdout.write(`::debug::Finished creating Keg-CLI config files!\n`)
 
 })()
