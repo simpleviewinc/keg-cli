@@ -19,7 +19,7 @@ keg_setup_cli_config(){
   
   echo "::debug::Running Keg-CLI config setup..."
 
-  local NODE_OUTPUT=(node $KEG_CLI_PATH/scripts/ci/setupCLIConfig.js)
+  local NODE_OUTPUT=$(node $KEG_CLI_PATH/scripts/ci/setupCLIConfig.js)
   
   echo "::debug::$NODE_OUTPUT"
 
