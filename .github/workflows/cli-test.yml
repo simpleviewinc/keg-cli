@@ -28,6 +28,12 @@ jobs:
         id: run-repo-format
         run: yarn format
 
+      - name: "Setup CLI config"
+        id: setup-cli-config
+        run: bash scripts/ci/setupCLIConfig.sh
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
       - name: "Run Repo Tests"
         id: run-repo-tests
         run: yarn test
