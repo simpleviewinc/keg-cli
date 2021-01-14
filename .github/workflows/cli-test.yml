@@ -22,7 +22,7 @@ jobs:
       - name: "Cache Dependencies"
       - uses: bahmutov/npm-install@v1
         with:
-          install-command: yarn --frozen-lockfile --silent
+          install-command: yarn install --ignore-engines --frozen-lockfile --silent
 
       - name: "Run Repo Format"
         id: run-repo-format
