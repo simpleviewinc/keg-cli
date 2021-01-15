@@ -51,6 +51,11 @@ module.exports = {
         example: 'keg tap package run --tap my-tap',
         required: true,
       },
+      port: {
+        description: 'Mount the local volumes defined in the docker-compose config.yml.',
+        example: 'keg docker package run --volumes',
+        default: false
+      },
     }
   }
 }
