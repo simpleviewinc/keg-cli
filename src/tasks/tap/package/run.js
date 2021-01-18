@@ -52,8 +52,8 @@ module.exports = {
         required: true,
       },
       port: {
-        description: 'Mount the local volumes defined in the docker-compose config.yml.',
-        example: 'keg docker package run --volumes',
+        description: 'Exposes the port to your local, from the docker container',
+        example: 'keg tap package run --port 5005:5005',
         default: false
       },
     }
