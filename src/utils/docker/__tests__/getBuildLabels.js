@@ -1,9 +1,10 @@
 const globalConfig = global.getGlobalCliConfig()
+const { __updateGlobalConfig } = require('../../globalConfig/globalConfigCache')
+__updateGlobalConfig(globalConfig)
+
 const { dockerLabels } = require('KegMocks/libs/docker/docker')
 const { DOCKER } = require('KegConst/docker')
 const { injectedTest, injectedContainer } = require('KegMocks/injected/injectedTest')
-
-
 
 const withInjected = {
   ...DOCKER.CONTAINERS,
