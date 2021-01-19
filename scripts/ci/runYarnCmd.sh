@@ -11,7 +11,7 @@ echo "::debug::Keg-CLI root directory => $KEG_CLI_PATH"
 export KEG_GLOBAL_CONFIG=$KEG_CLI_PATH/.kegConfig/cli.config.json
 echo "::debug::Keg-CLI config file => $KEG_GLOBAL_CONFIG"
 
-export KEG_ROOT_DIR = ../../keg-hub
+export KEG_ROOT_DIR="$(dirname $(dirname $(pwd)))/keg-hub"
 echo "::debug::KEG_ROOT_DIR directory => $KEG_ROOT_DIR"
 
 # Loop over the repos and run the passed in command on them

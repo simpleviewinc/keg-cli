@@ -1,4 +1,4 @@
-#!/bin/bash
+# !/bin/bash
 
 # IMPORTANT - This script should be run from the keg-cli root directory
 
@@ -12,7 +12,8 @@ export KEG_CLI_PATH=$(pwd)
 # And sets up and env for it's path
 keg_setup_keg_hub(){
   # Set the keg-hub root directory
-  export KEG_ROOT_DIR = ../../keg-hub
+  export KEG_ROOT_DIR="$(dirname $(dirname $(pwd)))/keg-hub"
+  
   # Clone keg-hub into the root directory
   git clone https://github.com/simpleviewinc/keg-hub.git $KEG_ROOT_DIR
 
