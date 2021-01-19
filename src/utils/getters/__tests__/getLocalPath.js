@@ -1,5 +1,9 @@
-
+const path = require('path')
+const { DOCKER } = require('KegConst/docker')
+const { get } = require('@keg-hub/jsutils')
 const globalConfig = global.getGlobalCliConfig()
+const cliRootDir = global.cliRootDir
+
 const { getLocalPath } = require('../getLocalPath')
 
 describe('getLocalPath', () => {
@@ -16,14 +20,13 @@ describe('getLocalPath', () => {
   it('should get the local path from the context and dependency', async () => {
 
     const localPath = getLocalPath(globalConfig, 'core', 'cli')
-    expect(localPath).toBe(globalConfig.cli.paths.cli)
+    expect(path.resolve(localPath)).toBe(path.resolve(get(DOCKER, `CONTAINERS.CORE.ENV.CLI_PATH`)))
 
   })
 
   it('should return the current working directory when no path is found', async () => {
-    const cwd = process.cwd()
     const localPath = getLocalPath(globalConfig, 'core', 'foo')
-    expect(localPath).toBe(cwd)
+    expect(path.resolve(localPath)).toBe(path.resolve(cliRootDir))
 
   })
 

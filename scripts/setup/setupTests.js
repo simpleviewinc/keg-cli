@@ -3,6 +3,8 @@ require('module-alias/register')
 // Override the console methods
 require('KegMocks/logger/console')
 
+const path = require('path')
+
 // Override the logger by default
 // Will get reset in the Logger tests
 const { Logger } = require('KegMocks/logger')
@@ -17,6 +19,7 @@ jest.setTimeout(15000)
 global.cliTasks = Tasks
 global.getTask = getTask
 global.testMocks = global.testMocks || {}
+global.cliRootDir = path.join(__dirname, '../../')
 
 global.loadMockEnvs = (envs={}) => {
   const originalEnvs = { ...process.env }

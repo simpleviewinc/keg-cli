@@ -1,4 +1,6 @@
 
+const { DOCKER } = require('KegConst/docker')
+const { get } = require('@keg-hub/jsutils')
 const globalConfig = global.getGlobalCliConfig()
 const testTask = global.getTask()
 const unloadEnvs = global.loadMockEnvs()
@@ -22,26 +24,50 @@ describe('buildContextEnvs', () => {
         cmdContext: 'base',
         tap: false
       })
-      
-      expect(contextEnvs.KEG_CONTEXT_PATH
-        .indexOf('/keg-hub/repos/keg-cli'))
-        .not.toBe(-1)
 
-      expect(contextEnvs.KEG_DOCKER_FILE
-        .indexOf('/keg-hub/repos/keg-cli/containers/base/Dockerfile'))
-        .not.toBe(-1)
+      expect(contextEnvs.KEG_CONTEXT_PATH)
+        .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_CONTEXT_PATH`))
 
-      expect(contextEnvs.KEG_VALUES_FILE
-        .indexOf('/keg-hub/repos/keg-cli/containers/base/values.yml'))
-        .not.toBe(-1)
+      expect(contextEnvs.KEG_DOCKER_FILE)
+        .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_DOCKER_FILE`))
 
-      expect(contextEnvs.KEG_COMPOSE_DEFAULT
-        .indexOf('/keg-hub/repos/keg-cli/containers/base/docker-compose.yml'))
-        .not.toBe(-1)
+      expect(contextEnvs.KEG_VALUES_FILE)
+        .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_VALUES_FILE`))
+
+      expect(contextEnvs.KEG_COMPOSE_DEFAULT)
+        .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_COMPOSE_DEFAULT`))
 
       expect(contextEnvs.IMAGE).toBe('keg-base')
       expect(contextEnvs.VERSION).toBe('0.0.1')
       expect(contextEnvs.CONTAINER_NAME).toBe('keg-base')
+
+    })
+
+  it('Should build the container context envs for the tap container', async () => {
+
+    const contextEnvs = await buildContextEnvs({
+        globalConfig,
+        params: { context: 'tap', tap: 'test' },
+        task: testTask,
+        envs: {},
+        cmdContext: 'tap',
+      })
+
+      expect(contextEnvs.KEG_CONTEXT_PATH)
+        .toBe(get(DOCKER, `CONTAINERS.TAP.ENV.KEG_CONTEXT_PATH`))
+
+      expect(contextEnvs.KEG_DOCKER_FILE)
+        .toBe(get(DOCKER, `CONTAINERS.TAP.ENV.KEG_DOCKER_FILE`))
+
+      expect(contextEnvs.KEG_VALUES_FILE)
+        .toBe(get(DOCKER, `CONTAINERS.TAP.ENV.KEG_VALUES_FILE`))
+
+      expect(contextEnvs.KEG_COMPOSE_DEFAULT)
+        .toBe(get(DOCKER, `CONTAINERS.TAP.ENV.KEG_COMPOSE_DEFAULT`))
+
+      expect(contextEnvs.IMAGE).toBe('tap')
+      expect(contextEnvs.VERSION).toBe('0.0.1')
+      expect(contextEnvs.CONTAINER_NAME).toBe('tap')
 
     })
 

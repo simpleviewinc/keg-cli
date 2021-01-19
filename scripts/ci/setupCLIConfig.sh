@@ -8,6 +8,16 @@ set -e
 # Should be something like this in the workflow => /home/runner/work/keg-cli/keg-cli
 export KEG_CLI_PATH=$(pwd)
 
+
+keg_setup_keg_hub(){
+  # Make the keg-hub folder
+  mkdir -p '../../keg-hub'
+  # Add the repos folder
+  mkdir -p '../../keg-hub/repos'
+  # Add the taps folder
+  mkdir -p '../../keg-hub/taps'
+}
+
 echo "::debug::Keg-CLI root directory => $KEG_CLI_PATH"
 
 # Setup the config paths for the global cli config 
@@ -18,6 +28,8 @@ export KEG_CONFIG_FILE=cli.config.json
 keg_setup_cli_config(){
   
   echo "::debug::Running Keg-CLI config setup..."
+
+  keg_setup_keg_hub
 
   node $KEG_CLI_PATH/scripts/ci/setupCLIConfig.js
 
