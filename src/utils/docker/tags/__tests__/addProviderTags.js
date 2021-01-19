@@ -1,7 +1,4 @@
 const globalConfig = global.getGlobalCliConfig()
-const { __updateGlobalConfig } = require('../../../globalConfig/globalConfigCache')
-__updateGlobalConfig(globalConfig)
-
 const { git } = require('KegGitCli')
 const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')

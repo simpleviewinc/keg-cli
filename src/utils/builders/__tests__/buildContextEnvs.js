@@ -1,8 +1,5 @@
 
 const globalConfig = global.getGlobalCliConfig()
-const { __updateGlobalConfig } = require('../../globalConfig/globalConfigCache')
-__updateGlobalConfig(globalConfig)
-
 const { DOCKER } = require('KegConst/docker')
 const { get } = require('@keg-hub/jsutils')
 const testTask = global.getTask()

@@ -1,7 +1,4 @@
 const globalConfig = global.getGlobalCliConfig()
-const { __updateGlobalConfig } = require('../../../globalConfig/globalConfigCache')
-__updateGlobalConfig(globalConfig)
-
 const path = require('path')
 const { DOCKER } = require('KegConst/docker')
 const { getTask } = require('KegMocks/helpers/testTasks')
