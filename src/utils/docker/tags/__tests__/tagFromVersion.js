@@ -41,7 +41,7 @@ const args = {
       ...defParams,
       context: 'base',
       tap: 'base',
-      location: get(globalConfig, 'cli.paths.cli'),
+      location: DOCKER.CONTAINERS.BASE.ENV.KEG_CONTEXT_PATH,
       cmd: 'build',
       image: 'keg-base',
       buildArgs: {
@@ -58,7 +58,7 @@ const args = {
       ...defParams,
       context: 'core',
       tap: 'core',
-      location: get(globalConfig, 'cli.paths.core'),
+      location: DOCKER.CONTAINERS.CORE.ENV.KEG_CONTEXT_PATH,
       cmd: 'core',
       image: 'keg-core',
       buildArgs: {
@@ -75,7 +75,7 @@ const args = {
       ...defParams,
       context: 'components',
       tap: 'components',
-      location: get(globalConfig, 'cli.paths.components'),
+      location: DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH,
       cmd: 'components',
       image: 'keg-components',
       buildArgs: {

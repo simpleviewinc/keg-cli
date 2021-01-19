@@ -1,19 +1,16 @@
 const globalConfig = global.getGlobalCliConfig()
 const { git } = require('KegGitCli')
-const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
 const { getTask } = require('KegMocks/helpers/testTasks')
 const { dockerData, docker } = require('KegMocks/libs/docker/docker')
 
+
 jest.setMock('KegDocCli', docker)
 
 const providerUrl = 'test.provider.url/tests'
-
-// TODO: Update base location to keg-hub path when image from updates are done
-const baseLoc = get(globalConfig, 'cli.paths.cli')
-
-const coreLoc = get(globalConfig, 'cli.paths.core')
-const compLoc = get(globalConfig, 'cli.paths.components')
+const baseLoc = DOCKER.CONTAINERS.BASE.ENV.KEG_CONTEXT_PATH
+const coreLoc = DOCKER.CONTAINERS.CORE.ENV.KEG_CONTEXT_PATH
+const compLoc = DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH
 
 const defArgs = {
   globalConfig,
