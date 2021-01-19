@@ -3,6 +3,9 @@ const { deepClone } = require('@keg-hub/jsutils')
 const orgGlobalConfig = global.getGlobalCliConfig()
 const globalConfig = deepClone(orgGlobalConfig)
 
+const { __updateGlobalConfig } = require('../../globalConfig/globalConfigCache')
+__updateGlobalConfig(orgGlobalConfig)
+
 const { getRepoPath } = require('../getRepoPath')
 const fakeTapPath = 'fake/tap/path'
 

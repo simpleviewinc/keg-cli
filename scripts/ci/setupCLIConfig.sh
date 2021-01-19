@@ -8,14 +8,15 @@ set -e
 # Should be something like this in the workflow => /home/runner/work/keg-cli/keg-cli
 export KEG_CLI_PATH=$(pwd)
 
-
+# Clones the keg-hub repo locally
+# And sets up and env for it's path
 keg_setup_keg_hub(){
-  # Make the keg-hub folder
-  mkdir -p '../../keg-hub'
-  # Add the repos folder
-  mkdir -p '../../keg-hub/repos'
-  # Add the taps folder
-  mkdir -p '../../keg-hub/taps'
+  # Set the keg-hub root directory
+  export KEG_ROOT_DIR = ../../keg-hub
+  # Clone keg-hub into the root directory
+  git clone https://github.com/simpleviewinc/keg-hub.git $KEG_ROOT_DIR
+
+  echo "::debug::Root directory for keg-hub => $KEG_ROOT_DIR"
 }
 
 echo "::debug::Keg-CLI root directory => $KEG_CLI_PATH"
