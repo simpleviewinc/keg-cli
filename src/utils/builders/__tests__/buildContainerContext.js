@@ -1,4 +1,9 @@
 const globalConfig = global.getGlobalCliConfig()
+const { __updateGlobalConfig } = require('../../globalConfig/globalConfigCache')
+__updateGlobalConfig(globalConfig)
+
+const { DOCKER } = require('KegConst/docker')
+const { get } = require('@keg-hub/jsutils')
 const testTask = global.getTask()
 const unloadEnvs = global.loadMockEnvs()
 
@@ -43,22 +48,18 @@ describe('buildContainerContext', () => {
       task: testTask,
       envs: {},
     })
-    
-    expect(contextEnvs.KEG_CONTEXT_PATH
-      .indexOf('/keg-hub/repos/keg-cli'))
-      .not.toBe(-1)
 
-    expect(contextEnvs.KEG_DOCKER_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/base/Dockerfile'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_CONTEXT_PATH)
+      .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_CONTEXT_PATH`))
 
-    expect(contextEnvs.KEG_VALUES_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/base/values.yml'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_DOCKER_FILE)
+      .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_DOCKER_FILE`))
 
-    expect(contextEnvs.KEG_COMPOSE_DEFAULT
-      .indexOf('/keg-hub/repos/keg-cli/containers/base/docker-compose.yml'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_VALUES_FILE)
+      .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_VALUES_FILE`))
+
+    expect(contextEnvs.KEG_COMPOSE_DEFAULT)
+      .toBe(get(DOCKER, `CONTAINERS.BASE.ENV.KEG_COMPOSE_DEFAULT`))
 
     expect(contextEnvs.IMAGE).toBe('keg-base')
     expect(contextEnvs.VERSION).toBe('0.0.1')
@@ -75,22 +76,18 @@ describe('buildContainerContext', () => {
       task: testTask,
       envs: {},
     })
-    
-    expect(contextEnvs.KEG_CONTEXT_PATH
-      .indexOf('/keg-hub/repos/keg-core'))
-      .not.toBe(-1)
 
-    expect(contextEnvs.KEG_DOCKER_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/core/Dockerfile'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_CONTEXT_PATH)
+      .toBe(get(DOCKER, `CONTAINERS.CORE.ENV.KEG_CONTEXT_PATH`))
 
-    expect(contextEnvs.KEG_VALUES_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/core/values.yml'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_DOCKER_FILE)
+      .toBe(get(DOCKER, `CONTAINERS.CORE.ENV.KEG_DOCKER_FILE`))
 
-    expect(contextEnvs.KEG_COMPOSE_DEFAULT
-      .indexOf('/keg-hub/repos/keg-cli/containers/core/docker-compose.yml'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_VALUES_FILE)
+      .toBe(get(DOCKER, `CONTAINERS.CORE.ENV.KEG_VALUES_FILE`))
+
+    expect(contextEnvs.KEG_COMPOSE_DEFAULT)
+      .toBe(get(DOCKER, `CONTAINERS.CORE.ENV.KEG_COMPOSE_DEFAULT`))
 
     expect(contextEnvs.IMAGE).toBe('keg-core')
     expect(contextEnvs.VERSION).toBe('0.0.1')
@@ -106,22 +103,18 @@ describe('buildContainerContext', () => {
       task: testTask,
       envs: {},
     })
-    
-    expect(contextEnvs.KEG_CONTEXT_PATH
-      .indexOf('/keg-hub/repos/keg-components'))
-      .not.toBe(-1)
 
-    expect(contextEnvs.KEG_DOCKER_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/components/Dockerfile'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_CONTEXT_PATH)
+      .toBe(get(DOCKER, `CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH`))
 
-    expect(contextEnvs.KEG_VALUES_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/components/values.yml'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_DOCKER_FILE)
+      .toBe(get(DOCKER, `CONTAINERS.COMPONENTS.ENV.KEG_DOCKER_FILE`))
 
-    expect(contextEnvs.KEG_COMPOSE_DEFAULT
-      .indexOf('/keg-hub/repos/keg-cli/containers/components/docker-compose.yml'))
-      .not.toBe(-1)
+    expect(contextEnvs.KEG_VALUES_FILE)
+      .toBe(get(DOCKER, `CONTAINERS.COMPONENTS.ENV.KEG_VALUES_FILE`))
+
+    expect(contextEnvs.KEG_COMPOSE_DEFAULT)
+      .toBe(get(DOCKER, `CONTAINERS.COMPONENTS.ENV.KEG_COMPOSE_DEFAULT`))
 
     expect(contextEnvs.IMAGE).toBe('keg-components')
     expect(contextEnvs.VERSION).toBe('0.0.1')

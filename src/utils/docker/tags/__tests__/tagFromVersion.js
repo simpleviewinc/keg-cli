@@ -1,3 +1,7 @@
+const globalConfig = global.getGlobalCliConfig()
+const { __updateGlobalConfig } = require('../../../globalConfig/globalConfigCache')
+__updateGlobalConfig(globalConfig)
+
 const path = require('path')
 const { DOCKER } = require('KegConst/docker')
 const { getTask } = require('KegMocks/helpers/testTasks')
@@ -5,7 +9,6 @@ const { deepMerge, get, uuid } = require('@keg-hub/jsutils')
 const { allowedTagOpts } = require('../../../getters/getTagVarMap')
 const { containerContexts } = require('KegMocks/contexts/containerContexts')
 
-const globalConfig = global.getGlobalCliConfig()
 
 const defParams = {
   local: false,
@@ -41,7 +44,7 @@ const args = {
       ...defParams,
       context: 'base',
       tap: 'base',
-      location: DOCKER.CONTAINERS.BASE.ENV.KEG_CONTEXT_PATH,
+      location: get(globalConfig, 'cli.paths.cli'),
       cmd: 'build',
       image: 'keg-base',
       buildArgs: {
@@ -58,7 +61,7 @@ const args = {
       ...defParams,
       context: 'core',
       tap: 'core',
-      location: DOCKER.CONTAINERS.CORE.ENV.KEG_CONTEXT_PATH,
+      location: get(globalConfig, 'cli.paths.core'),
       cmd: 'core',
       image: 'keg-core',
       buildArgs: {
@@ -75,7 +78,7 @@ const args = {
       ...defParams,
       context: 'components',
       tap: 'components',
-      location: DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH,
+      location: get(globalConfig, 'cli.paths.components'),
       cmd: 'components',
       image: 'keg-components',
       buildArgs: {
