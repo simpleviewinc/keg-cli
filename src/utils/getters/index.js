@@ -1,6 +1,5 @@
 
 module.exports = {
-  ...require('./getBaseTag'),
   ...require('./getContext'),
   ...require('./getImgFrom'),
   ...require('./getImgNameContext'),
