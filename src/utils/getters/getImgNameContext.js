@@ -174,7 +174,7 @@ const checkDockerId = async params => {
  * <br/> Uses the KEG_IMAGE_FROM env from the contexts values.yml file ENV's
  * @function
  * @param {Object} params - Options passed to the task from the command line
- * @param {string} params.image - Original image of the image
+ * @param {string} params.image - Original image name or Id of the image
  * @param {string} params.context - Context of the image being parsed
  * @param {string} params.tap - Name of the tap when context is `tap`
  * @param {string} params.tag - Custom tag to use for the image

@@ -1,5 +1,4 @@
 module.exports = {
-  ...require('./buildProviderUrl'),
   ...require('./buildDockerCmd'),
   ...require('./buildExecParams'),
   ...require('./checkContainerExists'),

@@ -32,10 +32,6 @@ module.exports = {
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
     description: `Builds a taps docker container`,
     example: 'keg base build <options>',
-    options: mergeTaskOptions(`base`, `build`, `build`, {
-      push: {
-        default: true, 
-      },
-    }, [])
+    options: mergeTaskOptions(`base`, `build`, `build`, {}, [])
   }
 }

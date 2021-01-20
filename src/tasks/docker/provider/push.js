@@ -1,12 +1,24 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
-const { get, mapObj } = require('@keg-hub/jsutils')
+const { get } = require('@keg-hub/jsutils')
+const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { generalError, throwRequired } = require('KegUtils/error')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { addProviderTags } = require('KegUtils/docker/tags/addProviderTags')
+const { getOrBuildImage } = require('KegUtils/docker/getOrBuildImage')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
+const { isValidProviderUrl } = require('KegUtils/helpers/isValidProviderUrl')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
-const { getOrBuildImage, buildProviderUrl, imageSelect } = require('KegUtils/docker')
+
+/**
+ * Gets the docker image to be pushed to the provider
+ * @param {Object} args - arguments passed from the runTask method
+ *
+ * @returns {Promise<Object> - Docker Image ref}
+ */
+const checkForImage = async args => (
+  await getOrBuildImage(args) || ( !args.__internal && await imageSelect() )
+)
+
 /**
  * Pushes a local image registry provider in the cloud
  * @param {Object} args - arguments passed from the runTask method
@@ -28,32 +40,40 @@ const providerPush = async (args) => {
 
   /*
   * ----------- Step 1 ----------- *
-  * Build the image
+  * Get or build the image
   */
-  const image = await getOrBuildImage(args) || await imageSelect()
-  !image && generalError('No img found!')
+  const imageRef = await checkForImage(args)
+  !imageRef && generalError('No img found!')
 
   /*
   * ----------- Step 2 ----------- *
-  * Build the provider url
+  * Get the image name context, which will contain the full provider url
   */
-  const url = await buildProviderUrl(image, args)
+  const imgNameContext = await getImgNameContext({ ...params, image: imageRef.id })
 
   /*
   * ----------- Step 3 ----------- *
-  * Add the provider tags
+  * Validate the full url to allow pushing to a provider the tag it
   */
-  const taggedUrl = await addProviderTags(image, url, args)
+  !isValidProviderUrl(imgNameContext.full) &&
+    generalError(`Failed to push ${imageRef.name}. Provider url is invalid`, imgNameContext.full)
 
-  // If we couldn't tag the image properly, just return
-  !taggedUrl && generalError(`Failed to tag ${context} image!`)
+  // Then call command to add the tag to the image
+  await docker.image.tag({
+    image: imageRef,
+    log: true,
+    provider: true,
+    tag: imgNameContext.full,
+  })
 
   /*
   * ----------- Step 4 ----------- *
-  * Finally push the image to docker using the tagged url
+  * Finally push the image to docker using the full provider url
   */
-  await docker.push(taggedUrl)
-
+  await docker.push(imgNameContext.full)
+  
+  // Return the image ref incase this task was called internally
+  return imageRef
 }
 
 module.exports = {
@@ -63,12 +83,6 @@ module.exports = {
     action: providerPush,
     description: 'Pushes an image to a Docker registry provider',
     example: 'keg docker provider push <options>',
-    options: mergeTaskOptions(`docker provider`, `push`, `push`, {
-      context: {
-        allowed: DOCKER.IMAGES,
-        description: 'Context of the docker container to build',
-        enforced: true,
-      },
-    }),
+    options: mergeTaskOptions(`docker provider`, `push`, `push`),
   }
 }
