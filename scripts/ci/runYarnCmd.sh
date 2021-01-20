@@ -1,8 +1,8 @@
 #!/bin/bash
-# ***************************** IMPORTANT ***************************** #
-# This script requries running scripts/ci/setupCLIConfig.sh first       #
-# In can be done in a prious step, as long as the keg-hub folder exists #
-# ***************************** IMPORTANT ***************************** #
+# ****************************** IMPORTANT ****************************** #
+# This script requries running scripts/ci/setupCLIConfig.sh first or      #
+# in a previous step, to ensure the keg-hub folder exists in this step    #
+# ****************************** IMPORTANT ****************************** #
 
 # Exit when any command fails
 set -e
