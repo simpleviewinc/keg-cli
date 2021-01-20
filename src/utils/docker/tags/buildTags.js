@@ -1,3 +1,4 @@
+const { getImgTag } = require('KegUtils/getters/getImgTag')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { tagFromVersion } = require('KegUtils/docker/tags/tagFromVersion')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
@@ -46,7 +47,7 @@ const addTagsToCommand = (dockerCmd, imageName, tags) => {
  */
 const buildTags = async (args, params, dockerCmd='') => {
   const { containerContext } = args
-  const { context, tagGit, tagVariable, latest=true } = params
+  const { context, tagGit, tagVariable, image } = params
 
   // Ensure we have an image name
   const imageName = getImageName(params.image, context)
@@ -69,14 +70,8 @@ const buildTags = async (args, params, dockerCmd='') => {
   const gitTag = tagGit && await getRepoGitTag({ containerContext, params }, tagGit)
   gitTag && tags.push(gitTag)
 
-  !tags.length && tags.push(env)
-
-  // Always add the latest tag so docker-compose will use this image automatically
-  // Unless the latest param is set to falsy
-  context !== 'base' &&
-    latest &&
-    !tags.includes('latest') &&
-    tags.push('latest')
+  !tags.length &&
+    tags.push(getImgTag(false, context, image || containerContext.image))
 
   // Add the tags to the docker command
   return addTagsToCommand(dockerCmd, imageName, tags)

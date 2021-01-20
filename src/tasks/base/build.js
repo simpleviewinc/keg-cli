@@ -13,7 +13,7 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {void}
  */
 const buildBase = async (args) => {
-  const buildResponse = await runInternalTask(`tasks.docker.tasks.build`, {
+  return await runInternalTask(`tasks.docker.tasks.build`, {
     ...args,
     __internal: {
       ...args.__internal,
@@ -33,16 +33,9 @@ module.exports = {
     description: `Builds a taps docker container`,
     example: 'keg base build <options>',
     options: mergeTaskOptions(`base`, `build`, `build`, {
-      local: {
-        default: false,
-      },
       push: {
-        alias: ['psh', 'ps'],
-        description: 'Auto push the newly built image to the provider',
-        example: `keg base build --no-push`,
         default: true, 
       },
-      // TODO: add doc options here
-    })
+    }, [])
   }
 }

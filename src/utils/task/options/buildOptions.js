@@ -2,9 +2,9 @@ const { fromImage, pullImage, tagVariable } = require('./singleOptions')
 const { dockerOptions } = require('./dockerOptions')
 const { contextOptions } = require('./contextOptions')
 
-const buildOptions = (task, action) => {
+const buildOptions = (task, action, options) => {
   return {
-    ...contextOptions(task, action),
+    ...contextOptions(task, action, options),
     ...dockerOptions(task, action, [ 'provider', 'namespace' ]),
     tags: {
       alias: [ 'tag' ],
@@ -48,12 +48,17 @@ const buildOptions = (task, action) => {
     },
     squash: {
       alias: [ 'sq' ],
-      description: 'Squash the docker image layers into its parent image',
-      example: `keg ${task} ${action} --no-squash`,
-      default: true,
+      description: 'Squash the docker image layers into its parent image. Requires docker experimental to be turned on',
+      example: `keg ${task} ${action} --squash`,
+      default: false,
     },
     from: fromImage(task, action),
-    pull: pullImage(task, action),
+    push: {
+      alias: ['psh', 'ps'],
+      description: 'Auto push the newly built image to a provider',
+      example: `keg ${task} ${action} --no-push`,
+      default: false, 
+    },
     cache: {
       description: 'Skip using docker build cache when building the image',
       example: `keg ${task} ${action} --no-cache`,
@@ -62,6 +67,7 @@ const buildOptions = (task, action) => {
     local: {
       description: 'Copy the local repo into the docker container at build time. Dockerfile must support KEG_COPY_LOCAL env. Overrides globalConfig setting!',
       example: `keg ${task} ${action} --local`,
+      default: false,
     },
     latest: {
       description: 'Adds the latest tag to the docker image.',

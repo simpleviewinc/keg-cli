@@ -1,9 +1,11 @@
-const contextOptions = (task, action) => {
-  return {
+const { pickKeys, isArr } = require('@keg-hub/jsutils')
+
+const contextOptions = (task, action, options) => {
+  const contextOpts = {
     context: {
       alias: [ 'ctx', 'name' ],
-      description: 'Context for the task ${action} when run',
-      example: 'keg ${task} ${action} --context core',
+      description: `Keg-CLI context for the ${task} ${action} task`,
+      example: `keg ${task} ${action} --context core`,
       enforced: true,
     },
     tap: {
@@ -11,6 +13,8 @@ const contextOptions = (task, action) => {
       example: `keg ${task} ${action} --context tap --tap <name-of-linked-tap>`,
     },
   }
+
+  return isArr(options) ? pickKeys(contextOpts, options) : contextOpts
 }
 
 module.exports = {
