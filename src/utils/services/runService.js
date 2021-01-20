@@ -6,7 +6,7 @@ const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { throwContainerNotFound } = require('KegUtils/error/throwContainerNotFound')
 
 /**
- * Runs the run service, to run a container directly, but overwrite the entry point
+ * A service to run a container directly, but overwrite the entry point
  * <br/>Also creates a sync with the local repo when the sync param is true
  * @function
  * @param {Object} args - Default task arguments passed from the runTask method
