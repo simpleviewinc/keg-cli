@@ -13,7 +13,7 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {void}
  */
 const buildBase = async (args) => {
-  return runInternalTask(`tasks.docker.tasks.build`, {
+  const buildResponse = await runInternalTask(`tasks.docker.tasks.build`, {
     ...args,
     __internal: {
       ...args.__internal,
@@ -36,12 +36,13 @@ module.exports = {
       local: {
         default: false,
       },
-      squash: {
-        alias: [ 'sq' ],
-        description: 'Squash the docker image layers into its parent image',
-        example: `keg base build --no-squash`,
-        default: true,
-      }
+      push: {
+        alias: ['psh', 'ps'],
+        description: 'Auto push the newly built image to the provider',
+        example: `keg base build --no-push`,
+        default: true, 
+      },
+      // TODO: add doc options here
     })
   }
 }

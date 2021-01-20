@@ -24,7 +24,7 @@ const testArgs = {
   },
   contextEnvs: {
     description: 'It should return KEG_BASE_FROM env from passed in ENVs over the context',
-    inputs: [ { context: 'tap' }, { KEG_BASE_IMAGE: 'test-tap:override' } ],
+    inputs: [ { context: 'tap' }, { KEG_IMAGE_FROM: 'test-tap:override' } ],
     outputs: 'test-tap:override'
   },
   fromParams: {
@@ -34,7 +34,7 @@ const testArgs = {
   },
   fromOverrideEvs: {
     description: 'It should use the from param over the context envs',
-    inputs: [{ from: 'from-override:test-tag' }, { KEG_BASE_IMAGE: 'test-tap:override' }, 'tap'],
+    inputs: [{ from: 'from-override:test-tag' }, { KEG_IMAGE_FROM: 'test-tap:override' }, 'tap'],
     outputs: 'from-override:test-tag'
   },
   fromOverrideContext: {

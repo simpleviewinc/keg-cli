@@ -20,6 +20,7 @@ env:
   # Image ENVs
   IMAGE: keg-base
   VERSION: "0.0.1"
+  KEG_IMAGE_TAG: master
 
   # Container ENVs
   CONTAINER_NAME: keg-base

@@ -70,11 +70,11 @@ const testArgs = {
     inputs: { context: 'injected', tap: 'injected' },
     outputs: {
       image: 'tap-injected-test',
-      tag: 'main',
+      tag: 'master',
       provider: 'docker.pkg.github.com',
       namespace: 'simpleviewinc/keg-packages',
-      imageWTag: 'tap-injected-test:main',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/tap-injected-test:main'
+      imageWTag: 'tap-injected-test:master',
+      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/tap-injected-test:master'
     }
   },
   tagOverride: {

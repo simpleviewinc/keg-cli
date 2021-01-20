@@ -7,10 +7,6 @@ const { getContainerConst } = require('../docker/getContainerConst')
 const { isDockerId } = require('../docker/isDockerId')
 const { getGlobalConfig } = require('../globalConfig/getGlobalConfig')
 
-// TODO:
-// This should replace all calls to getBaseTag
-// And anywhere where the url, image and tag are needed
-
 /**
  * Finds the provider and namespace to use based on passed in params and urlSplit
  * @function
@@ -110,7 +106,8 @@ const getBaseFromEnv = (context, params) => {
   const nameAndTag = getTagFromName(nameAndUrl.image)
 
   // Set the default tag if one does not exist
-  nameAndTag.tag = nameAndTag.tag || getSetting('docker.defaultTag')
+  nameAndTag.tag = nameAndTag.tag ||
+    getContainerConst(context, 'env.keg_image_tag', getSetting('docker.defaultTag'))
 
   return {
     ...nameAndUrl,

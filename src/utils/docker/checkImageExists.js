@@ -1,7 +1,7 @@
 const docker = require('KegDocCli')
 const { isBool } = require('@keg-hub/jsutils')
+const { getImgTag } = require('../getters/getImgTag')
 const { generalError } = require('../error/generalError')
-const { getSetting } = require('../globalConfig/getSetting')
 
 /**
  * Checks if a docker image already exists locally
@@ -13,7 +13,7 @@ const { getSetting } = require('../globalConfig/getSetting')
  * @returns {Boolean} - If the docker image exists
  */
 const checkImageExists = async ({ context, image, tag }) => {
-  tag = tag || getSetting('docker.defaultTag')
+  const foundTag = getImgTag(tag, context, image)
 
   // Use the image or the context
   const searchFor = image || context
@@ -21,7 +21,7 @@ const checkImageExists = async ({ context, image, tag }) => {
   // If no image or context then throw
   !searchFor && generalError(`checkImageExists util requires a context or image argument!`)
 
-  const searchImg = searchFor.includes(':') ? searchFor : `${searchFor}:${tag}`
+  const searchImg = searchFor.includes(':') ? searchFor : `${searchFor}:${foundTag}`
   const exists = await docker.image.get(searchImg)
 
   return isBool(exists) ? exists : false
