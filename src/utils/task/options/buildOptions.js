@@ -1,7 +1,11 @@
 const { fromImage, pullImage, tagVariable } = require('./singleOptions')
+const { dockerOptions } = require('./dockerOptions')
+const { contextOptions } = require('./contextOptions')
 
 const buildOptions = (task, action) => {
   return {
+    ...contextOptions(task, action),
+    ...dockerOptions(task, action, [ 'provider', 'namespace' ]),
     tags: {
       alias: [ 'tag' ],
       description: 'Extra tags to add to the docker image when its build. Uses commas (,) to separate',
