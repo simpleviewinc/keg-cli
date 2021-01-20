@@ -32,7 +32,7 @@ const convertParamsToEnvs = ({ env, command, install, local, from }, copyLocalEn
   env && ( extraENVs.NODE_ENV = env )
   command && ( extraENVs.KEG_EXEC_CMD = command )
   install && ( extraENVs.KEG_NM_INSTALL = true )
-  isStr(from) && ( extraENVs.KEG_BASE_IMAGE = from )
+  isStr(from) && ( extraENVs.KEG_IMAGE_FROM = from )
 
   // Check if we should copy the local repo into the docker container on image build
   getCopyLocal(local, copyLocalEnv) && ( extraENVs.KEG_COPY_LOCAL = true )

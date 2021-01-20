@@ -16,13 +16,13 @@ const getImgFrom = (params=noOpObj, contextEnvs=noOpObj, context) => {
     get(params, 'cmdContext') ||
     get(params, 'context')
 
-  const fromImg = get(params, 'from') || get(contextEnvs, 'KEG_BASE_IMAGE')
+  const fromImg = get(params, 'from') || get(contextEnvs, 'KEG_IMAGE_FROM')
 
   return fromImg || !context
     ? fromImg
     : getContainerConst(
         context,
-        `env.keg_base_image`,
+        `env.keg_image_from`,
         getContainerConst(context, `env.image`, context)
       )
 }

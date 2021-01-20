@@ -91,13 +91,13 @@ const getTagFromName = (imgName, tag) => {
 }
 
 /**
- * Gets the KEG_BASE_IMAGE from the context's ENV's
+ * Gets the KEG_IMAGE_FROM from the context's ENV's
  * Then parses it to get the image name context information
  * @function
  * @param {string} context - Name of the image name to be parsed
  * @param {Object} params - Options passed to the task from the command line
  *
- * @returns {Object} - Parsed image name data from the KEG_BASE_IMAGE env
+ * @returns {Object} - Parsed image name data from the KEG_IMAGE_FROM env
  */
 const getBaseFromEnv = (context, params) => {
   const baseFromEnv = getImgFrom(params, noOpObj, context)
@@ -174,7 +174,7 @@ const checkDockerId = async params => {
 
 /**
  * Gets an images provider, namespace, name, and tag from the passed in params or uses defaults
- * <br/> Uses the KEG_BASE_IMG env from the contexts values.yml file ENV's
+ * <br/> Uses the KEG_IMAGE_FROM env from the contexts values.yml file ENV's
  * @function
  * @param {Object} params - Options passed to the task from the command line
  * @param {string} params.image - Original image of the image
@@ -213,7 +213,7 @@ const getImgNameContext = async params => {
 
   const globalConfig = getGlobalConfig()
   
-  // The the image name and tag from the passed in params or KEG_BASE_IMG
+  // The the image name and tag from the passed in params or KEG_IMAGE_FROM
   return buildImgVariants({
     ...baseFromEnv,
     ...nameAndUrl,

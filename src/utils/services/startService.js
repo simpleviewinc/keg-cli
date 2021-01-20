@@ -24,13 +24,11 @@ const startService = async (args, exArgs) => {
   await proxyService(serviceArgs)
 
   // Call the build service to ensure required images are built 
-  const { isNewImage, ...pullServiceRes } = await pullService(serviceArgs)
-  
-  // TODO: If a new image was pulled, then we want to force recreate new images
-  // So update the args.params to ensure recreate is true when passing to composeService
+  const { isNewImage } = await pullService(serviceArgs)
 
-  // Call and return the compose server
-  return composeService(args, exArgs)
+  // Call the compose service to start the application
+  // Pass in recreate, base on if a new image was pulled
+  return composeService(args, { ...exArgs, recreate: isNewImage })
 
 }
 
