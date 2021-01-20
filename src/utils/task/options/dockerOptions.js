@@ -5,7 +5,6 @@ const dockerOptions = (task, action, options) => {
     provider: {
       description: 'Use custom provider (registry url) instead of the default defined in the globalConfig',
       example: 'keg ${ task } ${action} --provider docker.pkg.github.com',
-      default: 'docker.pkg.github.com'
     },
     namespace: {
       description: 'Use custom namespace (organization) instead of default defined in the globalConfig',
