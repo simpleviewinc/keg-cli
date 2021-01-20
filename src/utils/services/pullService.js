@@ -45,7 +45,7 @@ const pullService = async serviceArgs => {
   if(!shouldPull) return { imgNameContext: imageNameContext, isNewImage: false }
 
   // Check and pull the image if needed
-  const imgPullResp = await runInternalTask('docker.tasks.provider.tasks.pull', { 
+  return await runInternalTask('docker.tasks.provider.tasks.pull', { 
     ...serviceArgs,
     __internal: {
       ...serviceArgs.__internal,
@@ -53,21 +53,6 @@ const pullService = async serviceArgs => {
       imgNameContext: imageNameContext,
     }
   })
-
-  const { imgNameContext } = imgPullResp
-
-  // If no new image, or no name context, just return the response
-  // if(!imgPullResp.isNewImage) return imgPullResp
-
-  // Add the local tag so it can be access without the URL
-  // await docker.image.tag({
-  //   item: imgNameContext.full,
-  //   tag: imgNameContext.imageWTag,
-  //   provider: true
-  // })
-
-
-  return imgPullResp
 
 }
 

@@ -1,9 +1,11 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { DOCKER } = require('KegConst/docker')
+const { ask } = require('@keg-hub/ask-it')
 const { get } = require('@keg-hub/jsutils')
+const { DOCKER } = require('KegConst/docker')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { generalError, throwRequired } = require('KegUtils/error')
+const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getOrBuildImage } = require('KegUtils/docker/getOrBuildImage')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { isValidProviderUrl } = require('KegUtils/helpers/isValidProviderUrl')
@@ -15,9 +17,25 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  *
  * @returns {Promise<Object> - Docker Image ref}
  */
-const checkForImage = async args => (
-  await getOrBuildImage(args) || ( !args.__internal && await imageSelect() )
-)
+const checkForImage = async args => {
+  // Try to get or build the image
+  const imgRef = await getOrBuildImage(args)
+  if(imgRef) return imgRef
+
+  // If no image, then ask if the user wants to build it
+  const { params: { context, tap } } = args
+
+  Logger.info(`\nThe ${tap || context} image could not be found.\n`)
+  const doBuild = await ask.confirm(`Would you like to build it?`)
+
+  // If we should build, call the internal build task 
+  if(doBuild) return runInternalTask('tasks.docker.tasks.build', { ...args, command: 'build' })
+
+  // Log and exit, if no image to push
+  Logger.warn(`\nImage NOT pushed to provider. User canceled!\n`)
+  process.exit(0)
+
+}
 
 /**
  * Pushes a local image registry provider in the cloud
@@ -33,7 +51,7 @@ const checkForImage = async args => (
  */
 const providerPush = async (args) => {
   const { params, task } = args
-  const { context } = params
+  const { context, log=true } = params
 
   // Ensure we have the context of the image to be pushed
   !context && throwRequired(task, 'context', get(task, `options.context`))
@@ -71,6 +89,8 @@ const providerPush = async (args) => {
   * Finally push the image to docker using the full provider url
   */
   await docker.push(imgNameContext.full)
+  
+  Logger.success(`\nFinished pushing ${imgNameContext.imageWTag} to provider!\n`)
   
   // Return the image ref incase this task was called internally
   return imageRef
