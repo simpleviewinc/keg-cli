@@ -138,6 +138,7 @@ const dockerPackageRun = async args => {
     name,
     package,
     provider,
+    port,
     repo,
     user,
     version,
@@ -211,6 +212,7 @@ const dockerPackageRun = async args => {
   opts.push(`--network ${network || contextEnvs.KEG_DOCKER_NETWORK || DOCKER.KEG_DOCKER_NETWORK }`)
   opts = await setupLabels(opts, id || parsed.image, parsed, contextEnvs)
 
+  port && opts.push(`-p ${port}`)
   /*
   * ----------- Step 5 ----------- *
   * Run the docker image as a container
@@ -307,6 +309,11 @@ module.exports = {
       volumes: {
         description: 'Mount the local volumes defined in the docker-compose config.yml.',
         example: 'keg docker package run --volumes',
+        default: false
+      },
+      port: {
+        description: 'Exposes the port to your local, from the docker container',
+        example: 'keg tap package run --port 5005:5005',
         default: false
       },
     }

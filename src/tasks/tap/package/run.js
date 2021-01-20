@@ -51,6 +51,11 @@ module.exports = {
         example: 'keg tap package run --tap my-tap',
         required: true,
       },
+      port: {
+        description: 'Exposes the port to your local, from the docker container',
+        example: 'keg tap package run --port 5005:5005',
+        default: false
+      },
     }
   }
 }
