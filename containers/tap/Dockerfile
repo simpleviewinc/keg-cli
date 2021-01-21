@@ -3,7 +3,7 @@
 ARG KEG_BUILD_TYPE=tap
 ARG DOC_APP_PATH=/keg/tap
 
-# Setup the taps image from in the global state
+# Setup the taps image FROM in the global state
 # Must come before the FROM directive to is can be accessed
 ARG KEG_NODE_VERSION
 ARG NODE_IMAGE_FROM=node:$KEG_NODE_VERSION

@@ -9,7 +9,7 @@ if [[ -z "$KEG_DOCKER_EXEC" ]]; then
 
 else
 
-  # Cd into the tap repo
+  # cd into the tap repo
   cd $DOC_APP_PATH
 
   # Ensure there is a command to run
