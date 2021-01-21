@@ -17,6 +17,29 @@ const {
 } = require('@keg-hub/jsutils')
 
 /**
+ * Docker container exit codes and relative messages
+ * See here for more https://stackoverflow.com/questions/31297616/what-is-the-authoritative-list-of-docker-run-exit-codes
+ * @object
+ */
+const safeExitCodes = {
+  '0': `Finished running Docker command!`,
+  '130': `Container terminated by user!`,
+  '137': `Container received a SIGKILL`,
+  '143': `Container received a SIGTERM`,
+}
+
+/**
+ * Checks if a docker container exited safely
+ * @function
+ * @param {number|string} exitCode - Exit code for the docker container
+ *
+ * @returns {boolean|string} - False is not safe exit, string message is was a safe exit
+ */
+const isSafeExitCode = exitCode => {
+  return safeExitCodes[exitCode] || false
+}
+
+/**
  * Throws an error with the passed in message
  * @function
  * @param {string} message - Message for the thrown error
@@ -379,6 +402,7 @@ module.exports = {
   compareItems,
   cmdSuccess,
   getCmdParams,
+  isSafeExitCode,
   noItemError,
   noItemFoundError,
   portAsJSON,

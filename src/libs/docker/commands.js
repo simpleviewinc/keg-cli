@@ -3,9 +3,10 @@ const { executeCmd, spawnProc, pipeCmd } = require('KegProc')
 const {
   apiError,
   apiSuccess,
+  cmdSuccess,
+  isSafeExitCode,
   noItemError,
   noLoginError,
-  cmdSuccess,
 } = require('./helpers')
 const {
   isArr,
@@ -236,9 +237,13 @@ const raw = async (cmd, args={}, loc=process.cwd()) => {
   // Run the docker command
   const exitCode = await spawnProc(cmdToRun, cmdArgs, loc)
 
-  ;exitCode
-    ? apiError(`Docker command exited with non-zero exit code!`)
-    : Logger.success(`Finished running Docker command!`)
+  // Get the exit code message
+  const exitMessage = isSafeExitCode(exitCode)
+
+  // Log the message or an error
+  ;exitMessage
+    ? Logger.success(exitMessage)
+    : apiError(`Docker command exited with non-zero exit code!`)
   
   return exitCode
 }
