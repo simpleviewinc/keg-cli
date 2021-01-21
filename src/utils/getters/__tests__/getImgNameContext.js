@@ -19,14 +19,14 @@ const { getImgNameContext } = require('../getImgNameContext')
 const testArgs = {
   fullUrl: {
     description: 'It should return the imageName context from just an image url',
-    inputs: { image: `docker.pkg.github.com/test-org/test-path/test-app:test-tag` },
+    inputs: { image: `ghcr.io/test-org/test-path/test-app:test-tag` },
     outputs: {
       image: 'test-app',
-      provider: 'docker.pkg.github.com',
+      provider: 'ghcr.io',
       namespace: 'test-org/test-path',
       tag: 'test-tag',
       imageWTag: 'test-app:test-tag',
-      full: 'docker.pkg.github.com/test-org/test-path/test-app:test-tag'
+      full: 'ghcr.io/test-org/test-path/test-app:test-tag'
     }
   },
   imgName: {
@@ -34,11 +34,11 @@ const testArgs = {
     inputs: { image: 'keg-core' },
     outputs: {
       image: 'keg-core',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       tag: 'master',
       imageWTag: 'keg-core:master',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/keg-core:master'
+      full: 'ghcr.io/simpleviewinc/keg-core:master'
     }
   },
   imgTag: {
@@ -46,11 +46,11 @@ const testArgs = {
     inputs: { context: 'injected', tag: 'test-tag' },
     outputs: {
       image: 'tap-injected-test',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       tag: 'test-tag',
       imageWTag: 'tap-injected-test:test-tag',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/tap-injected-test:test-tag'
+      full: 'ghcr.io/simpleviewinc/tap-injected-test:test-tag'
     }
   },
   context: {
@@ -59,10 +59,10 @@ const testArgs = {
     outputs: {
       image: 'keg-components',
       tag: 'master',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       imageWTag: 'keg-components:master',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/keg-components:master'
+      full: 'ghcr.io/simpleviewinc/keg-components:master'
     }
   },
   injected: {
@@ -71,10 +71,10 @@ const testArgs = {
     outputs: {
       image: 'tap-injected-test',
       tag: 'master',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       imageWTag: 'tap-injected-test:master',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/tap-injected-test:master'
+      full: 'ghcr.io/simpleviewinc/tap-injected-test:master'
     }
   },
   tagOverride: {
@@ -83,10 +83,10 @@ const testArgs = {
     outputs: {
       image: 'keg-components',
       tag: 'test-tag',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       imageWTag: 'keg-components:test-tag',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/keg-components:test-tag'
+      full: 'ghcr.io/simpleviewinc/keg-components:test-tag'
     }
   },
   providerOverride: {
@@ -96,9 +96,9 @@ const testArgs = {
       image: 'keg-core',
       tag: 'master',
       provider: 'my.test-provider.com',
-      namespace: 'simpleviewinc/keg-packages',
+      namespace: 'simpleviewinc',
       imageWTag: 'keg-core:master',
-      full: 'my.test-provider.com/simpleviewinc/keg-packages/keg-core:master'
+      full: 'my.test-provider.com/simpleviewinc/keg-core:master'
     }
   },
   namespaceOverride: {
@@ -107,10 +107,10 @@ const testArgs = {
     outputs: {
       image: 'keg-components',
       tag: 'master',
-      provider: 'docker.pkg.github.com',
+      provider: 'ghcr.io',
       namespace: 'test-namespace',
       imageWTag: 'keg-components:master',
-      full: 'docker.pkg.github.com/test-namespace/keg-components:master'
+      full: 'ghcr.io/test-namespace/keg-components:master'
     }
   },
   imageId: {
@@ -119,10 +119,10 @@ const testArgs = {
     outputs: {
       image: 'keg-components',
       tag: '0.0.1',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       imageWTag: 'keg-components:0.0.1',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/keg-components:0.0.1'
+      full: 'ghcr.io/simpleviewinc/keg-components:0.0.1'
     }
   },
   contextId: {
@@ -131,10 +131,10 @@ const testArgs = {
     outputs: {
       image: 'keg-core',
       tag: 'master',
-      provider: 'docker.pkg.github.com',
-      namespace: 'simpleviewinc/keg-packages',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
       imageWTag: 'keg-core:master',
-      full: 'docker.pkg.github.com/simpleviewinc/keg-packages/keg-core:master'
+      full: 'ghcr.io/simpleviewinc/keg-core:master'
     }
   },
   contextIdOverride: {

@@ -11,8 +11,8 @@ module.exports = {
   name: 'keg-cli',
   displayName: 'Keg CLI',
   docker: {
-    providerUrl: 'docker.pkg.github.com',
-    namespace: "simpleviewinc/keg-packages",
+    providerUrl: 'ghcr.io',
+    namespace: "simpleviewinc",
     user: 'testuser',
     token: ''
   },

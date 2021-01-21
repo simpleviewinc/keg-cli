@@ -29,7 +29,12 @@ const checkForImage = async args => {
   const doBuild = await ask.confirm(`Would you like to build it?`)
 
   // If we should build, call the internal build task 
-  if(doBuild) return runInternalTask('tasks.docker.tasks.build', { ...args, command: 'build' })
+  if(doBuild)
+    return runInternalTask('tasks.docker.tasks.build', {
+      ...args,
+      command: 'build',
+      __internal: { rootTask: 'pull' }
+    })
 
   // Log and exit, if no image to push
   Logger.warn(`\nImage NOT pushed to provider. User canceled!\n`)

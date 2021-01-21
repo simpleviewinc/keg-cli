@@ -9,7 +9,7 @@ ARG KEG_NODE_VERSION
 ARG NODE_IMAGE_FROM=node:$KEG_NODE_VERSION
 
 # Add a FROM for the keg-base image to we can copy content from it
-ARG KEG_IMAGE_FROM=docker.pkg.github.com/simpleviewinc/keg-packages/keg-base:master
+ARG KEG_IMAGE_FROM=ghcr.io/simpleviewinc/keg-base:master
 FROM $KEG_IMAGE_FROM as keg-base
 
 # ------- Components Image Build Stage ------- #

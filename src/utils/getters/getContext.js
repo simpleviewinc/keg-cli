@@ -106,9 +106,15 @@ const getContext = async (params, askFor) => {
       ? getPrefixContext(contextRef)
       : {}
 
-  let foundContext = container && await containerContext(container, prefixData, __injected, askFor)
-  foundContext = foundContext || image && await imageContext(image, tag, prefixData, __injected, askFor)
-  foundContext = foundContext || ((prefixData.withPrefix || prefixData.id) && await contextFromPrefix(prefixData))
+  let foundContext = container &&
+    await containerContext(container, prefixData, __injected, askFor)
+
+  foundContext = foundContext ||
+    image && await imageContext(image, tag, prefixData, __injected, askFor)
+
+  foundContext = foundContext ||
+    ((prefixData.withPrefix || prefixData.id) && await contextFromPrefix(prefixData))
+
   foundContext = foundContext || prefixData
 
   return context === 'tap'

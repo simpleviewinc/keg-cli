@@ -291,7 +291,7 @@ module.exports = {
       provider: {
         alias: [ 'pro' ],
         description: 'Url of the docker registry provider',
-        example: 'keg docker package run --provider docker.pkg.github.com'
+        example: 'keg docker package run --provider ghcr.io'
       },
       repo: {
         description: 'The name of the repository holding docker images to pull',

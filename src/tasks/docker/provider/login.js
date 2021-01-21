@@ -36,7 +36,7 @@ module.exports = {
       },
       provider: {
         description: 'Url of the docker registry provider',
-        example: 'keg docker provider login --provider docker.pkg.github.com',
+        example: 'keg docker provider login --provider ghcr.io',
         enforced: true
       },
       token: {

@@ -82,8 +82,8 @@ const buildCIConfig = (customConfig) => {
       }
     },
     docker: {
-      providerUrl: `docker.pkg.github.com`,
-      namespace: `simpleviewinc/keg-packages`,
+      providerUrl: `ghcr.io`,
+      namespace: `simpleviewinc`,
       user: USER,
       token: GITHUB_TOKEN
     },
