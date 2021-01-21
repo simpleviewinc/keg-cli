@@ -1,4 +1,36 @@
+const { testEnum } = require('KegMocks/jest/testEnum')
 const { deepClone, isObj } = require('@keg-hub/jsutils')
+
+const globalConfig = global.getGlobalCliConfig()
+jest.setMock('../../globalConfig/globalConfigCache', {
+  __getGlobalConfig: jest.fn(() => globalConfig)
+})
+
+const testArgs = {
+  localParam: {
+    description: 'It should set the KEG_COPY_LOCAL env when local param is true',
+    inputs: [{ local: true }, false],
+    outputs: { KEG_COPY_LOCAL: true }
+  },
+  envArg: {
+    description: 'It should set the KEG_COPY_LOCAL env when second argument is true',
+    inputs: [{}, true],
+    outputs: { KEG_COPY_LOCAL: true }
+  },
+  paramOverride: {
+    description: 'The param should override the second argument',
+    matchers: [ 'not.toEqual' ],
+    inputs: [{ local: false }, true],
+    outputs: { KEG_COPY_LOCAL: true }
+  },
+  setting: {
+    description: 'It should use the global setting when param and argument dont exist',
+    inputs: [{}],
+    outputs: { KEG_COPY_LOCAL: globalConfig.cli.settings.docker.defaultLocalBuild }
+  }
+}
+
+
 
 const defArgs = { env: 'develop', command: 'run', install: true, local: true }
 const contextEnv = { KEG_FOO: 'BAR', KEG_BAZ: 'BAS' }
@@ -30,7 +62,7 @@ describe('convertParamsToEnvs', () => {
 
   })
 
-  // TODO: add tests for copyLocal logic
 
+  testEnum(testArgs, convertParamsToEnvs)
 
 })
