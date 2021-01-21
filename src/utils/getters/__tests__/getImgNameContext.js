@@ -156,7 +156,7 @@ const testArgs = {
       provider: 'test-provider',
       namespace: 'test-namespace',
       imageWTag: 'keg-core:0.0.1',
-      full: 'test-provider/test-namespace/keg-core:0.0.1'
+      full: 'test-provider/test-namespace/keg-core:0.0.1',
       providerImage: 'test-provider/test-namespace/keg-core'
     }
   },
