@@ -1,6 +1,5 @@
 const { spawn } = require('child_process')
 const docker = require('KegDocCli')
-const { buildService } = require('./buildService')
 const { getServiceArgs } = require('./getServiceArgs')
 const { exists, get, isObj } = require('@keg-hub/jsutils')
 const { runInternalTask } = require('../task/runInternalTask')

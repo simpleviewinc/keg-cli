@@ -1,9 +1,10 @@
 const { Logger } = require('KegLog')
-const { DOCKER } = require('KegConst/docker')
 const { spawnCmd } = require('KegProc')
+const { DOCKER } = require('KegConst/docker')
 const { logVirtualUrl } = require('KegUtils/log')
-const { buildComposeCmd, buildServiceName } = require('KegUtils/docker')
 const { buildContainerContext } = require('KegUtils/builders')
+const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
+const { getComposeServiceName } = require('KegUtils/getters/getComposeServiceName')
 
 /**
  * Runs docker-compose up command for (components | core | tap)
@@ -36,7 +37,7 @@ const composeRestart = async args => {
   })
 
   // Get the name of the docker-compose service
-  const serviceName = buildServiceName(cmdContext, contextEnvs)
+  const serviceName = getComposeServiceName(cmdContext, contextEnvs)
 
   // Run the docker-compose restart command
   await spawnCmd(

@@ -1,5 +1,4 @@
 const { DOCKER } = require('KegConst/docker')
-const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
@@ -16,9 +15,6 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const buildTap = async (args) => {
   const { params:{ tap } } = args
   const locationContext = tap ? DOCKER.LOCATION_CONTEXT.REPO : DOCKER.LOCATION_CONTEXT.CONTAINERS
-
-    // Check the base image and build it if it doesn't exist
-  await buildBaseImg(args)
 
   return runInternalTask('tasks.docker.tasks.build', {
     ...args,

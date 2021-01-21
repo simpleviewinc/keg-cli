@@ -1,10 +1,8 @@
 const { DOCKER } = require('KegConst/docker')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { buildService, getServiceArgs } = require('KegUtils/services')
-const { generalError } = require('KegUtils/error/generalError')
 
 /**
- * Start a tap with docker-compose
+ * Start a tap outside of docker-compose
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -16,8 +14,9 @@ const { generalError } = require('KegUtils/error/generalError')
 const runTap = async (args) => {
 
   const exArgs = { context: 'tap', tap: args.params.tap, image: 'tap' }
-  const isBuilt = await buildService(args, exArgs)
-
+  // TODO: validate this uses the KEG_IMAGE_FROM env when running
+  // Should not need to build the tap image first
+  // Should just pull the KEG_IMAGE_FROM image from the provider
   return runService(args, { ...exArgs, container: 'tap' }) 
 
 }
