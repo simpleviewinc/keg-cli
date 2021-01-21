@@ -131,6 +131,7 @@ const getBaseFromEnv = (context, params) => {
 const buildImgVariants = imgNameWTag => {
   imgNameWTag.imageWTag = `${imgNameWTag.image}:${imgNameWTag.tag}`
   imgNameWTag.full = `${imgNameWTag.provider}/${imgNameWTag.namespace}/${imgNameWTag.imageWTag}`
+  imgNameWTag.providerImage = `${imgNameWTag.provider}/${imgNameWTag.namespace}/${imgNameWTag.image}`
 
   return imgNameWTag
 }

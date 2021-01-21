@@ -48,10 +48,16 @@ module.exports = {
         example: 'keg base run --log',
         default: false,
       },
+      connect: {
+        alias: [ 'conn', 'con', 'it' ],
+        description: 'Auto connects to the docker containers stdio',
+        example: 'keg docker image run --no-connect',
+        default: true
+      },
       sync: {
         description: 'Creates a mutagen sync between the local Keg-CLI and the docker container',
         example: 'keg base run --sync false',
-        default: true,
+        default: false,
       }
     }
   }

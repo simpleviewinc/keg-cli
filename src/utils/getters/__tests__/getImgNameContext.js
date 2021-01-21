@@ -26,7 +26,8 @@ const testArgs = {
       namespace: 'test-org/test-path',
       tag: 'test-tag',
       imageWTag: 'test-app:test-tag',
-      full: 'ghcr.io/test-org/test-path/test-app:test-tag'
+      full: 'ghcr.io/test-org/test-path/test-app:test-tag',
+      providerImage: 'ghcr.io/test-org/test-path/test-app',
     }
   },
   imgName: {
@@ -38,7 +39,8 @@ const testArgs = {
       namespace: 'simpleviewinc',
       tag: 'master',
       imageWTag: 'keg-core:master',
-      full: 'ghcr.io/simpleviewinc/keg-core:master'
+      full: 'ghcr.io/simpleviewinc/keg-core:master',
+      providerImage: 'ghcr.io/simpleviewinc/keg-core',
     }
   },
   imgTag: {
@@ -50,7 +52,8 @@ const testArgs = {
       namespace: 'simpleviewinc',
       tag: 'test-tag',
       imageWTag: 'tap-injected-test:test-tag',
-      full: 'ghcr.io/simpleviewinc/tap-injected-test:test-tag'
+      full: 'ghcr.io/simpleviewinc/tap-injected-test:test-tag',
+      providerImage: 'ghcr.io/simpleviewinc/tap-injected-test',
     }
   },
   context: {
@@ -62,7 +65,8 @@ const testArgs = {
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
       imageWTag: 'keg-components:master',
-      full: 'ghcr.io/simpleviewinc/keg-components:master'
+      full: 'ghcr.io/simpleviewinc/keg-components:master',
+      providerImage: 'ghcr.io/simpleviewinc/keg-components',
     }
   },
   injected: {
@@ -74,7 +78,8 @@ const testArgs = {
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
       imageWTag: 'tap-injected-test:master',
-      full: 'ghcr.io/simpleviewinc/tap-injected-test:master'
+      full: 'ghcr.io/simpleviewinc/tap-injected-test:master',
+      providerImage: 'ghcr.io/simpleviewinc/tap-injected-test',
     }
   },
   tagOverride: {
@@ -86,7 +91,8 @@ const testArgs = {
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
       imageWTag: 'keg-components:test-tag',
-      full: 'ghcr.io/simpleviewinc/keg-components:test-tag'
+      full: 'ghcr.io/simpleviewinc/keg-components:test-tag',
+      providerImage: 'ghcr.io/simpleviewinc/keg-components',
     }
   },
   providerOverride: {
@@ -98,7 +104,8 @@ const testArgs = {
       provider: 'my.test-provider.com',
       namespace: 'simpleviewinc',
       imageWTag: 'keg-core:master',
-      full: 'my.test-provider.com/simpleviewinc/keg-core:master'
+      full: 'my.test-provider.com/simpleviewinc/keg-core:master',
+      providerImage: 'my.test-provider.com/simpleviewinc/keg-core',
     }
   },
   namespaceOverride: {
@@ -110,7 +117,8 @@ const testArgs = {
       provider: 'ghcr.io',
       namespace: 'test-namespace',
       imageWTag: 'keg-components:master',
-      full: 'ghcr.io/test-namespace/keg-components:master'
+      full: 'ghcr.io/test-namespace/keg-components:master',
+      providerImage: 'ghcr.io/test-namespace/keg-components',
     }
   },
   imageId: {
@@ -122,7 +130,8 @@ const testArgs = {
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
       imageWTag: 'keg-components:0.0.1',
-      full: 'ghcr.io/simpleviewinc/keg-components:0.0.1'
+      full: 'ghcr.io/simpleviewinc/keg-components:0.0.1',
+      providerImage: 'ghcr.io/simpleviewinc/keg-components',
     }
   },
   contextId: {
@@ -134,7 +143,8 @@ const testArgs = {
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
       imageWTag: 'keg-core:master',
-      full: 'ghcr.io/simpleviewinc/keg-core:master'
+      full: 'ghcr.io/simpleviewinc/keg-core:master',
+      providerImage: 'ghcr.io/simpleviewinc/keg-core',
     }
   },
   contextIdOverride: {
@@ -147,6 +157,7 @@ const testArgs = {
       namespace: 'test-namespace',
       imageWTag: 'keg-core:0.0.1',
       full: 'test-provider/test-namespace/keg-core:0.0.1'
+      providerImage: 'test-provider/test-namespace/keg-core'
     }
   },
 }

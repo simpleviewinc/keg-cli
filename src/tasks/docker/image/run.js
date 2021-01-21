@@ -7,76 +7,29 @@ const { removeLabels } = require('KegUtils/docker/removeLabels')
 const { CONTAINER_PREFIXES } = require('KegConst/constants')
 const { throwDupContainerName } = require('KegUtils/error/throwDupContainerName')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
+
+
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
+
 const { IMAGE } = CONTAINER_PREFIXES
 
-const buildContainerName = async cmdContext => {
 
-  const imgName = get(
-    CONTAINERS,
-    `${ cmdContext.toUpperCase() }.ENV.IMAGE`,
-    cmdContext
-  )
 
-  const imgContainer = `${ IMAGE }-${ imgName }`
-  const exists = await docker.container.exists(
-    imgContainer,
-    container => container.name === imgContainer,
-    'json'
-  )
-
-  return imgContainer
-}
-
-const getImageTag = ({ context, image, tag }) => {
-  return context && context.includes(':')
-    ? context.split(':')
-    : [context, tag]
-}
-
-const getImageContext = async (args, image, tag) => {
-  const { globalConfig, params, task } = args
-
-  // Get the context data for the command to be run
-  const imageContext = await buildContainerContext({
-    task,
-    globalConfig,
-    params: { ...params, image, tag },
-  })
-
-  // Build the name for the container
-  const container = await buildContainerName(imageContext.cmdContext)
-
-  return {
-    ...imageContext,
-    container,
-    tag : imageContext.tag,
-    image: imageContext.rootId,
-  }
-}
-
-const getImageData = async (args, imageName, tag) => {
+const getImageContext = async (args, imgName) => {
   const { globalConfig, task, params } = args
 
-  const image = (params.image || imageName) &&
-    await docker.image.get(params.image || imageName) ||
-    await imageSelect(args)
+  // Get a reference to the image
+  const imgRef = await docker.image.get(imgName)
 
   // Get the context data for the command to be run
-  const imageContext = await buildContainerContext({
+  const imgContext = await buildContainerContext({
     task,
     globalConfig,
-    params: { ...params, context: image.rootId },
+    __internal: {},
+    params: { ...params, context: imgName },
   })
 
-  // Build the name for the container
-  const container = await buildContainerName(imageContext.cmdContext)
-
-  return {
-    ...imageContext,
-    container,
-    tag: image.tag | tag,
-    image: image.rootId,
-  }
+  return { imgContext, imgRef }
 
 }
 
@@ -85,14 +38,14 @@ const getImageData = async (args, imageName, tag) => {
  * Default is to throw an error, unless skipError is true
  * @param {string} container - Name of container that exists
  * @param {Object} exists - Container json object data
- * @param {Object} imageContext - Meta data about the image to be run
+ * @param {Object} imgContext - Meta data about the image to be run
  * @param {boolean} skipError - True the throwing an error should be skipped
  *
- * @returns {Object} - Joined imageContext and exists object
+ * @returns {Object} - Joined imgContext and exists object
  */
-const handelContainerExists = (container, exists, imageContext, skipExists) => {
+const handelContainerExists = (container, exists, imgContext, skipExists) => {
   return skipExists
-    ? { ...imageContext, ...exists, }
+    ? { ...imgContext, ...exists, }
     : throwDupContainerName(container)
 }
 
@@ -108,50 +61,52 @@ const handelContainerExists = (container, exists, imageContext, skipExists) => {
  */
 const runDockerImage = async args => {
   const { globalConfig, params, task, __internal={} } = args
-  const { context, connect, cleanup, cmd, entry, log, network, options, volumes } = params
-  const [imageName, tagName] = getImageTag(params)
 
-  const imageContext = context
-    ? await getImageContext(args, imageName, tagName)
-    : await getImageData(args, imageName, tagName)
+  
+  const imgNameContext = await getImgNameContext(args.params)
+  const { context, connect, cleanup, cmd, entry, log, network, options=[], volumes } = params
+  
+  const { imgContext, imgRef } = await getImageContext(args, imgNameContext.image)
 
-  const { tag, location, contextEnvs, container, image } = imageContext
+  // Build the name for the container
+  const containerName = `${IMAGE}-${imgNameContext.image}-${imgNameContext.tag}`
+  const { location, contextEnvs } = imgContext
 
-  const exists = await docker.container.get(container)
-
+  const exists = await docker.container.get(containerName)
   if(exists)
     return handelContainerExists(
       container,
       exists,
-      imageContext,
+      imgContext,
       __internal.skipExists
     )
 
-  let opts = connect
-    ? options.concat([ `-it` ])
-    : options.concat([ `-d` ])
+  connect
+    ? options.push([ `-it` ])
+    : options.push([ `-d` ])
 
-  cleanup && opts.push(`--rm`)
-  entry && opts.push(`--entrypoint ${ entry }`)
+  cleanup && options.push(`--rm`)
+  entry && options.push(`--entrypoint ${ entry }`)
 
   // Clear out the docker-compose labels, so it does not think it controls this container
-  opts = await removeLabels(image, 'com.docker.compose', opts)
+  // const opts = await removeLabels(imgNameContext.providerImage, 'com.docker.compose', options)
 
+  // TODO: investigate 'the input device is not a TTY' when running command
   await docker.image.run({
-    tag,
     log,
-    opts,
-    entry: cmd,
-    image,
+    opts: options,
     location,
+    entry: cmd,
     envs: contextEnvs,
-    name: container,
+    name: containerName,
+    tag: imgNameContext.tag,
+    image: imgNameContext.providerImage,
   })
 
-  const runningContainer = await docker.container.get(container)
-  return runningContainer
-    ? { ...imageContext, ...runningContainer }
-    : imageContext
+  const containerRef = await docker.container.get(container)
+  return containerRef
+    ? { ...imgContext, containerRef }
+    : imgContext
 
 }
 
