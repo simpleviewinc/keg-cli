@@ -186,8 +186,6 @@ const checkDockerId = async params => {
  */
 const getImgNameContext = async params => {
 
-  // TODO: Add test for checking docker image id
-  // Validate the output
   const {
     tag,
     tap,

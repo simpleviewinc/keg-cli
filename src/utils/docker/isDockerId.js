@@ -7,7 +7,13 @@
  * @returns {boolean} - If value is a hex string
  */
 const isHex = toTest => {
-  return parseInt(toTest, 16).toString(16) === toTest
+  let parsed = parseInt(toTest, 16).toString(16)
+  // When parsing, if the first char is a 0, then it gets removed
+  // So we have to check the first char, and add it back if needed
+  parsed = toTest[0] === '0' ? `0${parsed}` : parsed
+
+  // Now check if it matches the original
+  return parsed === toTest
 }
 
 /**
