@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# ----------------------- Important ----------------------- #
+# For this file to install the tap correctly, you must add  #
+# DOC_APP_PATH and GIT_APP_BRANCH as ARGs                   #
+# Before the first FROM of the child dockerfile             #
+# OR the file can be called manually within the dockerfile  #
+# By adding RUN /keg/tap-build.sh                           #
+# ----------------------- Important ----------------------- #
+
 # Git clones a repo into the dock container
 keg_clone_tap(){
   # If a branch is defined then only pull that branch
@@ -44,7 +52,7 @@ keg_setup_tap(){
 # Install / Build Tap, then copy over it's keg dependencies
 keg_build_tap(){
 
-  # Normalize DOC_TAP_PATH
+  # Normalize DOC_APP_PATH && DOC_TAP_PATH
   if [[ "$DOC_TAP_PATH" ]]; then
     DOC_APP_PATH=$DOC_TAP_PATH
   fi
@@ -54,22 +62,24 @@ keg_build_tap(){
     DOC_APP_PATH=/keg/tap
   fi
 
-  # More to the taps directory
-  cd $DOC_APP_PATH
-
-  # Normalize GIT_TAP_URL && GIT_TAP_BRANCH
+  # Normalize GIT_APP_URL && GIT_TAP_URL
   if [[ "$GIT_TAP_URL" ]]; then
     GIT_APP_URL=$GIT_TAP_URL
   fi
 
+  # Normalize GIT_APP_BRANCH && GIT_TAP_BRANCH
   if [[ "$GIT_TAP_BRANCH" ]]; then
     GIT_APP_BRANCH=$GIT_TAP_BRANCH
   fi
 
+  # Only do git clone if the git url exists
   if [[ "$GIT_APP_URL" ]]; then
     # Clone the tap repo from git
     keg_clone_tap $GIT_APP_URL $DOC_APP_PATH $GIT_APP_BRANCH
   fi
+
+  # More to the taps directory
+  cd $DOC_APP_PATH
 
   # Setup the tap
   keg_setup_tap "$DOC_APP_PATH"

@@ -1,8 +1,3 @@
-# Overrights the KEG_BUILD_TYPE arg of the keg-base image
-# This tells the ONBUILD drective to use this value when run
-ARG KEG_BUILD_TYPE=tap
-ARG DOC_APP_PATH=/keg/tap
-
 # Setup the taps image FROM in the global state
 # Must come before the FROM directive to is can be accessed
 ARG KEG_NODE_VERSION
@@ -24,10 +19,24 @@ WORKDIR /
 # Add yarn's global bin to PATH
 ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin
 
+
+# ----------------- TODO: -----------------
+
+# Remove the local copy from the host machine, once the build.sh is merged upstream
+# For now, we have to copy it from the current host, so this is commented out
+# COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/build.sh /keg/tap-build.sh
+
+# Temporary until containers/tap/build.sh exists upstream
+# Remove this once that happends
+
+COPY ./build.sh /keg/tap-build.sh
+
+# ----------------- TODO: -----------------
+
+
 # Copy over required items from the keg-base image
 COPY --from=keg-base /usr/local/share/.config/yarn /usr/local/share/.config/yarn
 COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/run.sh /keg/tap-run.sh
-COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/build.sh /keg/tap-build.sh
 # Copy over the keg-core code with the latest changes
 COPY --from=keg-base /keg-hub/repos/keg-core /keg-hub/repos/keg-core
 

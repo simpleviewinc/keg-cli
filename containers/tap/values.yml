@@ -25,11 +25,21 @@ env:
   # So it should NOT be set inside the .env file
   # KEG_CONTEXT_PATH: INITIAL
 
+  # Default Yarn command to run when the docker container starts
+  KEG_EXEC_CMD: tap:start
+
+  # Image to use when build keg-core
+  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:master
+
+  # Image to use when running keg-core
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/tap:master
+
   # --- DOCKER ENV CONTEXT --- #
 
   # This is required to clone the tap into the docker container
   # Typically can be found dynamically if the local tap is a git repo
-  # GIT_APP_URL: <some.git.repo.url>
+  # GIT_APP_URL: <some.git.repo.url> ( Alt: GIT_TAP_URL )
+  # GIT_APP_BRANCH: Branch to clone, defaults to the base branch ( Alt: GIT_TAP_BRANCH )
 
   # Default location of the tap in the docker container
   DOC_APP_PATH: /keg/tap
@@ -66,7 +76,6 @@ env:
 
   # --- GENERAL CONTEXT ENVs --- #
 
-  KEG_EXEC_CMD: tap:start
   IMAGE: tap
   CONTAINER_NAME: tap
   CHOKIDAR_USEPOLLING: 1
