@@ -3,7 +3,7 @@ const { runService } = require('KegUtils/services')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
- * Run keg-components image outside of docker-compose
+ * Run keg-core image outside of docker-compose
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -12,19 +12,19 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  *
  * @returns {void}
  */
-const runComponents = async (args) => {
-  return runService(args, { context: 'components', tap: undefined })
+const runCore = async (args) => {
+  return runService(args, { context: 'core', tap: undefined })
 }
 
 module.exports = {
   run: {
     name: 'run',
     alias: [ 'rn' ],
-    action: runComponents,
+    action: runCore,
     inject: true,
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
-    description: `Runs the components image outside of docker-compose`,
-    example: 'keg components run <options>',
-    options: mergeTaskOptions('components', 'run', 'run', {}, []),
+    description: `Runs the core image outside of docker-compose`,
+    example: 'keg core run <options>',
+    options: mergeTaskOptions('core', 'run', 'run', {}, [])
   }
 }

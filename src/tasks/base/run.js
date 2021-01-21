@@ -1,5 +1,6 @@
 const { runService } = require('KegUtils/services')
 const { DOCKER } = require('KegConst/docker')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
  * Start a tap with docker-compose
@@ -24,41 +25,6 @@ module.exports = {
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
     description: `Runs the base image directly`,
     example: 'keg base run <options>',
-    options: {
-      cleanup: {
-        alias: [ 'clean', 'rm' ],
-        description: 'Auto remove the docker container after exiting',
-        example: `keg base run  --cleanup false`,
-        default: true
-      },
-      options: {
-        alias: [ 'opts' ],
-        description: 'Extra docker run command options',
-        example: `keg base run --options \\"-p 80:19006 -e MY_ENV=data\\"`,
-        default: []
-      },
-      cmd: {
-        alias: [ 'entry', 'command' ],
-        description: 'Overwrite entry of the image. Use escaped quotes for spaces ( bin/bash )',
-        example: 'keg base run --entry \\"node index.js\\"',
-        default: '/bin/bash'
-      },
-      log: {
-        description: 'Log the docker run command to the terminal',
-        example: 'keg base run --log',
-        default: false,
-      },
-      connect: {
-        alias: [ 'conn', 'con', 'it' ],
-        description: 'Auto connects to the docker containers stdio',
-        example: 'keg docker image run --no-connect',
-        default: true
-      },
-      sync: {
-        description: 'Creates a mutagen sync between the local Keg-CLI and the docker container',
-        example: 'keg base run --sync false',
-        default: false,
-      }
-    }
+    options: mergeTaskOptions('base', 'run', 'run', {}, []),
   }
 }

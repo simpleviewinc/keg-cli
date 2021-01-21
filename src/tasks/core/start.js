@@ -22,7 +22,7 @@ const startCore = async (args) => {
 module.exports = {
   start: {
     name: 'start',
-    alias: [ 'st', 'run' ],
+    alias: [ 'st' ],
     action: startCore,
     description: `Runs keg-core in a docker container`,
     example: 'keg core start <options>',
