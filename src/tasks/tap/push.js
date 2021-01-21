@@ -1,7 +1,7 @@
 const { get } = require('@keg-hub/jsutils')
-const { DOCKER } = require('KegConst/docker')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
+const { updateLocationContext } = require('KegUtils/helpers/updateLocationContext')
 
 /**
  * Pushes a local image to a registry provider in the cloud
@@ -16,22 +16,15 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {Promise<Void>}
  */
 const tapPush = async (args) => {
-  const { params:{ tap, context } } = args
-
-  const pushedImage = await runInternalTask(
+  return await runInternalTask(
     'tasks.docker.tasks.provider.tasks.push',
-    {
-      ...args,
+    updateLocationContext(args, {
       command: 'push',
-      params: {
-        ...args.params,
-        context: tap ? context : 'tap',
-        image: tap || 'tap',
+      params: { 
+        image: get(args, 'params.tap') || 'tap',
       }
-    }
+    })
   )
-
-  return pushedImage
 }
 
 module.exports = {

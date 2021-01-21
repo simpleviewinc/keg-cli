@@ -1,4 +1,3 @@
-const { DOCKER } = require('KegConst/docker')
 const { pullService } = require('KegUtils/services/pullService')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
@@ -36,7 +35,6 @@ module.exports = {
     alias: [ 'pl' ],
     action: pullTap,
     inject: true,
-    locationContext: DOCKER.LOCATION_CONTEXT.CONTAINERS,
     description: `Pull a tap image from a docker provider`,
     example: 'keg tap pull <options>',
     options: mergeTaskOptions(`tap`, `pull`, `pull`)
