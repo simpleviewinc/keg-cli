@@ -1,5 +1,32 @@
 ### CLI TODOs
 
+### Image FROM
+* Docker build command separate from the docker compose
+  * Build image, then push image
+  * Docker cli commands only
+* Docker-compose
+  * config files `image` property should point to the full docker provider url
+  * They should not point to the local image without the provider url
+  * They should include a tag, default is master
+  * When docker compose command is run,
+    * The image property should be dynamically set by
+      * --from prop from the command line
+      * KEG_IMAGE_FROM env set the context values.yml file
+      * The default KEG_IMAGE_FROM value for the context type
+        * `base` === `<provider-url>/keg-base:master`
+        * `components` === `<provider-url>/keg-components:master`
+        * `core` === `<provider-url>/keg-core:master`
+        * `tap` === `<provider-url>/tap:master`
+      * Tag can be overwritten with
+        * `--tag` option form command line
+        * KEG_IMAGE_TAG env
+* Docker packages
+  * These should create new images from the currently running images
+  * They should use the current branch name for the tag
+    * This should override the default tag
+  * This would also allow running the docker image with compose by setting the --tag option from the command line
+    * This would work the same as docker packages currently do, only through docker-compose not docker 
+
 **Taps**
   * Create a default init template for a tap - `create-react-tap`
 
@@ -11,18 +38,6 @@
     * Need to add for windows `.bat` || Rewrite in `node`
   * Should run `scripts/setup/cliSetup.js`
     * Sets up cli on the local machine
-
-* Add tasks to update version for repos
-  * Should update the package.json version
-  * All - Must follow this order
-    * update re-theme
-    * update tap-resolver
-    * update keg-components
-    * update keg-core
-    * update taps ( optional )
-  * Allow passing in major minor patch
-  * Allow auto-committing to develop, then develop to qa, then develop to master
-    * This is done for each repo
 
 ### Image pull
   * If a tap is passed in

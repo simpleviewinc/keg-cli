@@ -95,12 +95,12 @@ const dockerBuild = async args => {
     }
   })
 
-  Logger.info(`Building docker image "${ image || cmdContext }" ...`)
+  Logger.pair(`\nBuilding docker image`, image || cmdContext)
 
   // Run the built docker command
   const exitCode = await docker.build(
     dockerCmd,
-    { log, options: { env: contextEnvs }},
+    { log, options: { env: contextEnvs }, context: image || cmdContext },
     location
   )
 

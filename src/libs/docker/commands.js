@@ -12,7 +12,7 @@ const {
   isColl,
   isStr,
   toStr,
-  exists
+  exists,
 } = require('@keg-hub/jsutils')
 
 /**
@@ -245,18 +245,20 @@ const raw = async (cmd, args={}, loc=process.cwd()) => {
 }
 
 const build = async (cmd, args={}, loc=process.cwd()) => {
-  const { log=true, ...cmdArgs } = args
+  const { log=true, context, ...cmdArgs } = args
 
   // Build the command to be run
   const cmdToRun = ensureDocker(cmd)
   log && Logger.spacedMsg(`Running command: `, cmdToRun)
 
   // Run the docker command
-  const { error, data, exitCode } = await pipeDocCmd(cmdToRun, cmdArgs, log)
+  const exitCode = await spawnProc(cmdToRun, cmdArgs, log)
 
   ;exitCode
-    ? apiError(error)
-    : Logger.success(`\nFinished building Docker image!\n`)
+    ? apiError(`${context || ''} image failed to build!`.trim())
+    : Logger.pair(`Finished building image`, `${context || ''}`.trim())
+
+  Logger.empty()
 
   return exitCode
 }
