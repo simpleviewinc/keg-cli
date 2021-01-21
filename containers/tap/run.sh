@@ -9,6 +9,16 @@ if [[ -z "$KEG_DOCKER_EXEC" ]]; then
 
 else
 
+  # Normalize DOC_TAP_PATH
+  if [[ "$DOC_TAP_PATH" ]]; then
+    DOC_APP_PATH=$DOC_TAP_PATH
+  fi
+
+  # Ensure the DOC_APP_PATH is set
+  if [[ -z "$DOC_APP_PATH" ]]; then
+    DOC_APP_PATH=/keg/tap
+  fi
+
   # cd into the tap repo
   cd $DOC_APP_PATH
 

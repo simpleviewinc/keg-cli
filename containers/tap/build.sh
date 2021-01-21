@@ -44,6 +44,11 @@ keg_setup_tap(){
 # Install / Build Tap, then copy over it's keg dependencies
 keg_build_tap(){
 
+  # Normalize DOC_TAP_PATH
+  if [[ "$DOC_TAP_PATH" ]]; then
+    DOC_APP_PATH=$DOC_TAP_PATH
+  fi
+
   # Ensure the DOC_APP_PATH is set
   if [[ -z "$DOC_APP_PATH" ]]; then
     DOC_APP_PATH=/keg/tap
@@ -51,6 +56,15 @@ keg_build_tap(){
 
   # More to the taps directory
   cd $DOC_APP_PATH
+
+  # Normalize GIT_TAP_URL && GIT_TAP_BRANCH
+  if [[ "$GIT_TAP_URL" ]]; then
+    GIT_APP_URL=$GIT_TAP_URL
+  fi
+
+  if [[ "$GIT_TAP_BRANCH" ]]; then
+    GIT_APP_BRANCH=$GIT_TAP_BRANCH
+  fi
 
   if [[ "$GIT_APP_URL" ]]; then
     # Clone the tap repo from git
