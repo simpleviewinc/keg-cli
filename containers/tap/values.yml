@@ -27,6 +27,10 @@ env:
 
   # --- DOCKER ENV CONTEXT --- #
 
+  # This is required to clone the tap into the docker container
+  # Typically can be found dynamically if the local tap is a git repo
+  # GIT_APP_URL: <some.git.repo.url>
+
   # Default location of the tap in the docker container
   DOC_APP_PATH: /keg/tap
 

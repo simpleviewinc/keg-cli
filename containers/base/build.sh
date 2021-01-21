@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 EMPTY="EMPTY"
 KEG_REPOS="/keg-hub/repos"
 KEG_JSUTILS_BUILT="false"
@@ -8,6 +7,18 @@ KEG_RESOLVER_BUILT="false"
 KEG_RETHEME_BUILT="false"
 KEG_COMPONENTS_BUILT="false"
 KEG_CORE_BUILT="false"
+
+# Git clones a repo into the dock container
+keg_clone_repo(){
+  # If a branch is defined then only pull that branch
+  if [ "$3" ]; then
+    git clone --single-branch --branch $3 $1 $2 
+
+  # Otherwise just clone the repo
+  else
+    git clone $1 $2
+  fi
+}
 
 # Sets up a repo by installing, building, cleaning up, then coping to a location
 keg_setup_repo(){
@@ -187,6 +198,9 @@ keg_build_tap(){
   if [[ -z "$DOC_APP_PATH" ]]; then
     DOC_APP_PATH=/keg/tap
   fi
+
+  # Clone the tap repo from git
+  keg_clone_repo $GIT_APP_URL $DOC_APP_PATH $GIT_APP_BRANCH
 
   # Setup the tap
   keg_setup_repo "$DOC_APP_PATH"

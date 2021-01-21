@@ -78,12 +78,6 @@ WORKDIR /keg-hub
 # don't set a default value so that the value is set from the build command args
 ONBUILD ARG KEG_BUILD_TYPE
 
-ONBUILD ARG DOC_APP_PATH
-ONBUILD ENV DOC_APP_PATH=$DOC_APP_PATH
-
-ONBUILD ARG DOC_CORE_PATH
-ONBUILD ENV DOC_CORE_PATH=$DOC_CORE_PATH
-
 # use ONBUILD directive to call the build.sh script inside the child image
 # This allows the child image to define the value of KEG_BUILD_TYPE
 ONBUILD RUN /keg-cli-setup/build.sh $KEG_BUILD_TYPE

@@ -17,7 +17,5 @@ env:
 
   # Image ENVs
   IMAGE: keg-base
-  KEG_IMAGE_TAG: master
-
   # Container ENVs
   CONTAINER_NAME: keg-base
