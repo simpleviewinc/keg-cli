@@ -16,6 +16,8 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {Promise<Void>}
  */
 const tapPush = async (args) => {
+  const { params:{ tap, context } } = args
+
   const pushedImage = await runInternalTask(
     'tasks.docker.tasks.provider.tasks.push',
     {
@@ -23,8 +25,8 @@ const tapPush = async (args) => {
       command: 'push',
       params: {
         ...args.params,
-        context: 'tap',
-        image: get(args, 'params.tap') || 'tap',
+        context: tap ? context : 'tap',
+        image: tap || 'tap',
       }
     }
   )
