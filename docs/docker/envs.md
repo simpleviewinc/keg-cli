@@ -5,6 +5,9 @@
   * If overriding also set the `KEG_FROM_BASE` env to false
     * This bypasses pull the keg-base image before running the taps docker image
 
+### KEG_EXEC_CMD vs KEG_DOCKER_EXEC
+* TODO - explain difference and reasoning for them
+
 
 ### ENV Functionality
 * **DOC_APP_PATH**
@@ -13,6 +16,13 @@
     * **@required**
     * @type *String*
     * @cli-option `N/A`
+* **KEG_BUILD_TYPE**
+  * Defines the type of docker image being built
+  * This allows the keg-base `build.sh` script to which keg-hub repos should be installed
+  * Uses the `ONBUILD` directive to help keep images sizes small
+  * Definition
+    * @type *string*
+    * @cli-option `n/a`
 * **KEG_COPY_LOCAL**
   * Copy the local docker context into the docker image at build time
     * The Dockerfile for the image must support the `KEG_COPY_LOCAL` env
@@ -44,4 +54,8 @@
     * **@required**
     * @type *string*
     * @cli-option `N/A`
+* **KEG_EXEC_CMD**
+  * TODO
+* **KEG_DOCKER_EXEC**
+  * * TODO
 * *more coming soon...*

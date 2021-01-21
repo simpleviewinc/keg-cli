@@ -1,7 +1,7 @@
 sync:
   keg-base:
-    alpha: "/keg/keg-cli"
-    beta: "docker://keg/keg-cli"
+    alpha: "/keg-hub"
+    beta: "docker:/keg-hub"
     mode: "one-way-replica"
     ignore:
       vcs: true

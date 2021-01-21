@@ -98,7 +98,15 @@ const dockerBuild = async args => {
   Logger.info(`Building docker image "${ image || cmdContext }" ...`)
 
   // Run the built docker command
-  await docker.raw(dockerCmd, { log, options: { env: contextEnvs }}, location)
+  const exitCode = await docker.build(
+    dockerCmd,
+    { log, options: { env: contextEnvs }},
+    location
+  )
+
+  // Exit code is 0 if build succeeds, so check if it exists
+  // If if dose then the build failed
+  if(exitCode) process.exit(exitCode)
 
   // Return the built image as a json object
   // This is needed for internal keg-cli calls

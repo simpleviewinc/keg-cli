@@ -134,15 +134,19 @@ const login = async ({ providerUrl, user, token }) => {
  * Creates a child process and pipes the output to the current process
  * @function
  * @param {string} cmd - Command to run
+ * @param {string} args - Arguments to pass to the child process
+ * @param {string} location - Location where the cmd should be run
  * @param {boolean} log - Log messages and docker commands
  *
  * @returns {Object} - Output of the commands std out/err and exitCode
  */
-const pipeDocCmd = (cmd, log=true) => {
+const pipeDocCmd = (cmd, args, location, log=true) => {
   return new Promise(async (res, rej) => {
     const output = { data: [], error: [] }
 
     await pipeCmd(cmd, {
+      ...args,
+      cwd: location,
       onStdOut: data => {
         log && Logger.stdout(data)
         output.data.push(data)
@@ -231,16 +235,30 @@ const raw = async (cmd, args={}, loc=process.cwd()) => {
   log && Logger.spacedMsg(`Running command: `, cmdToRun)
 
   // Run the docker command
-  const resp = await spawnProc(cmdToRun, cmdArgs, loc)
-  if(!resp) return
-  
-  const { error, data } = resp
+  const { error, data, exitCode } = await pipeDocCmd(cmdToRun, cmdArgs, loc)
 
-  error && !data
+  ;error && !data
     ? apiError(error)
     : Logger.success(`Finished running Docker CLI command!`)
   
   return data
+}
+
+const build = async (cmd, args={}, loc=process.cwd()) => {
+  const { log=true, ...cmdArgs } = args
+
+  // Build the command to be run
+  const cmdToRun = ensureDocker(cmd)
+  log && Logger.spacedMsg(`Running command: `, cmdToRun)
+
+  // Run the docker command
+  const { error, data, exitCode } = await pipeDocCmd(cmdToRun, cmdArgs, log)
+
+  ;exitCode
+    ? apiError(error)
+    : Logger.success(`\nFinished building Docker image!\n`)
+
+  return exitCode
 }
 
 /**
@@ -351,6 +369,7 @@ const log = (args, cmdArgs={}) => {
 }
 
 module.exports = {
+  build,
   dockerCli,
   dynamicCmd,
   inspect,
