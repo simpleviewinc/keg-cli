@@ -29,7 +29,7 @@ const runService = async (args, exArgs) => {
 
   // Step 1 - Run the docker container, but don't attach to it
   // We do this so we can create a mutagen sync after the container has been started
-  const imageContext = await runInternalTask('docker.tasks.image.tasks.run', {
+  const { imageContext, containerRef } = await runInternalTask('docker.tasks.image.tasks.run', {
     ...args,
     __internal: { skipExists: true },
     params: {

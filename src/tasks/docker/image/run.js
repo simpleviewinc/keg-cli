@@ -103,9 +103,9 @@ const runDockerImage = async args => {
     image: imgNameContext.providerImage,
   })
 
-  const containerRef = await docker.container.get(container)
+  const containerRef = connect ? false : await docker.container.get(containerName)
   return containerRef
-    ? { ...imgContext, containerRef }
+    ? { imgContext, containerRef }
     : imgContext
 
 }

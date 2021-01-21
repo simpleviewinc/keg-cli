@@ -231,17 +231,16 @@ const raw = async (cmd, args={}, loc=process.cwd()) => {
   // Build the command to be run
   // Add docker if needed
   const cmdToRun = ensureDocker(cmd)
-
   log && Logger.spacedMsg(`Running command: `, cmdToRun)
 
   // Run the docker command
-  const { error, data, exitCode } = await pipeDocCmd(cmdToRun, cmdArgs, loc)
+  const exitCode = await spawnProc(cmdToRun, cmdArgs, loc)
 
-  ;error && !data
-    ? apiError(error)
-    : Logger.success(`Finished running Docker CLI command!`)
+  ;exitCode
+    ? apiError(`Docker command exited with non-zero exit code!`)
+    : Logger.success(`Finished running Docker command!`)
   
-  return data
+  return exitCode
 }
 
 const build = async (cmd, args={}, loc=process.cwd()) => {
