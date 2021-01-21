@@ -11,6 +11,7 @@ module.exports = {
       ...require('./destroy'),
       ...require('./push'),
       ...require('./pull'),
+      ...require('./run'),
       ...require('./stop'),
       ...require('./start'),
       ...require('./storybook'),

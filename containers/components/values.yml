@@ -34,6 +34,8 @@ env:
 
   KEG_EXEC_CMD: sb
 
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-components:master
+
   # --- KEG-PROXY ENVs --- #
 
   # Most Keg-Proxy Envs are not needed, but can be overwritten to allow customization

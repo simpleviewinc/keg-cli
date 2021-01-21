@@ -1,10 +1,11 @@
 const docker = require('KegDocCli')
-const { get, noOpObj } = require('@keg-hub/jsutils')
+const { getImgTag } = require('./getImgTag')
 const { getImgFrom } = require('./getImgFrom')
+const { get, noOpObj } = require('@keg-hub/jsutils')
 const { getKegContext } = require('./getKegContext')
+const { isDockerId } = require('../docker/isDockerId')
 const { getSetting } = require('../globalConfig/getSetting')
 const { getContainerConst } = require('../docker/getContainerConst')
-const { isDockerId } = require('../docker/isDockerId')
 const { getGlobalConfig } = require('../globalConfig/getGlobalConfig')
 
 /**
@@ -105,9 +106,8 @@ const getBaseFromEnv = (context, params) => {
   const nameAndUrl = getNameFromUrl(baseFromEnv)
   const nameAndTag = getTagFromName(nameAndUrl.image)
 
-  // Set the default tag if one does not exist
-  nameAndTag.tag = nameAndTag.tag ||
-    getContainerConst(context, 'env.keg_image_tag', getSetting('docker.defaultTag'))
+  // Ensure a tag is set, use the default if one does not exist
+  nameAndTag.tag = getImgTag(nameAndTag.tag, context, nameAndUrl.image)
 
   return {
     ...nameAndUrl,

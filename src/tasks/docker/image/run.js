@@ -13,8 +13,6 @@ const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 
 const { IMAGE } = CONTAINER_PREFIXES
 
-
-
 const getImageContext = async (args, imgName) => {
   const { globalConfig, task, params } = args
 
@@ -61,11 +59,9 @@ const handelContainerExists = (container, exists, imgContext, skipExists) => {
  */
 const runDockerImage = async args => {
   const { globalConfig, params, task, __internal={} } = args
-
-  
-  const imgNameContext = await getImgNameContext(args.params)
   const { context, connect, cleanup, cmd, entry, log, network, options=[], volumes } = params
-  
+
+  const imgNameContext = await getImgNameContext(params)
   const { imgContext, imgRef } = await getImageContext(args, imgNameContext.image)
 
   // Build the name for the container
@@ -88,10 +84,9 @@ const runDockerImage = async args => {
   cleanup && options.push(`--rm`)
   entry && options.push(`--entrypoint ${ entry }`)
 
-  // Clear out the docker-compose labels, so it does not think it controls this container
+  // TODO: Clear out the docker-compose labels, so it does not think it controls this container
   // const opts = await removeLabels(imgNameContext.providerImage, 'com.docker.compose', options)
 
-  // TODO: investigate 'the input device is not a TTY' when running command
   await docker.image.run({
     log,
     opts: options,

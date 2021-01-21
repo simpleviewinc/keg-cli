@@ -70,20 +70,5 @@ RUN mkdir -p /root/.kegConfig; \
 
 WORKDIR /keg-hub
 
-# See this comment for an explination
-# https://github.com/moby/moby/issues/15025#issuecomment-371466934
-# Use the ONBUILD directive to have the lines evaluated in a child image
-# This will define the `ARG` inside the build-stage
-# (it will be executed after `FROM` in the child image, so it's a new build-stage)
-# don't set a default value so that the value is set from the build command args
-ONBUILD ARG KEG_BUILD_TYPE
-
-# use ONBUILD directive to call the build.sh script inside the child image
-# This allows the child image to define the value of KEG_BUILD_TYPE
-ONBUILD RUN /keg-cli-setup/build.sh $KEG_BUILD_TYPE
-
-# Set the defualt shell to bash
-SHELL [ "/bin/bash"]
-
 # Run the bash for the default command
 CMD [ "/bin/bash" ]
