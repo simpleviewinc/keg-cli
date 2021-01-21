@@ -4,15 +4,12 @@ env:
 
   KEG_CONTEXT_PATH: "{{ cli.paths.components }}"
   RETHEME_PATH: "{{ cli.taps.retheme.path }}"
-
+  JSUTILS_PATH: "{{ cli.paths.jsutils }}"
 
   # --- COMPONENTS ENV CONTEXT --- #
 
   KEG_DOCKER_FILE: "{{ cli.paths.containers }}/components/Dockerfile"
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/components/values.yml"
-
-  # Defines the location of the mutagen config
-  # Without it, mutagen syncs will use the default settings
   KEG_MUTAGEN_FILE: "{{ cli.paths.containers }}/components/mutagen.yml"
   
   # The default docker-compose file path
@@ -68,5 +65,4 @@ env:
   IMAGE: keg-components
   VERSION: "0.0.1"
   CONTAINER_NAME: keg-components
-  KEG_IMAGE_FROM: keg-components:master
   CHOKIDAR_USEPOLLING: 1
