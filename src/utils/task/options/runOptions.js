@@ -42,7 +42,7 @@ const runOptions = (task, action, options) => {
         description: 'Creates a mutagen sync between the local Keg-CLI and the docker container',
         example: `keg ${task} ${action} --sync false`,
         default: false,
-      }
+      },
       volumes: {
         description: 'Mount the local volumes defined in the docker-compose config.yml.',
         example: `keg ${task} ${action} run --volumes`,

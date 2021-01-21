@@ -12,6 +12,7 @@ module.exports = {
       ...require('./pullrequest'),
       ...require('./push'),
       ...require('./restart'),
+      ...require('./run'),
       ...require('./start'),
       ...require('./stop'),
       ...require('./sync'),
