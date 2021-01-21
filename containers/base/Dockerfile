@@ -25,15 +25,15 @@ ARG GIT_CLI_BRANCH=master
 
 # Pull down the keg-cli
 RUN git clone --single-branch --branch $GIT_CLI_BRANCH $GIT_CLI_URL /keg-hub/repos/keg-cli; \
-    mkdir -p /keg-cli-setup; \
-    cp -r /keg-hub/repos/keg-cli/containers/base/* /keg-cli-setup/
+    mkdir -p /keg-setup; \
+    cp -r /keg-hub/repos/keg-cli/containers/base/* /keg-setup/
 
 # TODO: Remove this out once the file have been merge into the upstream
 # Copy over the local keg-cli setup files
-COPY ./repos/keg-cli/containers/base/build.sh /keg-cli-setup/build.sh
-COPY ./repos/keg-cli/containers/base/keg-exec.sh /keg-cli-setup/keg-exec.sh
-COPY ./repos/keg-cli/containers/base/cli.config.json /keg-cli-setup/cli.config.json
-COPY ./repos/keg-cli/containers/base/defaults.env /keg-cli-setup/defaults.env
+COPY ./repos/keg-cli/containers/base/build.sh /keg-setup/build.sh
+COPY ./repos/keg-cli/containers/base/keg-exec.sh /keg-setup/keg-exec.sh
+COPY ./repos/keg-cli/containers/base/cli.config.json /keg-setup/cli.config.json
+COPY ./repos/keg-cli/containers/base/defaults.env /keg-setup/defaults.env
 
 # ------- Final Build Stage ------- #
 
@@ -41,7 +41,7 @@ COPY ./repos/keg-cli/containers/base/defaults.env /keg-cli-setup/defaults.env
 FROM $KEG_NODE_IMAGE AS final-build
 
 # Add the keg-exec folder to the path, so we can find our keg-cli exec script
-ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin:/keg-cli-setup
+ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin:/keg-setup
 
 # Install git, docker-cli and bash for the new stage
 RUN apk add git docker-cli bash; \
@@ -56,17 +56,17 @@ RUN apk add git docker-cli bash; \
 COPY --from=keg-builder /usr/local/share/.config/yarn /usr/local/share/.config/yarn
 
 # Copy over the keg-cli setup files
-COPY --from=keg-builder /keg-cli-setup /keg-cli-setup
+COPY --from=keg-builder /keg-setup /keg-setup
 
 # Copy over keg hub from keg-builder build stage
 COPY --from=keg-builder /keg-hub /keg-hub
 
 # Copy over the keg-exec script nad update the permissions so we can execute it
 RUN mkdir -p /root/.kegConfig; \
-    mv /keg-cli-setup/cli.config.json /root/.kegConfig/cli.config.json; \
-    mv /keg-cli-setup/defaults.env /root/.kegConfig/defaults.env; \
-    chmod +x /keg-cli-setup/keg-exec.sh; \
-    chmod +x /keg-cli-setup/build.sh
+    mv /keg-setup/cli.config.json /root/.kegConfig/cli.config.json; \
+    mv /keg-setup/defaults.env /root/.kegConfig/defaults.env; \
+    chmod +x /keg-setup/keg-exec.sh; \
+    chmod +x /keg-setup/build.sh
 
 WORKDIR /keg-hub
 

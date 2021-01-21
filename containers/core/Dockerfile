@@ -8,7 +8,7 @@ ARG KEG_BASE_IMAGE=ghcr.io/simpleviewinc/keg-base:master
 FROM $KEG_BASE_IMAGE as keg-base
 
 # Run the build script keg-core
-RUN /keg-cli-setup/build.sh core
+RUN /keg-setup/build.sh core
 
 # ------- Components Image Build Stage ------- #
 

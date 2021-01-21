@@ -191,34 +191,9 @@ keg_build_cli(){
   fi
 }
 
-# Install / Build Tap, then copy over it's keg dependencies
-keg_build_tap(){
-
-  # Ensure the DOC_APP_PATH is set
-  if [[ -z "$DOC_APP_PATH" ]]; then
-    DOC_APP_PATH=/keg/tap
-  fi
-
-  # Clone the tap repo from git
-  keg_clone_repo $GIT_APP_URL $DOC_APP_PATH $GIT_APP_BRANCH
-
-  # Setup the tap
-  keg_setup_repo "$DOC_APP_PATH"
-
-  # Check if the keg-core folder exists
-  if [ -d "$DOC_APP_PATH/node_modules/keg-core" ]; then
-    # Setup keg-core for the tap
-    keg_build_core "$DOC_APP_PATH/node_modules/keg-core"
-  fi
-
-}
-
 keg_build_repos_from_type(){
 
-  if [[ -z "$1" ]]; then
-    keg_build_tap
-
-  elif [[ "$1" == "cli" ]]; then
+  if [[ "$1" == "cli" ]]; then
     keg_build_cli
 
   elif [[ "$1" == "core" ]]; then

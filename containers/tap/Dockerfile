@@ -9,8 +9,11 @@ ARG KEG_NODE_VERSION
 ARG NODE_IMAGE_FROM=node:$KEG_NODE_VERSION
 
 # Add a FROM for the keg-base image to we can copy content from it
-ARG KEG_IMAGE_FROM=ghcr.io/simpleviewinc/keg-base:master
-FROM $KEG_IMAGE_FROM as keg-base
+ARG KEG_BASE_IMAGE=ghcr.io/simpleviewinc/keg-base:master
+FROM $KEG_BASE_IMAGE as keg-base
+
+# Run the build script keg-core
+RUN /keg-setup/build.sh core
 
 # ------- Tap Build Stage ------- #
 
@@ -19,34 +22,38 @@ FROM $NODE_IMAGE_FROM as tap-builder
 WORKDIR /
 
 # Add yarn's global bin to PATH
-ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin:/keg-cli-setup
+ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin
 
-# Path of the app within the docker container
-ENV DOC_APP_PATH=$DOC_APP_PATH
+# Copy over required items from the keg-base image
+COPY --from=keg-base /usr/local/share/.config/yarn /usr/local/share/.config/yarn
+COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/run.sh /keg/tap-run.sh
+COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/build.sh /keg/tap-build.sh
+# Copy over the keg-core code with the latest changes
+COPY --from=keg-base /keg-hub/repos/keg-core /keg-hub/repos/keg-core
 
 # Install the dependecies with yarn install, then remove the .npmrc
-RUN apk add git bash; \
+RUN chmod a+x /keg/tap-run.sh; \
+    chmod a+x /keg/tap-build.sh; \
+    apk add git bash; \
     echo fs.inotify.max_user_watches=1048576 | sudo tee -a /etc/sysctl.conf; \
     sudo sysctl -p; \
     rm -rf /var/cache/apk/*; \
     /bin/sed -i '1s|.*|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
 
-# Copy over the globally installed yarn modules 
-COPY --from=keg-base /usr/local/share/.config/yarn /usr/local/share/.config/yarn
+# Path of the app within the docker container
+ARG DOC_APP_PATH
+ENV DOC_APP_PATH=$DOC_APP_PATH
 
-# Copy over the tap runs script from keg-base
-# Then update the permissions of the run script to ensure we can run it
-COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/run.sh /keg/tap-run.sh
-RUN chmod a+x /keg/tap-run.sh
+# Set the current directory to keg-core repo
+WORKDIR /keg
 
-# Copy over the buil tap code from keg base
-COPY --from=keg-base $DOC_APP_PATH $DOC_APP_PATH
-
-# Set the current directory to tap repo
-WORKDIR $DOC_APP_PATH
-
-
-SHELL [ "/bin/bash" ]
+# See this comment for an explination
+# https://github.com/moby/moby/issues/15025#issuecomment-371466934
+# Use the ONBUILD directive to have the lines evaluated on a child image
+# It will be executed after `FROM` in the child image, so it's a new build-stage
+# Don't set a default values so that the value is set from the build command args of the child
+# On build of the child image, run the /keg/tap-build.sh script
+ONBUILD RUN /keg/tap-build.sh
 
 # Run the start script
 CMD [ "/bin/bash", "/keg/tap-run.sh" ]
