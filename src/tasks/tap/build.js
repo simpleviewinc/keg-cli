@@ -13,7 +13,12 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {void}
  */
 const buildTap = async (args) => {
-  const { params:{ tap } } = args
+  const { params:{ tap, context } } = args
+  
+  // Determine the location context base in if a tap is defined
+  // It no tap is defined, then the task was called directly, and not with a linked tap
+  // Like this => keg tap build
+  // NOT like this => keg "link-tap-name" build
   const locationContext = tap ? DOCKER.LOCATION_CONTEXT.REPO : DOCKER.LOCATION_CONTEXT.CONTAINERS
 
   return runInternalTask('tasks.docker.tasks.build', {
@@ -23,10 +28,13 @@ const buildTap = async (args) => {
       locationContext,
     },
     params: {
-      context: 'tap',
       ...args.params,
+      // If a tap is defined, then use the original context
+      // Otherwise use the default 'tap' context
+      context: tap ? context : 'tap',
     },
   })
+
 }
 
 module.exports = {
