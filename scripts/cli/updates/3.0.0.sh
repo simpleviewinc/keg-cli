@@ -36,22 +36,31 @@ keg_cli_3_0_0_update(){
 
   keg cli env set --key GIT_HUB_URL --value https://github.com/simpleviewinc/keg-hub.git --confirm false
   keg cli env set --key GIT_HUB_BRANCH --value develop --confirm false
-  
   keg cli env set --key GIT_CLI_URL --value https://github.com/simpleviewinc/keg-cli.git.git --confirm false
   keg cli env set --key GIT_CLI_BRANCH --value master --confirm false
-  
+
+  # Update default image envs
   keg cli env set --key KEG_BASE_IMAGE --value ghcr.io/simpleviewinc/keg-base:master --confirm false
   keg cli env set --key KEG_IMAGE_FROM --value ghcr.io/simpleviewinc/keg-base:master --confirm false
   keg cli env set --key KEG_IMAGE_TAG --value master --confirm false
-  
 
   # Update the globalConfig
   keg config set --key cli.settings.docker.imagePullPolicy --value Always --confirm false
   keg config set --key cli.settings.docker.defaultTag --value master --confirm false
   keg config set --key cli.settings.docker.defaultLocalBuild --value false --confirm false
-  
-  keg config set --key version --value 3.0.0 --confirm false
 
+  keg config set --key version --value 3.0.0 --confirm false
+  keg config set --key cli.git.repos.cli --value keg-cli --confirm false
+  
+  # Update the docker config to use the new settings
+  keg config set --key docker.providerUrl --value ghcr.io --confirm false
+  keg config set --key docker.namespace --value simpleviewinc --confirm false
+
+  # Run a sync after the envs have been updated
+  keg config sync --confirm false
+
+  # Auto-login the user to docker
+  keg docker provider login
 
   echo ""
   keg_message "3.0.0 Update Complete!"
