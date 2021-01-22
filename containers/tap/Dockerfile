@@ -19,7 +19,6 @@ WORKDIR /
 # Add yarn's global bin to PATH
 ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin
 
-
 # ----------------- TODO: -----------------
 
 # Remove the local copy from the host machine, once the build.sh is merged upstream
@@ -32,7 +31,6 @@ ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin
 COPY ./build.sh /keg/tap-build.sh
 
 # ----------------- TODO: -----------------
-
 
 # Copy over required items from the keg-base image
 COPY --from=keg-base /usr/local/share/.config/yarn /usr/local/share/.config/yarn
@@ -49,10 +47,6 @@ RUN chmod a+x /keg/tap-run.sh; \
     rm -rf /var/cache/apk/*; \
     /bin/sed -i '1s|.*|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
 
-# Path of the app within the docker container
-ARG DOC_APP_PATH
-ENV DOC_APP_PATH=$DOC_APP_PATH
-
 # Set the current directory to keg-core repo
 WORKDIR /keg
 
@@ -62,7 +56,16 @@ WORKDIR /keg
 # It will be executed after `FROM` in the child image, so it's a new build-stage
 # Don't set a default values so that the value is set from the build command args of the child
 # On build of the child image, run the /keg/tap-build.sh script
-ONBUILD RUN /keg/tap-build.sh
+ONBUILD ARG DOC_APP_PATH
+ONBUILD ENV DOC_APP_PATH=$DOC_APP_PATH
+
+ONBUILD ARG GIT_APP_URL
+ONBUILD ENV GIT_APP_URL=$GIT_APP_URL
+
+ONBUILD ARG GIT_APP_BRANCH
+ONBUILD ENV GIT_APP_BRANCH=$GIT_APP_BRANCH
+
+ONBUILD RUN /keg/tap-build.sh $DOC_APP_PATH $GIT_APP_URL $GIT_APP_BRANCH
 
 # Run the start script
 CMD [ "/bin/bash", "/keg/tap-run.sh" ]

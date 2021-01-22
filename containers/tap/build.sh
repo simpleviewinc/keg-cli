@@ -38,8 +38,9 @@ keg_setup_tap(){
   if [[ -d "$TAP_CORE_PATH" ]] && [[ -d "$HUB_CORE_PATH" ]]; then
     # First taps keg-core folder
     rm -rf $TAP_CORE_PATH
-    # Move the update keg-core into the taps node_modules 
-    mv -R $HUB_CORE_PATH $TAP_CORE_PATH
+    # Copy the update keg-core into the taps node_modules 
+    cp -R $HUB_CORE_PATH/. $TAP_CORE_PATH/
+    rm -rf /keg-hub
   fi
 
   # Temp workaround for expo until we are able to update the expo version
