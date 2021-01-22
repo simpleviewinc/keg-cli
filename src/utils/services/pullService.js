@@ -39,9 +39,9 @@ const pullService = async serviceArgs => {
     get(serviceArgs, '__internal.forcePull'),
   )
 
-  const imageNameContext = await getImgNameContext(serviceArgs.params)
+  const imgNameContext = await getImgNameContext(serviceArgs.params)
 
-  if(!shouldPull) return { imgNameContext: imageNameContext, isNewImage: false }
+  if(!shouldPull) return { imgNameContext, isNewImage: false }
 
   // Check and pull the image if needed
   return await runInternalTask('docker.tasks.provider.tasks.pull', { 
@@ -49,7 +49,7 @@ const pullService = async serviceArgs => {
     __internal: {
       ...serviceArgs.__internal,
       forcePull: shouldPull,
-      imgNameContext: imageNameContext,
+      imgNameContext,
     }
   })
 

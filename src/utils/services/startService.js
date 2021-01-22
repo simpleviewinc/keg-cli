@@ -24,11 +24,23 @@ const startService = async (args, exArgs) => {
   await proxyService(serviceArgs)
 
   // Call the build service to ensure required images are built 
-  const { isNewImage } = await pullService(serviceArgs)
+  const { imgNameContext, isNewImage } = await pullService(serviceArgs)
 
   // Call the compose service to start the application
   // Pass in recreate, base on if a new image was pulled
-  return composeService(args, { ...exArgs, recreate: isNewImage })
+  return await composeService({
+    ...serviceArgs,
+    __internal: {
+      ...serviceArgs.__internal,
+      imgNameContext,
+    },
+    params: {
+      serviceArgs.params,
+      // Set pull param to false, because we already did that above
+      pull: false,
+      recreate: isNewImage,
+    }
+  })
 
 }
 

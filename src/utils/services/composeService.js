@@ -1,9 +1,9 @@
 const { Logger } = require('KegLog')
-const { get, isArr, set } = require('@keg-hub/jsutils')
 const { buildContainerSync } = require('./syncService')
 const { mutagenService } = require('./mutagenService')
 const { getServiceArgs } = require('./getServiceArgs')
 const { runInternalTask } = require('../task/runInternalTask')
+const { get, isArr, set, noOpObj } = require('@keg-hub/jsutils')
 const { buildExecParams } = require('../docker/buildExecParams')
 const { getContainerCmd } = require('../docker/getContainerCmd')
 const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
@@ -38,6 +38,47 @@ const createSyncs = async (args, containerContext) => {
 }
 
 /**
+ * Checks if the mutagen sync should be created for the service and creates it
+ * @function
+ * @param {Object} args - Default task arguments passed from the runTask method
+ * @param {Object} serviceArgs - Custom arguments merged with the args param
+ * @param {Object} containerContext - container meta data for the started service
+ * @param {Object} tap - Name of the tap is the service was a tap
+ * @param {Object} context - Context of the service that was started
+ */
+const checkServiceSync = async (args, serviceArgs, containerContext, tap, context) => {
+  // Only create syncs in the development env
+  const doSync = get(args, 'params.env') !== 'production' &&
+    get(args, 'params.service') === 'mutagen' &&
+    get(containerContext, 'contextEnvs.KEG_AUTO_SYNC') !== false
+
+  // Run the mutagen service if needed
+  return doSync
+    ? await mutagenService(serviceArgs, {
+        containerContext,
+        tap: get(serviceArgs, 'params.tap', tap),
+        context: get(serviceArgs, 'params.context', context),
+      })
+    : containerContext
+}
+
+/**
+ * Helper to log that a service was started
+ * @function
+ * @param {Object} serviceArgs - Default task arguments passed from the runTask method
+ * @param {Object} context - Context of the service that was started
+ */
+const logComposeStarted = (serviceArgs, context) => {
+  Logger.empty()
+  Logger.highlight(
+    `Started`,
+    `"${ get(serviceArgs, 'params.context', context) }"`,
+    `compose environment!`
+  )
+  Logger.empty()
+}
+
+/**
  * Runs `docker-compose` up command based on the passed in args
  * @function
  * @param {Object} args - Default task arguments passed from the runTask method
@@ -47,42 +88,37 @@ const createSyncs = async (args, containerContext) => {
  *
  * @returns {*} - Response from the `docker-compose` up task
  */
-const composeService = async (args, exArgs) => {
-  const { context, tap } = exArgs
-  const __skipDockerExec = get(args, '__internal.skipDockerExec')
-  
-  // Build the service arguments
-  const serviceArgs = getServiceArgs(args, exArgs)
+const composeService = async (args, exArgs=noOpObj) => {
+
+  const tap = exArgs.tap || get(args, 'params.tap')
+  const context = exArgs.context || get(args, 'params.context')
+  // Build the service arguments is exArgs exist
+  const serviceArgs = exArgs !== noOpObj ? getServiceArgs(args, exArgs) : args
 
   // Run the docker-compose up task
-  const containerContext = await runInternalTask('docker.tasks.compose.tasks.up', serviceArgs)
-
-  // Only create syncs in the development env
-  const doSync = get(args, 'params.env') !== 'production' &&
-    get(args, 'params.service') === 'mutagen' &&
-    get(containerContext, 'contextEnvs.KEG_AUTO_SYNC') !== false
-
-  // Run the mutagen service if needed
-  const composeContext = doSync
-    ? await mutagenService(serviceArgs, {
-        containerContext,
-        tap: get(serviceArgs, 'params.tap', tap),
-        context: get(serviceArgs, 'params.context', context),
-      })
-    : containerContext
-
-  Logger.empty()
-
-  Logger.highlight(
-    `Started`,
-    `"${ get(serviceArgs, 'params.context', context) }"`,
-    `compose environment!`
+  const containerContext = await runInternalTask(
+    'docker.tasks.compose.tasks.up',
+    serviceArgs
   )
 
-  Logger.empty()
+  // Check if we should to a sync for the service we just started
+  const composeContext = await checkServiceSync(
+    args,
+    serviceArgs,
+    containerContext,
+    tap,
+    context
+  )
 
+  // Log that the compose service has been started
+  logComposeStarted(serviceArgs, context)
 
-  await createSyncs(serviceArgs, composeContext, exArgs)
+  // Create any other syncs for the service based on the passed in params
+  await createSyncs(
+    serviceArgs,
+    composeContext,
+    exArgs
+  )
 
   // Set a keg-compose service ENV 
   // This is added so we can know when were running the exec start command over
@@ -99,7 +135,9 @@ const composeService = async (args, exArgs) => {
   * Connect to the service and run the start cmd
   */
   const { cmdContext, image } = composeContext
-  return __skipDockerExec
+
+  // Check internally if we should skip the docker exec command
+  return get(args, '__internal.skipDockerExec')
     ? composeContext
     : runInternalTask('tasks.docker.tasks.exec', {
         ...args,
