@@ -148,7 +148,9 @@ const getImage = async (image, findCb, log=false) => {
 
       if(tag && (image.tag !== tag || !image.tags.includes(tag))) return false
 
-      const hasMatch = image.id === imgRef || image.repository === imgRef || image.rootId === imgRef
+      const hasMatch = image.id === imgRef ||
+        image.repository === imgRef ||
+        image.rootId === imgRef
 
       return !hasMatch || (hasMatch && !tag)
         ? hasMatch
