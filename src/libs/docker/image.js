@@ -108,12 +108,13 @@ const removeTagImage = async (args, imgTag) => {
 
   // Get the image as an object
   let image = args.image || await getImage(item)
+
+  // If no image, then just throw
   !image && noItemFoundError('image', image)
 
   // Use the repository as the name if it's a pull url
   const imgName = image.repository.includes('/') ? image.repository : image.rootId
 
-  // If no image, then just throw, otherwise remove the tag from the image
   return dockerCli({
     ...args,
     format: '',

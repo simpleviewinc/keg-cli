@@ -1,12 +1,13 @@
-const { ask } = require('@keg-hub/ask-it')
 const docker = require('KegDocCli')
 const { git } = require('KegGitCli')
 const { Logger } = require('KegLog')
+const { ask } = require('@keg-hub/ask-it')
 const { DOCKER } = require('KegConst/docker')
-const { isStr, get, isFunc, isArr, checkCall } = require('@keg-hub/jsutils')
-const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
+const { isStr, get, isFunc, isArr, checkCall } = require('@keg-hub/jsutils')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
  * Gets the author to use for the docker commit command
@@ -50,7 +51,7 @@ const checkImgExists = async (imgTag, commitTag) => {
   Logger.empty()
 
   const replace = await ask.confirm(`Would you like to replace it?`)
-  replace && await docker.image.remove({ item: exists.id, force: true })
+  replace && await docker.image.removeTag({ image: exists, tag: commitTag })
 
   // Return the opposite of replace because we want to know if the image exist
   // If not replace, then the image still exists
@@ -86,13 +87,23 @@ const dockerPackage = async args => {
     params,
   })
 
-  const useAuthor = getAuthor(globalConfig, author)
-
+  // Get the current branch name at the location
   const currentBranch = tag || await getCommitTag(location)
+  // If none found, use the current time
   const commitTag = (currentBranch || 'package-' + Date.now()).toLowerCase()
-  const imgTag = `${ image }:${ commitTag }`.toLowerCase()
 
-  const exists = await checkImgExists(imgTag, commitTag)
+  // Get the imgNameContext, with the custom commitTag
+  const imgNameContext = await getImgNameContext({ ...params, tag: commitTag })
+
+  // Check if the image already exist
+  // So we can ask if it should be replaced
+  // Also clean it so it can be used as a url with keg-proxy
+  const cleanedTag = imgNameContext.tag
+    .toLowerCase()
+    .replace(/[&\/\\#, +()$~%.'"*?<>{}]/g, '-')
+
+  const imgTag = imgNameContext.providerImage + `:` + cleanedTag
+  const exists = await checkImgExists(imgTag, cleanedTag)
 
   /*
   * Create image of the container using docker commit
@@ -104,10 +115,10 @@ const dockerPackage = async args => {
         Logger.highlight(`Creating image of container with tag`, `"${ imgTag }"`, `...`)
         
         await docker.container.commit({
+          tag: imgTag,
           container: id,
           message: message,
-          author: useAuthor,
-          tag: imgTag,
+          author: getAuthor(globalConfig, author),
         })
 
         Logger.info(`Finished creating image!`)
@@ -165,12 +176,7 @@ module.exports = {
       },
       push: {
         description: 'Push the packaged image up to a docker provider registry',
-        required: true,
-        ask: {
-          type: 'confirm',
-          message: "Do you want to push to your docker provider?",
-          default: false,
-        },
+        default: true,
       },
       tag: {
         alias: [ 'tg' ],

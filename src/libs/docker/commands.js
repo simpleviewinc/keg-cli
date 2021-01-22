@@ -294,17 +294,21 @@ const prune = opts => {
  * @returns {string|Object} - Docker inspect meta data
  */
 const inspect = async args => {
-
   // Ensure the args are an object
-  const toInspect = isStr(args) ? { item: args, format: 'json' } : args
+  const { item, ...toInspect } = isStr(args) ? { item: args, format: 'json' } : args
+
+  // Extract the item based on it's format
+  const itemRef = isObj(item) && (item.id || item.rootId || item.name)
+    ? item.id || item.rootId || item.name
+    : isStr(item) && item
 
   // Ensure we have an item to inspect
-  !toInspect.item &&
-    !params.skipError && 
+  !itemRef &&
+    !args.skipError && 
     noItemError(`docker.inspect`)
 
   // Build the command, and add format if needed
-  let cmdToRun = [ `inspect`, toInspect.item ]
+  const cmdToRun = [ `inspect`, itemRef ]
   toInspect.type && cmdToRun.unshift(toInspect.type)
 
   // Call the docker inspect command
