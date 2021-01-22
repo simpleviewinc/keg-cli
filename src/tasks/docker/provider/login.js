@@ -44,6 +44,10 @@ module.exports = {
         example: 'keg docker provider login --token 12345',
         enforced: true
       },
+      profile: {
+        description: 'Profile name in the global config of the docker registry credentials to use',
+        example: 'keg docker provider login --profile docker-hub',
+      }
     }
   }
 }
