@@ -71,7 +71,7 @@ const runDockerImage = async args => {
   const exists = await docker.container.get(containerName)
   if(exists)
     return handelContainerExists(
-      container,
+      containerName,
       exists,
       imgContext,
       __internal.skipExists
