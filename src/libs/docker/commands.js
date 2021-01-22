@@ -11,6 +11,7 @@ const {
 const {
   isArr,
   isColl,
+  isObj,
   isStr,
   toStr,
   exists,
@@ -184,13 +185,14 @@ const push = async (url, log, skipError) => {
 
   toPush.log && Logger.spacedMsg(`Pushing docker image to`, toPush.url)
 
-  const { error, data, exitCode } = await pipeDocCmd(`docker push ${toPush.url}`)
+  const exitCode = await spawnProc(`docker push ${toPush.url}`)
 
-  if(error.length || exitCode) return toPush.skipError ? false : apiError(error)
+  if(exitCode)
+    return toPush.skipError ? false : apiError(`docker push ${toPush.url}`)
 
   toPush.log && Logger.success(`\nFinished pushing ${toPush.url} to provider!\n`)
 
-  return true
+  return exitCode
 }
 
 /**
@@ -202,18 +204,28 @@ const push = async (url, log, skipError) => {
  *
  * @returns {boolean} True if the image could be pulled
  */
-const pull = async (url, log=true, skipError=false) => {
+const pull = async ({ url, log=true, skipError=false, pipe=false }) => {
   const toPull = isStr(url) ? { url, log, skipError } : url
 
   toPull.log && Logger.spacedMsg(`Pulling docker image from`, toPull.url)
 
-  const { error, data, exitCode } = await pipeDocCmd(`docker pull ${toPull.url}`)
+  if(pipe){
+    const { error, data, exitCode } = await pipeDocCmd(`docker pull ${toPull.url}`)
+    if(error.length || exitCode) return toPull.skipError ? false : apiError(error)
 
-  if(error.length || exitCode) return toPull.skipError ? false : apiError(error)
+    toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
+    return { data, exitCode }
 
-  toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
+  }
+  else {
+    const exitCode = await spawnProc(`docker pull ${toPull.url}`)
+    if(exitCode)
+      return toPush.skipError ? false : apiError(`docker push ${toPull.url}`)
 
-  return data
+    toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
+
+    return { exitCode }
+  }
 }
 
 /**
@@ -322,7 +334,8 @@ const inspect = async args => {
   const parse = exists(toInspect.parse) ? toInspect.parse : true
 
   // If no parsing, or it's already a collection, just return it
-  if(!parse || isColl(inspectData)) return inspectData
+  if(!parse || isColl(inspectData))
+    return isArr(inspectData) ? inspectData[0] : inspectData
 
   try {
 
@@ -332,18 +345,12 @@ const inspect = async args => {
       ? parsed[0]
       : isObj(parsed)
         ? parsed
-        : {}
+        : invalidInspectError(parsed)
   }
   catch(error){
-    if(args.skipError) return inspectData
-  
-    Logger.error(error.stack)
-    Logger.empty()
-
-    Logger.info(`Docker Inspect Response:`)
-    Logger.data(inspectData)
-
-    process.exit(1)
+    return args.skipError
+      ? inspectData
+      : invalidInspectError(inspectData, error)
   }
 
 }

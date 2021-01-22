@@ -59,8 +59,26 @@ const throwFailedCmd = (message=`Docker API command Failed!`) => {
  */
 const noItemFoundError = (type, name) => {
   Logger.empty()
-  Logger.error(`  Docker API command failed:`)
-  Logger.info(`  Could not find docker ${type} from ${ name }!`)
+  Logger.error(`Docker API command failed:`)
+  Logger.info(`Could not find docker ${type} from ${ name }!`)
+  Logger.empty()
+
+  throwFailedCmd()
+}
+
+/**
+ * Throws an error when a docker type can not be found
+ * @function
+ * @param {string} message - Message for the thrown error
+ *
+ * @returns {void}
+ */
+const invalidInspectError = (inspectData, error) => {
+  Logger.empty()
+  Logger.error(`Docker API command Inspect failed:`)
+  Logger.info(`Inspect response must be of type object, Received:`, inspectData)
+  Logger.empty()
+  error && Logger.error(error.stack)
   Logger.empty()
 
   throwFailedCmd()
@@ -402,6 +420,7 @@ module.exports = {
   compareItems,
   cmdSuccess,
   getCmdParams,
+  invalidInspectError,
   isSafeExitCode,
   noItemError,
   noItemFoundError,

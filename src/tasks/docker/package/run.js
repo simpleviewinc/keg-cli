@@ -2,14 +2,18 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { pathExists } = require('KegFileSys')
 const { DOCKER } = require('KegConst/docker')
+const { KEG_ENVS } = require('KegConst/envs')
 const { logVirtualUrl } = require('KegUtils/log')
-const { isUrl, get } = require('@keg-hub/jsutils')
+const { isUrl, get, isArr } = require('@keg-hub/jsutils')
 const { proxyLabels } = require('KegConst/docker/labels')
+const { generalError } = require('KegUtils/error/generalError')
 const { buildLabel } = require('KegUtils/docker/getBuildLabels')
 const { removeLabels } = require('KegUtils/docker/removeLabels')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
+const { buildContextEnvs } = require('KegUtils/builders/buildContextEnvs')
+const { getImgInspectContext } = require('KegUtils/getters/getImgInspectContext')
 const { checkContainerExists } = require('KegUtils/docker/checkContainerExists')
-const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
+
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { PACKAGE } = CONTAINER_PREFIXES
 
@@ -80,14 +84,15 @@ const checkProxyUrl = (optsWLabels, imgLabels, args) => {
  * Builds a docker container so it can be run
  * @function
  * @param {Array} opts - Options to pass to the docker run command
- * @param {string} imageRef - Reference used to find the docker image
- * @param {Object} parsed - The parsed docker package url
+ * @param {Object} inspectContext - Context object of containing image inspect content
+ * @param {Object} proxyDomain - Domain for the proxy built form the parsed docker package url
+ * @param {Object} contextEnvs - ENVs for the current image context
  *
  * @returns {Array} - Opts array with the labels to be overwritten
  */
-const setupLabels = async (opts, imageRef, parsed, contextEnvs={}) => {
+const setupLabels = async (opts, inspectContext, contextEnvs, proxyDomain,) => {
   let optsWLabels = [ ...opts ]
-  const imgInspect = await docker.image.inspect({ image: imageRef })
+  const imgInspect = inspectContext.inspectRef
 
   // If the image can't be found, just return
   if(!imgInspect) return optsWLabels
@@ -95,22 +100,10 @@ const setupLabels = async (opts, imageRef, parsed, contextEnvs={}) => {
   // Clear out the docker-compose labels, so it does not think it controls this container
   optsWLabels = await removeLabels(imgInspect, 'com.docker.compose', optsWLabels)
 
-  // Get the image labels and Envs that were built with the image
-  const imgLabels = get(imgInspect, 'Config.Labels', {})
-
-  // Convert the image ENV's from an array to an object so it can be merged with the contextEnvs
-  const imgEnvs = get(imgInspect, 'Config.Env', [])
-    .reduce((envObj, env) => {
-      const [ key, value ] = env.split('=')
-      key && value && (envObj[key] = value)
-
-      return envObj
-    }, {})
-
   // Check if the proxy labels should be added based on the proxy url label
-  return checkProxyUrl(optsWLabels, imgLabels, {
-    proxyDomain: `${parsed.image}-${parsed.tag}`,
-    contextEnvs: { ...contextEnvs, ...imgEnvs }
+  return checkProxyUrl(optsWLabels, inspectContext.labels, {
+    proxyDomain,
+    contextEnvs,
   })
 
 }
@@ -134,11 +127,13 @@ const dockerPackageRun = async args => {
     command,
     context,
     cleanup,
+    log,
     network,
     name,
     package,
     provider,
-    port,
+    ports,
+    pull,
     repo,
     user,
     version,
@@ -156,11 +151,15 @@ const dockerPackageRun = async args => {
   * ----------- Step 1 ----------- *
   * Get the full package url
   */
+  const providerAccount = `${get(globalConfig, `docker.providerUrl`)}/${get(globalConfig, `docker.namespace`)}`
+
   const packageUrl = isUrl(package)
     ? package
-    : isUrl(provider)
-      ? `${provider}/${package}`
-      : `${ get(globalConfig, `docker.providerUrl`) }/${ package }`
+    : !package.includes('/')
+      ? `${providerAccount}/${package}`
+      : isUrl(provider)
+        ? `${provider}/${package}`
+        : generalError(`Invalid package url. Expected a url but received`, package)
 
   const parsed = parsePackageUrl(packageUrl)
   const containerName = name || `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`
@@ -170,36 +169,32 @@ const dockerPackageRun = async args => {
   * ----------- Step 2 ----------- *
   * Pull the image from the provider and tag it
   */
-  await docker.pull(packageUrl)
-  await docker.image.tag({
-    item: packageUrl,
-    tag: imageTaggedName,
-    provider: true
-  })
+  pull && await docker.pull({ url: packageUrl })
 
   /*
   * ----------- Step 3 ----------- *
   * Build the container context information
   */
-  const containerContext = await buildContainerContext({
-    task,
+  const inspectContext = await getImgInspectContext(packageUrl)
+  const contextEnvs = await buildContextEnvs({
+    params,
     globalConfig,
-    params: { image: parsed.image, tag: parsed.tag },
+    // Merge the defualt envs with the image inspect envs
+    // This way we have default envs, but not tied to a keg specific project
+    envs: {...KEG_ENVS, ...inspectContext.envs},
   })
-  const { cmdContext, contextEnvs, location, id } = containerContext
-  const [error, locExists] = await pathExists(location)
-  cmdLocation = locExists ? location : undefined
 
   /*
   * ----------- Step 3.1 ----------- *
   * Check if the container already exists, and if it should be removed!
   */
   const containerExists = await checkContainerExists({
-    id,
     args,
     context: parsed.image,
+    id: inspectContext.id,
     containerRef: containerName,
   })
+
   if(containerExists)
     return Logger.highlight(`Exiting task because container`, `"${containerExists}"`, `is still running!\n`)
 
@@ -210,29 +205,42 @@ const dockerPackageRun = async args => {
   let opts = [ `-it` ]
   cleanup && opts.push(`--rm`)
   opts.push(`--network ${network || contextEnvs.KEG_DOCKER_NETWORK || DOCKER.KEG_DOCKER_NETWORK }`)
-  opts = await setupLabels(opts, id || parsed.image, parsed, contextEnvs)
 
-  port && opts.push(`-p ${port}`)
+  isArr(ports) &&
+    ports.map(port => (
+      port.includes(':') 
+        ? opts.push(`-p ${port}`) 
+        : opts.push(`-p ${port}:${port}`)
+    ))
+
   /*
-  * ----------- Step 5 ----------- *
+  * ----------- Step 6 ----------- *
+  * Get the metadata and labels from the image
+  */
+  const optsWLabels = await setupLabels(
+    opts,
+    inspectContext,
+    contextEnvs,
+    `${parsed.image}-${parsed.tag}`,
+  )
+
+  /*
+  * ----------- Step 6 ----------- *
   * Run the docker image as a container
   */
-  // TODO: investigate using the cmd from the image.inspect call => const imgCmd = get(imgInspect, 'Config.Cmd', [])
-  const defCmd = `/bin/bash ${ contextEnvs.DOC_CLI_PATH }/containers/${ cmdContext }/run.sh`
+  // Get the keg exec cmd, and override the default if command param is passed
+  const kegExecCmd = command || contextEnvs.KEG_EXEC_CMD
 
   try {
     await docker.image.run({
-      ...parsed,
-      opts,
-      cmd: command,
+      opts: optsWLabels,
+      image: packageUrl,
       name: containerName,
-      location: cmdLocation,
-      cmd: isInjected ? command : defCmd,
-      overrideDockerfileCmd: Boolean(command),
+      ...(command && { cmd: command }),
       envs: {
         ...contextEnvs,
         [KEG_DOCKER_EXEC]: KEG_EXEC_OPTS.packageRun,
-        ...((command || contextEnvs.KEG_EXEC_CMD) && { KEG_EXEC_CMD: command || contextEnvs.KEG_EXEC_CMD })
+        ...(kegExecCmd && { KEG_EXEC_CMD: kegExecCmd })
       },
     })
   }
@@ -262,6 +270,11 @@ module.exports = {
         alias: [ 'cmd' ],
         description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
         example: 'keg docker package run --command dev ( Runs "yarn dev" )',
+      },
+      entry: {
+        alias: [ 'entrypoint', 'ent', 'ep' ],
+        description: 'Override the default entrypoint of the docker image',
+        example: 'keg docker package run --entry /bin/bash',
       },
       branch: {
         description: 'Name of branch name that exists as the image name',
@@ -311,10 +324,19 @@ module.exports = {
         example: 'keg docker package run --volumes',
         default: false
       },
-      port: {
-        description: 'Exposes the port to your local, from the docker container',
-        example: 'keg tap package run --port 5005:5005',
-        default: false
+      ports: {
+        alias: [ 'port' ],
+        description: 'Exposes the ports to your local, from the docker container',
+        example: 'keg docker package run --ports 5005:5005,1604',
+        default: false,
+        type: 'array',
+      },
+      pull: {
+        alias: [ 'pl' ],
+        description: `Pull the most recent image before building.`,
+        example: `keg docker package run --no-pull`,
+        type: 'bool',
+        default: true
       },
     }
   }

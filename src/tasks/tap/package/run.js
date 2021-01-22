@@ -46,6 +46,11 @@ module.exports = {
         example: 'keg tap package run --command dev ( Runs "yarn dev" )',
         default: false
       },
+      entry: {
+        alias: [ 'entrypoint', 'ent', 'ep' ],
+        description: 'Override the default entrypoint of the docker image',
+        example: 'keg docker package run --entry /bin/bash',
+      },
       tap: { 
         description: 'Name of the tap to run. Must be a tap linked in the global config',
         example: 'keg tap package run --tap my-tap',
@@ -55,6 +60,12 @@ module.exports = {
         description: 'Exposes the port to your local, from the docker container',
         example: 'keg tap package run --port 5005:5005',
         default: false
+      },
+      pull: {
+        alias: [ 'pl' ],
+        description: `Pull the most recent image before building.`,
+        example: `keg docker package run --no-pull`,
+        default: true
       },
     }
   }

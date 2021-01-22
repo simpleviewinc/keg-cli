@@ -11,6 +11,8 @@ const { DOCKER } = require('KegConst/docker')
  * @returns {Object} - Constants container object data
  */
 const getContainerConst = (container, key='', alt) => {
+  if(!container) return alt
+
   let [ mainKey, ...subKeys ] = key.split('.')
   mainKey = mainKey.toUpperCase()
 

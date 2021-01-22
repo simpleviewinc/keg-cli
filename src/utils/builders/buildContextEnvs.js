@@ -19,6 +19,8 @@ const buildContextEnvs = async (args) => {
 
   const { cmdContext, envs={}, globalConfig, params={}, tap } = args
   const containerEnvs = getContainerConst(cmdContext, 'env', {})
+  const projectName = containerEnvs.COMPOSE_PROJECT_NAME || cmdContext
+  const publicGitKey = await getPublicGitKey(globalConfig)
 
   // Get the ENV vars for the command context and merge with any passed in envs
   return {
@@ -41,13 +43,13 @@ const buildContextEnvs = async (args) => {
       })),
 
     // Add the git key so we can call github within the image / container
-    PUBLIC_GIT_KEY: await getPublicGitKey(globalConfig),
+    ...(publicGitKey && { PUBLIC_GIT_KEY: publicGitKey }),
 
     // Get any params that should be converted into ENVs passed to docker
     ...convertParamsToEnvs(params, containerEnvs.KEG_COPY_LOCAL),
 
     // Set the project name to allow linking services if needed
-    COMPOSE_PROJECT_NAME: containerEnvs.COMPOSE_PROJECT_NAME || cmdContext,
+    ...(projectName && { COMPOSE_PROJECT_NAME: projectName }),
   }
 
 }

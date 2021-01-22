@@ -24,7 +24,7 @@ const providerPull = async args => {
   const imgNameContext = __internal.imgNameContext || await getImgNameContext(params)
 
   // Try to pull the image
-  const pulledRes = await docker.pull(imgNameContext.full)
+  const pulledRes = await docker.pull({ url: imgNameContext.full, pipe: true })
 
   // // Get the docker image object that was just pulled
   const imageRef = await docker.image.get(imgNameContext.full)
