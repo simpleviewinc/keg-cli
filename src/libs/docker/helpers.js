@@ -23,9 +23,9 @@ const {
  */
 const safeExitCodes = {
   '0': `Finished running Docker command!`,
-  '130': `Container terminated by user!`,
-  '137': `Container received a SIGKILL`,
-  '143': `Container received a SIGTERM`,
+  '130': `Container session terminated by user!`,
+  '137': `Container session received a SIGKILL`,
+  '143': `Container session received a SIGTERM`,
 }
 
 /**
