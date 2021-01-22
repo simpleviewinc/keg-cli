@@ -17,5 +17,6 @@ env:
 
   # Image ENVs
   IMAGE: keg-base
+  VERSION: 1.0.0
   # Container ENVs
   CONTAINER_NAME: keg-base

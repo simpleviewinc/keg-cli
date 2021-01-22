@@ -211,8 +211,8 @@ const dockerOutput = {
 const dockerObjLabels = {
   base: {
     'com.keg.env.context': 'keg-base',
-    'com.keg.path.context': 'keg-cli',
-    'com.keg.path.container': '/keg/keg-cli',
+    'com.keg.path.context': '/keg-hub',
+    'com.keg.path.container': '/keg-hub',
     'com.keg.path.compose': 'keg-cli/containers/base/docker-compose.yml',
     'com.keg.path.values': 'keg-cli/containers/base/values.yml',
     'com.keg.path.docker': 'keg-cli/containers/base/Dockerfile',
@@ -262,7 +262,7 @@ const dockerObjLabels = {
     'com.keg.env.context': 'tap',
     'com.keg.env.cmd': 'tap:start',
     'com.keg.env.port': '19006',
-    'com.keg.path.context': 'INITIAL',
+    'com.keg.path.context': '/keg-hub/taps/tap-injected-test',
     'com.keg.path.container': '/keg/tap',
     'com.keg.path.compose': 'keg-cli/containers/tap/docker-compose.yml',
     'com.keg.path.values': 'keg-cli/containers/tap/values.yml',
