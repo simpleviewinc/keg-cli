@@ -1,6 +1,6 @@
 const docker = require('KegDocCli')
 const { getImgFrom } = require('./getImgFrom')
-const { get, noOpObj, isStr } = require('@keg-hub/jsutils')
+const { get, isObj, noOpObj, isStr } = require('@keg-hub/jsutils')
 const { getKegContext } = require('./getKegContext')
 const { isDockerId } = require('../docker/isDockerId')
 const { getSetting } = require('../globalConfig/getSetting')
@@ -164,25 +164,29 @@ const findTruthyVal = (...args) => {
 /**
  * Funds the first truthy value in an array of values
  * @function
- * @param {Object} args - Array of possiable values
+ * @param {Object} params - Options passed to the task from the command line
+ * @param {Object} imgRef - Docker image reference object
  *
- * @returns {Object} - found truthy value or undefined
+ * @returns {Object} - Updated params with image or passed in params
  */
-const checkDockerId = async params => {
-  const { context, provider, namespace, tag, __injected=noOpObj } = params
-  const image = __injected.image || params.image
+const checkDockerId = async (params, imgRef) => {
+  const { context, image, provider, namespace, tag } = params
 
-  const docImg = isDockerId(image)
-    ? await docker.image.get(image)
-    : isDockerId(context) && await docker.image.get(context)
-  
-  return docImg
+  const docImg = isObj(imgRef) && imgRef.repository && imgRef.rootId
+    ? imgRef
+    :isDockerId(image)
+      ? await docker.image.get(image)
+      : isDockerId(context) && await docker.image.get(context)
+
+  const response = isObj(docImg)
     ? {
         ...params,
         image: docImg.repository || docImg.rootId || image,
         tag: tag || docImg.tag || isArr(docImg.tags) && docImg.tags[0],
       }
     : params
+
+  return response
 }
 
 /**
@@ -196,10 +200,11 @@ const checkDockerId = async params => {
  * @param {string} params.tag - Custom tag to use for the image
  * @param {string} params.provider - Custom provider to use for image when pulling or pushing
  * @param {string} params.namespace - Custom namespace to use for image when pulling or pushing
+ * @param {Object} imgRef - Docker image reference object
  *
  * @returns {Object} - Parse image data
  */
-const getImgNameContext = async params => {
+const getImgNameContext = async (params, imgRef) => {
 
   const {
     tag,
@@ -208,7 +213,7 @@ const getImgNameContext = async params => {
     context,
     provider,
     namespace,
-  } = await checkDockerId(params)
+  } = await checkDockerId(params, imgRef)
 
   // Separate the url, image and tag if needed
   const nameAndUrl = image

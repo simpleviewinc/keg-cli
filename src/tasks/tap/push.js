@@ -32,6 +32,7 @@ module.exports = {
     name: 'push',
     alias: [ 'psh' ],
     action: tapPush,
+    inject: true,
     description: 'Pushes an image to a Docker registry provider',
     example: 'keg tap push <options>',
     options: mergeTaskOptions(`tap`, `push`, `push`),

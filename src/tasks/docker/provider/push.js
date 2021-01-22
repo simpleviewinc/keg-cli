@@ -72,7 +72,7 @@ const providerPush = async (args) => {
   * ----------- Step 2 ----------- *
   * Get the image name context, which will contain the full provider url
   */
-  const imgNameContext = await getImgNameContext({ ...params, image: imageRef.id })
+  const imgNameContext = await getImgNameContext({ ...params }, imageRef)
 
   /*
   * ----------- Step 3 ----------- *
