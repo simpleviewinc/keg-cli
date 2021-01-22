@@ -155,7 +155,8 @@ const findTruthyVal = (...args) => {
  * @returns {Object} - found truthy value or undefined
  */
 const checkDockerId = async params => {
-  const { image, context, provider, namespace, tag } = params
+  const { context, provider, namespace, tag, __injected=noOpObj } = params
+  const image = __injected.image || params.image
 
   const docImg = isDockerId(image)
     ? await docker.image.get(image)

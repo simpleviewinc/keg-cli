@@ -42,6 +42,8 @@ const composeDown = async args => {
     !Boolean(__internal),
   )
 
+  // TODO: this is not working properly
+  // Need to come up with a better solution
   // Check if we have a proxy domain, and remove the injected compose file after running the compose command
   // Otherwise the injected compose file will just be recreated
   ;proxyDomain && await removeInjectedCompose(proxyDomain, true)

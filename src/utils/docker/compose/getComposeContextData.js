@@ -1,6 +1,8 @@
 const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
 const { getKegProxyDomain } = require('KegUtils/proxy/getKegProxyDomain')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
+
 /**
  * Builds context data needed to create the injected docker-compose file
  * @function
@@ -10,11 +12,23 @@ const { getKegProxyDomain } = require('KegUtils/proxy/getKegProxyDomain')
  */
 const getComposeContextData = async data => {
   const composeContext = {}
+  const imgNameContext = await getImgNameContext(data.params)
+
+  // Get the pull image url for the service 
+  composeContext.imageFrom = imgNameContext.full
+
+  // TODO: Investigate loading the default compose config,
+  // Use this helper => getServiceName
+  // This will always ensure it matches
 
   // The the docker image name for the service being started
-  composeContext.image = get(
-    data, `params.__injected.image`,
-    get(data, `contextEnvs.IMAGE`)
+  composeContext.service = get(
+    data, `contextEnvs.KEG_COMPOSE_SERVICE`,
+    get(data, `params.__injected.image`,
+      get(data, `contextEnvs.IMAGE`,
+        get(data, `contextEnvs.CONTAINER_NAME`, imgNameContext.image)
+      )
+    )
   )
 
   // Get the root path where the docker container should be built from
@@ -39,11 +53,13 @@ const getComposeContextData = async data => {
   composeContext.container = get(
     data, `params.__injected.container`,
     get(data, `params.container`,
-      get(data, `contextEnvs.CONTAINER_NAME`, composeContext.image)
+      get(data, `contextEnvs.CONTAINER_NAME`, composeContext.service)
     )
   )
 
   composeContext.proxyDomain = await getKegProxyDomain(data, data.contextEnvs)
+
+
 
   return composeContext
 }

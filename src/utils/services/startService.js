@@ -1,4 +1,4 @@
-const { get, set } = require('@keg-hub/jsutils')
+const { get, set, deepMerge } = require('@keg-hub/jsutils')
 const { composeService } = require('./composeService')
 const { pullService } = require('./pullService')
 const { proxyService } = require('./proxyService')
@@ -28,19 +28,11 @@ const startService = async (args, exArgs) => {
 
   // Call the compose service to start the application
   // Pass in recreate, base on if a new image was pulled
-  return await composeService({
-    ...serviceArgs,
-    __internal: {
-      ...serviceArgs.__internal,
-      imgNameContext,
-    },
-    params: {
-      serviceArgs.params,
-      // Set pull param to false, because we already did that above
-      pull: false,
-      recreate: isNewImage,
-    }
-  })
+  // Set 'pull' param to false, because we already did that above
+  return await composeService(deepMerge(serviceArgs, {
+    __internal: { imgNameContext },
+    params: { pull: false, recreate: isNewImage },
+  }))
 
 }
 
