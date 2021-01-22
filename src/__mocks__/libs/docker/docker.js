@@ -53,11 +53,18 @@ const docker = {
     getCmd: jest.fn(async ({ image }) => {
       return dockerOutput.image.getCmd[image]
     }),
-    get: jest.fn(image => {
+    get: jest.fn(imgCheck => {
+      const [ image, tag ] = imgCheck.includes(':')
+        ? imgCheck.split(':')
+        : [ imgCheck ]
+
       return dockerData.images[image] ||
         Object.values(dockerData.images)
           .find((data) => {
-            return data.id === image || data.image === image || data.name === image
+            return data.id === image ||
+               data.image === image ||
+               data.repository === image ||
+               data.rootId === image
           })
     }),
     list: jest.fn(() => {

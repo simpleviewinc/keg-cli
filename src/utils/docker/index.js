@@ -5,7 +5,6 @@ module.exports = {
   ...require('./compose'),
   ...require('./containerSelect'),
   ...require('./checkRunningContainers'),
-  ...require('./checkRemoveImage'),
   ...require('./getBuildArgs'),
   ...require('./getContainerCmd'),
   ...require('./getContainerFromContext'),
@@ -15,6 +14,5 @@ module.exports = {
   ...require('./getOrBuildImage'),
   ...require('./imageSelect'),
   ...require('./isDockerId'),
-  ...require('./mountSocket'),
   ...require('./removeLabels'),
 }

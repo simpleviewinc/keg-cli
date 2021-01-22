@@ -133,7 +133,7 @@ const removeTagImage = async (args, imgTag) => {
 const getImage = async (image, findCb, log=false) => {
 
   // Split the image and tag if : exits in the image name
-  const [ imgRef, tag ] = image.indexOf(':') !== -1
+  const [ imgRef, tag ] = image.includes(':')
     ? image.split(':')
     : [ image ]
   

@@ -1,4 +1,3 @@
-const { getImgTag } = require('KegUtils/getters/getImgTag')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { tagFromVersion } = require('KegUtils/docker/tags/tagFromVersion')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
