@@ -28,7 +28,7 @@ const providerPull = async args => {
 
   // // Get the docker image object that was just pulled
   const imageRef = await docker.image.get(imgNameContext.full)
-  const isNewImage = !pulledRes.includes('Image is up to date')
+  const isNewImage = isStr(pulledRes) && !pulledRes.includes('Image is up to date')
 
   // Return the state of the image being pulled
   return { imgNameContext, isNewImage, imageRef }
