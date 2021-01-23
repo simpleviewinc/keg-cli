@@ -34,14 +34,19 @@ const runService = async (args, exArgs) => {
     __internal: { skipExists: true },
     params: {
       // set the cmd to tail /dev/null to keep the container running
-      connect: false,
-      cmd: 'tail -f /dev/null',
+      // connect: false,
+      // TODO: Fix this so we can keep the container running
+      // Right now tail -f /dev/null fails, so commenting out
+      // cmd: '/bin/bash',
+      // cmd: 'tail -f /dev/null',
       ...params,
       tap,
       context,
       // Set connect to false to we run it in the background
     }
   })
+
+  return imageContext
 
   if((!sync && connect) || connect) return imageContext
 
