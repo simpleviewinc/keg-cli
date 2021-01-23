@@ -1,18 +1,18 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { pathExists } = require('KegFileSys')
 const { DOCKER } = require('KegConst/docker')
 const { KEG_ENVS } = require('KegConst/envs')
 const { logVirtualUrl } = require('KegUtils/log')
-const { isUrl, get, isArr } = require('@keg-hub/jsutils')
+const { isUrl, get, isArr, pickKeys } = require('@keg-hub/jsutils')
 const { proxyLabels } = require('KegConst/docker/labels')
 const { generalError } = require('KegUtils/error/generalError')
 const { buildLabel } = require('KegUtils/docker/getBuildLabels')
 const { removeLabels } = require('KegUtils/docker/removeLabels')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
 const { buildContextEnvs } = require('KegUtils/builders/buildContextEnvs')
-const { getImgInspectContext } = require('KegUtils/getters/getImgInspectContext')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { checkContainerExists } = require('KegUtils/docker/checkContainerExists')
+const { getImgInspectContext } = require('KegUtils/getters/getImgInspectContext')
 
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { PACKAGE } = CONTAINER_PREFIXES
@@ -131,35 +131,27 @@ const dockerPackageRun = async args => {
     network,
     name,
     package,
-    provider,
     ports,
     pull,
     repo,
     user,
     version,
     volumes
+    namespace=get(globalConfig, `docker.namespace`),
+    provider=get(globalConfig, `docker.providerUrl`),
   } = params
-
-  const isInjected = params.__injected ? true : false
-
-  // TODO: Add check, if a context is provided, and no package
-  // Then use the package utils to get a list of all packages for that context
-  // Allow the user to select a package from the list
-  // Or if a package is provided, build the packageUrl url
 
   /*
   * ----------- Step 1 ----------- *
   * Get the full package url
   */
-  const providerAccount = `${get(globalConfig, `docker.providerUrl`)}/${get(globalConfig, `docker.namespace`)}`
+  const providerAccount = `${provider}/${namespace}`
 
   const packageUrl = isUrl(package)
     ? package
-    : !package.includes('/')
+    : !package.includes('/') && isUrl(providerAccount)
       ? `${providerAccount}/${package}`
-      : isUrl(provider)
-        ? `${provider}/${package}`
-        : generalError(`Invalid package url. Expected a url but received`, package)
+      : generalError(`Invalid package url. Expected a url but received`, package)
 
   const parsed = parsePackageUrl(packageUrl)
   const containerName = name || `${ PACKAGE }-${ parsed.image }-${ parsed.tag }`
@@ -257,87 +249,41 @@ module.exports = {
     action: dockerPackageRun,
     description: `Runs a git pr docker image in a container`,
     example: 'keg docker package run <options>',
-    options: {
-      package: {
-        description: 'Pull request package url or name',
-        example: `keg docker package --package lancetipton/keg-core/keg-core:bug-fixes`,
-        required: true,
-        ask: {
-          message: 'Enter the docker package url or path (<user>/<repo>/<package>:<tag>)',
+    options: pickKeys(
+      mergeTaskOptions(`docker package`, 'run', 'run', {
+        package: {
+          description: 'Pull request package url or name',
+          example: `keg docker package --package lancetipton/keg-core/keg-core:bug-fixes`,
+          required: true,
+          ask: {
+            message: 'Enter the docker package url or path (<user>/<repo>/<package>:<tag>)',
+          }
+        },
+        command: {},
+        name: {
+          description: 'Set the name of the docker container being run',
+          example: 'keg docker package run --name my-container',
+        },
+        pull: {
+          alias: [ 'pl' ],
+          description: `Pull the most recent image before building.`,
+          example: `keg docker package run --no-pull`,
+          type: 'bool',
+          default: true
         }
-      },
-      command: {
-        alias: [ 'cmd' ],
-        description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
-        example: 'keg docker package run --command dev ( Runs "yarn dev" )',
-      },
-      entry: {
-        alias: [ 'entrypoint', 'ent', 'ep' ],
-        description: 'Override the default entrypoint of the docker image',
-        example: 'keg docker package run --entry /bin/bash',
-      },
-      branch: {
-        description: 'Name of branch name that exists as the image name',
-        example: 'keg docker package run --branch develop',
-      },
-      context: {
-        allowed: [],
-        description: 'Context of the docker package to run',
-        example: 'keg docker package run --context core',
-        enforced: true,
-      },
-      cleanup: {
-        alias: [ 'clean', 'rm' ],
-        description: 'Auto remove the docker container after exiting',
-        example: `keg docker package run --cleanup false`,
-        default: true
-      },
-      network: {
-        alias: [ 'net' ],
-        description: 'Set the docker run --network option to this value',
-        example: 'keg docker package run --network host'
-      },
-      name: {
-        description: 'Set the name of the docker container being run',
-        example: 'keg docker package run --name my-container',
-      },
-      provider: {
-        alias: [ 'pro' ],
-        description: 'Url of the docker registry provider',
-        example: 'keg docker package run --provider ghcr.io'
-      },
-      repo: {
-        description: 'The name of the repository holding docker images to pull',
-        example: 'keg docker package run --repo keg-core',
-      },
-      user: {
-        alias: [ 'usr' ],
-        description: 'User to use when logging into the registry provider. Defaults to the docker.user property in your global config.',
-        example: 'keg docker package run --user gituser',
-      },
-      version: {
-        description: 'The version of the image to use',
-        example: 'keg docker package run --version 0.0.1',
-      },
-      volumes: {
-        description: 'Mount the local volumes defined in the docker-compose config.yml.',
-        example: 'keg docker package run --volumes',
-        default: false
-      },
-      ports: {
-        alias: [ 'port' ],
-        description: 'Exposes the ports to your local, from the docker container',
-        example: 'keg docker package run --ports 5005:5005,1604',
-        default: false,
-        type: 'array',
-      },
-      pull: {
-        alias: [ 'pl' ],
-        description: `Pull the most recent image before building.`,
-        example: `keg docker package run --no-pull`,
-        type: 'bool',
-        default: true
-      },
-    }
+      }),
+      [
+        'package',
+        'command',
+        'entrypoint',
+        'cleanup',
+        'network',
+        'provider',
+        'name',
+        'namespace',
+        'ports',
+        'pull'
+      ]
+    )
   }
 }

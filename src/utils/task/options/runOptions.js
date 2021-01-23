@@ -16,11 +16,16 @@ const runOptions = (task, action, options) => {
         example: `keg ${task} ${action} --options \\"-p 80:19006 -e MY_ENV=data\\"`,
         default: []
       },
-      cmd: {
-        alias: [ 'entry', 'command' ],
+      command: {
+        alias: [ 'cmd' ],
         description: 'Overwrite entry of the image. Use escaped quotes for spaces ( bin/bash )',
-        example: `keg ${task} ${action} --entry \\"node index.js\\"`,
+        example: `keg ${task} ${action} --command \\"node index.js\\"`,
         default: '/bin/bash'
+      },
+      entrypoint: {
+        alias: [ 'entry', 'ent', 'ep' ],
+        description: 'Override the default entrypoint of the docker image',
+        example: 'keg ${task} ${action} --entry /bin/bash',
       },
       log: {
         description: 'Log the docker run command to the terminal',
@@ -46,12 +51,15 @@ const runOptions = (task, action, options) => {
       volumes: {
         description: 'Mount the local volumes defined in the docker-compose config.yml.',
         example: `keg ${task} ${action} run --volumes`,
-        default: false
+        default: [],
+        type: 'array'
       },
-      port: {
-        description: 'Exposes the port to your local, from the docker container',
-        example: `keg ${task} ${action} run --port 5005:5005`,
-        default: false
+      ports: {
+        alias: [ 'port' ],
+        description: 'Exposes the ports to your local, from the docker container',
+        example: 'keg docker package run --ports 5005:5005,1604',
+        default: [],
+        type: 'array',
       },
     ...dockerOptions(task, action),
   }
