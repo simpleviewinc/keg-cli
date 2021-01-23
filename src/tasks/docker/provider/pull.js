@@ -1,6 +1,6 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { get, noOpObj } = require('@keg-hub/jsutils')
+const { get, isStr, noOpObj } = require('@keg-hub/jsutils')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { generalError } = require('KegUtils/error/generalError')
