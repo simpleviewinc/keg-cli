@@ -127,16 +127,13 @@ const dockerPackageRun = async args => {
     command,
     context,
     cleanup,
+    entrypoint,
     log,
     network,
     name,
     package,
     ports,
     pull,
-    repo,
-    user,
-    version,
-    volumes
     namespace=get(globalConfig, `docker.namespace`),
     provider=get(globalConfig, `docker.providerUrl`),
   } = params
@@ -229,6 +226,7 @@ const dockerPackageRun = async args => {
       image: packageUrl,
       name: containerName,
       ...(command && { cmd: command }),
+      ...(entrypoint && { entry: entrypoint }),
       envs: {
         ...contextEnvs,
         [KEG_DOCKER_EXEC]: KEG_EXEC_OPTS.packageRun,
