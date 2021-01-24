@@ -3,19 +3,19 @@
 
 # If the no KEG_DOCKER_EXEC env is set, just sleep forever
 # This is to keep our container running forever
-if [[ -z "$KEG_DOCKER_EXEC" ]]; then
+if [ -z "$KEG_DOCKER_EXEC" ]; then
   tail -f /dev/null
   exit 0
 
 else
 
   # Normalize DOC_TAP_PATH
-  if [[ "$DOC_TAP_PATH" ]]; then
+  if [ "$DOC_TAP_PATH" ]; then
     DOC_APP_PATH=$DOC_TAP_PATH
   fi
 
   # Ensure the DOC_APP_PATH is set
-  if [[ -z "$DOC_APP_PATH" ]]; then
+  if [ -z "$DOC_APP_PATH" ]; then
     DOC_APP_PATH=/keg/tap
   fi
 
@@ -23,7 +23,7 @@ else
   cd $DOC_APP_PATH
 
   # Ensure there is a command to run
-  if [[ -z "$KEG_EXEC_CMD" ]]; then
+  if [ -z "$KEG_EXEC_CMD" ]; then
     KEG_EXEC_CMD="start"
   fi
 

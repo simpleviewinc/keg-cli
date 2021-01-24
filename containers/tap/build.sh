@@ -24,7 +24,7 @@ keg_clone_tap(){
 keg_setup_tap(){
 
   # Install the node_modules if a package.json exists
-  if [[ -f "$DOC_APP_PATH/package.json" ]]; then
+  if [ -f "$DOC_APP_PATH/package.json" ]; then
     yarn install --pure-lockfile
     yarn cache clean
   fi
@@ -35,7 +35,7 @@ keg_setup_tap(){
 
   # Check if keg-core exists at both locations
   # Then copy over the updated keg-core to the tap
-  if [[ -d "$TAP_CORE_PATH" ]] && [[ -d "$HUB_CORE_PATH" ]]; then
+  if [ -d "$TAP_CORE_PATH" ] && [ -d "$HUB_CORE_PATH" ]; then
     # First taps keg-core folder
     rm -rf $TAP_CORE_PATH
     # Copy the update keg-core into the taps node_modules 
@@ -44,7 +44,7 @@ keg_setup_tap(){
   fi
 
   # Temp workaround for expo until we are able to update the expo version
-  if [[ -d "$TAP_CORE_PATH/.expo" ]]; then
+  if [ -d "$TAP_CORE_PATH/.expo" ]; then
     rm -rf $TAP_CORE_PATH/.expo
   fi
 
@@ -54,27 +54,27 @@ keg_setup_tap(){
 keg_build_tap(){
 
   # Normalize DOC_APP_PATH && DOC_TAP_PATH
-  if [[ "$DOC_TAP_PATH" ]]; then
+  if [ "$DOC_TAP_PATH" ]; then
     DOC_APP_PATH=$DOC_TAP_PATH
   fi
 
   # Ensure the DOC_APP_PATH is set
-  if [[ -z "$DOC_APP_PATH" ]]; then
+  if [ -z "$DOC_APP_PATH" ]; then
     DOC_APP_PATH=/keg/tap
   fi
 
   # Normalize GIT_APP_URL && GIT_TAP_URL
-  if [[ "$GIT_TAP_URL" ]]; then
+  if [ "$GIT_TAP_URL" ]; then
     GIT_APP_URL=$GIT_TAP_URL
   fi
 
   # Normalize GIT_APP_BRANCH && GIT_TAP_BRANCH
-  if [[ "$GIT_TAP_BRANCH" ]]; then
+  if [ "$GIT_TAP_BRANCH" ]; then
     GIT_APP_BRANCH=$GIT_TAP_BRANCH
   fi
 
   # Only do git clone if the git url exists
-  if [[ "$GIT_APP_URL" ]]; then
+  if [ "$GIT_APP_URL" ]; then
     # Clone the tap repo from git
     keg_clone_tap $GIT_APP_URL $DOC_APP_PATH $GIT_APP_BRANCH
   fi

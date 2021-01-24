@@ -193,13 +193,13 @@ keg_build_cli(){
 
 keg_build_repos_from_type(){
 
-  if [[ "$1" == "cli" ]]; then
+  if [ "$1" == "cli" ]; then
     keg_build_cli
 
-  elif [[ "$1" == "core" ]]; then
+  elif [ "$1" == "core" ]; then
     keg_build_core
 
-  elif [[ "$1" == "components" ]]; then
+  elif [ "$1" == "components" ]; then
     keg_build_components
   fi
 
