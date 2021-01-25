@@ -43,12 +43,14 @@ keg_install_tap(){
     fi
   
   # If copy local is setup, the copy over the keg-temp directory
-  else
+  elif [ -d "/keg-temp/" ]; then
     cp -R /keg-temp/ $DOC_APP_PATH
   fi
 
-  # Always remove the keg-temp directory no-matter when
-  rm -rf /keg-temp
+  # Always remove the keg-temp directory if it exists
+  if [ -d "/keg-temp/" ]; then
+    rm -rf /keg-temp
+  fi
 
 }
 
@@ -97,11 +99,22 @@ keg_build_tap(){
 
   keg_install_tap "$@"
 
-  # More to the taps directory
-  cd $DOC_APP_PATH
+  if [ -d "$DOC_APP_PATH" ]; then
+    # More to the taps directory
+    cd $DOC_APP_PATH
 
-  # Setup the tap
-  keg_setup_tap "$DOC_APP_PATH"
+    # Setup the tap
+    keg_setup_tap "$DOC_APP_PATH"
+  else
+
+    RED="\033[0;31m"
+    NC="\033[0m"
+    echo ""
+    printf "${RED}[ KEG-ERROR ]${NC} Directory $DOC_APP_PATH does not exist!\n"  >&2
+    echo ""
+
+    exit 2
+  fi
 
 }
 
