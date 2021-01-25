@@ -13,7 +13,7 @@ keg_cli_3_0_0_update(){
   keg_destroy_all_docker
 
   # Remove node_modules, and re-install
-  # yarn clean:full
+  yarn install
 
   # Update the DEFUALT ENVs
   keg cli env unset --key EXPO_DEBUG_PORT --confirm false --comment false
