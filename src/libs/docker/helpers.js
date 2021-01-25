@@ -387,28 +387,23 @@ const getCmdParams = (args, ext={}) => {
  * Builds the names for a container and image based on the passed in params
  * @function
  * @param {Object} args - Use to build the names
- * @param {Object} args.image - Image Object returned from get image
+ * @param {string} args.image - Image Object returned from get image
  * @param {string} args.name - Custom name for the container
  * @param {string} args.tag - Tag of the image
  *
  * @returns {Object} - Contains the container and image names
  */
 const buildNames = ({ image, name, tag }) => {
-  const container = isStr(name)
-    ? name
-    : isStr(image)
-      ? `img-${image}`
-      : `img-${image.name}`
+  const container = isStr(name) ? name : `img-${image}`
 
-  let imgName = isStr(image) ? image : image.name
+  // Parse the tag form the image name if it exists
+  const [ imgName, altTag ] = image.includes(':') ? image.split(':') : [ image ]
 
-  imgName = isStr(tag)
-    ? tag.indexOf(image) !== 0
-      ? `${ image }:${ tag }`
-      : tag
-    : imgName
+  // Use the custom tag if it exists
+  const imgTag = tag || altTag
+  const nameWTag = imgTag ? `${imgName}:${imgTag}` : imgName
 
-  return { image: imgName, container }
+  return { container, image:nameWTag }
 }
 
 module.exports = {

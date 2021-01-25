@@ -14,6 +14,7 @@ const runOptions = (task, action, options) => {
         alias: [ 'opts' ],
         description: 'Extra docker run command options',
         example: `keg ${task} ${action} --options \\"-p 80:19006 -e MY_ENV=data\\"`,
+        type: 'array',
         default: []
       },
       command: {

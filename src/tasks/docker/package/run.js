@@ -126,7 +126,7 @@ const dockerPackageRun = async args => {
   const {
     command,
     context,
-    cleanup,
+    cleanup=true,
     entrypoint,
     log,
     network,
@@ -190,31 +190,17 @@ const dockerPackageRun = async args => {
   /*
   * ----------- Step 4 ----------- *
   * Get the options for the docker run command
-  */
-  let opts = [ `-it` ]
-  cleanup && opts.push(`--rm`)
-  opts.push(`--network ${network || contextEnvs.KEG_DOCKER_NETWORK || DOCKER.KEG_DOCKER_NETWORK }`)
-
-  isArr(ports) &&
-    ports.map(port => (
-      port.includes(':') 
-        ? opts.push(`-p ${port}`) 
-        : opts.push(`-p ${port}:${port}`)
-    ))
-
-  /*
-  * ----------- Step 6 ----------- *
   * Get the metadata and labels from the image
   */
   const optsWLabels = await setupLabels(
-    opts,
+    [ `-it` ],
     inspectContext,
     contextEnvs,
     `${parsed.image}-${parsed.tag}`,
   )
 
   /*
-  * ----------- Step 6 ----------- *
+  * ----------- Step 5 ----------- *
   * Run the docker image as a container
   */
   // Get the keg exec cmd, and override the default if command param is passed
@@ -222,6 +208,8 @@ const dockerPackageRun = async args => {
 
   try {
     await docker.image.run({
+      ports,
+      remove: cleanup,
       opts: optsWLabels,
       image: packageUrl,
       name: containerName,
@@ -232,6 +220,7 @@ const dockerPackageRun = async args => {
         [KEG_DOCKER_EXEC]: KEG_EXEC_OPTS.packageRun,
         ...(kegExecCmd && { KEG_EXEC_CMD: kegExecCmd })
       },
+      network: network || contextEnvs.KEG_DOCKER_NETWORK || DOCKER.KEG_DOCKER_NETWORK,
     })
   }
   catch(err){

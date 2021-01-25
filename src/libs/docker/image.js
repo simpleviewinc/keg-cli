@@ -250,7 +250,8 @@ const clean = async ({ force, opts='', log=false }) => {
  * @param {string|Object} args.image - Image object or image name to be run
  * @param {string} args.location - The location where the docker run command will be executed
  * @param {string} args.name - Name of the docker container
- * @param {Array} args.options - Name of the docker container
+ * @param {Array} args.opts - Extra docker cli options to pass to the run command
+ * @param {Array} args.ports - Host ports to mount to the container
  *
  * @returns {string|Array} - Response from docker cli
  */
@@ -263,7 +264,10 @@ const runImage = async (args) => {
     location,
     log,
     name,
+    network,
     opts=[],
+    ports=[],
+    remove,
     tag
   } = args
 
@@ -273,17 +277,29 @@ const runImage = async (args) => {
   // Set the name of the container based off the image name
   let cmdToRun = `docker run --name ${ names.container }`.trim()
 
+  network && opts.push(`--network ${network}`)
+  remove && opts.push(`--rm`)
+
+  isArr(ports) &&
+    ports.map(port => (
+      port.includes(':') 
+        ? opts.push(`-p ${port}`) 
+        : opts.push(`-p ${port}:${port}`)
+    ))
+
   // Add any passed in docker cli opts 
-  cmdToRun = `${ cmdToRun } ${ isArr(opts) ? opts.join(' ') : opts }`.trim()
+  cmdToRun = `${ cmdToRun } ${ opts.join(' ') }`.trim()
 
   // Convert the passed in envs to envs that can be passed to the container
   cmdToRun = toContainerEnvs(envs, cmdToRun)
   
   // Get the container run command
   const containerCmd = cmd || ''
+
+  // Check for entrypoint override
   cmdToRun = entry ? `${cmdToRun} --entrypoint ${entry}` : cmdToRun
 
-  // Set / overwrite the entry for the container
+  // Check for command override
   cmdToRun = `${ cmdToRun.trim() } ${ names.image.trim() } ${ containerCmd.trim() }`.trim()
 
   log && Logger.spacedMsg(`  Running command: `, cmdToRun)
