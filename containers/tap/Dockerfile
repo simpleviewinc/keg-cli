@@ -65,7 +65,14 @@ ONBUILD ENV GIT_APP_URL=$GIT_APP_URL
 ONBUILD ARG GIT_APP_BRANCH
 ONBUILD ENV GIT_APP_BRANCH=$GIT_APP_BRANCH
 
-ONBUILD RUN /keg/tap-build.sh $DOC_APP_PATH $GIT_APP_URL $GIT_APP_BRANCH
+# Should we use the local copy of the tap repo when building
+ONBUILD ARG KEG_COPY_LOCAL
+ONBUILD ENV KEG_COPY_LOCAL=$KEG_COPY_LOCAL
+
+# Copy over the package.json, and yarn.lock files
+ONBUILD COPY . /keg-temp/
+
+ONBUILD RUN /keg/tap-build.sh
 
 # Run the start script
 CMD [ "/bin/bash", "/keg/tap-run.sh" ]
