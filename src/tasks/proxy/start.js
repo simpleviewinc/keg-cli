@@ -18,11 +18,15 @@ const startProxy = async (args) => {
     __internal: {
       ...args.__internal,
       skipDockerExec: true,
+      skipDockerSyncs: true,
       locationContext: args.task.locationContext,
     },
   },
   {
     context: 'proxy',
+    pull: false,
+    follow: false,
+    service: 'proxy',
     container: 'keg-proxy',
   })
 

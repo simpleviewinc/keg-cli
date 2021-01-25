@@ -114,11 +114,12 @@ const composeService = async (args, exArgs=noOpObj) => {
   logComposeStarted(serviceArgs, context)
 
   // Create any other syncs for the service based on the passed in params
-  await createSyncs(
-    serviceArgs,
-    composeContext,
-    exArgs
-  )
+  !get(args, '__internal.skipDockerSyncs') &&
+    await createSyncs(
+      serviceArgs,
+      composeContext,
+      exArgs
+    )
 
   // Set a keg-compose service ENV 
   // This is added so we can know when were running the exec start command over
