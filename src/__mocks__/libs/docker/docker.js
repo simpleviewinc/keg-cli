@@ -95,6 +95,17 @@ const docker = {
   inspect: jest.fn(({ item, type='image' }) => {
     return dockerData.inspect[type][item] || {}
   }),
+  isDockerId: jest.fn(toTest => {
+    try {
+      let parsed = parseInt(toTest, 16).toString(16)
+      parsed = toTest[0] === '0' ? `0${parsed}` : parsed
+
+      return Boolean(parsed === toTest) && toTest.length === 12
+    }
+    catch(err){
+      return false
+    }
+  }),
 }
 
 module.exports = {
