@@ -24,7 +24,8 @@ keg_clone_tap(){
 keg_install_tap(){
 
   # If no copy local, then try to pull from github
-  if [ -z "$KEG_COPY_LOCAL" ] then;
+  if [ -z "$KEG_COPY_LOCAL" ]; then
+
     # Normalize GIT_APP_URL && GIT_TAP_URL
     if [ "$GIT_TAP_URL" ]; then
       GIT_APP_URL=$GIT_TAP_URL
