@@ -13,7 +13,7 @@ keg_cli_3_0_0_update(){
   keg_destroy_all_docker
 
   # Remove node_modules, and re-install
-  yarn clean:full
+  # yarn clean:full
 
   # Update the DEFUALT ENVs
   keg cli env unset --key EXPO_DEBUG_PORT --confirm false --comment false
@@ -34,15 +34,15 @@ keg_cli_3_0_0_update(){
   keg cli env unset --key GIT_RESOLVER_URL --confirm false --comment false
   keg cli env unset --key GIT_PROXY_URL --confirm false --comment false
 
-  keg cli env set --key GIT_HUB_URL --value https://github.com/simpleviewinc/keg-hub.git --confirm false
+  keg cli env set --key GIT_HUB_URL --value \"{{ cli.git.orgUrl }}/{{ cli.git.repos.hub }}.git\" --confirm false
   keg cli env set --key GIT_HUB_BRANCH --value develop --confirm false
-  keg cli env set --key GIT_CLI_URL --value https://github.com/simpleviewinc/keg-cli.git.git --confirm false
+  keg cli env set --key GIT_CLI_URL --value \"{{ cli.git.orgUrl }}/{{ cli.git.repos.cli }}.git\" --confirm false
   keg cli env set --key GIT_CLI_BRANCH --value master --confirm false
 
   # Update default image envs
-  keg cli env set --key KEG_BASE_IMAGE --value ghcr.io/simpleviewinc/keg-base:master --confirm false
-  keg cli env set --key KEG_IMAGE_FROM --value ghcr.io/simpleviewinc/keg-base:master --confirm false
-  keg cli env set --key KEG_IMAGE_TAG --value master --confirm false
+  keg cli env set --key KEG_BASE_IMAGE --value \"ghcr.io/simpleviewinc/keg-base:{{ cli.settings.docker.defaultTag }}\" --confirm false
+  keg cli env set --key KEG_IMAGE_FROM --value \"ghcr.io/simpleviewinc/keg-base:{{ cli.settings.docker.defaultTag }}\" --confirm false
+  keg cli env set --key KEG_IMAGE_TAG --value \"{{ cli.settings.docker.defaultTag }}\" --confirm false
 
   # Update the globalConfig
   keg config set --key cli.settings.docker.imagePullPolicy --value Always --confirm false
@@ -50,6 +50,8 @@ keg_cli_3_0_0_update(){
   keg config set --key cli.settings.docker.defaultLocalBuild --value false --confirm false
 
   keg config set --key version --value 3.0.0 --confirm false
+  keg config set --key cli.git.orgUrl --value \"https://github.com/simpleviewinc\" --confirm false
+  keg config set --key cli.git.repos.hub --value keg-hub --confirm false
   keg config set --key cli.git.repos.cli --value keg-cli --confirm false
   
   # Update the docker config to use the new settings
