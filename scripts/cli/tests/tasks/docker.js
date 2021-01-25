@@ -1,8 +1,9 @@
 const { uuid } = require('@keg-hub/jsutils')
 const { spawnCmd, asyncCmd } = require('@keg-hub/spawn-cmd')
 const expect = require('expect')
+const { logFailed } = require('../helpers/logTests')
 
-const testUuid = uuid()
+const cliTestTag = `automated-cli-tests`
 let beforeImages
 let afterImages
 
@@ -14,11 +15,14 @@ const testImages = [
 ]
 
 // Docker build tasks to be run
-const build = {
+const buildNPush = {
   timeout: 100000,
   tasks: testImages.reduce((buildTasks, img) => {
     return buildTasks.concat([
-      `${img} build`
+      `${img} build --tag ${cliTestTag}`,
+      `${img} build --push --tag ${cliTestTag}`,
+      `${img} push --build --tag ${cliTestTag}`,
+      `${img} push --tag ${cliTestTag}`,
     ])
   }, []),
 }
@@ -27,7 +31,7 @@ const build = {
 const run = {
   tasks: testImages.reduce((runTasks, img) => {
     return runTasks.concat([
-      `${img} run --command ls`
+      `${img} run --command ls --tag ${cliTestTag}`
     ])
   }, []),
 }
@@ -42,6 +46,7 @@ const dockerTasks = {
   },
   afterTasks: async (kegCmd, kegCmdAsync) => {
     const promises = testImages.map(async img => {
+      await kegCmd(`di tag rm --context ${img} --tag ${cliTestTag}`)
       await kegCmd(`di rm ${img}`)
       return true
     })
@@ -50,15 +55,23 @@ const dockerTasks = {
 
     // List the docker images after clean up
     const { data } = await kegCmdAsync(`di --format json`)
-    // Assert the before images with the current images
-    const result = expect(beforeImages).toEqual(data)
-    // Result is only defined if expect fails, so check if it exists, and print it out
-    result && process.stdout.write(result)
+
+    try {
+      // Expect the before images to be the same as the current images
+      expect(beforeImages).toEqual(data)
+    }
+    catch(err){
+      logFailed({
+        parent: 'docker',
+        cmd: 'di --format json',
+        response: err.stack,
+      }, beforeImages, data)
+    }
 
     return promises
   },
   runTasks: async (testArray) => {
-    await testArray(build)
+    await testArray(buildNPush)
     await testArray(run)
   }
 }

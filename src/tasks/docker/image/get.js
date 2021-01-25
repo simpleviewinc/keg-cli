@@ -1,9 +1,11 @@
-const { get } = require('@keg-hub/jsutils')
-const { throwNoDockerImg } = require('KegUtils/error/throwNoDockerImg')
-const { DOCKER } = require('KegConst/docker')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
+const { get } = require('@keg-hub/jsutils')
+const { DOCKER } = require('KegConst/docker')
 const { dockerLog } = require('KegUtils/log/dockerLog')
+const { getImageRef } = require('KegUtils/docker/getImageRef')
+const { throwNoDockerImg } = require('KegUtils/error/throwNoDockerImg')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 
 /**
  * Get a docker image object
@@ -16,29 +18,19 @@ const { dockerLog } = require('KegUtils/log/dockerLog')
  * @returns {void}
  */
 const getImage = async args => {
-
   const { params, __internal={} } = args
-  const { context, image, tag } = params
 
-  // Check the name for a tag ref, or use the passed in name and tag
-  let [ nameRef, tagRef ] = context.indexOf(':') !== -1 ? context.split(':') : [ context, tag ]
+  // Get the name context based on the params
+  const imgNameContext = __internal.imgNameContext || getImgNameContext(params)
 
-  // Ensure we have an image to remove by checking for a mapped nameRef, or use original
-  let imgRef = image || get(
-    DOCKER,
-    `CONTAINERS.${nameRef && nameRef.toUpperCase()}.ENV.IMAGE`,
-    nameRef
-  )
+  // Get the image reference from the imgNameContext
+  const foundImg = await getImageRef(imgNameContext)
 
-  !imgRef && throwNoDockerImg(null, `The docker "image get" task requires a name or tag argument!`)
-
-  imgRef = tagRef ? `${imgRef}:${tagRef}` : imgRef
-
-  // Get the image meta data
-  const foundImg = await docker.image.get(imgRef)
+  // Ensure we found the image
+  !foundImg.imgRef && throwNoDockerImg(null, `The docker "image get" task requires a name or tag argument!`)
 
   // Log the output of the command
-  __internal.skipLog !== true && Logger.data(foundImg)
+  __internal.skipLog !== true && Logger.data(foundImg.imgRef)
 
   return foundImg
 

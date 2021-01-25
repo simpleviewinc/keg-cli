@@ -164,7 +164,7 @@ const dockerPackageRun = async args => {
   * ----------- Step 3 ----------- *
   * Build the container context information
   */
-  const inspectContext = await getImgInspectContext(packageUrl)
+  const inspectContext = await getImgInspectContext({ image: packageUrl })
   const contextEnvs = await buildContextEnvs({
     params,
     globalConfig,

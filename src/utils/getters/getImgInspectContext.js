@@ -7,19 +7,20 @@ const { eitherArr, get } = require('@keg-hub/jsutils')
  *
  * @returns {Object} - Inspect context for the passed in image ref
  */
-const getImgInspectContext = async (image, imgInspect) => {
+const getImgInspectContext = async ({ image }) => {
   // Get the inspect object of the image
-  const toInspect = imgInspect || await docker.image.inspect({ image })
-  if(!toInspect) return {}
+  const imgInspect = await docker.image.inspect({ image })
+
+  if(!imgInspect) return {}
   
   // Get the image labels and Envs that were built with the image
-  const imgLabels = get(toInspect, 'config.Labels', {})
+  const imgLabels = get(imgInspect, 'config.Labels', {})
 
   // Get the command to run the image when its a container 
-  const imgCmd = get(toInspect, 'config.Cmd', [])
+  const imgCmd = get(imgInspect, 'config.Cmd', [])
 
   // Convert the image ENV's from an array to an object so it can be merged with the contextEnvs
-  const imgEnvs = get(toInspect, 'config.Env', [])
+  const imgEnvs = get(imgInspect, 'config.Env', [])
     .reduce((envObj, env) => {
       const [ key, value ] = env.split('=')
       key && value && (envObj[key] = value)
@@ -28,14 +29,14 @@ const getImgInspectContext = async (image, imgInspect) => {
     }, {})
 
   // Get the short ID to match what docker normally returns
-  const imgId = toInspect.id.split(':')[1].substring(0, 12)
+  const imgId = imgInspect.id.split(':')[1].substring(0, 12)
 
   return {
     id: imgId,
     envs: imgEnvs,
     labels: imgLabels,
-    fullId: toInspect.id,
-    inspectRef: toInspect,
+    fullId: imgInspect.id,
+    inspectRef: imgInspect,
     cmd: eitherArr(imgCmd, [imgCmd]).join(' ')
   }
 }

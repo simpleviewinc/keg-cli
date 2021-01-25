@@ -2,7 +2,6 @@ const docker = require('KegDocCli')
 const { getImgFrom } = require('./getImgFrom')
 const { get, isObj, noOpObj, isStr } = require('@keg-hub/jsutils')
 const { getKegContext } = require('./getKegContext')
-const { isDockerId } = require('../docker/isDockerId')
 const { getSetting } = require('../globalConfig/getSetting')
 const { getContainerConst } = require('../docker/getContainerConst')
 const { getGlobalConfig } = require('../globalConfig/getGlobalConfig')
@@ -174,9 +173,9 @@ const checkDockerId = async (params, imgRef) => {
 
   const docImg = isObj(imgRef) && imgRef.repository && imgRef.rootId
     ? imgRef
-    :isDockerId(image)
+    : docker.isDockerId(image)
       ? await docker.image.get(image)
-      : isDockerId(context) && await docker.image.get(context)
+      : docker.isDockerId(context) && await docker.image.get(context)
 
   const response = isObj(docImg)
     ? {

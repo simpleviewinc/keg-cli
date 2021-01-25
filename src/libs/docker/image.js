@@ -18,6 +18,7 @@ const {
 const {
   buildNames,
   compareItems,
+  isDockerId,
   noItemFoundError,
   toContainerEnvs
 } = require('./helpers')
@@ -134,7 +135,7 @@ const removeTagImage = async (args, imgTag) => {
 const getImage = async (image, findCb, log=false) => {
 
   // Split the image and tag if : exits in the image name
-  const [ imgRef, tag ] = image.includes(':')
+  const [ imgName, tag ] = image.includes(':')
     ? image.split(':')
     : [ image ]
   
@@ -145,18 +146,30 @@ const getImage = async (image, findCb, log=false) => {
   return images &&
     images.length &&
     images.find(image => {
-      if(isFunc(findCb)) return findCb(image, imgRef, tag)
+      if(isFunc(findCb)) return findCb(image, imgName, tag)
 
       if(tag && (image.tag !== tag || !image.tags.includes(tag))) return false
 
-      const hasMatch = image.id === imgRef ||
-        image.repository === imgRef ||
-        image.rootId === imgRef
+      const hasMatch = image.id === imgName ||
+        image.repository === imgName ||
+        image.rootId === imgName
 
       return !hasMatch || (hasMatch && !tag)
         ? hasMatch
         : image.tag === tag || image.tags.includes(tag)
     })
+}
+
+/**
+ * Gets an images name from it's ID
+ * @function
+ * @param {string} id - Docker image id
+ *
+ * @returns {string} - Built image name
+ */
+const getNameFromId = async id => {
+  imgRef = await getImage(id)
+  return imgRef && `${imgRef.repository}:${imgRef.tag}`
 }
 
 /**
@@ -260,7 +273,6 @@ const runImage = async (args) => {
     cmd,
     entry,
     envs,
-    image,
     location,
     log,
     name,
@@ -270,6 +282,10 @@ const runImage = async (args) => {
     remove,
     tag
   } = args
+
+  const image = isDockerId(args.image)
+    ? await getNameFromId(args.image)
+    : args.image
 
   // Build the names for the container and image
   const names = buildNames({ image, name, tag })

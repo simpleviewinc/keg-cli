@@ -4,27 +4,20 @@ const { get } = require('@keg-hub/jsutils')
 const { KEG_ENVS } = require('KegConst/envs')
 const { CONTAINER_PREFIXES } = require('KegConst/constants')
 const { CONTAINERS } = require('KegConst/docker/containers')
+const { getImageRef } = require('KegUtils/docker/getImageRef')
+const { throwNoDockerImg } = require('KegUtils/error/throwNoDockerImg')
 const { buildContextEnvs } = require('KegUtils/builders/buildContextEnvs')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { getImgInspectContext } = require('KegUtils/getters/getImgInspectContext')
 const { throwDupContainerName } = require('KegUtils/error/throwDupContainerName')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
+const { IMAGE } = CONTAINER_PREFIXES
 
 // const { removeLabels } = require('KegUtils/docker/removeLabels')
 // const { imageSelect } = require('KegUtils/docker/imageSelect')
 
-const { IMAGE } = CONTAINER_PREFIXES
 
-
-const attemptToGetImg = async image => {
-  try {
-    return await docker.image.get(image)
-  }
-  catch(err){
-    return undefined
-  }
-}
 
 /**
  * Called when the container to run already exists
@@ -40,23 +33,6 @@ const handelContainerExists = (container, exists, imgRef, skipExists) => {
   return skipExists
     ? { imgRef, containerRef: exists }
     : throwDupContainerName(container)
-}
-
-const getImageRef = async imgNameContext => {
-  // Try to get the image with full provider url
-  const fullRef = await attemptToGetImg(imgNameContext.full)
-  if(fullRef) return { imgRef: fullRef, refFrom: imgNameContext.full }
-
-  // Otherwise try to get it with just the name an tag
-  const tagRef = await attemptToGetImg(imgNameContext.imageWTag)
-  if(tagRef) return { imgRef: tagRef, refFrom: imgNameContext.imageWTag }
-
-
-  // Otherwise try to get it with just the name an tag
-  const imgRef = await attemptToGetImg(imgNameContext.image)
-  if(imgRef) return { imgRef, refFrom: imgNameContext.image }
-
-  return false
 }
 
 /**
@@ -96,8 +72,12 @@ const runDockerImage = async args => {
   */
   const imgNameContext = await getImgNameContext(params)
   const { imgRef, refFrom } = await getImageRef(imgNameContext)
-  const inspectContext = await getImgInspectContext(refFrom)
 
+  // Ensure we have an image to reference
+  !imgRef && throwNoDockerImg(imgNameContext.full)
+
+  const inspectContext = await getImgInspectContext({ image: imgRef.id })
+  
     /*
   * ----------- Step 2 ----------- *
   * Pull the image from the provider and tag it
@@ -136,7 +116,6 @@ const runDockerImage = async args => {
   */
   connect ? options.push([ `-it` ]) : options.push([ `-d` ])
 
-
   // TODO: Clear out the docker-compose labels, so it does not think it controls this container
   // const opts = await removeLabels(imgNameContext.providerImage, 'com.docker.compose', options)
 
@@ -148,8 +127,8 @@ const runDockerImage = async args => {
     log,
     ports,
     opts: options,
-    image: refFrom,
     remove: cleanup,
+    image: imgRef.id,
     envs: contextEnvs,
     name: containerName,
     tag: imgNameContext.tag,

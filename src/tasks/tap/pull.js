@@ -1,5 +1,6 @@
 const { pullService } = require('KegUtils/services/pullService')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
+const { updateLocationContext } = require('KegUtils/helpers/updateLocationContext')
 
 /**
  * Pulls a tap image from a registry provider based on tag
@@ -13,19 +14,21 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  */
 const pullTap = async (args) => {
   const { params: { tap, branch, tag, version }} = args
+  const updatedArgs = updateLocationContext(args, {
+    params: {
+      context: 'tap',
+      tag: tag || version || branch,
+      tap: get(args, 'params.tap') || 'tap',
+    }
+  })
 
   return pullService({
     ...args,
+    params: updatedArgs.params,
     __internal: {
       ...args.__internal,
       forcePull: true
     },
-    params: {
-      ...args.params,
-      tap,
-      context: 'tap',
-      tag: tag || version || branch
-    }
   })
 
 }

@@ -2,11 +2,10 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { ask } = require('@keg-hub/ask-it')
 const { get } = require('@keg-hub/jsutils')
-const { DOCKER } = require('KegConst/docker')
-const { imageSelect } = require('KegUtils/docker/imageSelect')
-const { generalError, throwRequired } = require('KegUtils/error')
+const { getImageRef } = require('KegUtils/docker/getImageRef')
+const { generalError } = require('KegUtils/error/generalError')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { getOrBuildImage } = require('KegUtils/docker/getOrBuildImage')
+const { throwNoDockerImg } = require('KegUtils/error/throwNoDockerImg')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { isValidProviderUrl } = require('KegUtils/helpers/isValidProviderUrl')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
@@ -17,15 +16,9 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  *
  * @returns {Promise<Object> - Docker Image ref}
  */
-const checkForImage = async args => {
-  // Try to get or build the image
-  const imgRef = await getOrBuildImage(args)
-  if(imgRef) return imgRef
+const checkBuildImage = async (args, imgNameContext) => {
 
-  // If no image, then ask if the user wants to build it
-  const { params: { context, tap } } = args
-
-  Logger.info(`\nThe ${tap || context} image could not be found.\n`)
+  Logger.info(`\nThe ${imgNameContext.imageWTag} image could not be found.\n`)
   const doBuild = await ask.confirm(`Would you like to build it?`)
 
   // If we should build, call the internal build task 
@@ -33,7 +26,11 @@ const checkForImage = async args => {
     return runInternalTask('tasks.docker.tasks.build', {
       ...args,
       command: 'build',
-      __internal: { rootTask: 'pull' }
+      __internal: {
+        ...args.__internal,
+        imgNameContext,
+        rootTask: 'pull',
+      }
     })
 
   // Log and exit, if no image to push
@@ -56,23 +53,22 @@ const checkForImage = async args => {
  */
 const providerPush = async (args) => {
   const { params, task } = args
-  const { context, log=true } = params
-
-  // Ensure we have the context of the image to be pushed
-  !context && throwRequired(task, 'context', get(task, `options.context`))
+  const { log=true } = params
 
   /*
   * ----------- Step 1 ----------- *
-  * Get or build the image
+  * Get the Image name context and inspect meta data
   */
-  const imageRef = await checkForImage(args)
-  !imageRef && generalError('No img found!')
+  const imgNameContext = await getImgNameContext(params)
+  const { imgRef } = await getImageRef(imgNameContext)
 
   /*
   * ----------- Step 2 ----------- *
-  * Get the image name context, which will contain the full provider url
+  * Ensure we have an image to reference
   */
-  const imgNameContext = await getImgNameContext({ ...params }, imageRef)
+  const imageRef = imgRef || await checkBuildImage(args, imgNameContext)
+
+  !imageRef && throwNoDockerImg(imgNameContext.full)
 
   /*
   * ----------- Step 3 ----------- *

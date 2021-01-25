@@ -91,6 +91,23 @@ const dockerData = {
     }
   },
   images: {
+    injected: {
+      containers: "N/A",
+      createdAt: "2021-01-25 00:59:29 -0700 MST",
+      createdSince: "2 hours ago",
+      digest: "<none>",
+      id: "13eefd8c2c3d",
+      repository: "ghcr.io/simpleviewinc/tap-injected-test",
+      sharedSize: "N/A",
+      size: "2.19GB",
+      tag: "master",
+      uniqueSize: "N/A",
+      virtualSize: "2.193GB",
+      tags: [
+        "master"
+      ],
+      rootId: "tap-injected-test"
+    },
     tap: {
       containers: "N/A",
       createdAt: "2020-10-20 17:02:46 -0700 MST",

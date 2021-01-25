@@ -11,8 +11,7 @@ module.exports = {
   ...require('./getContainerConst'),
   ...require('./getDockerCmdArgs'),
   ...require('./getInspectValue'),
-  ...require('./getOrBuildImage'),
+  ...require('./getImageRef'),
   ...require('./imageSelect'),
-  ...require('./isDockerId'),
   ...require('./removeLabels'),
 }

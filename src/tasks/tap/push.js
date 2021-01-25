@@ -16,13 +16,15 @@ const { updateLocationContext } = require('KegUtils/helpers/updateLocationContex
  * @returns {Promise<Void>}
  */
 const tapPush = async (args) => {
+  const updatedArgs = updateLocationContext(args, {
+    params: { tap: get(args, 'params.tap') || 'tap', }
+  })
+
   return await runInternalTask(
     'tasks.docker.tasks.provider.tasks.push',
     updateLocationContext(args, {
       command: 'push',
-      params: { 
-        image: get(args, 'params.tap') || 'tap',
-      }
+      params: updatedArgs.params
     })
   )
 }
