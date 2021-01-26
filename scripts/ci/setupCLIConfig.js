@@ -37,6 +37,7 @@ const {
   KEG_CONFIG_FILE=`cli.config.json`,
   KEG_CONFIG_PATH=path.join(KEG_CLI_ROOT, '.kegConfig'),
   KEG_CUSTOM_PATH,
+  KEG_ROOT_DIR,
   NODE_ENV,
   USER,
 } = process.env
@@ -67,10 +68,11 @@ const buildCIConfig = (customConfig) => {
         cli: KEG_CLI_PATH,
         containers: path.join(KEG_CLI_PATH, 'containers'),
         kegConfig: KEG_CONFIG_PATH,
+        keg: KEG_ROOT_DIR,
       },
       git: {
-        orgName: `lancetipton`,
-        orgUrl: `https://github.com/lancetipton`,
+        orgName: `simpleviewinc`,
+        orgUrl: `https://github.com/simpleviewinc`,
         publicToken: GITHUB_TOKEN,
         repos: {
           cli: `keg-cli`,
@@ -94,6 +96,8 @@ const buildCIConfig = (customConfig) => {
 
 (async () => {
 
+  
+
   // Ensure the global keg config folder path exists
   process.stdout.write(`::debug::Creating directory ${KEG_CONFIG_PATH}\n`)
   !fs.existsSync(KEG_CONFIG_PATH) && fs.mkdirSync(KEG_CONFIG_PATH)
@@ -107,13 +111,18 @@ const buildCIConfig = (customConfig) => {
 
   // Try to load a custom config file
   const customConfig = {} //loadCustomConfig()
+  const globalConfig = buildCIConfig(customConfig)
+  
+  process.stdout.write(`::debug::Docker User is ${globalConfig.docker.user}\n`)
+  process.stdout.write(`::debug::Default Env is ${globalConfig.cli.settings.defaultEnv}\n`)
+  
   const ciConfigTo = path.join(KEG_CONFIG_PATH, KEG_CONFIG_FILE)
 
   // Build then wright the cli config file to the config path
   process.stdout.write(`::debug::Creating ci cli.config.json file at path ${ciConfigTo}\n`)
   fs.writeFileSync(
     ciConfigTo,
-    buildCIConfig(customConfig),
+    globalConfig,
     'utf8'
   )
 
