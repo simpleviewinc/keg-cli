@@ -62,7 +62,7 @@ const loadCustomConfig = () => {
 }
 
 const buildCIConfig = (customConfig) => {
-  return JSON.stringify(deepMerge(ciConfig, {
+  return deepMerge(ciConfig, {
     cli: {
       paths: {
         cli: KEG_CLI_PATH,
@@ -89,14 +89,11 @@ const buildCIConfig = (customConfig) => {
       user: USER,
       token: GITHUB_TOKEN
     },
-  }, customConfig), null, 2)
-  
+  }, customConfig)
 }
 
 
 (async () => {
-
-  
 
   // Ensure the global keg config folder path exists
   process.stdout.write(`::debug::Creating directory ${KEG_CONFIG_PATH}\n`)
@@ -122,7 +119,7 @@ const buildCIConfig = (customConfig) => {
   process.stdout.write(`::debug::Creating ci cli.config.json file at path ${ciConfigTo}\n`)
   fs.writeFileSync(
     ciConfigTo,
-    globalConfig,
+    JSON.stringify(globalConfig, null, 2),
     'utf8'
   )
 
