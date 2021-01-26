@@ -58,9 +58,19 @@ const runOptions = (task, action, options) => {
       ports: {
         alias: [ 'port' ],
         description: 'Exposes the ports to your local, from the docker container',
-        example: 'keg docker package run --ports 5005:5005,1604',
+        example: 'keg ${task} ${action} --ports 5005:5005,1604',
         default: [],
         type: 'array',
+      },
+      proxyPort: {
+        alias: [ 'pp', 'proxy', 'pport' ],
+        description: `Port to register with the keg-proxy`,
+        example: `keg docker package run --proxyPort 8080`,
+      },
+      log: {
+        description: 'Log the output the of commands',
+        example: `keg ${task} ${action} --log`,
+        default: false,
       },
     ...dockerOptions(task, action),
   }

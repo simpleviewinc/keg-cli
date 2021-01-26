@@ -39,6 +39,9 @@ ENV DOC_APP_PATH=$DOC_APP_PATH
 # Set the current directory to keg-core repo
 WORKDIR $DOC_APP_PATH
 
+ARG KEG_PROXY_PORT=60710
+EXPOSE $KEG_PROXY_PORT
+
 # Copy keg-components repo from the keg-base image
 COPY --from=keg-base /keg-hub/repos/keg-components $DOC_APP_PATH
 

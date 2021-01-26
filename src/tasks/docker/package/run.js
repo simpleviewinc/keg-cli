@@ -18,6 +18,26 @@ const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst
 const { PACKAGE } = CONTAINER_PREFIXES
 
 /**
+ * Search for the keg-proxy-port to use for registering with the keg-proxy
+ * @function
+ * @param {Array} proxyPort - Specific proxy port passed from the command line
+ * @param {Array} ports - Ports passed from the command line
+ * @param {Object} inspectContext - Docker image inspect meta data
+ * @param {Object} KEG_PROXY_PORT - KEG_PROXY_PORT context env
+ *
+ * @returns {string} - Keg proxy port to use
+ */
+const getKegProxyPort = (ports, proxyPort, kegProxyPort, { labels, ports:imgPorts }) => {
+  // If it's a defined env, just use it
+  // Otherwise search for the keg port label
+  return proxyPort ||
+    kegProxyPort ||
+    labels['com.keg.env.port'] ||
+    get(imgPorts, '0') ||
+    ports && ports.length && ports[0].split(':').pop()
+}
+
+/**
  * Loops the proxy labels and builds them in a format the docker run command needs
  * <br>Also gets the value for the proxy host so it can be logged
  * @function
@@ -31,12 +51,21 @@ const { PACKAGE } = CONTAINER_PREFIXES
 const addProxyLabels = (optsWLabels, args) => {
   const builtOpts = [ ...optsWLabels ]
   let fullProxyUrl
+
   proxyLabels.map(labelData => {
     const [ key, valuePath, label ] = labelData
     const value = get(args.contextEnvs, key.toUpperCase(), get(args, valuePath))
 
-    const builtLabel = value && buildLabel('', label, args, key, value)
-    builtLabel && builtOpts.push(builtLabel)
+    const builtLabel = value 
+      ? buildLabel('', label, args, key, value)
+      : !key && !valuePath && label
+        ? `--label "${label}"`
+        : undefined
+
+    builtLabel && builtOpts.push(
+      builtLabel
+    )
+
     // Check if the key is for the proxy host, and get the url to be logged
     builtLabel && 
       key === 'KEG_PROXY_HOST' &&
@@ -132,6 +161,7 @@ const dockerPackageRun = async args => {
     network,
     name,
     package,
+    proxyPort,
     ports,
     pull,
     namespace=get(globalConfig, `docker.namespace`),
@@ -158,13 +188,14 @@ const dockerPackageRun = async args => {
   * ----------- Step 2 ----------- *
   * Pull the image from the provider and tag it
   */
-  pull && await docker.pull({ url: packageUrl })
+  // pull && await docker.pull({ url: packageUrl })
 
   /*
   * ----------- Step 3 ----------- *
   * Build the container context information
   */
   const inspectContext = await getImgInspectContext({ image: packageUrl })
+
   const contextEnvs = await buildContextEnvs({
     params,
     globalConfig,
@@ -192,10 +223,19 @@ const dockerPackageRun = async args => {
   * Get the options for the docker run command
   * Get the metadata and labels from the image
   */
+  const foundProxyPort = getKegProxyPort(
+    ports,
+    proxyPort,
+    contextEnvs.KEG_PROXY_PORT,
+    inspectContext
+  )
+  
   const optsWLabels = await setupLabels(
     [ `-it` ],
     inspectContext,
-    contextEnvs,
+    // If we find a proxy port, then add it as an env with the others
+    // This way the keg proxy label can be added to it
+    (proxyPort ? { ...contextEnvs, KEG_PROXY_PORT: foundProxyPort } : contextEnvs),
     `${parsed.image}-${parsed.tag}`,
   )
 
@@ -208,6 +248,7 @@ const dockerPackageRun = async args => {
 
   try {
     await docker.image.run({
+      log,
       ports,
       remove: cleanup,
       opts: optsWLabels,
@@ -246,7 +287,9 @@ module.exports = {
             message: 'Enter the docker package url or path (<user>/<repo>/<package>:<tag>)',
           }
         },
-        command: {},
+        command: {
+          default: undefined
+        },
         name: {
           description: 'Set the name of the docker container being run',
           example: 'keg docker package run --name my-container',
@@ -255,7 +298,6 @@ module.exports = {
           alias: [ 'pl' ],
           description: `Pull the most recent image before building.`,
           example: `keg docker package run --no-pull`,
-          type: 'bool',
           default: true
         }
       }),
@@ -264,10 +306,12 @@ module.exports = {
         'command',
         'entrypoint',
         'cleanup',
-        'network',
-        'provider',
+        'log',
         'name',
         'namespace',
+        'network',
+        'provider',
+        'proxyPort',
         'ports',
         'pull'
       ]

@@ -42,5 +42,8 @@ WORKDIR $DOC_APP_PATH
 # Copy keg-core repo from the keg-base image
 COPY --from=keg-base /keg-hub/repos/keg-core $DOC_APP_PATH
 
+ARG KEG_PROXY_PORT=19006
+EXPOSE $KEG_PROXY_PORT
+
 # Run the start script
 CMD [ "/bin/bash", "/keg/core-run.sh" ]

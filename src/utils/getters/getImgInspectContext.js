@@ -28,6 +28,14 @@ const getImgInspectContext = async ({ image }) => {
       return envObj
     }, {})
 
+  // Get the image ports and convert it to an array of port values
+  // Right now we don't care about protocol we just use tcp
+  // But we may need it in the future, to leaving this comment here
+  // Port looks like this -> ExposedPorts: { '60710/tcp': {} }
+  // So get the keys of ExposedPorts, and split on the / to get the number
+  const imgPorts = Object.keys(get(imgInspect, 'config.ExposedPorts', {}))
+    .map(key => key.split('/').shift())
+
   // Get the short ID to match what docker normally returns
   const imgId = imgInspect.id.split(':')[1].substring(0, 12)
 
@@ -35,6 +43,7 @@ const getImgInspectContext = async ({ image }) => {
     id: imgId,
     envs: imgEnvs,
     labels: imgLabels,
+    ports: imgPorts,
     fullId: imgInspect.id,
     inspectRef: imgInspect,
     cmd: eitherArr(imgCmd, [imgCmd]).join(' ')
