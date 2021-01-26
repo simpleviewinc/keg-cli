@@ -36,7 +36,7 @@ const defParams = {
   pull: true,
   cache: true,
   log: false,
-  env: 'development',
+  env: globalConfig.cli.settings.defaultEnv,
 }
 
 const testTask = {

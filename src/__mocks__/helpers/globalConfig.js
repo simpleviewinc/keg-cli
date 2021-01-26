@@ -1,12 +1,14 @@
 const path = require('path')
-
 const homeDir = require('os').homedir()
+const { deepMerge } = require('@keg-hub/jsutils')
+const defaultConfig = require('../../../scripts/setup/cli.config')
+
 const cliRoot = path.join(__dirname, '../../../')
 const kegHub = process.env.KEG_ROOT_DIR || path.join(homeDir, './keg-hub')
 const kegRepos = path.join(kegHub, 'repos')
 const kegTaps = path.join(kegHub, 'taps')
 
-module.exports = {
+module.exports = deepMerge(defaultConfig, {
   version: '1.0.0',
   name: 'keg-cli',
   displayName: 'Keg CLI',
@@ -18,12 +20,6 @@ module.exports = {
   },
   cli: {
     git: {
-      orgName: 'simpleviewinc',
-      orgUrl: 'https://github.com/simpleviewinc',
-      repos: {
-        hub: "keg-hub",
-        rc: 'tap-release-client',
-      },
       publicToken: '123456789',
       sshKey: path.join(homeDir, '.ssh/github'),
       key: '123456789'
@@ -39,22 +35,11 @@ module.exports = {
       core: path.join(kegRepos, 'keg-core'),
       proxy: path.join(kegRepos, 'keg-proxy'),
       resolver: path.join(kegRepos, 'tap-resolver'),
-      customTasks: ''
     },
     settings: {
-      docker: {
-        preConfirm: false,
-        buildKit: true,
-        defaultLocalBuild: true,
-        force: true,
-        imagePullPolicy: "Always",
-        defaultTag: "master"
-      },
-      git: {
-        secure: false
-      },
-      editorCmd: 'code',
-      errorStack: false
+      task: {
+        optionsAsk: false
+      }
     },
     taps: {
       test: {
@@ -73,4 +58,4 @@ module.exports = {
       }
     }
   }
-}
+})

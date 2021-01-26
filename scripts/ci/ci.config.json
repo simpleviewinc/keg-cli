@@ -28,8 +28,9 @@
         "preConfirm": true,
         "buildKit": true,
         "force": true,
-        "defaultLocalBuild": true,
-        "imagePullPolicy": "Always"
+        "defaultLocalBuild": false,
+        "imagePullPolicy": "Always",
+        "defaultTag": "master"
       },
       "checkUpdates": false,
       "editorCmd": "code",
@@ -38,7 +39,7 @@
         "secure": false
       },
       "task": {
-        "optionsAsk": true
+        "optionsAsk": false
       }
     }
   },

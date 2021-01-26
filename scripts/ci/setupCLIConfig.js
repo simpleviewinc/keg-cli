@@ -74,13 +74,15 @@ const buildCIConfig = (customConfig) => {
         orgName: `simpleviewinc`,
         orgUrl: `https://github.com/simpleviewinc`,
         publicToken: GITHUB_TOKEN,
+        key: GITHUB_TOKEN,
+        user: "keg-admin",
         repos: {
           cli: `keg-cli`,
           hub: `keg-hub`,
         }
       },
       settings: {
-        defaultEnv: NODE_ENV || "production",
+        defaultEnv: NODE_ENV || ciConfig.cli.settings.defaultEnv,
       }
     },
     docker: {
