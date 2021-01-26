@@ -188,7 +188,7 @@ const dockerPackageRun = async args => {
   * ----------- Step 2 ----------- *
   * Pull the image from the provider and tag it
   */
-  // pull && await docker.pull({ url: packageUrl })
+  pull && await docker.pull({ url: packageUrl })
 
   /*
   * ----------- Step 3 ----------- *
