@@ -292,7 +292,7 @@ const dockerLabels = Object.entries(dockerObjLabels)
   .reduce((allLabels, [ key, labels]) => {
     allLabels[key] = Object.entries(labels) 
       .reduce((joined, [ name, value]) => {
-        return joined += ` --label ${name}=${value}`
+        return joined += ` --label "${name}=${value}"`
       }, '').trim()
 
     return allLabels
