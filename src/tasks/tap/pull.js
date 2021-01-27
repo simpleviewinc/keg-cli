@@ -1,6 +1,7 @@
 const { pullService } = require('KegUtils/services/pullService')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { updateLocationContext } = require('KegUtils/helpers/updateLocationContext')
+const { get } = require('@keg-hub/jsutils')
 
 /**
  * Pulls a tap image from a registry provider based on tag

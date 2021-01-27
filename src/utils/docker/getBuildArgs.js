@@ -41,7 +41,7 @@ const getBuildArgs = async (globalConfig, params, dockerCmd='') => {
         break
       }
       case 'GIT_APP_URL': {
-        useVal = tapUrl
+        useVal = get(containerOpts, 'ENV.GIT_APP_URL', tapUrl) 
         break
       }
     }
