@@ -64,11 +64,13 @@ const filterBypass = (logs, data) => {
  */
 const handleLog = (eventCb, type, loading, logs, data, procId) => {
   try {
-    const shouldFilter = loading && loading.active
+    const activeLoading = loading && loading.active
+
+    const shouldFilter = activeLoading
       ? filterBypass(logs, data)
       : filterLog(logs, data)
 
-    loading && loading.active && loading.progress(shouldFilter && 1, data)
+    activeLoading && loading.progress(shouldFilter && 1, data)
 
     return !shouldFilter
       ? isFunc(eventCb)

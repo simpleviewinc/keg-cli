@@ -142,15 +142,17 @@ const login = async ({ providerUrl, user, token }) => {
  *
  * @returns {Object} - Output of the commands std out/err and exitCode
  */
-const pipeDocCmd = (cmd, args, location, log=true) => {
+const pipeDocCmd = (cmd, args, pullUrl, log=true) => {
+
   return new Promise(async (res, rej) => {
     const output = { data: [], error: [] }
 
     await pipeCmd(cmd, {
       ...args,
-      cwd: location,
       onStdOut: data => {
-        log && Logger.stdout(data)
+        log &&
+          data.trim() !== pullUrl &&
+          Logger.stdout(data)
         output.data.push(data)
       },
       onStdErr: data => {
@@ -161,13 +163,14 @@ const pipeDocCmd = (cmd, args, location, log=true) => {
         log && Logger.stderr(data)
         output.error.push(data)
       },
-      onExit: (exitCode) => res({
-        data: output.data.join(''),
-        error: output.error.join(''),
-        exitCode,
-      })
+      onExit: (exitCode) => (
+        res({
+          data: output.data.join(''),
+          error: output.error.join(''),
+          exitCode,
+        })
+      )
     })
-
   })
 }
 
@@ -210,8 +213,21 @@ const pull = async ({ url, log=true, skipError=false, pipe=false }) => {
   toPull.log && Logger.spacedMsg(`Pulling docker image from`, toPull.url)
 
   if(pipe){
-    const { error, data, exitCode } = await pipeDocCmd(`docker pull ${toPull.url}`)
-    if(error.length || exitCode) return toPull.skipError ? false : apiError(error)
+    const { error, data, exitCode } = await pipeDocCmd(
+      `docker pull ${toPull.url}`,
+      {
+        loading: {
+          title: `- Downloading Image`,
+          active: true,
+          type: 'bouncingBall',
+          offMatch: [ `Status:` ]
+        }
+      },
+      toPull.url
+    )
+
+    if(error.length || exitCode)
+      return toPull.skipError ? false : apiError(error)
 
     toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
     return { data, exitCode }
