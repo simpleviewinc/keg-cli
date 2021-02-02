@@ -7,15 +7,23 @@ const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
  * Builds context data needed to create the injected docker-compose file
  * @function
  * @param {Object} data - Data to fill the compose template with
+ * @param {Object} imgNameContext - Data to fill the compose template with
+ 
  *
  * @returns {Object} - Build compose context data
  */
-const getComposeContextData = async data => {
-  const composeContext = {}
-  const imgNameContext = await getImgNameContext(data.params)
+const getComposeContextData = async (data, imgNameContext) => {
 
-  // Get the pull image url for the service 
-  composeContext.imageFrom = imgNameContext.full
+  const composeContext = {}
+
+  // Get the pull image url for the service form the imageNameContext
+  // If KEG_IMAGE_FROM ENV is defined, then use the env
+  // Otherwise used the imageNameContext.full image url
+  // This allows the ENV to be dynamic if it's defined,
+  // Or use the image url when it's not
+  composeContext.imageFrom = get(data, 'contextEnvs.KEG_IMAGE_FROM')
+    ? '${KEG_IMAGE_FROM}'
+    : imgNameContext.full
 
   // TODO: Investigate loading the default compose config,
   // Use this helper => getServiceName
@@ -58,8 +66,6 @@ const getComposeContextData = async data => {
   )
 
   composeContext.proxyDomain = await getKegProxyDomain(data, data.contextEnvs)
-
-
 
   return composeContext
 }

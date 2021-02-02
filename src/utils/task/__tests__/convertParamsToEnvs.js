@@ -30,8 +30,6 @@ const testArgs = {
   }
 }
 
-
-
 const defArgs = { env: 'develop', command: 'run', install: true, local: true }
 const contextEnv = { KEG_FOO: 'BAR', KEG_BAZ: 'BAS' }
 
@@ -41,9 +39,9 @@ describe('convertParamsToEnvs', () => {
 
   afterAll(() => jest.resetAllMocks())
 
-  it('should return an object of ENVs based off params', () => {
+  it('should return an object of ENVs based off params', async () => {
 
-    const converted = convertParamsToEnvs(defArgs)
+    const converted = await convertParamsToEnvs(defArgs)
 
     expect(isObj(converted)).toBe(true)
     expect(converted.NODE_ENV).toBe('develop')
@@ -51,7 +49,7 @@ describe('convertParamsToEnvs', () => {
     expect(converted.KEG_NM_INSTALL).toBe(true)
     expect(converted.KEG_COPY_LOCAL).toBe(true)
     
-    const converted2 = convertParamsToEnvs({
+    const converted2 = await convertParamsToEnvs({
       ...defArgs,
       install: false,
       command: 'duper'

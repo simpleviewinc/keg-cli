@@ -1,6 +1,6 @@
 const docker = require('KegDocCli')
 const { getImgFrom } = require('./getImgFrom')
-const { get, isObj, noOpObj, isStr } = require('@keg-hub/jsutils')
+const { get, isObj, noOpObj, isStr, exists } = require('@keg-hub/jsutils')
 const { getKegContext } = require('./getKegContext')
 const { getSetting } = require('../globalConfig/getSetting')
 const { getContainerConst } = require('../docker/getContainerConst')
@@ -189,6 +189,44 @@ const checkDockerId = async (params, imgRef) => {
 }
 
 /**
+ * Parses the from param into provider/namespace/image/tag params
+ * <br/> Overwrites the other params if they exist
+ * @function
+ * @param {Object} params - Options passed to the task from the command line
+ * @param {string} params.image - Original image name or Id of the image
+ * @param {string} params.tag - Custom tag to use for the image
+ * @param {string} params.provider - Custom provider to use for image when pulling or pushing
+ * @param {string} params.namespace - Custom namespace to use for image when pulling or pushing
+ *
+ * @returns {Object} - Parse image data
+ */
+const checkFromParam = params => {
+  const { from } = params
+
+  return {
+    ...params,
+    /*
+     * Parse the from param, to get the image and tag
+     * The from param will override all other params
+     * from param will be overwritten when imgRef is passed to getImgNameContext
+     */
+    ...(() => {
+      const [ image, tag ] = params.from.split(':')
+      const [ provider, namespace, imgName ] = image.includes('/')
+        ? image.split('/')
+        : [ params.provider, params.namespace, image ]
+
+      return {
+        tag: tag || params.tag,
+        image: imgName || params.image,
+        provider: provider || params.provider,
+        namespace: namespace || params.namespace,
+      }
+    })()
+  }
+}
+
+/**
  * Gets an images provider, namespace, name, and tag from the passed in params or uses defaults
  * <br/> Uses the KEG_IMAGE_FROM env from the contexts values.yml file ENV's
  * @function
@@ -204,6 +242,8 @@ const checkDockerId = async (params, imgRef) => {
  * @returns {Object} - Parse image data
  */
 const getImgNameContext = async (params, imgRef) => {
+  // Check if the from param exists and use that over the other params
+  const fromParams = exists(params.from) ? checkFromParam(params) : params
 
   const {
     tag,
@@ -212,7 +252,7 @@ const getImgNameContext = async (params, imgRef) => {
     context,
     provider,
     namespace,
-  } = await checkDockerId(params, imgRef)
+  } = await checkDockerId(fromParams, imgRef)
 
   // Separate the url, image and tag if needed
   const nameAndUrl = image

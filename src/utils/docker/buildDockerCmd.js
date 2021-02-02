@@ -2,7 +2,6 @@ const { buildTags } = require('./tags/buildTags')
 const { getBuildArgs } = require('./getBuildArgs')
 const { getBuildLabels } = require('./getBuildLabels')
 const { getDockerCmdArgs } = require('./getDockerCmdArgs')
-const { getImgNameContext } = require('../getters/getImgNameContext')
 
 /**
  * Creates a docker run command as a string. Adds any needed volume mounts

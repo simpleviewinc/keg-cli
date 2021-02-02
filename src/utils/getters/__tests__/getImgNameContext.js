@@ -121,6 +121,84 @@ const testArgs = {
       providerImage: 'ghcr.io/test-namespace/keg-components',
     }
   },
+  fromOnly: {
+    description: 'It should work with only the from param',
+    inputs: [{ from: `provider/namespace/keg-items:test` }],
+    outputs: {
+      image: 'keg-items',
+      provider: 'provider',
+      namespace: 'namespace',
+      tag: 'test',
+      imageWTag: 'keg-items:test',
+      full: 'provider/namespace/keg-items:test',
+      providerImage: 'provider/namespace/keg-items'
+    }
+  },
+  fromOverride: {
+    description: 'It use the from param over other params',
+    inputs: [{ context: 'components', tag: 'master', from: `provider/namespace/keg-items:test` }],
+    outputs: {
+      image: 'keg-items',
+      provider: 'provider',
+      namespace: 'namespace',
+      tag: 'test',
+      imageWTag: 'keg-items:test',
+      full: 'provider/namespace/keg-items:test',
+      providerImage: 'provider/namespace/keg-items'
+    }
+  },
+  fromWithProviderNamespace: {
+    description: 'It use the from param over other params',
+    inputs: [{ provider: 'not-used', namespace: 'not-used', from: `provider/namespace/keg-items:test` }],
+    outputs: {
+      image: 'keg-items',
+      provider: 'provider',
+      namespace: 'namespace',
+      tag: 'test',
+      imageWTag: 'keg-items:test',
+      full: 'provider/namespace/keg-items:test',
+      providerImage: 'provider/namespace/keg-items'
+    }
+  },
+  fromNoProviderNamespace: {
+    description: 'It use the from param over other params',
+    inputs: [{ provider: 'used-provider', namespace: 'used-namespace', from: `keg-items:test` }],
+    outputs: {
+      image: 'keg-items',
+      provider: 'used-provider',
+      namespace: 'used-namespace',
+      tag: 'test',
+      imageWTag: 'keg-items:test',
+      full: 'used-provider/used-namespace/keg-items:test',
+      providerImage: 'used-provider/used-namespace/keg-items'
+    }
+  },
+  fromImageAndTag: {
+    description: 'It should work when from is only an image and tag',
+    inputs: [{ from: `keg-items:test` }],
+    outputs: {
+      image: 'keg-items',
+      tag: 'test',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
+      imageWTag: 'keg-items:test',
+      full: 'ghcr.io/simpleviewinc/keg-items:test',
+      providerImage: 'ghcr.io/simpleviewinc/keg-items'
+    }
+  },
+  fromOnlyImage: {
+    description: 'It should work when from is only an image name',
+    inputs: [{ from: `keg-items` }],
+    outputs: {
+      image: 'keg-items',
+      tag: 'master',
+      provider: 'ghcr.io',
+      namespace: 'simpleviewinc',
+      imageWTag: 'keg-items:master',
+      full: 'ghcr.io/simpleviewinc/keg-items:master',
+      providerImage: 'ghcr.io/simpleviewinc/keg-items'
+    }
+  },
   imageId: {
     description: 'It should allow passing in an image id',
     inputs: [{ image: 'a56406239194' }],
@@ -159,20 +237,7 @@ const testArgs = {
       full: 'test-provider/test-namespace/keg-core:0.0.1',
       providerImage: 'test-provider/test-namespace/keg-core'
     }
-  },
-  imgRef: {
-    description: 'It should allow passing in am imgRef object as the second argument',
-    inputs: [{}, dockerData.images.core],
-    outputs: {
-      image: 'keg-core',
-      tag: '0.0.1',
-      provider: 'ghcr.io',
-      namespace: 'simpleviewinc',
-      imageWTag: 'keg-core:0.0.1',
-      full: 'ghcr.io/simpleviewinc/keg-core:0.0.1',
-      providerImage: 'ghcr.io/simpleviewinc/keg-core',
-    }
-  },
+  }
 }
 
 describe('getImgNameContext', () => {

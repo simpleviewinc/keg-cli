@@ -15,6 +15,8 @@ const {
   isStr,
   toStr,
   exists,
+  noPropArr,
+  noOpObj,
 } = require('@keg-hub/jsutils')
 
 /**
@@ -137,22 +139,29 @@ const login = async ({ providerUrl, user, token }) => {
  * @function
  * @param {string} cmd - Command to run
  * @param {string} args - Arguments to pass to the child process
- * @param {string} location - Location where the cmd should be run
+ * @param {string} pullUrl - Url of the docker image
  * @param {boolean} log - Log messages and docker commands
  *
  * @returns {Object} - Output of the commands std out/err and exitCode
  */
-const pipeDocCmd = (cmd, args, pullUrl, log=true) => {
+const dockerCLiPipe = (cmd, args=noOpObj, options=noOpObj) => {
+  const { filter=noPropArr, log=true } = options
 
   return new Promise(async (res, rej) => {
     const output = { data: [], error: [] }
 
     await pipeCmd(cmd, {
       ...args,
+      loading: {
+        active: true,
+        type: 'bouncingBall',
+        ...args.loading,
+      },
       onStdOut: data => {
         log &&
-          data.trim() !== pullUrl &&
+          !filter.includes(data.trim()) &&
           Logger.stdout(data)
+
         output.data.push(data)
       },
       onStdErr: data => {
@@ -213,24 +222,19 @@ const pull = async ({ url, log=true, skipError=false, pipe=false }) => {
   toPull.log && Logger.spacedMsg(`Pulling docker image from`, toPull.url)
 
   if(pipe){
-    const { error, data, exitCode } = await pipeDocCmd(
+    const { error, data, exitCode } = await dockerCLiPipe(
       `docker pull ${toPull.url}`,
-      {
-        loading: {
-          title: `- Downloading Image`,
-          active: true,
-          type: 'bouncingBall',
-          offMatch: [ `Status:` ]
-        }
-      },
-      toPull.url
+      { loading: { title: `- Downloading Image`, offMatch: [ `Status:` ] }},
+      { filter: [toPull.url], log }
     )
 
     if(error.length || exitCode)
-      return toPull.skipError ? false : apiError(error)
+      return toPull.skipError
+        ? { data, error, exitCode }
+        : apiError(error)
 
     toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
-    return { data, exitCode }
+    return { data, error, exitCode }
 
   }
   else {
@@ -413,5 +417,6 @@ module.exports = {
   pull,
   push,
   raw,
-  remove
+  remove,
+  cliPipe: dockerCLiPipe,
 }

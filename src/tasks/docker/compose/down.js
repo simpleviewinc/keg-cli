@@ -1,9 +1,8 @@
 const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
 const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
+const { removeInjected } = require('KegUtils/docker/compose/removeInjectedCompose')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
-const { getProxyDomainFromLabel } = require('KegUtils/proxy/getProxyDomainFromLabel')
-const { removeInjectedCompose } = require('KegUtils/docker/compose/removeInjectedCompose')
 
 /**
  * Runs the docker-compose down command for the passed in context
@@ -19,11 +18,7 @@ const composeDown = async args => {
 
   // Get the context data for the command to be run
   const containerContext = await buildContainerContext(args)
-  const { location, cmdContext, contextEnvs } = containerContext
-
-  // Get the proxy domain from the label, and use it to remove the injected compose config form the temp dir
-  // Have to get the domain before bringing the containers down so we have access to the label
-  const proxyDomain = await getProxyDomainFromLabel(containerContext.id || containerContext.name)
+  const { location, cmdContext, tap, contextEnvs } = containerContext
 
   // Build the docker compose down command
   const { dockerCmd } = await buildComposeCmd({
@@ -42,11 +37,8 @@ const composeDown = async args => {
     !Boolean(__internal),
   )
 
-  // TODO: this is not working properly
-  // Need to come up with a better solution
-  // Check if we have a proxy domain, and remove the injected compose file after running the compose command
-  // Otherwise the injected compose file will just be recreated
-  ;proxyDomain && await removeInjectedCompose(proxyDomain, true)
+  // Attempt to remove the injected compose file after stopping the service
+  await removeInjected(tap || cmdContext, globalConfig)
 
   log && Logger.highlight(`Compose service`, `"${ cmdContext }"`, `destroyed!`)
 

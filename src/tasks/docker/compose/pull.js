@@ -1,13 +1,12 @@
+const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { spawnCmd } = require('KegProc')
-const { DOCKER } = require('KegConst/docker')
-const { pickKeys } = require('@keg-hub/jsutils')
-const { logVirtualUrl } = require('KegUtils/log')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { isStr, noOpObj } = require('@keg-hub/jsutils')
 const { throwComposeFailed } = require('KegUtils/error/throwComposeFailed')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
-const { buildContainerContext } = require('KegUtils/builders')
+const { checkPulledNewImage } = require('KegUtils/docker/checkPulledNewImage')
+const { removeInjected } = require('KegUtils/docker/compose/removeInjectedCompose')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
  * Runs docker-compose pull command
@@ -18,49 +17,67 @@ const { buildContainerContext } = require('KegUtils/builders')
  * @returns {void}
  */
 const composePull = async args => {
-  const { envs, globalConfig, __internal, params, task } = args
-  const { log } = params
+  const { globalConfig, __internal, params, task } = args
 
   // Get the context data for the command to be run
   const containerContext = await buildContainerContext(args)
   const { location, cmdContext, contextEnvs, tap, image } = containerContext
 
+  await removeInjected(tap || cmdContext, globalConfig)
 
   // Build the docker compose command
-  const { dockerCmd, composeData } = await buildComposeCmd({
+  const {
+    dockerCmd,
+    composeData=noOpObj,
+    imgNameContext=noOpObj,
+  } = await buildComposeCmd({
+    params,
     cmd: 'pull',
+    __internal,
     cmdContext,
     contextEnvs,
     globalConfig,
-    // Default no-recreate to true, if recreate is falsy
-    params: params,
   })
 
-  console.log(`---------- dockerCmd ----------`)
-  console.log(dockerCmd)
-  console.log(`---------- composeData ----------`)
-  console.log(composeData)
-  process.exit()
+  Logger.empty()
+  Logger.highlight(`Pulling docker image from`, imgNameContext.full)
 
-  // TODO: add service name to docker cmd
-  // Fix from options, currently not overwriting KEG_IMAGE_FROM env like it should
+  // Run the docker-compose pull command
+  // Pipe the output, so we can capture if a new image has been pulled
+  const { error, data, exitCode } = await docker.cliPipe(
+    dockerCmd,
+    {
+      cwd: location,
+      options: { env: contextEnvs },
+      loading: {
+        title: `- Downloading Image`,
+        offMatch: [ `status:` ]
+      },
+    },
+    { log: false },
+  )
 
-  // Run the docker-compose up command
-  // const cmdFailed = await spawnCmd(
-  //   dockerCmd,
-  //   { options: { env: contextEnvs }},
-  //   location,
-  //   !Boolean(__internal),
-  // )
-
-  // Returns 0 if the command is successful, which is falsy
+  // exitCode is 0 if the command is successful, which is falsy
   // So check for truthy value, which means the command failed
-  // cmdFailed && throwComposeFailed(dockerCmd, location)
+  exitCode && throwComposeFailed(dockerCmd, location, error)
 
-  // log && Logger.highlight(`Finished pulling`, `"${ cmdContext }"`, ` from provider!`)
+  const isNewImage = checkPulledNewImage(data, error)
 
-  // Return the built context info, so it can be reused if needed
-  return containerContext
+  Logger.empty()
+  isNewImage
+    ? Logger.highlight(`Pulled new image for`, `"${ cmdContext }"`, ` from provider!`)
+    : Logger.highlight(`Current image for`, `"${ cmdContext }"`, ` is up to date!`)
+
+  // Get the docker image object that was just pulled
+  const imageRef = await docker.image.get(imgNameContext.full)
+
+  // Return the state of the image being pulled
+  return {
+    imageRef,
+    isNewImage,
+    imgNameContext,
+    containerContext,
+  }
 
 }
 

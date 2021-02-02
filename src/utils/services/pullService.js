@@ -1,7 +1,7 @@
 const { spawn } = require('child_process')
 const docker = require('KegDocCli')
 const { getServiceArgs } = require('./getServiceArgs')
-const { exists, get, isObj } = require('@keg-hub/jsutils')
+const { exists, get, isObj, deepMerge } = require('@keg-hub/jsutils')
 const { runInternalTask } = require('../task/runInternalTask')
 const { getImgNameContext } = require('../getters/getImgNameContext')
 const { shouldPullImage } = require('../helpers/shouldPullImage')
@@ -32,7 +32,6 @@ const checkPullImage = async ({ force, ...params }, internalForce) => {
  * @returns {Object} - docker pull task response. (Sets `isNewImage` property if a new image was pulled)
  */
 const pullService = async (serviceArgs, pullService='docker') => {
-  
 
   // Check if the image should be pulled
   const shouldPull = checkPullImage(
@@ -44,14 +43,7 @@ const pullService = async (serviceArgs, pullService='docker') => {
 
   if(!shouldPull) return { imgNameContext, isNewImage: false }
 
-  const pullArgs = { 
-    ...serviceArgs,
-    __internal: {
-      ...serviceArgs.__internal,
-      forcePull: shouldPull,
-      imgNameContext,
-    }
-  }
+  const pullArgs = deepMerge(serviceArgs, { __internal: { imgNameContext }})
 
   // Check and pull the image if needed
   return pullService !== 'docker'

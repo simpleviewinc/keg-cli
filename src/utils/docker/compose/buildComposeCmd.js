@@ -1,6 +1,7 @@
 const { addComposeConfigs } = require('./addComposeConfigs')
-const { get, exists, reduceObj } = require('@keg-hub/jsutils')
 const { getComposeContextData } = require('./getComposeContextData')
+const { get, exists, reduceObj, noOpObj } = require('@keg-hub/jsutils')
+const { getImgNameContext } = require('../../getters/getImgNameContext')
 
 /**
  * Mapping of available params to docker-compose arguments
@@ -24,6 +25,7 @@ const composeArgs = {
   },
   pull: {
     deps: `--include-deps`,
+    log: `--log-level DEBUG`,
   }
 }
 
@@ -97,16 +99,23 @@ const getDownArgs = (dockerCmd, params) => {
  * @returns {string} - Built docker command
  */
 const buildComposeCmd = async args => {
-  const { cmd, params={} } = args
+  const { cmd, params=noOpObj, __internal=noOpObj } = args
+
+  // Get the image name context, so we can pull the image
+  const imgNameContext = __internal.imgNameContext || await getImgNameContext(params)
 
   // Get the compose data for filling out the injected compose template
   // only if the KEG_NO_INJECTED_COMPOSE env does not exist
   const composeData = !exists(get(args, `contextEnvs.KEG_NO_INJECTED_COMPOSE`)) &&
-    await getComposeContextData(args)
+    await getComposeContextData(args, imgNameContext)
 
-  let dockerCmd = `docker-compose`
-  dockerCmd = await addComposeConfigs(dockerCmd, args, composeData)
-  dockerCmd = `${dockerCmd} ${cmd}`
+  // Find the dynamic compose configs, and add them to the command
+  let dockerCmd = await addComposeConfigs(`docker-compose`, args, composeData)
+
+  // We need to set a different log level for the pull command
+  // So only add the cmd if it's not pull
+  dockerCmd = cmd !== `pull` ? `${dockerCmd} ${cmd}` : dockerCmd
+
   const cmdArgs = composeArgs[cmd]
 
   switch(cmd){
@@ -120,9 +129,11 @@ const buildComposeCmd = async args => {
         cmdArgs,
         params
       )
+      break
     }
     case 'pull': {
-      dockerCmd = `${dockerCmd} ${cmdArgs.deps}`
+      // Add the log level, then add the cmd to allow tracking the pull output
+      dockerCmd = `${dockerCmd} ${cmdArgs.log} ${cmd} ${cmdArgs.deps}`
       break
     }
     case 'down': {
@@ -131,7 +142,11 @@ const buildComposeCmd = async args => {
     }
   }
 
-  return { dockerCmd, composeData }
+  return {
+    dockerCmd,
+    composeData,
+    imgNameContext
+  }
 }
 
 module.exports = {

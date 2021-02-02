@@ -1,9 +1,10 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { get, isStr, noOpObj } = require('@keg-hub/jsutils')
-const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
-const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { generalError } = require('KegUtils/error/generalError')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
+const { checkPulledNewImage } = require('KegUtils/docker/checkPulledNewImage')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
  * Pulls an image locally from a configured registry provider in the cloud
@@ -24,11 +25,11 @@ const providerPull = async args => {
   const imgNameContext = __internal.imgNameContext || await getImgNameContext(params)
 
   // Try to pull the image
-  const pulledRes = await docker.pull({ url: imgNameContext.full, pipe: true })
+  const { data, error, exitCode } = await docker.pull({ url: imgNameContext.full, pipe: true })
 
   // // Get the docker image object that was just pulled
   const imageRef = await docker.image.get(imgNameContext.full)
-  const isNewImage = isStr(pulledRes) && !pulledRes.includes('Image is up to date')
+  const isNewImage = checkPulledNewImage(data, error)
 
   // Return the state of the image being pulled
   return { imgNameContext, isNewImage, imageRef }
