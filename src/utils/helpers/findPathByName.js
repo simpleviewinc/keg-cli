@@ -13,7 +13,7 @@ const { isArr } = require('@keg-hub/jsutils')
  * @returns {Object} - Contains feature and steps local and remote locations 
  */
 const findPathByName = async (contextPath, name, opts={}) => {
-  const defExclude = [ 'node_modules', '.git', '.github', '.vscode' ]
+  const defExclude = [ 'node_modules', '.git', '.github', '.vscode', 'build' ]
   return getFolderContent(contextPath, {
     ...opts,
     include: [ name ],
