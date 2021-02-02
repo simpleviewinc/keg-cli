@@ -17,7 +17,7 @@ const checkCustomTaskFolder = async (globalConfig, tapObj) => {
   const [ foundPath ] = await findPathByName(
     path.join(tapObj.path),
     'tasks',
-    { type: 'folder' }
+    { type: 'folder', recursive: false }
   )
 
   // Ensure we found a path to use
