@@ -65,8 +65,8 @@ const composePull = async args => {
 
   Logger.empty()
   isNewImage
-    ? Logger.highlight(`Pulled new image for`, `"${ cmdContext }"`, ` from provider!`)
-    : Logger.highlight(`Current image for`, `"${ cmdContext }"`, ` is up to date!`)
+    ? Logger.highlight(`Pulled new image`, `${ imgNameContext.full }`, `from provider!`)
+    : Logger.highlight(`Local image`, `${ imgNameContext.full }`, `is up to date!`)
 
   // Get the docker image object that was just pulled
   const imageRef = await docker.image.get(imgNameContext.full)
