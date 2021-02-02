@@ -31,7 +31,8 @@ const checkPullImage = async ({ force, ...params }, internalForce) => {
  *
  * @returns {Object} - docker pull task response. (Sets `isNewImage` property if a new image was pulled)
  */
-const pullService = async serviceArgs => {
+const pullService = async (serviceArgs, pullService='docker') => {
+  
 
   // Check if the image should be pulled
   const shouldPull = checkPullImage(
@@ -43,15 +44,19 @@ const pullService = async serviceArgs => {
 
   if(!shouldPull) return { imgNameContext, isNewImage: false }
 
-  // Check and pull the image if needed
-  return await runInternalTask('docker.tasks.provider.tasks.pull', { 
+  const pullArgs = { 
     ...serviceArgs,
     __internal: {
       ...serviceArgs.__internal,
       forcePull: shouldPull,
       imgNameContext,
     }
-  })
+  }
+
+  // Check and pull the image if needed
+  return pullService !== 'docker'
+    ? await runInternalTask('docker.tasks.compose.tasks.pull', pullArgs)
+    : await runInternalTask('docker.tasks.provider.tasks.pull', pullArgs)
 
 }
 

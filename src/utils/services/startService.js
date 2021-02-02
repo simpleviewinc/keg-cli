@@ -24,7 +24,7 @@ const startService = async (args, exArgs) => {
   await proxyService(serviceArgs)
 
   // Call the build service to ensure required images are built 
-  const { imgNameContext, isNewImage } = await pullService(serviceArgs)
+  const { imgNameContext, isNewImage } = await pullService(serviceArgs, 'compose')
 
   // Call the compose service to start the application
   // Pass in recreate, base on if a new image was pulled

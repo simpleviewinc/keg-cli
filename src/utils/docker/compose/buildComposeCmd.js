@@ -21,6 +21,9 @@ const composeArgs = {
     nocreate:`--no-recreate`,
     recreate: '--force-recreate',
     orphans: '--remove-orphans',
+  },
+  pull: {
+    deps: `--include-deps`,
   }
 }
 
@@ -117,6 +120,10 @@ const buildComposeCmd = async args => {
         cmdArgs,
         params
       )
+    }
+    case 'pull': {
+      dockerCmd = `${dockerCmd} ${cmdArgs.deps}`
+      break
     }
     case 'down': {
       dockerCmd = params.remove ? getDownArgs(dockerCmd, params) : dockerCmd

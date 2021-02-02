@@ -17,7 +17,7 @@ const buildDockerImg = async (args, cmdContext, tap) => {
 }
 
 const pullDockerImg = async (args, cmdContext, tap) => {
-  return await runInternalTask('docker.tasks.provider.tasks.pull', { 
+  return await runInternalTask('docker.tasks.compose.tasks.pull', { 
     ...args,
     params: { ...args.params, context: cmdContext, tap },
   })
@@ -43,7 +43,7 @@ const composeUp = async args => {
   build && await buildDockerImg(args, cmdContext)
 
   // Check if we should pull the image
-  pull && await buildDockerImg(args, cmdContext)
+  pull && await pullDockerImg(args, cmdContext)
 
   // Build the docker compose command
   const { dockerCmd, composeData } = await buildComposeCmd({
