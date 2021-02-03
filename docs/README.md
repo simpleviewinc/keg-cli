@@ -17,11 +17,11 @@
       * `keg <name of task> -h` 
 
 ## Core Repos
-  * [keg-cli]() - Commands to run the keg, and taps
-  * [keg-components]() - A cross-platform component library for React / React-Native
-  * [keg-core]() - Main keg repo, which contains code to run taps
-  * [tap-resolver]() - Allows resolving tap files through aliases
-  * [re-theme]() - Manages cross-platform styles for web and native
+  * [keg-cli](https://github.com/simpleviewinc/keg-cli) - Commands to run the keg, and taps
+  * [keg-components](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/keg-components) - A cross-platform component library for React / React-Native
+  * [keg-core](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/keg-core) - Main keg repo, which contains code to run taps
+  * [tap-resolver](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/tap-resolver) - Allows resolving tap files through aliases
+  * [re-theme](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/re-theme) - Manages cross-platform styles for web and native
 
 ## Taps
 * Taps can be installed anywhere on the local machine
@@ -35,11 +35,9 @@
 
 ## Docker
   * Application used to ensure a consistent dev environment
-    * [docker]() - Runs the containers and images of the keg
-    * [docker-machine]() - Runs the core docker instance through virtualbox 
-    * [docker-compose]() - Run multiple docker containers from one yml file
-    * [mutagen]() - syncs local folder with the running docker containers
-    * [virtualbox]() - Run by docker-machine
+    * [docker-desktop](https://www.docker.com/products/docker-desktop) - Runs the core docker instance through virtualbox 
+    * [docker-compose](https://docs.docker.com/compose) - Run multiple docker containers from one yml file
+    * [mutagen](https://mutagen.io/) - syncs local folder with the running docker containers
 
 ### Docker Containers
   * Build core container
