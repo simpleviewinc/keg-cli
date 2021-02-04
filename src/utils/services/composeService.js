@@ -3,7 +3,7 @@ const { buildContainerSync } = require('./syncService')
 const { mutagenService } = require('./mutagenService')
 const { getServiceArgs } = require('./getServiceArgs')
 const { runInternalTask } = require('../task/runInternalTask')
-const { get, isArr, set, noOpObj } = require('@keg-hub/jsutils')
+const { get, isArr, set, noOpObj, deepMerge } = require('@keg-hub/jsutils')
 const { buildExecParams } = require('../docker/buildExecParams')
 const { getContainerCmd } = require('../docker/getContainerCmd')
 const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
@@ -140,11 +140,9 @@ const composeService = async (args, exArgs=noOpObj) => {
   // Check internally if we should skip the docker exec command
   return get(args, '__internal.skipDockerExec')
     ? composeContext
-    : runInternalTask('tasks.docker.tasks.exec', {
-        ...args,
+    : runInternalTask('tasks.docker.tasks.exec', deepMerge(args, {
         __internal: { containerContext: composeContext },
         params: {
-          ...params,
           ...buildExecParams(
             serviceArgs.params,
             { detach: Boolean(get(serviceArgs, 'params.detach')) },
@@ -152,7 +150,7 @@ const composeService = async (args, exArgs=noOpObj) => {
           cmd: await getContainerCmd({ context: cmdContext, image }),
           context: cmdContext,
         },
-      })
+      }))
 
 }
 

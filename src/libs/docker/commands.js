@@ -240,7 +240,7 @@ const pull = async ({ url, log=true, skipError=false, pipe=false }) => {
   else {
     const exitCode = await spawnProc(`docker pull ${toPull.url}`)
     if(exitCode)
-      return toPush.skipError ? false : apiError(`docker push ${toPull.url}`)
+      return toPull.skipError ? false : apiError(`docker push ${toPull.url}`)
 
     toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
 
