@@ -42,18 +42,20 @@ const checkAddCustomTasks = async (globalConfig, tapName, tapObj) => {
 const mergeTapTasks = (cliTasks, tapTasks) => {
   const cliTapTasks = get(cliTasks, 'tap.tasks')
 
-  return Object.assign(cliTasks, {
-    tap: {
-      tasks: reduceObj(tapTasks, (name, definition, merged) => {
-        return Object.assign(merged, buildTaskData(
-          definition,
-          'tap',
-          cliTapTasks
-        ))
-      }, {})
-    }
-  })
+  Object.assign(
+    cliTasks.tap.tasks,
+    reduceObj(tapTasks, (name, definition, merged) => {
+      Object.assign(merged, buildTaskData(
+        definition,
+        'tap',
+        cliTapTasks
+      ))
 
+      return merged
+    }, {})
+  )
+
+  return cliTasks
 }
 
 /**
