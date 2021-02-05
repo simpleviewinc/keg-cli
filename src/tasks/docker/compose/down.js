@@ -1,5 +1,6 @@
 const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
+const { throwComposeFailed } = require('KegUtils/error/throwComposeFailed')
 const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
 const { removeInjected } = require('KegUtils/docker/compose/removeInjectedCompose')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
@@ -30,12 +31,16 @@ const composeDown = async args => {
   })
 
   // Run the docker compose down command
-  await spawnCmd(
+  const cmdFailed = await spawnCmd(
     dockerCmd,
     { options: { env: contextEnvs }},
     location,
     !Boolean(__internal),
   )
+
+  // Returns 0 if the command is successful, which is falsy
+  // So check for truthy value, which means the command failed
+  cmdFailed && throwComposeFailed(dockerCmd, location)
 
   // Attempt to remove the injected compose file after stopping the service
   await removeInjected(tap || cmdContext, globalConfig)

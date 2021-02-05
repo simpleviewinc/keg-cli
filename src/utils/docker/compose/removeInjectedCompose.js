@@ -16,6 +16,9 @@ const { getProxyDomainFromBranch } = require('KegUtils/proxy/getProxyDomainFromB
  * @returns {Void}
  */
 const removeInjected = async (injected, globalConfig) => {
+  // No injected exist for the proxy, so just return
+  if(injected === 'proxy') return
+
   globalConfig = globalConfig || getGlobalConfig()
   const repoPath = getRepoPath(injected, globalConfig)
   const proxyDomain = repoPath && await getProxyDomainFromBranch(injected, repoPath)
