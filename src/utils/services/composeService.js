@@ -68,10 +68,10 @@ const checkServiceSync = async (args, serviceArgs, containerContext, tap, contex
  * @param {Object} serviceArgs - Default task arguments passed from the runTask method
  * @param {Object} context - Context of the service that was started
  */
-const logComposeStarted = (serviceArgs, context) => {
+const logComposeStarted = (serviceArgs, context, composeTask) => {
   Logger.empty()
   Logger.highlight(
-    `Started`,
+    composeTask === 'restart' ? `Restarted` : `Started`,
     `"${ get(serviceArgs, 'params.context', context) }"`,
     `compose environment!`
   )
@@ -95,9 +95,12 @@ const composeService = async (args, exArgs=noOpObj) => {
   // Build the service arguments is exArgs exist
   const serviceArgs = exArgs !== noOpObj ? getServiceArgs(args, exArgs) : args
 
-  // Run the docker-compose up task
+  // If called from the restart task, we should run compose restart instead of compose up
+  const composeTask = get(args, 'task.name') === 'restart' ? 'restart' : 'up'
+
+  // Run the docker-compose task based on the original calling task
   const containerContext = await runInternalTask(
-    'docker.tasks.compose.tasks.up',
+    `docker.tasks.compose.tasks.${composeTask}`,
     serviceArgs
   )
 
@@ -111,7 +114,7 @@ const composeService = async (args, exArgs=noOpObj) => {
   )
 
   // Log that the compose service has been started
-  logComposeStarted(serviceArgs, context)
+  logComposeStarted(serviceArgs, context, composeTask)
 
   // Create any other syncs for the service based on the passed in params
   !get(args, '__internal.skipDockerSyncs') &&

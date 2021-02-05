@@ -18,9 +18,6 @@ const runTap = async (args) => {
     params: { tap: get(args, 'params.tap') || 'tap', }
   })
 
-  // TODO: validate this uses the KEG_IMAGE_FROM env when running
-  // Should not need to build the tap image first
-  // Should just pull the KEG_IMAGE_FROM image from the provider
   return await runService(updatedArgs, {
     context: get(updatedArgs, 'params.context'),
     tap: get(updatedArgs, 'params.tap'),
