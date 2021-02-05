@@ -55,7 +55,6 @@ const checkServiceSync = async (args, serviceArgs, containerContext, tap, contex
   // Run the mutagen service if needed
   return doSync
     ? await mutagenService(serviceArgs, {
-        containerContext,
         tap: get(serviceArgs, 'params.tap', tap),
         context: get(serviceArgs, 'params.context', context),
       })

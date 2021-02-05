@@ -1,5 +1,5 @@
 const docker = require('KegDocCli')
-const { get } = require('@keg-hub/jsutils')
+const { get, deepMerge } = require('@keg-hub/jsutils')
 const { proxyService } = require('./proxyService')
 const { getServiceArgs } = require('./getServiceArgs')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
@@ -29,22 +29,22 @@ const runService = async (args, exArgs) => {
 
   // Step 1 - Run the docker container, but don't attach to it
   // We do this so we can create a mutagen sync after the container has been started
-  const { imageContext, containerRef } = await runInternalTask('docker.tasks.image.tasks.run', {
-    ...args,
-    __internal: { skipExists: true },
-    params: {
-      // set the cmd to tail /dev/null to keep the container running
-      // connect: false,
-      // TODO: Fix this so we can keep the container running
-      // Right now tail -f /dev/null fails, so commenting out
-      // cmd: '/bin/bash',
-      // cmd: 'tail -f /dev/null',
-      ...params,
-      tap,
-      context,
-      // Set connect to false to we run it in the background
-    }
-  })
+  const { imageContext, containerRef } = await runInternalTask(
+    'docker.tasks.image.tasks.run',
+    deepMerge(args, {
+      __internal: { skipExists: true },
+      params: {
+        // set the cmd to tail /dev/null to keep the container running
+        // connect: false,
+        // TODO: Fix this so we can keep the container running
+        // Right now tail -f /dev/null fails, so commenting out
+        // cmd: '/bin/bash',
+        // cmd: 'tail -f /dev/null',
+        tap,
+        context,
+      }
+    })
+  )
 
   return imageContext
 
@@ -58,53 +58,46 @@ const runService = async (args, exArgs) => {
 
   // // Build the container context, so the values are cache on calls to buildContainerContext
   const syncName = `img-${ context }-run`
+  // TODO: clean this up. Should not be merging the container ref with imageContext
   const containerContext = { cmdContext: context, ...imageContext, ...containerRef }
   
   // Check if we should sync the local repo to the container
   const syncContext = sync
-    ? await runInternalTask('mutagen.tasks.create', {
-        ...args,
+    ? await runInternalTask('mutagen.tasks.create', deepMerge(args, {
         __internal: {
+          containerContext,
           skipExists: true,
-          // TODO: clean this up. Should not be merging the container ref with imageContext
-          containerContext: { cmdContext: context, ...imageContext, ...containerRef },
         },
         params: {
-          ...params,
           tap,
           context,
           container,
           name: syncName,
-          containerContext,
           local: local || get(imageContext, `contextEnvs.KEG_CONTEXT_PATH`),
           remote: remote || get(imageContext, `contextEnvs.DOC_APP_PATH`),
         }
-      })
+      }))
     : containerContext
 
   // Step 3 - Attach to the container as if we didn't run it in the background
-  await runInternalTask('tasks.docker.tasks.exec', {
-    ...args,
+  await runInternalTask('tasks.docker.tasks.exec', deepMerge(args, {
     __internal: { containerContext },
     params: {
-      ...params,
       tap,
       context,
       options: ['--rm', '-it'],
     },
-  })
+  }))
 
   // Step 4 - Clean up the container sync after the user has disconnected
 
   // Terminate all mutagen sync process for the context type
-  await runInternalTask('mutagen.tasks.clean', {
-    ...serviceArgs,
+  await runInternalTask('mutagen.tasks.clean', deepMerge(serviceArgs, {
     params: {
-      ...serviceArgs.params,
       context: syncName,
       force: true,
     }
-  })
+  }))
 
 }
 
