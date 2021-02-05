@@ -1,8 +1,7 @@
 const { buildTags } = require('./tags/buildTags')
-const { getDockerImg } = require('./getDockerImg')
 const { getBuildArgs } = require('./getBuildArgs')
-const { getDockerCmdArgs } = require('./getDockerCmdArgs')
 const { getBuildLabels } = require('./getBuildLabels')
+const { getDockerCmdArgs } = require('./getDockerCmdArgs')
 
 /**
  * Creates a docker run command as a string. Adds any needed volume mounts
@@ -10,7 +9,7 @@ const { getBuildLabels } = require('./getBuildLabels')
  * @param {Object} args.globalConfig - Global config object for the keg-cli
  * @param {Object} args.params - Data to build the docker command
  * @param {string} args.params.dockerCmd - docker command being built
- * @param {string} args.params.context - Name of the image to be built
+ * @param {string} args.params.context - Context of the image to be built
  * @param {Array} args.params.tags - Tag names for the image being built
  *
  * @returns {string} - Built docker build command
@@ -18,9 +17,6 @@ const { getBuildLabels } = require('./getBuildLabels')
 const createBuildCmd = async (args, dockerCmd) => {
   const { globalConfig, params } = args
   const { location } = params
-
-  // Ensure we have an image name to build
-  const image = getDockerImg(params.image, params.context)
 
   // Add any build tags
   dockerCmd = await buildTags(args, params, dockerCmd)

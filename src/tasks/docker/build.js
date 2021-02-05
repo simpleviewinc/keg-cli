@@ -1,13 +1,10 @@
-const path = require('path')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { isStr } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
 const { buildDockerCmd } = require('KegUtils/docker')
-const { copyFileSync, removeFileSync } = require('KegFileSys/fileSys')
+const { throwRequired, throwNoTapLoc } = require('KegUtils/error')
+const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
-const { throwRequired, generalError, throwNoTapLoc } = require('KegUtils/error')
-const { getPathFromConfig } = require('KegUtils/globalConfig/getPathFromConfig')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
@@ -57,7 +54,7 @@ const dockerBuild = async args => {
   // Otherwise it would cause getContext to fail
   // Because it thinks it needs to ask for the non-existent container
   const { container, ...params } = args.params
-  const { context, log, pull, buildArgs  } = params
+  const { context, log, pull, buildArgs, push  } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
@@ -98,15 +95,44 @@ const dockerBuild = async args => {
     }
   })
 
-  Logger.info(`Building docker image "${ image || cmdContext }" ...`)
+  Logger.pair(`\nBuilding docker image`, image || cmdContext)
 
   // Run the built docker command
-  await docker.raw(dockerCmd, { log, options: { env: contextEnvs }}, location)
+  const exitCode = await docker.build(
+    dockerCmd,
+    { log, options: { env: contextEnvs }, context: image || cmdContext },
+    location
+  )
+
+  // Exit code is 0 if build succeeds, so check if it exists
+  // If if dose then the build failed
+  if(exitCode) process.exit(exitCode)
 
   // Return the built image as a json object
   // This is needed for internal keg-cli calls
-  return docker.image.get(image || contextEnvs.IMAGE)
+  const imgRef = await docker.image.get(image || contextEnvs.IMAGE)
 
+  // push the new image to the docker provider 
+  push && await runInternalTask(
+    'tasks.docker.tasks.provider.tasks.push',
+    {
+      ...args,
+      command: 'push',
+      __internal: {
+        ...args.__internal,
+        containerContext,
+      },
+      params: {
+        ...args.params,
+        context,
+        // Force set build false, cause we just built the image
+        build: false,
+        image: image || imgRef.rootId,
+      }
+    }
+  )
+
+  return imgRef
 }
 
 module.exports = {
@@ -117,18 +143,6 @@ module.exports = {
     description: `Runs docker build command for a container`,
     example: 'keg docker build <options>',
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
-    options: mergeTaskOptions(`docker`, `build`, `build`, {
-      context: {
-        alias: [ 'name' ],
-        allowed: DOCKER.IMAGES,
-        description: 'Context of the docker container to build',
-        example: 'keg docker build --context core',
-        enforced: true,
-      },
-      tap: {
-        description: 'Name of the tap to build. Only needed if "context" argument is "tap"',
-        example: `keg docker build --context tap --tap events-force`,
-      },
-    })
+    options: mergeTaskOptions(`docker`, `build`, `build`)
   }
 }

@@ -4,16 +4,13 @@ env:
 
   KEG_CONTEXT_PATH: "{{ cli.paths.components }}"
   RETHEME_PATH: "{{ cli.taps.retheme.path }}"
-
+  JSUTILS_PATH: "{{ cli.paths.jsutils }}"
 
   # --- COMPONENTS ENV CONTEXT --- #
 
   KEG_DOCKER_FILE: "{{ cli.paths.containers }}/components/Dockerfile"
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/components/values.yml"
-
-  # Defines the location of the mutagen config
-  # Without it, mutagen syncs will use the default settings
-  KEG_MUTAGEN_PATH: "{{ cli.paths.containers }}/components/mutagen.yml"
+  KEG_MUTAGEN_FILE: "{{ cli.paths.containers }}/components/mutagen.yml"
   
   # The default docker-compose file path
   KEG_COMPOSE_DEFAULT: "{{ cli.paths.containers }}/components/docker-compose.yml"
@@ -36,6 +33,12 @@ env:
   DOC_JSUTILS_PATH: /keg/keg-components/node_modules/@keg-hub/jsutils
 
   KEG_EXEC_CMD: sb
+
+  # Image to use when running keg-components
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-components:master
+
+  # Image to use when building keg-components
+  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:master
 
   # --- KEG-PROXY ENVs --- #
 
@@ -66,6 +69,6 @@ env:
 
   # Image Build information
   IMAGE: keg-components
-  VERSION: "0.0.1"
+  VERSION: 1.0.0
   CONTAINER_NAME: keg-components
   CHOKIDAR_USEPOLLING: 1

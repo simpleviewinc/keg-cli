@@ -12,24 +12,6 @@
   * Should run `scripts/setup/cliSetup.js`
     * Sets up cli on the local machine
 
-* Add tasks to update version for repos
-  * Should update the package.json version
-  * All - Must follow this order
-    * update re-theme
-    * update tap-resolver
-    * update keg-components
-    * update keg-core
-    * update taps ( optional )
-  * Allow passing in major minor patch
-  * Allow auto-committing to develop, then develop to qa, then develop to master
-    * This is done for each repo
-
-### Image pull
-  * If a tap is passed in
-    * Get the tap location locally
-    * From the location get the git remote info
-      * This will allow getting the branch / repo name data
-      * Use this find the correct package after the have been pulled from github
 
 ### TODO: 
   * Keg repos should be installed through an install command
@@ -45,5 +27,10 @@ BUG:
   * Users can customize their config values, which means tests will fail
 
 
-Docker-Compose
+### Issues
+* `from` option is not overwriting KEG_IMAGE_FROM 
+* docker compose restart task, not restarting
+* Temp files not being removed
   * Injected docker-compose.yml config files are not being properly removed when the service is killed
+* Pushed latest master image, did not pull down the most recent version
+  * Have to delete the local version, and re-download the latest image from provider

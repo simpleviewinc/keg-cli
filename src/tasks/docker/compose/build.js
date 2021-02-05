@@ -1,9 +1,10 @@
-const { get, reduceObj } = require('@keg-hub/jsutils')
 const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
-const { buildComposeCmd, buildServiceName } = require('KegUtils/docker')
-const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 const { DOCKER } = require('KegConst/docker')
+const { get, reduceObj } = require('@keg-hub/jsutils')
+const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
+const { getComposeServiceName } = require('KegUtils/getters/getComposeServiceName')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
  * Runs the docker-compose build command
@@ -34,7 +35,7 @@ const buildDockerCompose = async args => {
   })
 
   // Get the name of the docker-compose service
-  const serviceName = buildServiceName(cmdContext, contextEnvs)
+  const serviceName = getComposeServiceName(cmdContext, contextEnvs)
 
   // Run the docker compose build command
   await spawnCmd(

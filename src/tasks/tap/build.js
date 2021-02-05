@@ -1,7 +1,7 @@
 const { DOCKER } = require('KegConst/docker')
-const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
+const { updateLocationContext } = require('KegUtils/helpers/updateLocationContext')
 
 /**
  * Builds a docker container for a tap so it can be run
@@ -14,23 +14,10 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {void}
  */
 const buildTap = async (args) => {
-  const { params:{ tap } } = args
-  const locationContext = tap ? DOCKER.LOCATION_CONTEXT.REPO : DOCKER.LOCATION_CONTEXT.CONTAINERS
-
-    // Check the base image and build it if it doesn't exist
-  await buildBaseImg(args)
-
-  return runInternalTask('tasks.docker.tasks.build', {
-    ...args,
-    __internal: {
-      ...args.__internal,
-      locationContext,
-    },
-    params: {
-      context: 'tap',
-      ...args.params,
-    },
-  })
+  return await runInternalTask(
+    'tasks.docker.tasks.build',
+    updateLocationContext(args, { command: 'build' }),
+  )
 }
 
 module.exports = {
@@ -39,7 +26,6 @@ module.exports = {
     alias: [ 'bld', 'make' ],
     inject: true,
     action: buildTap,
-    locationContext: DOCKER.LOCATION_CONTEXT.REPO,
     description: `Builds a taps docker container`,
     example: 'keg tap build <options>',
     options: mergeTaskOptions(`tap`, `build`, `build`, {

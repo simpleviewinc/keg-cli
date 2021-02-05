@@ -1,5 +1,6 @@
 const { DOCKER } = require('KegConst/docker')
 const { restartService } = require('KegUtils/services')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
  * Start a tap with docker-compose
@@ -12,7 +13,14 @@ const { restartService } = require('KegUtils/services')
  * @returns {void}
  */
 const restartTap = async args => {
-  return restartService(args,  { context: 'tap' })
+  const { params: { tap } } = args
+
+  return restartService(args, {
+    tap,
+    context: 'tap',
+    container: 'tap',
+  })
+
 }
 
 module.exports = {
@@ -22,20 +30,14 @@ module.exports = {
     inject: true,
     action: restartTap,
     locationContext: DOCKER.LOCATION_CONTEXT.CONTAINERS,
-    description: `Runs a tap in a docker container`,
+    description: `Restarts a taps docker containers`,
     example: 'keg tap restart <options>',
-    options: {
+    options: mergeTaskOptions('tap', 'restart', 'startService', {
       tap: { 
         description: 'Name of the tap to run. Must be a tap linked in the global config',
-        example: 'keg tap restart --tap my-tap',
+        example: 'keg tap restart --tap <tap-name>',
         required: true,
       },
-      follow: {
-        alias: [ 'f', 'tail', 't' ],
-        description: 'Automatically follow the log output of the started service',
-        example: `keg tap restart --follow false`,
-        default: true
-      },
-    },
+    }),
   }
 }

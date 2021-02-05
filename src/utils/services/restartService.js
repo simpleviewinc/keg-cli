@@ -1,9 +1,8 @@
 const { Logger } = require('KegLog')
-const { get } = require('@keg-hub/jsutils')
 const { proxyService } = require('./proxyService')
-const { mutagenService } = require('./mutagenService')
+const { get, deepMerge } = require('@keg-hub/jsutils')
 const { getServiceArgs } = require('./getServiceArgs')
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { composeService } = require('./composeService')
 
 /**
  * Runs the build service, then the compose service
@@ -18,35 +17,17 @@ const { runInternalTask } = require('KegUtils/task/runInternalTask')
  * @returns {*} - Response from the compose service
  */
 const restartService = async (args, exArgs) => {
-  const { context, tap } = exArgs
-
-  // Call the proxy service to make sure that is running
-  await proxyService(args)
-
   // Build the service arguments
   const serviceArgs = getServiceArgs(args, exArgs)
 
-  // Call the docker-compose restart task
-  const containerContext = await runInternalTask('docker.tasks.compose.tasks.restart', serviceArgs)
+  // Call the proxy service to make sure that is running
+  await proxyService(serviceArgs)
 
-  // Re-create the mutagen-sync
-  await mutagenService(serviceArgs, {
-    containerContext,
-    tap: get(serviceArgs, 'params.tap', tap),
-    context: get(serviceArgs, 'params.context', context),
-  })
-
-  Logger.highlight(
-    `Restarted`,
-    `"${ serviceArgs.params.tap || serviceArgs.params.context }"`,
-    `compose environment!`
-  )
-  
-  Logger.empty()
-
-  // Check if we should start logging the output of the service
-  get(serviceArgs, 'params.follow') &&
-    await runInternalTask('docker.tasks.log', serviceArgs)
+  // Call the compose service to restart the application
+  // Set 'pull' param to false, because we are restarting containers
+  return await composeService(deepMerge(serviceArgs, {
+    params: { pull: false, recreate: true },
+  }))
 
 }
 

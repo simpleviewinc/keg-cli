@@ -24,7 +24,7 @@ describe('buildContextEnvs', () => {
       })
       
       expect(contextEnvs.KEG_CONTEXT_PATH
-        .indexOf('/keg-hub/repos/keg-cli'))
+        .indexOf('/keg-hub'))
         .not.toBe(-1)
 
       expect(contextEnvs.KEG_DOCKER_FILE
@@ -40,7 +40,6 @@ describe('buildContextEnvs', () => {
         .not.toBe(-1)
 
       expect(contextEnvs.IMAGE).toBe('keg-base')
-      expect(contextEnvs.VERSION).toBe('0.0.1')
       expect(contextEnvs.CONTAINER_NAME).toBe('keg-base')
 
     })

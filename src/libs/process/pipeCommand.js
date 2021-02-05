@@ -1,26 +1,15 @@
 const { Logger } = require('KegLog')
 const { Loading } = require('./loading')
 const { spawnCmd } = require('@keg-hub/spawn-cmd')
-const { get, checkCall, deepMerge, isFunc, isArr } = require('@keg-hub/jsutils')
+const {
+  get,
+  checkCall,
+  deepMerge,
+  isFunc,
+  isArr,
+  noOpObj
+} = require('@keg-hub/jsutils')
 
-
-/**
- * Helper to log errors to the terminal
- * @param {Object} logs - Log Config for the currently running process
- * @param {string} data - Text to be printed if not filtered
- *
- * @returns {void}
- */
-const noBypassLog = (logs, data, type) => {
-  logs.clearOnBypassLog && console.clear()
-  Logger.empty()
-  Logger.empty()
-
-  logs.noBypassLog && Logger.error(logs.noBypassLog)
-  process[type] ? process[type].write(data) : Logger.log(data)
-
-  Logger.empty()
-}
 
 /**
  * Checks the passed in data to see if it should be filtered
@@ -29,27 +18,14 @@ const noBypassLog = (logs, data, type) => {
  *
  * @returns {boolean} - True if the data should filtered / False if data should be printed
  */
-const filterLog = (logs, data) => {
+const filterAllowedLogs = (filters, data) => {
   // Check if the data is in the filters array
-  return logs.filters && logs.filters
-    .reduce((inFilter, filter) => {
-      return inFilter || data.trim().indexOf(filter) === 0
-    }, false)
-}
-
-/**
- * Checks the passed in data to see if it should be logged even when logging is off
- * @param {Object} logs - Log Config for the currently running process
- * @param {string} data - Text to be printed if not filtered
- *
- * @returns {boolean} - False if the filter should be bypassed
- */
-const filterBypass = (logs, data) => {
-  // Check if the data should bypass the filter and force log
-  return !(logs.filterBypass && logs.filterBypass
-    .reduce((inBypass, bypass) => {
-      return inBypass || data.trim().indexOf(bypass) === 0
-    }, false))
+  const isFiltered = filters.reduce((inFilter, filter) => {
+    return inFilter || data.trim().indexOf(filter) === 0
+  }, false)
+  
+  return isFiltered
+  
 }
 
 /**
@@ -62,23 +38,27 @@ const filterBypass = (logs, data) => {
  *
  * @returns {void}
  */
-const handleLog = (eventCb, type, loading, logs, data, procId) => {
+const handleLog = (eventCb, type, loading=noOpObj, logs=noOpObj, data, procId) => {
   try {
-    const shouldFilter = loading && loading.active
-      ? filterBypass(logs, data)
-      : filterLog(logs, data)
 
-    loading && loading.active && loading.progress(shouldFilter && 1, data)
+    const activeLoading = loading && loading.active
+    // Check for filtered logs, which are allowed to log
+    // Even though loading is active
+    const allowLog = logs.allow && filterAllowedLogs(logs.allow, data)
+    const shouldFilter = activeLoading || !allowLog
 
-    return !shouldFilter
-      ? isFunc(eventCb)
-        ? eventCb(data, procId)
-        : checkCall(() => {
-          loading && loading.active
-            ? noBypassLog(logs, data)
-            : process[type] && process[type].write(data)
-        })
-      : null
+    // If loading is active, update the loading progress
+    activeLoading && loading.progress(shouldFilter && 1, data)
+
+    // Call the callback for the event to allow data capture
+    isFunc(eventCb) && eventCb(data, procId)
+
+    // Check if the data should be logged
+    ;(!loading || !loading.active) &&
+      !shouldFilter &&
+      process[type] &&
+      process[type].write(data)
+
   }
   catch(err){
     // This should be a cli dev only error
@@ -106,32 +86,35 @@ const handleExit = (config, loading) => {
 
 /**
  * Builds event listeners that filter out logs based on passed in filters
- * @param {Object} config - Log Config for the currently running process
+ * @param {Object} config - Config for the currently running process
+ * @param {Object} logs - Log Config for the currently running process
+ * @param {Object} loading - Loading Config for the currently running process
  *
  * @returns {Object} - Event listeners with filters
  */
-const buildEvents = (config={}, logs, loadingConf) => {
-  const filter = get(logs, 'filter')
+const buildEvents = (config=noOpObj, logs=noOpObj, loading) => {
+  const allow = get(logs, 'allow')
   const onStdOut = get(config, 'onStdOut')
   const onStdErr = get(config, 'onStdErr')
 
-  // If filter set to true, or there's no event callbacks, just return empty
-  if(filter !== true && (!onStdOut && !onStdErr)) return {}
+  // If allow set to true, or there's no event callbacks, just return empty
+  // Because all logs are allowed, so no need to overwrite the process output callbacks
+  if(allow !== true && (!onStdOut && !onStdErr)) return noOpObj
 
-  loading = loadingConf && new Loading({}, loadingConf)
+  const loadingConf = loading && new Loading({}, loading)
 
   // Create event handler callbacks
   return {
-    onStdOut: (...args) => handleLog(onStdOut, 'stdout', loading, logs, ...args),
-    onStdErr: (...args) => handleLog(onStdErr, 'stderr', loading, logs, ...args),
-    onExit: handleExit(config, loading)
+    onStdOut: (...args) => handleLog(onStdOut, 'stdout', loadingConf, logs, ...args),
+    onStdErr: (...args) => handleLog(onStdErr, 'stderr', loadingConf, logs, ...args),
+    onExit: handleExit(config, loadingConf)
   }
 }
 
 /**
  * Executes an child process, with stdio set to pipe
  * @param {string} cmd - Command to be run
- * @param {Array} options - extra options to pass to the child process
+ * @param {Object} options - extra options to pass to the child process
  * @param {string} location - Where the command should be run
  *
  * @returns {*} - Response from async exec cmd
@@ -139,7 +122,7 @@ const buildEvents = (config={}, logs, loadingConf) => {
 const pipeCmd = (cmd, options={}, location=process.cwd()) => {
   // Pull the logConfig from the passed in options
   // This way we can pass all other options to the spawnCmd call
-  const { logs={}, loading, ...cmdOpts } = options
+  const { logs=noOpObj, loading, ...cmdOpts } = options
 
   const spawnOpts = {
     ...cmdOpts,

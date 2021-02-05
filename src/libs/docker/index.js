@@ -1,8 +1,15 @@
-const { asBuildArg, asContainerEnv, toContainerEnvs, toBuildArgs } = require('./helpers')
+const {
+  asBuildArg,
+  asContainerEnv,
+  isDockerId,
+  toContainerEnvs,
+  toBuildArgs,
+} = require('./helpers')
 
 module.exports = {
   asBuildArg,
   asContainerEnv,
+  isDockerId,
   toBuildArgs,
   toContainerEnvs,
   ...require('./commands'),

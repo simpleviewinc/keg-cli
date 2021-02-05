@@ -1,6 +1,5 @@
 const docker = require('KegDocCli')
 const { isStr } = require('@keg-hub/jsutils')
-const { isDockerId } = require('../docker/isDockerId')
 const { getPrefixContext } = require('./getPrefixContext')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
@@ -100,15 +99,21 @@ const getContext = async (params, askFor) => {
     ? image
     : context || container || image || (tap && 'tap')
 
-  const prefixData = isDockerId(contextRef)
+  const prefixData = docker.isDockerId(contextRef)
     ? { id: contextRef }
     : isStr(contextRef)
       ? getPrefixContext(contextRef)
       : {}
 
-  let foundContext = container && await containerContext(container, prefixData, __injected, askFor)
-  foundContext = foundContext || image && await imageContext(image, tag, prefixData, __injected, askFor)
-  foundContext = foundContext || ((prefixData.withPrefix || prefixData.id) && await contextFromPrefix(prefixData))
+  let foundContext = container &&
+    await containerContext(container, prefixData, __injected, askFor)
+
+  foundContext = foundContext ||
+    image && await imageContext(image, tag, prefixData, __injected, askFor)
+
+  foundContext = foundContext ||
+    ((prefixData.withPrefix || prefixData.id) && await contextFromPrefix(prefixData))
+
   foundContext = foundContext || prefixData
 
   return context === 'tap'

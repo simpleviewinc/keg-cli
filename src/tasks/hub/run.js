@@ -4,9 +4,6 @@ const { spawnCmd } = require('KegProc')
 const { get } = require('@keg-hub/jsutils')
 const { runYarnScript } = require('KegUtils/helpers/runYarnScript')
 
-// Update the Max listeners, to ensure all processes can exit properly
-process.setMaxListeners(Infinity)
-
 /**
  * Allowed yarn commands that can run for every repo
  * All other commands must be defined in the scripts object of the package.json

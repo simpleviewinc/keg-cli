@@ -9,6 +9,7 @@ module.exports = {
       ...require('./build'),
       ...require('./down'),
       ...require('./restart'),
+      ...require('./pull'),
       ...require('./stop'),
       ...require('./up'),
     }

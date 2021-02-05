@@ -1,4 +1,3 @@
-const docker = require('KegDocCli')
 const { DOCKER } = require('KegConst/docker')
 const { exists } = require('KegUtils/helpers/exists')
 const { reduceObj, get, isStr } = require('@keg-hub/jsutils')
@@ -69,36 +68,6 @@ const getDockerCmdArgs = ({ args, cmd, context, dockerCmd='' }) => {
 
 }
 
-/**
- * Adds the name of the container to the dockerCmd
- * @param {string} [dockerCmd=''] - Docker command to add the name to
- * @param {string} name - Name of the container to add to the dockerCmd
- *
- * @returns {string} - dockerCmd with the name arg added
- */
-const addContainerName = (dockerCmd='', name) => {
-  return `${dockerCmd} --name ${name}`
-}
-
-/**
- * Adds Envs to the passed in dockerCmd ( -e key=value )
- * @param {string} [dockerCmd=''] - Command to add the envs to
- * @param {Object} [options={}] - Items to add as Envs
- *
- * @returns {string} - dockerCmd with envs added
- */
-const addContainerEnv = (dockerCmd='', options={}) => {
-  return reduceObj(options, (key, value, cmd) => {
-    return docker.asContainerEnv(
-      key.toUpperCase(),
-      value,
-      cmd
-    )
-  }, dockerCmd)
-}
-
 module.exports = {
-  addContainerEnv,
-  addContainerName,
   getDockerCmdArgs,
 }

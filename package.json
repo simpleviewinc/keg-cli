@@ -1,6 +1,6 @@
 {
   "name": "keg-cli",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Node.js CLI for working with Keg Repos and Taps",
   "main": "./keg",
   "repository": "https://github.com/lancetipton/Keg-CLI",
@@ -29,7 +29,9 @@
     "format": "exit 0",
     "keg": "./keg",
     "init:bash": "/bin/bash ./scripts/setup/mac-init.sh",
-    "test": "NODE_ENV=test jest --no-cache  --verbose",
+    "test": "yarn test:jest",
+    "test:jest": "NODE_ENV=test jest --no-cache  --verbose",
+    "test:e2e": "NODE_ENV=test node ./scripts/cli/tests/index.js",
     "test:reports": "yarn test --coverage && yarn view:reports",
     "update:cli": "bash ./scripts/cli/updates/1.2.0.sh",
     "view:reports": "open reports/coverage/lcov-report/index.html"
@@ -55,6 +57,7 @@
     "write-yaml-file": "4.0.0"
   },
   "devDependencies": {
+    "expect": "^26.6.2",
     "jest": "24.8.0",
     "jest-cli": "24.8.0",
     "jest-html-reporter": "3.1.3",

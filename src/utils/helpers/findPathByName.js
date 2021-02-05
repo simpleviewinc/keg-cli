@@ -1,5 +1,5 @@
 const { getFolderContent } = require('KegFileSys/fileSys')
-const { isArr } = require('@keg-hub/jsutils')
+const { isArr, exists } = require('@keg-hub/jsutils')
 
 /**
  * Searches a path recursively for a file or folder by name
@@ -17,8 +17,8 @@ const findPathByName = async (contextPath, name, opts={}) => {
   return getFolderContent(contextPath, {
     ...opts,
     include: [ name ],
-    full: opts.full || true,
-    recursive: opts.recursive || true,
+    full: exists(opts.full) ? opts.full : true,
+    recursive: exists(opts.recursive) ? opts.recursive : true,
     exclude: isArr(opts.exclude) ? opts.exclude.concat(defExclude) : defExclude,
   })
 }

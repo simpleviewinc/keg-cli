@@ -3,10 +3,25 @@ const { spawnCmd } = require('KegProc')
 const { DOCKER } = require('KegConst/docker')
 const { pickKeys } = require('@keg-hub/jsutils')
 const { logVirtualUrl } = require('KegUtils/log')
+const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { throwComposeFailed } = require('KegUtils/error/throwComposeFailed')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
-const { buildContainerContext, buildDockerImage } = require('KegUtils/builders')
+const { buildContainerContext } = require('KegUtils/builders')
+
+const buildDockerImg = async (args, cmdContext, tap) => {
+  return await runInternalTask(`tasks.docker.tasks.build`, {
+    ...args,
+    params: { ...args.params, context: cmdContext },
+  })
+}
+
+const pullDockerImg = async (args, cmdContext, tap) => {
+  return await runInternalTask('docker.tasks.compose.tasks.pull', { 
+    ...args,
+    params: { ...args.params, context: cmdContext, tap },
+  })
+}
 
 /**
  * Runs docker-compose up command for (components | core | tap)
@@ -18,16 +33,18 @@ const { buildContainerContext, buildDockerImage } = require('KegUtils/builders')
  */
 const composeUp = async args => {
   const { envs, globalConfig, __internal, params, task } = args
-  const { detached, build, context, log, recreate } = params
+  const { detached, build, pull, context, log, recreate } = params
 
   // Get the context data for the command to be run
   const containerContext = await buildContainerContext(args)
   const { location, cmdContext, contextEnvs, tap, image } = containerContext
 
-  // Check if build param is passed, and use the docker build to build container
-  // This allow use of BuildKit which is faster, and has better caching
-  // Docker compose currently does NOT support BuildKit, so we do it manually
-  build && await buildDockerImage(args, cmdContext, tap)
+  // Check if we should build the image
+  build && await buildDockerImg(args, cmdContext)
+
+  // Check if we should pull the image
+  pull && await pullDockerImg(args, cmdContext)
+
   // Build the docker compose command
   const { dockerCmd, composeData } = await buildComposeCmd({
     cmd: 'up',
@@ -77,7 +94,7 @@ module.exports = {
           description: 'Context of docker compose up command (components || core || tap)',
           example: 'keg docker compose up --context core',
           required: true
-        },
+        }
       }),
       [
         'build',
@@ -93,6 +110,7 @@ module.exports = {
         'log',
         'local',
         'recreate',
+        'pull',
       ]
     )
   }

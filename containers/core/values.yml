@@ -1,5 +1,4 @@
 
-start: /bin/bash /keg/keg-cli/containers/core/run.sh
 env:
   # --- LOCAL ENV CONTEXT --- #
   COMPONENTS_PATH: "{{ cli.paths.components }}"
@@ -12,7 +11,7 @@ env:
   KEG_CONTEXT_PATH: "{{ cli.paths.core }}"
   KEG_DOCKER_FILE: "{{ cli.paths.containers }}/core/Dockerfile"
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/core/values.yml"
-  KEG_MUTAGEN_PATH: "{{ cli.paths.containers }}/core/mutagen.yml"
+  KEG_MUTAGEN_FILE: "{{ cli.paths.containers }}/core/mutagen.yml"
 
   # The default docker-compose file path
   KEG_COMPOSE_DEFAULT: "{{ cli.paths.containers }}/core/docker-compose.yml"
@@ -24,20 +23,25 @@ env:
 
   KEG_EXEC_CMD: tap:start
 
+  # Image to use when build keg-core
+  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:master
+
+  # Image to use when running keg-core
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-core:master
+
   # --- DOCKER ENV CONTEXT --- #
 
-  DOC_APP_PATH: "/keg/keg-core"
+  DOC_APP_PATH: /keg/keg-core
 
   # Port the application will use when running within the container
   # Required to allow the keg-proxy to route traffic to it
 
   # Defines the location in a docker container for a dependency
   # This allows mutagen to know where to sync the local version of the dependency
-  DOC_CORE_PATH: "/keg/keg-core"
-  DOC_COMPONENTS_PATH: "/keg/keg-core/node_modules/@keg-hub/keg-components"
-  DOC_JSUTILS_PATH: "/keg/keg-core/node_modules/@keg-hub/jsutils"
-  DOC_RETHEME_PATH: "/keg/keg-core/node_modules/@keg-hub/re-theme"
-  DOC_RESOLVER_PATH: "/keg/keg-core/node_modules/@keg-hub/tap-resolver"
+  DOC_COMPONENTS_PATH: /keg/keg-core/node_modules/@keg-hub/keg-components
+  DOC_JSUTILS_PATH: /keg/keg-core/node_modules/@keg-hub/jsutils
+  DOC_RETHEME_PATH: /keg/keg-core/node_modules/@keg-hub/re-theme
+  DOC_RESOLVER_PATH: /keg/keg-core/node_modules/@keg-hub/tap-resolver
 
   # --- KEG-PROXY ENVs --- #
 
@@ -64,7 +68,7 @@ env:
   # --- GENERAL CONTEXT ENVs --- #
 
   # Image Build information
-  IMAGE: "keg-core"
-  VERSION: "0.0.1"
-  CONTAINER_NAME: "keg-core"
+  IMAGE: keg-core
+  VERSION: 1.0.0
+  CONTAINER_NAME: keg-core
   CHOKIDAR_USEPOLLING: 1

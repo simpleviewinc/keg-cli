@@ -23,7 +23,7 @@ const startComponents = async (args) => {
 module.exports = {
   start: {
     name: 'start',
-    alias: [ 'st', 'run' ],
+    alias: [ 'st' ],
     action: startComponents,
     description: `Runs keg-components in a docker container`,
     example: 'keg components start <options>',

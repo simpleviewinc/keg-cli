@@ -2,14 +2,13 @@
   "name": "keg-cli",
   "displayName": "Keg CLI",
   "docker": {
-    "providerUrl": "docker.pkg.github.com",
-    "namespace": "simpleviewinc/keg-packages",
+    "providerUrl": "ghcr.io",
+    "namespace": "simpleviewinc",
     "user": "",
     "token": ""
   },
   "cli": {
     "paths": {
-      "customTasks": ""
     },
     "git": {
       "orgName": "simpleviewinc",
@@ -29,7 +28,8 @@
         "buildKit": true,
         "force": true,
         "defaultLocalBuild": true,
-        "imagePullPolicy": "Always"
+        "imagePullPolicy": "Always",
+        "defaultTag": "master"
       },
       "checkUpdates": false,
       "editorCmd": "code",

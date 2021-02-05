@@ -17,6 +17,29 @@ const {
 } = require('@keg-hub/jsutils')
 
 /**
+ * Docker container exit codes and relative messages
+ * See here for more https://stackoverflow.com/questions/31297616/what-is-the-authoritative-list-of-docker-run-exit-codes
+ * @object
+ */
+const safeExitCodes = {
+  '0': `Finished running Docker command!`,
+  '130': `Container session terminated by user!`,
+  '137': `Container session received a SIGKILL`,
+  '143': `Container session received a SIGTERM`,
+}
+
+/**
+ * Checks if a docker container exited safely
+ * @function
+ * @param {number|string} exitCode - Exit code for the docker container
+ *
+ * @returns {boolean|string} - False is not safe exit, string message is was a safe exit
+ */
+const isSafeExitCode = exitCode => {
+  return safeExitCodes[exitCode] || false
+}
+
+/**
  * Throws an error with the passed in message
  * @function
  * @param {string} message - Message for the thrown error
@@ -36,8 +59,26 @@ const throwFailedCmd = (message=`Docker API command Failed!`) => {
  */
 const noItemFoundError = (type, name) => {
   Logger.empty()
-  Logger.error(`  Docker API command failed:`)
-  Logger.info(`  Could not find docker ${type} from ${ name }!`)
+  Logger.error(`Docker API command failed:`)
+  Logger.info(`Could not find docker ${type} from ${ name }!`)
+  Logger.empty()
+
+  throwFailedCmd()
+}
+
+/**
+ * Throws an error when a docker type can not be found
+ * @function
+ * @param {string} message - Message for the thrown error
+ *
+ * @returns {void}
+ */
+const invalidInspectError = (inspectData, error) => {
+  Logger.empty()
+  Logger.error(`Docker API command Inspect failed:`)
+  Logger.info(`Inspect response must be of type object, Received:`, inspectData)
+  Logger.empty()
+  error && Logger.error(error.stack)
   Logger.empty()
 
   throwFailedCmd()
@@ -346,29 +387,43 @@ const getCmdParams = (args, ext={}) => {
  * Builds the names for a container and image based on the passed in params
  * @function
  * @param {Object} args - Use to build the names
- * @param {Object} args.image - Image Object returned from get image
+ * @param {string} args.image - Image Object returned from get image
  * @param {string} args.name - Custom name for the container
  * @param {string} args.tag - Tag of the image
  *
  * @returns {Object} - Contains the container and image names
  */
 const buildNames = ({ image, name, tag }) => {
-  const container = isStr(name)
-    ? name
-    : isStr(image)
-      ? `img-${image}`
-      : `img-${image.name}`
+  const container = isStr(name) ? name : `img-${image}`
 
-  let imgName = isStr(image) ? image : image.name
+  // Parse the tag form the image name if it exists
+  const [ imgName, altTag ] = image.includes(':') ? image.split(':') : [ image ]
 
-  imgName = isStr(tag)
-    ? tag.indexOf(image) !== 0
-      ? `${ image }:${ tag }`
-      : tag
-    : imgName
+  // Use the custom tag if it exists
+  const imgTag = tag || altTag
+  const nameWTag = imgTag ? `${imgName}:${imgTag}` : imgName
 
-  return { image: imgName, container }
+  return { container, image:nameWTag }
 }
+
+/**
+ * Checks if the passed in value is a valid short docker id
+ * @function
+ * @param {string} value - String to check if is a valid short docker id
+ *
+ * @returns {boolean} - If value is a valid short docker it
+ */
+const isDockerId = toTest => {
+  try {
+    let parsed = parseInt(toTest, 16).toString(16)
+    parsed = toTest[0] === '0' ? `0${parsed}` : parsed
+
+    return Boolean(parsed === toTest) && toTest.length === 12
+  }
+  catch(err){
+    return false
+  }
+} 
 
 module.exports = {
   asBuildArg,
@@ -379,6 +434,9 @@ module.exports = {
   compareItems,
   cmdSuccess,
   getCmdParams,
+  isDockerId,
+  invalidInspectError,
+  isSafeExitCode,
   noItemError,
   noItemFoundError,
   portAsJSON,

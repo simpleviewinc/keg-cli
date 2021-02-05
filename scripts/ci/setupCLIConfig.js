@@ -37,6 +37,7 @@ const {
   KEG_CONFIG_FILE=`cli.config.json`,
   KEG_CONFIG_PATH=path.join(KEG_CLI_ROOT, '.kegConfig'),
   KEG_CUSTOM_PATH,
+  KEG_ROOT_DIR,
   NODE_ENV,
   USER,
 } = process.env
@@ -61,34 +62,36 @@ const loadCustomConfig = () => {
 }
 
 const buildCIConfig = (customConfig) => {
-  return JSON.stringify(deepMerge(ciConfig, {
+  return deepMerge(ciConfig, {
     cli: {
       paths: {
         cli: KEG_CLI_PATH,
         containers: path.join(KEG_CLI_PATH, 'containers'),
         kegConfig: KEG_CONFIG_PATH,
+        keg: KEG_ROOT_DIR,
       },
       git: {
-        orgName: `lancetipton`,
-        orgUrl: `https://github.com/lancetipton`,
+        orgName: `simpleviewinc`,
+        orgUrl: `https://github.com/simpleviewinc`,
         publicToken: GITHUB_TOKEN,
+        key: GITHUB_TOKEN,
+        user: "keg-admin",
         repos: {
           cli: `keg-cli`,
           hub: `keg-hub`,
         }
       },
       settings: {
-        defaultEnv: NODE_ENV || "production",
+        defaultEnv: NODE_ENV || ciConfig.cli.settings.defaultEnv,
       }
     },
     docker: {
-      providerUrl: `docker.pkg.github.com`,
-      namespace: `simpleviewinc/keg-packages`,
+      providerUrl: `ghcr.io`,
+      namespace: `simpleviewinc`,
       user: USER,
       token: GITHUB_TOKEN
     },
-  }, customConfig), null, 2)
-  
+  }, customConfig)
 }
 
 
@@ -107,13 +110,18 @@ const buildCIConfig = (customConfig) => {
 
   // Try to load a custom config file
   const customConfig = {} //loadCustomConfig()
+  const globalConfig = buildCIConfig(customConfig)
+  
+  process.stdout.write(`::debug::Docker User is ${globalConfig.docker.user}\n`)
+  process.stdout.write(`::debug::Default Env is ${globalConfig.cli.settings.defaultEnv}\n`)
+  
   const ciConfigTo = path.join(KEG_CONFIG_PATH, KEG_CONFIG_FILE)
 
   // Build then wright the cli config file to the config path
   process.stdout.write(`::debug::Creating ci cli.config.json file at path ${ciConfigTo}\n`)
   fs.writeFileSync(
     ciConfigTo,
-    buildCIConfig(customConfig),
+    JSON.stringify(globalConfig, null, 2),
     'utf8'
   )
 

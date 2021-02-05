@@ -70,7 +70,7 @@ const buildLabel = (cmdWithLabels, label, args, key, value) => {
     .trim()
 
   return builtLabel
-    ? `${cmdWithLabels} --label ${builtLabel}`.trim()
+    ? `${cmdWithLabels} --label "${builtLabel}"`.trim()
     : cmdWithLabels
 
 }

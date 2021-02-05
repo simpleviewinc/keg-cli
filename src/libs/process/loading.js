@@ -14,7 +14,8 @@ const logUpdate = require('log-update')
  * @returns {Object} - ProgressBar
  */
 const createBar = (title, { total=100, start=0, preset, ...config }) => {
-  title && Logger.log(title)
+  console.log('')
+  title && Logger.log(` ${title}`)
 
   // Create the new progressBar
   const bar = new cliProgress.SingleBar({
@@ -38,8 +39,9 @@ const startSpinner = loading => {
   if(!loading.active || loading.loader.stop) return
 
   const { frames, interval } = loading.loader
-  let i = 0
+  console.log('')
 
+  let i = 0
   const timeout = setInterval(() => {
     logUpdate(` ${ frames[i = ++i % frames.length] } ${ loading.title }`)
   }, interval)

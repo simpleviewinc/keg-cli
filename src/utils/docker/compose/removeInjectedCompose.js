@@ -1,7 +1,30 @@
 const path = require('path')
 const { Logger } = require('KegLog')
-const { removeFile, pathExists } = require('KegFileSys/fileSys')
 const { GLOBAL_INJECT_FOLDER } = require('KegConst/constants')
+const { getRepoPath } = require('KegUtils/getters/getRepoPath')
+const { removeFile, pathExists } = require('KegFileSys/fileSys')
+const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
+const { getProxyDomainFromBranch } = require('KegUtils/proxy/getProxyDomainFromBranch')
+
+/**
+ * Removes an injected compose file from the global injected folder
+ * <br/>Uses the passed in context and current git branch of the context's repo
+ * @function
+ * @param {string} injected - Context or name of the docker-compose service
+ * @param {Object} globalConfig - Global config object for the keg-cli
+ *
+ * @returns {Void}
+ */
+const removeInjected = async (injected, globalConfig) => {
+  // No injected exist for the proxy, so just return
+  if(injected === 'proxy') return
+
+  globalConfig = globalConfig || getGlobalConfig()
+  const repoPath = getRepoPath(injected, globalConfig)
+  const proxyDomain = repoPath && await getProxyDomainFromBranch(injected, repoPath)
+
+  proxyDomain && await removeInjectedCompose(proxyDomain, false)
+}
 
 /**
  * Removes an injected compose file from the global injected folder
@@ -17,6 +40,8 @@ const removeInjectedCompose = async (name, log=true) => {
     if(err && log) Logger.error(err.stack || err)
 
     exists && await removeFile(injectedCompose)
+
+    return true
   }
   catch(err){
     log && Logger.error(err.stack)
@@ -25,5 +50,6 @@ const removeInjectedCompose = async (name, log=true) => {
 }
 
 module.exports = {
+  removeInjected,
   removeInjectedCompose
 }

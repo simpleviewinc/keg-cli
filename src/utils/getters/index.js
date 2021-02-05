@@ -1,7 +1,8 @@
 
 module.exports = {
   ...require('./getContext'),
-  ...require('./getFromImage'),
+  ...require('./getImgFrom'),
+  ...require('./getImgNameContext'),
   ...require('./getLocationContext'),
   ...require('./getLocalPath'),
   ...require('./getMutagenConfig'),

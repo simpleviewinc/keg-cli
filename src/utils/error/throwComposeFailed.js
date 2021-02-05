@@ -1,25 +1,24 @@
-const { get } = require('@keg-hub/jsutils')
+const { get, isStr } = require('@keg-hub/jsutils')
 const { Logger } = require('KegLog')
 const { throwTaskFailed } = require('./throwTaskFailed')
 
 /**
- * Error helper to log and throw when trying to create a mutagen sync that already exists
+ * Error helper to log and throw when docker compose command fails
  * @function
- * @param {string} args.local - Local path of the existing sync
- * @param {string} args.name - Name of the existing sync
- * @param {string} args.remote - Remote path of the existing sync
- * @param {Object} sync - Existing sync object
- * @param {Object} throwError - Should an error be thrown
+ * @param {string} command - Docker compose command that failed
+ * @param {string} location - Location where the command was run
+ * @param {string|Object} error - Error message that was thrown by the command
  *
  * @returns {void}
  */
-const throwComposeFailed = (command, location) => {
+const throwComposeFailed = (command, location, error) => {
 
   Logger.empty()
 
   Logger.error(`The docker compose task failed, See above output for details.`)
   Logger.pair(`Command:`, command)
   Logger.pair(`Location:`, location)
+  error && Logger.error(isStr(error) && error || Logger.error(error.message))
 
   Logger.empty()
 

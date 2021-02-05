@@ -57,5 +57,34 @@ describe('Docker Helpers', () => {
 
   })
 
+  describe('isDockerId', () => {
+
+    afterAll(() => jest.resetAllMocks())
+
+    it('It should return true for a valid docker id', () => {
+      expect(Helpers.isDockerId('ba9e35cde327')).toBe(true)
+      expect(Helpers.isDockerId('eb9e92ea6354')).toBe(true)
+      expect(Helpers.isDockerId('3ad8d5edbf6c')).toBe(true)
+      expect(Helpers.isDockerId('1caa46fa11ba')).toBe(true)
+      expect(Helpers.isDockerId('56aa46fa11ba')).toBe(true)
+      expect(Helpers.isDockerId('a2aba7cf204f')).toBe(true)
+      expect(Helpers.isDockerId('b80dcb1cac10')).toBe(true)
+      expect(Helpers.isDockerId('3b74af475ff2')).toBe(true)
+      expect(Helpers.isDockerId('a56406239194')).toBe(true)
+    })
+
+    it('It should return false for an  invalid docker id', () => {
+      expect(Helpers.isDockerId('')).toBe(false)
+      expect(Helpers.isDockerId(123)).toBe(false)
+      expect(Helpers.isDockerId(123456789123)).toBe(false)
+      expect(Helpers.isDockerId('12345678912R')).toBe(false)
+      expect(Helpers.isDockerId('aaa')).toBe(false)
+      expect(Helpers.isDockerId([])).toBe(false)
+      expect(Helpers.isDockerId({})).toBe(false)
+      expect(Helpers.isDockerId(true)).toBe(false)
+      expect(Helpers.isDockerId('{}')).toBe(false)
+    })
+
+  })
 
 })

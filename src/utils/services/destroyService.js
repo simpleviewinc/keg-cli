@@ -1,4 +1,4 @@
-const { get } = require('@keg-hub/jsutils')
+const { get, deepMerge } = require('@keg-hub/jsutils')
 const { Logger } = require('KegLog')
 const { runInternalTask } = require('../task/runInternalTask')
 const { getServiceArgs } = require('./getServiceArgs')
@@ -32,10 +32,9 @@ const destroyService = async (args, argsExt) => {
   const serviceArgs = getServiceArgs(args, argsExt)
 
   // Bring down the docker-compose services and remove the docker-container
-  await runInternalTask('docker.tasks.compose.tasks.down', {
-    ...serviceArgs,
-    params: { ...serviceArgs.params, remove: get(serviceArgs, `params.remove`, `orphans,volumes`) }
-  })
+  await runInternalTask('docker.tasks.compose.tasks.down', deepMerge(serviceArgs, {
+    params: { remove: get(serviceArgs, `params.remove`, `orphans,volumes`) }
+  }))
 
   // Remove the image if option is passed in
   await checkRemoveImage(serviceArgs)

@@ -126,7 +126,7 @@ module.exports = {
         example: 'keg docker image remove --force ',
       },
       remote: {
-        description: 'only image(s) downloaded externally. default keg-packages repo',
+        description: 'only image(s) downloaded externally.',
         example: 'keg docker image remove --remote <url>',
       },
     },

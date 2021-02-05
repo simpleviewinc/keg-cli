@@ -1,9 +1,12 @@
 const { Logger } = require('KegLog')
-const { DOCKER } = require('KegConst/docker')
 const { spawnCmd } = require('KegProc')
+const { DOCKER } = require('KegConst/docker')
+const { pickKeys } = require('@keg-hub/jsutils')
 const { logVirtualUrl } = require('KegUtils/log')
-const { buildComposeCmd, buildServiceName } = require('KegUtils/docker')
 const { buildContainerContext } = require('KegUtils/builders')
+const { throwComposeFailed } = require('KegUtils/error/throwComposeFailed')
+const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
  * Runs docker-compose up command for (components | core | tap)
@@ -35,18 +38,21 @@ const composeRestart = async args => {
     cmd: 'restart',
   })
 
-  // Get the name of the docker-compose service
-  const serviceName = buildServiceName(cmdContext, contextEnvs)
+  Logger.empty()
 
   // Run the docker-compose restart command
-  await spawnCmd(
-    `${ dockerCmd } ${ serviceName }`,
+  const cmdFailed = await spawnCmd(
+    dockerCmd,
     { options: { env: contextEnvs }},
     location,
     !Boolean(__internal),
   )
 
-  log && Logger.highlight(`Compose service`, `"${ cmdContext }"`, `is restarting!`)
+  // Returns 0 if the command is successful, which is falsy
+  // So check for truthy value, which means the command failed
+  cmdFailed && throwComposeFailed(dockerCmd, location)
+
+  log && Logger.highlight(`Restarted`, `"${ cmdContext }"`, `compose environment!`)
 
   // Log the virtual url so users know how to access the running containers
   logVirtualUrl(composeData, contextEnvs.KEG_PROXY_HOST)
@@ -63,22 +69,21 @@ module.exports = {
     action: composeRestart,
     description: `Run docker-compose up command`,
     example: 'keg docker compose up <options>',
-    options: {
-      context: {
-        allowed: DOCKER.IMAGES,
-        description: 'Context of docker compose up command (components || core || tap)',
-        example: 'keg docker compose restart --context core',
-        required: true
-      },
-      tap: { 
-        description: 'Name of the tap to run. Must be a tap linked in the global config',
-        example: 'keg tap restart --tap events-force',
-      },
-      log: {
-        description: 'Log the compose command to the terminal',
-        example: 'keg docker compose build --log false',
-        default: false,
-      }
-    }
+    options: pickKeys(
+      mergeTaskOptions('docker compose', 'restart', 'startService', {
+        context: {
+          allowed: DOCKER.IMAGES,
+          description: 'Context of docker compose up command (components || core || tap)',
+          example: 'keg docker compose restart --context core',
+          required: true
+        }
+      }),
+      [
+        'context',
+        'docker',
+        'install',
+        'log',
+      ]
+    )
   }
 }

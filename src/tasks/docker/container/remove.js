@@ -2,7 +2,6 @@ const docker = require('KegDocCli')
 const { exists } = require('@keg-hub/jsutils')
 const { generalError } = require('KegUtils/error')
 const { dockerLog } = require('KegUtils/log/dockerLog')
-const { isDockerId } = require('KegUtils/docker/isDockerId')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
@@ -48,7 +47,7 @@ const removeContainer = async args => {
 
   const container = !context
     ? await containerSelect()
-    : isDockerId(context)
+    : docker.isDockerId(context)
       ? { id: context }
       : await getContainerRef(context, throwErr)
 

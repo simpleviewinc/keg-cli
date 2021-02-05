@@ -1,9 +1,9 @@
 const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
+const { throwComposeFailed } = require('KegUtils/error/throwComposeFailed')
 const { buildComposeCmd } = require('KegUtils/docker/compose/buildComposeCmd')
+const { removeInjected } = require('KegUtils/docker/compose/removeInjectedCompose')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
-const { getProxyDomainFromLabel } = require('KegUtils/proxy/getProxyDomainFromLabel')
-const { removeInjectedCompose } = require('KegUtils/docker/compose/removeInjectedCompose')
 
 /**
  * Runs the docker-compose down command for the passed in context
@@ -19,11 +19,7 @@ const composeDown = async args => {
 
   // Get the context data for the command to be run
   const containerContext = await buildContainerContext(args)
-  const { location, cmdContext, contextEnvs } = containerContext
-
-  // Get the proxy domain from the label, and use it to remove the injected compose config form the temp dir
-  // Have to get the domain before bringing the containers down so we have access to the label
-  const proxyDomain = await getProxyDomainFromLabel(containerContext.id || containerContext.name)
+  const { location, cmdContext, tap, contextEnvs } = containerContext
 
   // Build the docker compose down command
   const { dockerCmd } = await buildComposeCmd({
@@ -35,16 +31,19 @@ const composeDown = async args => {
   })
 
   // Run the docker compose down command
-  await spawnCmd(
+  const cmdFailed = await spawnCmd(
     dockerCmd,
     { options: { env: contextEnvs }},
     location,
     !Boolean(__internal),
   )
 
-  // Check if we have a proxy domain, and remove the injected compose file after running the compose command
-  // Otherwise the injected compose file will just be recreated
-  ;proxyDomain && await removeInjectedCompose(proxyDomain, true)
+  // Returns 0 if the command is successful, which is falsy
+  // So check for truthy value, which means the command failed
+  cmdFailed && throwComposeFailed(dockerCmd, location)
+
+  // Attempt to remove the injected compose file after stopping the service
+  await removeInjected(tap || cmdContext, globalConfig)
 
   log && Logger.highlight(`Compose service`, `"${ cmdContext }"`, `destroyed!`)
 

@@ -195,6 +195,14 @@ class Log {
   stderr = (...args) => process.stderr.write(...args)
 
   /**
+  * Clears the terminal, does not allow scrolling back
+  */
+  clear = () => {
+    process.stdout.write("\u001b[3J\u001b[2J\u001b[1J")
+    console.clear()
+  }
+
+  /**
   * Helper to highlight a word in a logged message
   * @function
   * @param {string} start - Beginning of the message

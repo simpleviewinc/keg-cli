@@ -1,4 +1,3 @@
-const { buildBaseImg } = require('KegUtils/builders/buildBaseImg')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
@@ -13,10 +12,6 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  * @returns {void}
  */
 const buildCore = async args => {
-
-  // Check the base image and build it if it doesn't exist
-  await buildBaseImg(args)
-
   // Build the core image through internal task
   return runInternalTask('tasks.docker.tasks.build', {
     ...args,

@@ -2,7 +2,7 @@
 const { Logger } = require('KegMocks/logger')
 jest.setMock('KegLog', { Logger })
 
-const toParse = 'docker.pkg.github.com/test-user/test-repo/test-img:1591977796609'
+const toParse = 'ghcr.io/test-user/test-repo/test-img:1591977796609'
 const { parsePackageUrl } = require('../parsePackageUrl')
 
 describe('parsePackageUrl', () => {
@@ -15,7 +15,7 @@ describe('parsePackageUrl', () => {
 
     expect(account).toBe('test-user')
     expect(image).toBe('test-img')
-    expect(provider).toBe('docker.pkg.github.com')
+    expect(provider).toBe('ghcr.io')
     expect(repo).toBe('test-repo')
     expect(tag).toBe('1591977796609')
 

@@ -1,6 +1,5 @@
 module.exports = {
   ...require('./actionService'),
-  ...require('./buildService'),
   ...require('./composeService'),
   ...require('./destroyService'),
   ...require('./getServiceArgs'),

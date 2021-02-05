@@ -37,7 +37,9 @@ global.loadMockEnvs = (envs={}) => {
 // Setup our cache holder
 global.getGlobalCliConfig = reset => {
   if(reset) delete require.cache[require.resolve('KegMocks/helpers/globalConfig')]
+
   const globalConfig = require('KegMocks/helpers/globalConfig')
+  const { __updateGlobalConfig } = require(`../../src/utils/globalConfig/globalConfigCache`)
   __updateGlobalConfig(globalConfig)
 
   return globalConfig

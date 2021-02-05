@@ -1,13 +1,23 @@
+const { Logger } = require('KegLog')
+const { executeCmd, spawnProc, pipeCmd } = require('KegProc')
 const {
   apiError,
   apiSuccess,
+  cmdSuccess,
+  isSafeExitCode,
   noItemError,
   noLoginError,
-  cmdSuccess,
 } = require('./helpers')
-const { Logger } = require('KegLog')
-const { isArr, toStr } = require('@keg-hub/jsutils')
-const { executeCmd, spawnProc } = require('KegProc')
+const {
+  isArr,
+  isColl,
+  isObj,
+  isStr,
+  toStr,
+  exists,
+  noPropArr,
+  noOpObj,
+} = require('@keg-hub/jsutils')
 
 /**
  * Calls the docker cli from the command line and returns the response
@@ -125,40 +135,117 @@ const login = async ({ providerUrl, user, token }) => {
 }
 
 /**
+ * Creates a child process and pipes the output to the current process
+ * @function
+ * @param {string} cmd - Command to run
+ * @param {string} args - Arguments to pass to the child process
+ * @param {string} pullUrl - Url of the docker image
+ * @param {boolean} log - Log messages and docker commands
+ *
+ * @returns {Object} - Output of the commands std out/err and exitCode
+ */
+const dockerCLiPipe = (cmd, args=noOpObj, options=noOpObj) => {
+  const { filter=noPropArr, log=true } = options
+
+  return new Promise(async (res, rej) => {
+    const output = { data: [], error: [] }
+
+    await pipeCmd(cmd, {
+      ...args,
+      loading: {
+        active: true,
+        type: 'bouncingBall',
+        ...args.loading,
+      },
+      onStdOut: data => {
+        log &&
+          !filter.includes(data.trim()) &&
+          Logger.stdout(data)
+
+        output.data.push(data)
+      },
+      onStdErr: data => {
+        log && Logger.stderr(data)
+        output.error.push(data)
+      },
+      onError: data => {
+        log && Logger.stderr(data)
+        output.error.push(data)
+      },
+      onExit: (exitCode) => (
+        res({
+          data: output.data.join(''),
+          error: output.error.join(''),
+          exitCode,
+        })
+      )
+    })
+  })
+}
+
+/**
  * Pushes a local docker image to the docker provider base on the url
  * @function
- * @param {string} url - Url to push the image to
+ * @param {string|Object} url - Url to push the image to
+ * @param {boolean} log - Log messages and docker commands
+ * @param {boolean} skipError - Skip throwing an error if command fails
  *
- * @returns {void}
+ * @returns {boolean} True if the image could be pushed
  */
-const push = async url => {
+const push = async (url, log, skipError) => {
+  const toPush = isStr(url)  ? { url, log, skipError } : url
 
-  Logger.spacedMsg(`  Pushing docker image to url`, url)
+  toPush.log && Logger.spacedMsg(`Pushing docker image to`, toPush.url)
 
-  const { error, data } = await spawnProc(`docker push ${ url }`)
+  const exitCode = await spawnProc(`docker push ${toPush.url}`)
 
-  return error && !data
-    ? apiError(error)
-    : Logger.success(`  Finished pushing Docker image to provider!`)
+  if(exitCode)
+    return toPush.skipError ? false : apiError(`docker push ${toPush.url}`)
+
+  toPush.log && Logger.success(`\nFinished pushing ${toPush.url} to provider!\n`)
+
+  return exitCode
 }
 
 /**
  * Pulls a docker image from a provider to the local machine
  * @function
- * @param {string} url - Url to pull the image from
+ * @param {string|Object} url - Url to pull the image from
+ * @param {boolean} log - Log messages and docker commands
+ * @param {boolean} skipError - Skip throwing an error if command fails
  *
- * @returns {void}
+ * @returns {boolean} True if the image could be pulled
  */
-const pull = async url => {
+const pull = async ({ url, log=true, skipError=false, pipe=false }) => {
+  const toPull = isStr(url) ? { url, log, skipError } : url
 
-  Logger.spacedMsg(`  Pulling docker image from url`, url)
+  toPull.log && Logger.spacedMsg(`Pulling docker image from`, toPull.url)
 
-  const { error, data } = await spawnProc(`docker pull ${ url }`)
+  if(pipe){
+    const { error, data, exitCode } = await dockerCLiPipe(
+      `docker pull ${toPull.url}`,
+      { loading: { title: `- Downloading Image`, offMatch: [ `Status:` ] }},
+      { filter: [toPull.url], log }
+    )
 
-  return error && !data
-    ? apiError(error)
-    : Logger.success(`  Finished pulling Docker image from provider!`)
+    if(error.length || exitCode)
+      return toPull.skipError
+        ? { data, error, exitCode }
+        : apiError(error)
 
+    toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
+    return { data, error, exitCode }
+
+  }
+  else {
+    const exitCode = await spawnProc(`docker pull ${toPull.url}`)
+    if(exitCode)
+      return toPull.skipError ? false : apiError(`docker push ${toPull.url}`)
+
+    toPull.log && Logger.success(`\nFinished pulling ${toPull.url} from provider!\n`)
+
+    return { exitCode }
+  }
 }
 
 /**
@@ -177,20 +264,39 @@ const raw = async (cmd, args={}, loc=process.cwd()) => {
   // Build the command to be run
   // Add docker if needed
   const cmdToRun = ensureDocker(cmd)
-
   log && Logger.spacedMsg(`Running command: `, cmdToRun)
 
   // Run the docker command
-  const resp = await spawnProc(cmdToRun, cmdArgs, loc)
-  if(!resp) return
-  
-  const { error, data } = resp
+  const exitCode = await spawnProc(cmdToRun, cmdArgs, loc)
 
-  error && !data
-    ? apiError(error)
-    : Logger.success(`Finished running Docker CLI command!`)
+  // Get the exit code message
+  const exitMessage = isSafeExitCode(exitCode)
+
+  // Log the message or an error
+  ;exitMessage
+    ? Logger.success(exitMessage)
+    : apiError(`Docker command exited with non-zero exit code!`)
   
-  return data
+  return exitCode
+}
+
+const build = async (cmd, args={}, loc=process.cwd()) => {
+  const { log=true, context, ...cmdArgs } = args
+
+  // Build the command to be run
+  const cmdToRun = ensureDocker(cmd)
+  log && Logger.spacedMsg(`Running command: `, cmdToRun)
+
+  // Run the docker command
+  const exitCode = await spawnProc(cmdToRun, cmdArgs, log)
+
+  ;exitCode
+    ? apiError(`${context || ''} image failed to build!`.trim())
+    : Logger.pair(`Finished building image`, `${context || ''}`.trim())
+
+  Logger.empty()
+
+  return exitCode
 }
 
 /**
@@ -207,6 +313,67 @@ const prune = opts => {
   })
 }
 
+/**
+ * Runs docker inspect for the passed in item reference
+ * @function
+ * @param {Object|string} args - Arguments to pass to the docker image command
+ * @param {string} args.item - Reference to the docker item
+ * @param {boolean} args.parse - Should parse the response into JSON
+ * @param {string} [args.format=json] - Format the returned results
+ * @param {boolean} [args.skipError=false] - Should skip throwing an error
+ * @param {boolean} [args.log=false] - Should log docker commands as the are run
+ *
+ * @returns {string|Object} - Docker inspect meta data
+ */
+const inspect = async args => {
+  // Ensure the args are an object
+  const { item, ...toInspect } = isStr(args) ? { item: args, format: 'json' } : args
+
+  // Extract the item based on it's format
+  const itemRef = isObj(item) && (item.id || item.rootId || item.name)
+    ? item.id || item.rootId || item.name
+    : isStr(item) && item
+
+  // Ensure we have an item to inspect
+  !itemRef &&
+    !args.skipError && 
+    noItemError(`docker.inspect`)
+
+  // Build the command, and add format if needed
+  const cmdToRun = [ `inspect`, itemRef ]
+  toInspect.type && cmdToRun.unshift(toInspect.type)
+
+  // Call the docker inspect command
+  const inspectData = await dockerCli({
+    opts: cmdToRun,
+    format: exists(toInspect.format) ? toInspect.format : 'json',
+    log: exists(toInspect.log) ? toInspect.log : false,
+  })
+
+  // Check if the response should be parsed
+  const parse = exists(toInspect.parse) ? toInspect.parse : true
+
+  // If no parsing, or it's already a collection, just return it
+  if(!parse || isColl(inspectData))
+    return isArr(inspectData) ? inspectData[0] : inspectData
+
+  try {
+
+    // Parse the data, and return the first found item
+    const parsed = JSON.parse(inspectData)
+    return isArr(parsed)
+      ? parsed[0]
+      : isObj(parsed)
+        ? parsed
+        : invalidInspectError(parsed)
+  }
+  catch(error){
+    return args.skipError
+      ? inspectData
+      : invalidInspectError(inspectData, error)
+  }
+
+}
 
 /**
  * Runs docker system prune command
@@ -239,8 +406,10 @@ const log = (args, cmdArgs={}) => {
 }
 
 module.exports = {
+  build,
   dockerCli,
   dynamicCmd,
+  inspect,
   login,
   log,
   logs: log,
@@ -248,5 +417,6 @@ module.exports = {
   pull,
   push,
   raw,
-  remove
+  remove,
+  cliPipe: dockerCLiPipe,
 }

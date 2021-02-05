@@ -45,14 +45,13 @@ const mergeTapTasks = (cliTasks, tapTasks) => {
   Object.assign(
     cliTasks.tap.tasks,
     reduceObj(tapTasks, (name, definition, merged) => {
-      return {
-        ...merged,
-        ...buildTaskData(
-          definition,
-          'tap',
-          cliTapTasks
-        ),
-      }
+      Object.assign(merged, buildTaskData(
+        definition,
+        'tap',
+        cliTapTasks
+      ))
+
+      return merged
     }, {})
   )
 

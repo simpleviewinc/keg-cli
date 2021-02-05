@@ -93,10 +93,9 @@
 * Window Apps Store
 
 ### Docker
-* Docker
+* Docker-Desktop
 * Mutagen ( Docker folder syncing )
 * Docker-Composer
-* Docker-Machine
 * Github Packages - ( Docker Repository )
 
 ### 3rd Party

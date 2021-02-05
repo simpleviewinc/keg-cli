@@ -1,23 +1,9 @@
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { tagFromVersion } = require('KegUtils/docker/tags/tagFromVersion')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { tagFromVariables } = require('KegUtils/docker/tags/tagFromVariables')
 const { getRepoGitTag, tagsFromParams } = require('KegUtils/docker/tags/tagHelpers')
-
-/**
- * Get the name of the image to be built
- * @type function
- * @param {string} imageName - Predefined name to use for the image
- * @param {string} context - The Keg-CLI context of the image
- *
- * @returns {string} - Name of the image
- */
-const getImageName = (imageName, context) => {
-  return imageName ||
-    getContainerConst(context, 'env.image') ||
-    getContainerConst(context, 'env.container_name') ||
-    context
-}
 
 /**
  * Converts the passed in tags array to docker cli tag format
@@ -28,9 +14,13 @@ const getImageName = (imageName, context) => {
  *
  * @returns {string} - Formatted string of tags added to the docker command
  */
-const addTagsToCommand = (dockerCmd, imageName, tags) => {
+const addTagsToCommand = (dockerCmd, { tag, providerImage }, tags) => {
+  // If no tags were added, add the default tag from the imageNameContext
+  !tags.length && tags.push(tag)
+
+  // Loop the tags and add the provider image to each one
   return tags.length
-    ? `${ dockerCmd } -t ${imageName}:${ tags.join(` -t ${imageName}:`).trim() }`
+    ? `${ dockerCmd } -t ${providerImage}:${ tags.join(` -t ${providerImage}:`).trim() }`
     : dockerCmd.trim()
 }
 
@@ -46,10 +36,7 @@ const addTagsToCommand = (dockerCmd, imageName, tags) => {
  */
 const buildTags = async (args, params, dockerCmd='') => {
   const { containerContext } = args
-  const { context, tagGit, tagVariable, latest=true } = params
-
-  // Ensure we have an image name
-  const imageName = getImageName(params.image, context)
+  const { context, tagGit, tagVariable, image } = params
 
   // Ensure we have an environment
   const env = params.env || getSetting('defaultEnv')
@@ -69,18 +56,10 @@ const buildTags = async (args, params, dockerCmd='') => {
   const gitTag = tagGit && await getRepoGitTag({ containerContext, params }, tagGit)
   gitTag && tags.push(gitTag)
 
-  !tags.length && tags.push(env)
-
-  // Always add the latest tag so docker-compose will use this image automatically
-  // Unless the latest param is set to falsy
-  context !== 'base' &&
-    latest &&
-    !tags.includes('latest') &&
-    tags.push('latest')
+  const imgNameContext = await getImgNameContext(params)
 
   // Add the tags to the docker command
-  return addTagsToCommand(dockerCmd, imageName, tags)
-
+  return addTagsToCommand(dockerCmd, imgNameContext, tags)
 }
 
 module.exports = {

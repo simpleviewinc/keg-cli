@@ -22,8 +22,8 @@ describe('proxyService', () => {
 
   it('It checks if the keg-proxy container exists', async () => {
     await proxyService({ globalConfig, params: {} })
-    expect(docker.container.exists).toHaveBeenCalled()
-    expect(docker.container.exists.mock.calls[0][0]).toBe('keg-proxy')
+    expect(docker.container.get).toHaveBeenCalled()
+    expect(docker.container.get.mock.calls[0][0]).toBe('keg-proxy')
   })
 
   it(`calls task to start the proxy if it does not exist`, async () => {
@@ -33,7 +33,7 @@ describe('proxyService', () => {
   })
 
   it(`does not call the proxy start task when the container already exists`, async () => {
-    global.testDocker.containers[`keg-proxy`] = true
+    global.testDocker.containers[`keg-proxy`] = { state: 'running' }
     await proxyService({ globalConfig, params: {} })
     expect(internalTaskMock).not.toHaveBeenCalled()
     delete global.testDocker.containers[`keg-proxy`]
