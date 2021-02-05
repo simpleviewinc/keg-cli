@@ -8,6 +8,9 @@
 # By adding RUN /keg/tap-build.sh                           #
 # ----------------------- Important ----------------------- #
 
+# Exit when any command fails
+set -e
+
 # Git clones a repo into the dock container
 keg_clone_tap(){
   # If a branch is defined then only pull that branch
