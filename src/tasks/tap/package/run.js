@@ -1,5 +1,6 @@
 const { packageService } = require('KegUtils/services/packageService')
 const { DOCKER } = require('KegConst/docker')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
  * Package a running tap container into an image and push to the docker provider
@@ -31,42 +32,23 @@ module.exports = {
     locationContext: DOCKER.LOCATION_CONTEXT.REPO,
     description: `Package a running tap container into an image and push to the docker provider`,
     example: 'keg tap package run <options>',
-    options: {
+    options: mergeTaskOptions(`keg tap package`, 'run', 'run', {
       package: {
         description: 'Pull request package url or name',
-        example: `keg tap package run --package simpleviewinc/my-app:bug-fixes`,
+        example: `keg docker package --package lancetipton/keg-core/keg-core:bug-fixes`,
         required: true,
         ask: {
           message: 'Enter the docker package url or path (<user>/<repo>/<package>:<tag>)',
         }
       },
       command: {
-        alias: [ 'cmd' ],
-        description: 'Overwrites the default yarn command. Command must exist in package.json scripts!',
-        example: 'keg tap package run --command dev ( Runs "yarn dev" )',
-        default: false
-      },
-      entry: {
-        alias: [ 'entrypoint', 'ent', 'ep' ],
-        description: 'Override the default entrypoint of the docker image',
-        example: 'keg docker package run --entry /bin/bash',
+        default: undefined
       },
       tap: { 
         description: 'Name of the tap to run. Must be a tap linked in the global config',
         example: 'keg tap package run --tap my-tap',
         required: true,
       },
-      port: {
-        description: 'Exposes the port to your local, from the docker container',
-        example: 'keg tap package run --port 5005:5005',
-        default: false
-      },
-      pull: {
-        alias: [ 'pl' ],
-        description: `Pull the most recent image before building.`,
-        example: `keg docker package run --no-pull`,
-        default: true
-      },
-    }
+    })
   }
 }
