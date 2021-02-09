@@ -1,8 +1,8 @@
 
 env:
   # --- LOCAL ENV CONTEXT --- #
-  COMPONENTS_PATH: "{{ cli.paths.components }}"
-  RETHEME_PATH: "{{ cli.taps.links.retheme }}"
+  COMPONENTS_PATH: "{{ cli..taps.components.path }}"
+  RETHEME_PATH: "{{ cli.taps.retheme.path }}"
   RESOLVER_PATH: "{{ cli.paths.resolver }}"
   CLI_PATH: "{{ cli.paths.cli }}"
   

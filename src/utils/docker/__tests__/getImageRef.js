@@ -83,22 +83,6 @@ const testArgs = {
       refFrom: 'ghcr.io/simpleviewinc/tap-injected-test:master'
     }
   },
-  Components: {
-    description: 'Should return the image reference for the keg-components image',
-    inputs: {
-      image: 'keg-components',
-      tag: 'master',
-      provider: 'ghcr.io',
-      namespace: 'simpleviewinc',
-      imageWTag: 'keg-components:master',
-      full: 'ghcr.io/simpleviewinc/keg-components:master',
-      providerImage: 'ghcr.io/simpleviewinc/keg-components',
-    },
-    outputs: {
-      imgRef: dockerData.images.components,
-      refFrom: 'keg-components:master'
-    }
-  },
 }
 
 describe('getImageRef', () => {

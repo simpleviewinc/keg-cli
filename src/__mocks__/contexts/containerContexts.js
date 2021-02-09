@@ -28,18 +28,6 @@ const containerContexts = {
       ...DOCKER.CONTAINERS.CORE.ENV,
     },
   },
-  components: {
-    context: 'components',
-    tap: 'components',
-    noPrefix: 'components',
-    cmdContext: 'components',
-    image: 'keg-components',
-    withPrefix: 'keg-components',
-    location: `${kegHubRoot}/repos/keg-components`,
-    contextEnvs: {
-      ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-    },
-  },
   tap: {
     context: 'tap',
     tap: 'tap-test',

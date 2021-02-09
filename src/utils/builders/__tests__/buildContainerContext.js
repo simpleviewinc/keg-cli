@@ -96,35 +96,4 @@ describe('buildContainerContext', () => {
 
   })
 
-  it('should return the contextEnvs for the components context', async () => {
-
-    const { contextEnvs } = await buildContainerContext({
-      globalConfig,
-      params: { context: 'components' },
-      task: testTask,
-      envs: {},
-    })
-    
-    expect(contextEnvs.KEG_CONTEXT_PATH
-      .indexOf('/keg-hub/repos/keg-components'))
-      .not.toBe(-1)
-
-    expect(contextEnvs.KEG_DOCKER_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/components/Dockerfile'))
-      .not.toBe(-1)
-
-    expect(contextEnvs.KEG_VALUES_FILE
-      .indexOf('/keg-hub/repos/keg-cli/containers/components/values.yml'))
-      .not.toBe(-1)
-
-    expect(contextEnvs.KEG_COMPOSE_DEFAULT
-      .indexOf('/keg-hub/repos/keg-cli/containers/components/docker-compose.yml'))
-      .not.toBe(-1)
-
-    expect(contextEnvs.IMAGE).toBe('keg-components')
-    expect(contextEnvs.CONTAINER_NAME).toBe('keg-components')
-
-  })
-
-
 })

@@ -169,23 +169,6 @@ const dockerData = {
         "latest"
       ],
       rootId: "keg-base"
-    },
-    components: {
-      containers: "N/A",
-      createdAt: "2020-10-20 21:39:10 -0700 MST",
-      createdSince: "About a minute ago",
-      digest: "<none>",
-      id: "a56406239194",
-      repository: "keg-components",
-      sharedSize: "N/A",
-      size: "850MB",
-      tag: "0.0.1",
-      uniqueSize: "N/A",
-      virtualSize: "849.5MB",
-      tags: [
-        "0.0.1"
-      ],
-      rootId: "keg-components"
     }
   },
   inspect: {
@@ -201,12 +184,12 @@ const dockerData = {
       }
     },
     image: {
-      components: {
-        id: '980398bef84b',
+      core: {
+        id: 'b80dcb1cac10',
         Config: {
           Cmd: [
             "/bin/bash",
-            "/keg/keg-cli/containers/components/run.sh"
+            "/keg/keg-cli/containers/core/run.sh"
           ],
         },
       }
@@ -214,10 +197,12 @@ const dockerData = {
   },
 }
 
+// Add inspect reference by ID, to match docker CLI
 const tapId = dockerData.inspect.container.tap.id
 dockerData.inspect.container[tapId] = dockerData.inspect.container.tap
-const compsId = dockerData.inspect.image.components.id
-dockerData.inspect.image[compsId] = dockerData.inspect.image.components
+dockerData.inspect.image[tapId] = dockerData.inspect.container.tap
+const coreId = dockerData.inspect.image.core.id
+dockerData.inspect.image[coreId] = dockerData.inspect.image.core
 
 global.testDocker = dockerData
 
@@ -255,17 +240,6 @@ const dockerObjLabels = {
     'com.keg.path.values': 'keg-cli/containers/core/values.yml',
     'com.keg.path.docker': 'keg-cli/containers/core/Dockerfile',
     'com.keg.proxy.domain': 'core'
-  },
-  components: {
-    'com.keg.env.context': 'keg-components',
-    'com.keg.env.cmd': 'sb',
-    'com.keg.env.port': '60710',
-    'com.keg.path.context': 'keg-components',
-    'com.keg.path.container': '/keg/keg-components',
-    'com.keg.path.compose': 'keg-cli/containers/components/docker-compose.yml',
-    'com.keg.path.values': 'keg-cli/containers/components/values.yml',
-    'com.keg.path.docker': 'keg-cli/containers/components/Dockerfile',
-    'com.keg.proxy.domain': 'components'
   },
   proxy: {
     'com.keg.path.container': '/keg/tap',
@@ -315,12 +289,6 @@ const package = {
     provider: 'ghcr.io',
     tag: 'test-core'
   },
-  components: {
-    account: 'simpleviewinc',
-    image: 'keg-components',
-    provider: 'ghcr.io',
-    tag: 'test-components'
-  },
   tap: {
     account: 'simpleviewinc',
     image: 'tap',
@@ -336,13 +304,6 @@ const proxyOpts = {
     '--label traefik.http.routers.core.rule=Host(`core-test-core.local.kegdev.xyz`)',
     '--label traefik.http.services.core.loadbalancer.server.port=19006',
     '--label traefik.http.routers.core.entrypoints=keg',
-    '--network keg-hub-net'
-  ],
-  components: [
-    '--label traefik.enable=true',
-    '--label traefik.http.routers.components.rule=Host(`components-test-components.local.kegdev.xyz`)',
-    '--label traefik.http.services.components.loadbalancer.server.port=60710',
-    '--label traefik.http.routers.components.entrypoints=keg',
     '--network keg-hub-net'
   ],
   tap: [

@@ -25,8 +25,8 @@ const testArgs = {
   },
   imageExist: {
     description: 'It should return true when the image param is passed',
-    inputs: { image: 'keg-components' },
-    outputs: dockerData.images.components
+    inputs: { image: 'keg-core' },
+    outputs: dockerData.images.core
   },
   imageIdExist: {
     description: 'It should return true when only an image id is passed',

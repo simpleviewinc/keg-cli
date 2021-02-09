@@ -15,15 +15,17 @@ const withInjected = {
 jest.setMock('KegConst/docker', { DOCKER: { ...DOCKER, CONTAINERS: withInjected }})
 jest.setMock('KegDocCli', docker)
 
+console.log(dockerData.inspect.image.core)
+
 const testArgs = {
   inspectObj: {
     description: 'It should return the inspect object',
-    inputs: [ 'components' ],
-    outputs: dockerData.inspect.image.components,
+    inputs: [ 'core' ],
+    outputs: dockerData.inspect.image.core,
   },
   valueAtPath: {
     description: 'It should return the value from the inspectPath param',
-    inputs: [ 'components', 'Config.Cmd.0' ],
+    inputs: [ 'core', 'Config.Cmd.0' ],
     outputs: '/bin/bash'
   },
   containerInspect: {
@@ -38,8 +40,8 @@ const testArgs = {
   },
   asObj: {
     description: 'It should accept the first argument as an object',
-    inputs: { item: 'components' },
-    outputs: dockerData.inspect.image.components,
+    inputs: { item: 'core' },
+    outputs: dockerData.inspect.image.core,
   },
   asObjContainer: {
     description: 'It should accept the first argument as an object',
@@ -55,6 +57,6 @@ describe('getInspectValue', () => {
 
   afterAll(() => jest.resetAllMocks())
 
-  testEnum(testArgs, getInspectValue)
+  testEnum(testArgs, getInspectValue, true)
 
 })
