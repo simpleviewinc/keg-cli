@@ -145,16 +145,15 @@ const buildRepos = (repos, rootRepoPath, searchPath, args) => {
     ]
   }
 
+  const builtRepos = []
   return repos.reduce((repos, repo) => {
-    const responses = repos
-
     const repoData = filter !== 'all' && !repo.includes(filter)
       ? false
       : buildRepo({ repo, rootRepoPath, searchPath, pathError: !Boolean(tap) }, args)
     
-    repoData && responses.push(repoData)
+    repoData && repos.push(repoData)
 
-    return responses
+    return repos
 
   }, builtRepos)
 
