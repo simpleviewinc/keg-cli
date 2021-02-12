@@ -10,12 +10,12 @@ const publishTasks = get(defaultConfig, 'publish.default.tasks')
  * 
  * @returns {null|Object}
  */
-const setupPublishOptions = (tasks) => {
+const setupPublishOptions = (tasks, taskName='hub') => {
   // For each task, generate option obj with generic description
   return reduceObj(tasks || publishTasks, (key, value, options) => {
     options[key] = {
       description: `Will perform ${key} task during the publish service`,
-      example: `keg hub publish --${key}`,
+      example: `keg ${taskName} publish --${key}`,
     }
 
     return options

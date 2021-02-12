@@ -48,6 +48,15 @@ module.exports = deepMerge(defaultConfig, {
     }
   },
   publish: {
+    default: {
+      tasks: {
+        install: true,
+        test: true,
+        build: true,
+        publish: true,
+        commit: true
+      }
+    },
     test: {
       name: 'test',
       dependent: true,

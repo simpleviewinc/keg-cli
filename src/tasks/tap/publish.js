@@ -65,7 +65,7 @@ module.exports = {
         description: 'New version to be published. Must be valid semver or one of major, minor or patch',
         example: 'keg tap publish --version 1.0.0',
       },
-      ...setupPublishOptions()
+      ...setupPublishOptions(null, `tap`)
     }
   }
 }

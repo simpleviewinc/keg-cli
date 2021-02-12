@@ -9,7 +9,6 @@ const { get, exists } = require('@keg-hub/jsutils')
  * @return {Object} publishArgs with the params mapped to the tasks object
  */
 const mapPublishTaskOptions = ({ globalConfig, params }) => {
-  const { tap } = params
   const publishArgs = { tasks: {} }
 
   Object.keys(get(globalConfig, `publish.default.tasks`))
