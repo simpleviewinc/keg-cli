@@ -1,8 +1,9 @@
-const { get, exists } = require('@keg-hub/jsutils')
+const { get } = require('@keg-hub/jsutils')
 const { publishService } = require('KegUtils/services/publishService')
 const { logPublishSummary } = require('KegUtils/publish/logPublishSummary')
 const { setupPublishOptions } = require('KegUtils/publish/setupPublishOptions')
 const { mapPublishTaskOptions } = require('KegUtils/publish/mapPublishTaskOptions')
+const { updateLocationContext } = require('KegUtils/helpers/updateLocationContext')
 
 /**
  * Push Keg Hub repos to NPM and Github
@@ -14,43 +15,55 @@ const { mapPublishTaskOptions } = require('KegUtils/publish/mapPublishTaskOption
  *
  * @returns {void}
  */
-const hubPublish = async args => {
-  const result = await publishService(args, mapPublishTaskOptions(args))
+const publishTap = async (args) => {
+  const { params: { tap, branch, tag, version }} = args
+  const updatedArgs = updateLocationContext(args, {
+    params: {
+      context: 'tap',
+      tap: get(args, 'params.tap') || 'tap',
+    }
+  })
 
+  const result = await publishService(updatedArgs, {
+    ...mapPublishTaskOptions(updatedArgs),
+    tap: true,
+    name: tap,
+    dependent: false,
+    order: {},
+  })
   logPublishSummary(result)
 
   return true
-}
 
+}
 module.exports = {
   publish: {
     name: 'publish',
     alias: [ 'pub' ],
-    description: 'Push Keg Hub repos to NPM and Github',
-    action: hubPublish,
-    example: 'keg hub publish <options>',
+    action: publishTap,
+    inject: true,
+    description: `Publish a tap to git and NPM`,
+    example: 'keg tap publish <options>',
     options: {
-      context: {
-        alias: [ 'ctx' ],
-        description: 'Publish context to use from the globalConfig!',
-        example: 'keg hub publish --context keg',
-        default: 'keg'
+      tap: {
+        description: 'Linked tap name to use as the publish context!',
+        example: 'keg tap publish --tap <my-tap>',
       },
       dryrun: {
-        alias: [ 'dry-run', 'dry', 'dr'],
+        alias: ['dry-run', 'dr'],
         description: 'Does everything publish would do except pushing to git and publishing to npm',
-        example: 'keg hub publish --dry-run',
+        example: 'keg tap publish --dry-run',
         default: false
       },
       confirm: {
         description: 'Asks the user to confirm the updates before publishing. Set to false for CI/CD environments',
-        example: 'keg hub publish --no-confirm',
+        example: 'keg tap publish --no-confirm',
         default: true
       },
       version: {
         alias: [ 'ver' ],
         description: 'New version to be published. Must be valid semver or one of major, minor or patch',
-        example: 'keg hub publish --version 1.0.0',
+        example: 'keg tap publish --version 1.0.0',
       },
       ...setupPublishOptions()
     }

@@ -318,6 +318,25 @@ const publishRepos = async (globalConfig, toPublish, repos, params={}, publishCo
 }
 
 /**
+ * Adds a taps repos to the order object to allow them to be published
+ * TODO: this is only temporary until the `getTapConfig` helper is setup
+ * then the order will be defined within the tap config file 
+ * @function
+ * @param {Object} repos - Repos to be published
+ * @param {Object} publishArgs - Arguments describing how the repos should be published
+ * 
+ * @returns {Object} - Updated publishArgs with the repos added to the publishArgs.order object
+ */
+const checkTapPublishOrder = (repos, publishArgs) => {
+  publishArgs.tap &&
+    repos.map((repo, index) => {
+      publishArgs.order[index] = get(repo, 'package.name')
+    })
+  
+  return publishArgs
+}
+
+/**
  * Loads a publishContext from the globalConfig based on the passed in arguments
  * <br/>Attempts to publish all repos defined in teh loaded publishContext
  * @function
@@ -329,14 +348,15 @@ const publishRepos = async (globalConfig, toPublish, repos, params={}, publishCo
  */
 const publishService = async (args, publishArgs) => {
   const { params, globalConfig } = args
-  const { context, confirm=true, version } = params
+  const { context, tap, confirm=true, version } = params
+  const publishName = tap || context
 
   // If running without a confirm, then check that we have a version
   !confirm &&
     (!exists(version) || !version) &&
     generalError(`Can not auto-publish without a valid semver version!`)
 
-  confirm && await confirmPublish(context)
+  confirm && await confirmPublish(publishName)
 
   const newVersion = !version
     ? await getValidSemver()
@@ -344,14 +364,18 @@ const publishService = async (args, publishArgs) => {
 
   // Get all repos / package.json
   const repos = await getHubRepos({
-    context: 'all',
+    tap,
     full: true,
+    context: 'all',
   })
 
-  !repos && generalError(`No keg-hub repos could be found!`)
+  !repos && generalError(`No repos could be found to publish!`)
+
+  // Check if it's a tap, and setup the publish order for it
+  const publishOrderArgs = checkTapPublishOrder(repos, publishArgs)
 
   // Get the publish context from the globalConfig, and merge with passed in publish args
-  const publishContext = getPublishContext(globalConfig, context, publishArgs)
+  const publishContext = getPublishContext(globalConfig, publishName, publishOrderArgs)
 
   // Get all the repo's to be published
   const toPublish = getPublishContextOrder(repos, publishContext, params)
