@@ -3,6 +3,7 @@ const { git } = require('KegGitCli')
 const { Logger } = require('KegLog')
 const { ask } = require('@keg-hub/ask-it')
 const { DOCKER } = require('KegConst/docker')
+const { CONTEXT_TO_CONTAINER } = require('KegConst/constants')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
@@ -81,11 +82,18 @@ const dockerPackage = async args => {
   !context && throwRequired(task, 'context', task.options.context)
 
   // Get the context data for the command to be run
-  const { cmdContext, contextEnvs, location, tap, image, id } = await buildContainerContext({
-    globalConfig,
-    task,
-    params,
-  })
+  const containerContext = await buildContainerContext(args)
+  const { cmdContext, contextEnvs, location, tap, image } = containerContext
+
+  // TODO: This should not be using the image name for finding the image
+  // Really the ID should be coming from buildContainerContext
+  // Need to investigate why
+
+  // Ensure we get the container ID, either from the container context
+  // Or from the container context for internal apps or the image name
+  const { id } = containerContext.id
+    ? containerContext
+    : await docker.container.get(CONTEXT_TO_CONTAINER[cmdContext] || image)
 
   // Get the current branch name at the location
   const currentBranch = tag || await getCommitTag(location)
