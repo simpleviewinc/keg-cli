@@ -50,7 +50,7 @@ module.exports = {
         example: 'keg tap publish --tap <my-tap>',
       },
       dryrun: {
-        alias: ['dry-run', 'dr'],
+        alias: [ 'dry-run', 'dry', 'dr' ],
         description: 'Does everything publish would do except pushing to git and publishing to npm',
         example: 'keg tap publish --dry-run',
         default: false

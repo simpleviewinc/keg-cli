@@ -82,12 +82,17 @@ const rollbackChanges = async (repo, publishArgs, confirm=true) => {
 /**
  * Asks the user to confirm publishing the repo
  * @function
- * @param {string} context - Repo context to be published to be rolled back
+ * @param {string} context - Repo context to be published
+ * @param {string} dryrun - Is this just a practice run
  *
  * @returns {Promise<Boolean>} true if the repo context should be published
  */
-const confirmPublish = async context => {
-  const resp = await ask.confirm(`Confirm publish with config ${context}?`)
+const confirmPublish = async (context, dryrun) => {
+  let question = `Confirm publish with config ${context}?`
+  Logger.empty()
+  dryrun && (question = `[ DRY-RUN - WILL NOT BE PUBLISHED ] ${question}`)
+
+  const resp = await ask.confirm(question)
   if(resp) return true
   
   Logger.warn(`Publish with config ${context} cancelled!`)
@@ -104,7 +109,7 @@ const confirmPublish = async context => {
  */
 const logFormal = (repo, message) => {
   Logger.empty()
-  Logger.highlight(``, `[${repo.repo.toUpperCase()}]`, message)
+  Logger.highlight(``, `[ ${repo.repo.toUpperCase()} ]`, message)
   Logger.empty()
 }
 
@@ -147,7 +152,11 @@ const gitBranchCommitUpdates = async (repo, publishArgs, updated, params) => {
     logFormal(repo, `Running commit service`)
     // Build a new branch for the version
     publishArgs.step = { number: 5, name: 'git-branch' }
-    const newBranch = `${context}-${newVersion}-${await git.repo.commitHash({ location: repo.location })}`
+
+    // Use the linked tap name as the prefix when publishing a tag
+    // Otherwise use the context
+    const branchPrefix = context === 'tap' && params.tap ? params.tap : context
+    const newBranch = `${branchPrefix}-${newVersion}-${await git.repo.commitHash({ location: repo.location })}`
 
     // Create a new branch for the repo and version
     publishArgs.step = { number: 6, name: 'git-checkout' }
@@ -348,7 +357,7 @@ const checkTapPublishOrder = (repos, publishArgs) => {
  */
 const publishService = async (args, publishArgs) => {
   const { params, globalConfig } = args
-  const { context, tap, confirm=true, version } = params
+  const { context, tap, confirm=true, version, dryrun } = params
   const publishName = tap || context
 
   // If running without a confirm, then check that we have a version
@@ -356,7 +365,7 @@ const publishService = async (args, publishArgs) => {
     (!exists(version) || !version) &&
     generalError(`Can not auto-publish without a valid semver version!`)
 
-  confirm && await confirmPublish(publishName)
+  confirm && await confirmPublish(publishName, dryrun)
 
   const newVersion = !version
     ? await getValidSemver()
@@ -384,7 +393,8 @@ const publishService = async (args, publishArgs) => {
   const versionNumber = await getVersionUpdate(toPublish[0], newVersion, publishContext, confirm)
 
   if (!versionNumber) return null
-  get(params, 'dryrun') && Logger.subHeader('dry-run: Will NOT Publish or Push to GitHub')
+
+  dryrun && Logger.subHeader('dry-run: Will NOT Publish to Npm or Push to GitHub')
 
   // run yarn install on all toPublish repos prior to any package json updates
   // then we can just copy over new build files to their node_modules
