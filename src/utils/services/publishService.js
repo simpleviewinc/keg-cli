@@ -83,7 +83,7 @@ const rollbackChanges = async (repo, publishArgs, confirm=true) => {
  * Asks the user to confirm publishing the repo
  * @function
  * @param {string} context - Repo context to be published
- * @param {string} dryrun - Is this just a practice run
+ * @param {boolean} dryrun - Is this just a practice run
  *
  * @returns {Promise<Boolean>} true if the repo context should be published
  */
