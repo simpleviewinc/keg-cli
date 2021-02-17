@@ -153,8 +153,7 @@ const gitBranchCommitUpdates = async (repo, publishArgs, updated, params) => {
     // Build a new branch for the version
     publishArgs.step = { number: 5, name: 'git-branch' }
 
-    // Use the linked tap name as the prefix when publishing a tag
-    // Otherwise use the context
+    // Use the linked tap name as the prefix when publishing a tap, otherwise use the context
     const branchPrefix = context === 'tap' && params.tap ? params.tap : context
     const newBranch = `${branchPrefix}-${newVersion}-${await git.repo.commitHash({ location: repo.location })}`
 
