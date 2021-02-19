@@ -82,12 +82,17 @@ const rollbackChanges = async (repo, publishArgs, confirm=true) => {
 /**
  * Asks the user to confirm publishing the repo
  * @function
- * @param {string} context - Repo context to be published to be rolled back
+ * @param {string} context - Repo context to be published
+ * @param {boolean} dryrun - Is this just a practice run
  *
  * @returns {Promise<Boolean>} true if the repo context should be published
  */
-const confirmPublish = async context => {
-  const resp = await ask.confirm(`Confirm publish with config ${context}?`)
+const confirmPublish = async (context, dryrun) => {
+  let question = `Confirm publish with config ${context}?`
+  Logger.empty()
+  dryrun && (question = `[ DRY-RUN - WILL NOT BE PUBLISHED ] ${question}`)
+
+  const resp = await ask.confirm(question)
   if(resp) return true
   
   Logger.warn(`Publish with config ${context} cancelled!`)
@@ -104,7 +109,7 @@ const confirmPublish = async context => {
  */
 const logFormal = (repo, message) => {
   Logger.empty()
-  Logger.highlight(``, `[${repo.repo.toUpperCase()}]`, message)
+  Logger.highlight(``, `[ ${repo.repo.toUpperCase()} ]`, message)
   Logger.empty()
 }
 
@@ -147,7 +152,10 @@ const gitBranchCommitUpdates = async (repo, publishArgs, updated, params) => {
     logFormal(repo, `Running commit service`)
     // Build a new branch for the version
     publishArgs.step = { number: 5, name: 'git-branch' }
-    const newBranch = `${context}-${newVersion}-${await git.repo.commitHash({ location: repo.location })}`
+
+    // Use the linked tap name as the prefix when publishing a tap, otherwise use the context
+    const branchPrefix = context === 'tap' && params.tap ? params.tap : context
+    const newBranch = `${branchPrefix}-${newVersion}-${await git.repo.commitHash({ location: repo.location })}`
 
     // Create a new branch for the repo and version
     publishArgs.step = { number: 6, name: 'git-checkout' }
@@ -318,6 +326,25 @@ const publishRepos = async (globalConfig, toPublish, repos, params={}, publishCo
 }
 
 /**
+ * Adds a taps repos to the order object to allow them to be published
+ * TODO: this is only temporary until the `getTapConfig` helper is setup
+ * then the order will be defined within the tap config file 
+ * @function
+ * @param {Object} repos - Repos to be published
+ * @param {Object} publishArgs - Arguments describing how the repos should be published
+ * 
+ * @returns {Object} - Updated publishArgs with the repos added to the publishArgs.order object
+ */
+const checkTapPublishOrder = (repos, publishArgs) => {
+  publishArgs.tap &&
+    repos.map((repo, index) => {
+      publishArgs.order[index] = get(repo, 'package.name')
+    })
+  
+  return publishArgs
+}
+
+/**
  * Loads a publishContext from the globalConfig based on the passed in arguments
  * <br/>Attempts to publish all repos defined in teh loaded publishContext
  * @function
@@ -329,14 +356,15 @@ const publishRepos = async (globalConfig, toPublish, repos, params={}, publishCo
  */
 const publishService = async (args, publishArgs) => {
   const { params, globalConfig } = args
-  const { context, confirm=true, version } = params
+  const { context, tap, confirm=true, version, dryrun } = params
+  const publishName = tap || context
 
   // If running without a confirm, then check that we have a version
   !confirm &&
     (!exists(version) || !version) &&
     generalError(`Can not auto-publish without a valid semver version!`)
 
-  confirm && await confirmPublish(context)
+  confirm && await confirmPublish(publishName, dryrun)
 
   const newVersion = !version
     ? await getValidSemver()
@@ -344,14 +372,18 @@ const publishService = async (args, publishArgs) => {
 
   // Get all repos / package.json
   const repos = await getHubRepos({
-    context: 'all',
+    tap,
     full: true,
+    context: 'all',
   })
 
-  !repos && generalError(`No keg-hub repos could be found!`)
+  !repos && generalError(`No repos could be found to publish!`)
+
+  // Check if it's a tap, and setup the publish order for it
+  const publishOrderArgs = checkTapPublishOrder(repos, publishArgs)
 
   // Get the publish context from the globalConfig, and merge with passed in publish args
-  const publishContext = getPublishContext(globalConfig, context, publishArgs)
+  const publishContext = getPublishContext(globalConfig, publishName, publishOrderArgs)
 
   // Get all the repo's to be published
   const toPublish = getPublishContextOrder(repos, publishContext, params)
@@ -360,7 +392,8 @@ const publishService = async (args, publishArgs) => {
   const versionNumber = await getVersionUpdate(toPublish[0], newVersion, publishContext, confirm)
 
   if (!versionNumber) return null
-  get(params, 'dryrun') && Logger.subHeader('dry-run: Will NOT Publish or Push to GitHub')
+
+  dryrun && Logger.subHeader('dry-run: Will NOT Publish to Npm or Push to GitHub')
 
   // run yarn install on all toPublish repos prior to any package json updates
   // then we can just copy over new build files to their node_modules
