@@ -1,6 +1,5 @@
 const { DOCKER } = require('KegConst/docker')
-const { exists } = require('KegUtils/helpers/exists')
-const { reduceObj, get, isStr } = require('@keg-hub/jsutils')
+const { reduceObj, get, isStr, exists } = require('@keg-hub/jsutils')
 
 /**
  * Loops over the passed in args and maps them to the docker constants

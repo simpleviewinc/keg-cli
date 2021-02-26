@@ -1,6 +1,5 @@
 const docker = require('KegDocCli')
-const { get, isStr } = require('@keg-hub/jsutils')
-const { exists } = require('KegUtils/helpers/exists')
+const { get, isStr, exists } = require('@keg-hub/jsutils')
 const { dockerLog } = require('KegUtils/log/dockerLog')
 const { DOCKER } = require('KegConst/docker')
 const { imageSelect } = require('KegUtils/docker/imageSelect')

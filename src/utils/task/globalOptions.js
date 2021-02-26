@@ -1,36 +1,6 @@
-const { ENV_MAP } = require('KegConst/constants')
 const { deepMerge, get, set } = require('@keg-hub/jsutils')
-
-/**
- * All env shortcuts mapped to a single array
- * @array
- */
-const envOpts = Object.entries(ENV_MAP)
-  .reduce((options, [ main, shortcuts ]) => {
-    return options.concat(shortcuts)
-  }, [])
-
-
-/**
- * Cache holder for the default env
- * @object
- */
-let __defaultEnv
-
-/**
- * Gets the default env setting from the keg global config
- * @function
- *
- * @returns {string} - Default env from the global config 
- */
-const getDefaultEnv = () => {
-  if(__defaultEnv) return __defaultEnv
-  
-  const { getSetting } = require('../globalConfig/getSetting')
-  __defaultEnv = getSetting('defaultEnv')
-
-  return __defaultEnv
-}
+const { getDefaultEnv } = require('../globalConfig/getDefaultEnv')
+const { ENV_ALIAS, ENV_MAP, ENV_OPTIONS } = require('../../constants/constants')
 
 /**
  * Builds the global options object, and returns it
@@ -42,11 +12,11 @@ const getDefaultEnv = () => {
 const getGlobalOptions = (task, action) => {
   return {
     env: {
-      alias: [ 'environment' ],
-      allowed: envOpts,
+      alias: ENV_ALIAS,
+      allowed: ENV_OPTIONS,
       description: 'Environment to run the task in',
       example: 'keg ${ task } ${ action } --env staging',
-      default: getDefaultEnv() || 'development',
+      default: getDefaultEnv(),
     },
   }
 }
@@ -70,4 +40,5 @@ const addGlobalOptions = (namedTask, name, parent) => {
 module.exports = {
   addGlobalOptions,
   getGlobalOptions,
+  getDefaultEnv,
 }

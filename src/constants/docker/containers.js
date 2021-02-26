@@ -1,10 +1,12 @@
 const path = require('path')
 const { KEG_ENVS } = require('../envs')
 const { PREFIXED } = require('./domainEnvs')
-const { loadValuesFiles, loadEnvFiles } = require('./loaders')
 const { containersPath, images } = require('./values')
+const { loadValuesFiles, loadEnvFiles } = require('./loaders')
 const { defineProperty } = require('../../utils/helpers/defineProperty')
-const { deepFreeze, deepMerge, keyMap } = require('@keg-hub/jsutils')
+const { checkArgsForEnv } = require('../../utils/helpers/checkArgsForEnv')
+const { deepFreeze, deepMerge, keyMap, get, noOpObj } = require('@keg-hub/jsutils')
+const { getDefaultEnv } = require('../../utils/globalConfig/getDefaultEnv')
 
 /**
  * Holds each docker containers meta data that can be built by the CLI
@@ -51,7 +53,7 @@ const DEFAULT = {
  *
  * @returns {Object} - Built container config
 */
-const containerConfig = (container, currentEnv, __internal={}) => {
+const containerConfig = (container, currentEnv, __internal=noOpObj) => {
   const dockerFile = __internal.dockerPath || path.join(containersPath, container, `Dockerfile`)
 
   // Merge the container config with the default config and return
@@ -100,11 +102,19 @@ const buildContainers = (container, currentEnv, __internal) => {
 
 /**
  * Gets the __CONTAINERS object or builds it if it does not exist
+ * Finds the default env to ensure the correct env and values files can be loaded
  * @function
  *
  * @returns {Object} - Built container config
 */
-const getContainers = () => (__CONTAINERS || buildContainers())
+const getContainers = () => {
+  if(__CONTAINERS) return __CONTAINERS
+
+  const initEnv = checkArgsForEnv() || getDefaultEnv()
+  __CONTAINERS = buildContainers(null, initEnv)
+
+  return __CONTAINERS
+}
 
 /**
  * Injector helper to build a __CONTAINERS object dynamically
