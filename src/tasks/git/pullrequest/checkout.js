@@ -1,5 +1,4 @@
-const { reduceObj, isInt, toInt } = require('@keg-hub/jsutils')
-const { exists } = require('KegUtils/helpers/exists')
+const { reduceObj, isInt, toInt, exists } = require('@keg-hub/jsutils')
 const { spawnCmd } = require('KegProc')
 const { getGitPath } = require('KegUtils/git/getGitPath')
 const { throwNoConfigPath, generalError } = require('KegUtils/error')

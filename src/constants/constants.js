@@ -19,6 +19,29 @@ if(KEG_GLOBAL_CONFIG){
 
 let GLOBAL_INJECT_FOLDER = path.join(GLOBAL_CONFIG_FOLDER, '.tmp')
 
+/**
+ * Environment keys mapped to their shortcuts
+ * @array
+ */
+const ENV_MAP = {
+  PRODUCTION: [ 'production', 'prod', 'p' ],
+  CI: [ 'ci', 'c' ],
+  QA: [ 'qa', 'q' ],
+  STAGING: [ 'staging', 'st', 's' ],
+  DEVELOPMENT: [ 'development', 'dev', 'd' ],
+  LOCAL: [ 'local', 'loc', 'l' ],
+  TEST: [ 'test', 'tst', 't' ]
+}
+
+/**
+ * All env shortcuts mapped to a single array
+ * @array
+ */
+const ENV_OPTIONS = Object.entries(ENV_MAP)
+  .reduce((options, [ main, shortcuts ]) => {
+    return options.concat(shortcuts)
+  }, [])
+
 module.exports = deepFreeze({
 
   // Tasks settings
@@ -75,19 +98,12 @@ module.exports = deepFreeze({
     '-o StrictHostKeyChecking=no'
   ],
 
-  // Shortcuts to map env to real environment
-  ENV_OPTIONS: [ 'environment', 'env', 'e' ],
-
   // Environment keys mapped to their shortcuts 
-  ENV_MAP: {
-    PRODUCTION: [ 'production', 'prod', 'p' ],
-    CI: [ 'ci', 'c' ],
-    QA: [ 'qa', 'q' ],
-    STAGING: [ 'staging', 'st', 's' ],
-    DEVELOPMENT: [ 'development', 'dev', 'd' ],
-    LOCAL: [ 'local', 'loc', 'l' ],
-    TEST: [ 'test', 'tst', 't' ]
-  },
+  ENV_MAP,
+  // ALL Environment keys as an array
+  ENV_OPTIONS,
+  // Shortcuts to map env to real environment
+  ENV_ALIAS: [ 'environment', 'env', 'e' ],
 
   // Keys in the object that should be returned by
   // the buildContainerContext method
