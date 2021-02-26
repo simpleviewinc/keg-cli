@@ -1,5 +1,5 @@
-const { isArr, get, reduceObj, isObj, softFalsy, noOpObj } = require('@keg-hub/jsutils')
-const { getGitUrl, getGitKey, getTapPath, exists } = require('KegUtils')
+const { isArr, get, reduceObj, isObj, softFalsy, noOpObj, exists } = require('@keg-hub/jsutils')
+const { getGitUrl, getGitKey, getTapPath } = require('KegUtils')
 const { getRemoteUrl } = require('KegUtils/git/getRemoteUrl')
 const docker = require('KegDocCli')
 const { DOCKER } = require('KegConst/docker')
