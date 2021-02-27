@@ -51,6 +51,9 @@ const loadEnvFiles = args => {
     // ENVs in the global config folder based on current environment
     // Example => ~/.kegConfig/local.env
     path.join(GLOBAL_CONFIG_FOLDER, `${ env }.env`),
+    // ENVs in the global config folder based on current container
+    // Example => ~/.kegConfig/core.env
+    path.join(GLOBAL_CONFIG_FOLDER, `${ container }.env`),
     // ENVs in the global config folder based on current container and environment
     // Example => ~/.kegConfig/core-local.env
     path.join(GLOBAL_CONFIG_FOLDER, `${ container }-${ env }.env`),
@@ -84,6 +87,8 @@ const buildValueDup = (rootPath, env, container) => {
     ? []
     : container
       ? [
+          path.join(rootPath, `${ container }_values.yml`),
+          path.join(rootPath, `${ container }-values.yml`),
           path.join(rootPath, `${ container }_values_${ env }.yml`),
           path.join(rootPath, `${ container }-values-${ env }.yml`),
         ]
