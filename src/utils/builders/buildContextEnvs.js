@@ -3,6 +3,7 @@ const { getSetting } = require('../globalConfig/getSetting')
 const { getPublicGitKey } = require('../git/getPublicGitKey')
 const { getContainerConst } = require('../docker/getContainerConst')
 const { convertParamsToEnvs } = require('../task/convertParamsToEnvs')
+const { mapProcessEnvsToContextEnvs } = require('../helpers/mapProcessEnvsToContextEnvs')
 
 /**
  * Builds the ENVs for the passed in cmdContext
@@ -23,7 +24,7 @@ const buildContextEnvs = async (args) => {
   const publicGitKey = await getPublicGitKey(globalConfig)
 
   // Get the ENV vars for the command context and merge with any passed in envs
-  return {
+  return mapProcessEnvsToContextEnvs({
 
     // Get the ENV context for the command
     ...containerEnvs,
@@ -50,7 +51,7 @@ const buildContextEnvs = async (args) => {
 
     // Set the project name to allow linking services if needed
     ...(projectName && { COMPOSE_PROJECT_NAME: projectName }),
-  }
+  })
 
 }
 

@@ -20,11 +20,16 @@ const getContainerConst = (container, key='', alt) => {
     ? `.${ key.toUpperCase() }`
     : `.${ mainKey.toUpperCase() }.${ subKeys.join('.') }`
 
-  return get(
-    DOCKER,
-    `CONTAINERS.${ container.toUpperCase() }${ constPath }`,
-    alt
-  )
+  // Check the process env if the main key is env
+  // This ensures it follows the same pattern as loading the contextEnvs
+  // This way getting a constant is consistent
+  return mainKey === 'ENV' && process.env[key]
+    ? process.env[key]
+    : get(
+        DOCKER,
+        `CONTAINERS.${ container.toUpperCase() }${ constPath }`,
+        alt
+      )
 }
 
 module.exports = {
