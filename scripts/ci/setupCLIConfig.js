@@ -33,7 +33,7 @@ const { deepMerge, isFunc } = require('@keg-hub/jsutils')
 
 const {
   GITHUB_TOKEN,
-  KEG_CLI_PATH=path.join('../../'),
+  KEG_CLI_PATH=path.join(__dirname, '../../'),
   KEG_CONFIG_FILE=`cli.config.json`,
   KEG_CONFIG_PATH=path.join(KEG_CLI_ROOT, '.kegConfig'),
   KEG_CUSTOM_PATH,
