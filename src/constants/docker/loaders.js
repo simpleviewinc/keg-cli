@@ -87,10 +87,11 @@ const buildValueDup = (rootPath, env, container) => {
     ? []
     : container
       ? [
+          path.join(rootPath, `${ container }.yml`),
           path.join(rootPath, `${ container }_values.yml`),
           path.join(rootPath, `${ container }-values.yml`),
-          path.join(rootPath, `${ container }_values_${ env }.yml`),
-          path.join(rootPath, `${ container }-values-${ env }.yml`),
+          path.join(rootPath, `${ container }_${ env }_values.yml`),
+          path.join(rootPath, `${ container }-${ env }-values.yml`),
         ]
       : [
           path.join(rootPath, `values_${ env }.yml`),
