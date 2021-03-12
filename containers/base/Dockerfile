@@ -4,9 +4,12 @@ FROM $KEG_NODE_IMAGE as keg-builder
 
 WORKDIR /
 
+
 # Add git so we can pull down keg-repos
-RUN apk --no-cache add git; \
-    yarn global add expo-cli@$EXPO_CLI_VERSION sharp-cli@$SHARP_CLI_VERSION nodemon --pure-lockfile
+# RUN apk --no-cache --virtual add git python .gyp python make g++
+RUN apk add --no-cache git python make g++
+RUN yarn global add expo-cli@$EXPO_CLI_VERSION nodemon --pure-lockfile
+RUN yarn global add sharp-cli@$SHARP_CLI_VERSION
 
 # ---- Setup keg-hub within the container ---- #
 
