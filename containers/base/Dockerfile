@@ -6,7 +6,7 @@ WORKDIR /
 
 # Add git so we can pull down keg-repos
 RUN apk --no-cache add git; \
-    yarn global add expo-cli@$EXPO_CLI_VERSION nodemon --pure-lockfile
+    yarn global add expo-cli@$EXPO_CLI_VERSION sharp-cli@$SHARP_CLI_VERSION nodemon --pure-lockfile
 
 # ---- Setup keg-hub within the container ---- #
 

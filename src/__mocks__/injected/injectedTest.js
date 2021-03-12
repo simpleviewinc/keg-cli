@@ -48,6 +48,7 @@ const injectedTest = {
     PROXY_PATH: `${homeDir}/keg-hub/repos/keg-proxy`,
     JSUTILS_PATH: `${homeDir}/keg-hub/repos/jsutils`,
     EXPO_CLI_VERSION: '4.3.0',
+    SHARP_CLI_VERSION: '1.10.0',
     EXPO_DEBUG_PORT: 19007,
     EXPO_APP_PORT: '19006',
     GIT_KEY: 'INITIAL',
