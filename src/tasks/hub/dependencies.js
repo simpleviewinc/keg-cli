@@ -2,6 +2,10 @@ const semver = require('semver')
 const { Logger } = require('KegLog')
 const { getHubRepos } = require('KegUtils/hub/getHubRepos')
 const { reduceObj, mapObj, get, set } = require('@keg-hub/jsutils')
+const { updateVersionInDependencies } = require('KegUtils/version/updateVersionInDependencies')
+
+
+const cleanVersion = ver => semver.clean(ver.replace('^', ''))
 
 /**
  * Loops over a repos dependencies and compares it with all other repo dependencies
@@ -107,9 +111,10 @@ const diffDepVersions = versions => {
 const formatMismatches = mismatched => {
   return reduceObj(mismatched, (depName, mapped, toRender) => {
     mapObj(mapped, (repo, meta) => {
+      const version = cleanVersion(meta.version)
       toRender[depName] = toRender[depName] || {}
-      toRender[depName][meta.version] = toRender[depName][meta.version] || []
-      toRender[depName][meta.version].push(repo)
+      toRender[depName][version] = toRender[depName][version] || []
+      toRender[depName][version].push(repo)
     })
 
     return toRender
@@ -143,17 +148,34 @@ const displayMismatches = formatted => {
  *
  * @returns {void}
  */
-const compareVersions = repos => {
+const compareVersions = (repos, display) => {
   const allDependencies = { cache: {}, versions: {} }
-  repos.map(({ repo, package }) => buildDepMap(allDependencies, package, repo))
+  mapObj(repos, (repo, { package }) => buildDepMap(allDependencies, package, repo))
   const mismatched = diffDepVersions(allDependencies.versions)
   const formatted = formatMismatches(mismatched)
 
-  displayMismatches(formatted)
+  display && displayMismatches(formatted)
+
+  return { formatted, mismatched }
 }
 
-const updateVersion = (repos, update) => {
-  // TODO: Add code from other branch to update the versions
+const updateVersion = (repos, diff) => {
+  const { formatted, mismatched } = diff
+
+  mapObj(formatted, (depName, versions) => {
+    const versArr = mapObj(versions, (ver) => cleanVersion(ver))
+    const version = semver.sort(versArr).pop()
+    
+    const needUpdate = reduceObj(versions, (current, repoNames, toUpdate) => {
+      return current === version
+        ? toUpdate
+        : toUpdate.concat(repoNames.map(name => repos[name]))
+    }, [])
+    
+    return [ depName, needUpdate, version ]
+  })
+  .map(args => updateVersionInDependencies(...args))
+
 }
 
 /**
@@ -168,19 +190,17 @@ const updateVersion = (repos, update) => {
  */
 const hubDeps = async args => {
   const { params } = args
-  const { update } = params
-  const repos = []
+  const { update, display } = params
+  const repos = {}
 
   await getHubRepos({ ...params, callback: (repo, package, { location }) => {
-    repos.push({
-      repo,
-      package,
-      location,
-    })
+    repos[repo] = { repo, package, location }
   }})
 
-  compareVersions(repos)
-  update && updateVersion(repos)
+  const diff = compareVersions(repos, display)
+  // update && updateVersion(repos, diff)
+
+  updateVersion(repos, diff)
 
   return repos
 }
