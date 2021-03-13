@@ -39,8 +39,8 @@
   "dependencies": {
     "@keg-hub/args-parse": "6.2.2",
     "@keg-hub/ask-it": "0.0.1",
-    "@keg-hub/jsutils": "8.0.0",
-    "@keg-hub/spawn-cmd": "0.1.0",
+    "@keg-hub/jsutils": "8.3.0",
+    "@keg-hub/spawn-cmd": "0.1.1",
     "axios": "0.21.1",
     "cli-progress": "3.8.2",
     "cli-spinners": "2.3.0",
@@ -51,7 +51,7 @@
     "module-alias": "2.2.2",
     "ngrok": "3.2.7",
     "qrcode-terminal": "0.12.0",
-    "rimraf": "2.6.3",
+    "rimraf": "3.0.2",
     "semver": "^7.3.2",
     "shelljs": "^0.8.4",
     "write-yaml-file": "4.0.0"
