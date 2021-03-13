@@ -1,10 +1,15 @@
 const semver = require('semver')
 const { Logger } = require('KegLog')
 const { getHubRepos } = require('KegUtils/hub/getHubRepos')
-const { reduceObj, mapObj, get, set } = require('@keg-hub/jsutils')
+const { reduceObj, mapObj, get, set, isEmptyColl } = require('@keg-hub/jsutils')
 const { updateVersionInDependencies } = require('KegUtils/version/updateVersionInDependencies')
 
-
+/**
+ * Cleans the version number so it can be compared
+ * @param {string} version - Version number of a dependency from a package.json file
+ *
+ * @returns {string} - Cleaned Version number
+ */
 const cleanVersion = ver => semver.clean(ver.replace('^', ''))
 
 /**
@@ -128,6 +133,10 @@ const formatMismatches = mismatched => {
  * @returns {void}
  */
 const displayMismatches = formatted => {
+  if(isEmptyColl(formatted))
+    return Logger.info(`\nNo mismatched dependency versions found!\n`)
+
+
   Logger.header(`Mismatched Dependencies`)
 
   mapObj(formatted, (depName, mapped) => {
@@ -159,8 +168,17 @@ const compareVersions = (repos, display) => {
   return { formatted, mismatched }
 }
 
+/**
+ * Updates the mismatched dependency versions to the highest found value
+ * @param {Object} repos - Meta data for all repos of the keg-hub
+ * @param {Object} diff - Meta data about repos with different version of the same dependency
+ *
+ * @returns {void}
+ */
 const updateVersion = (repos, diff) => {
   const { formatted, mismatched } = diff
+
+  if(isEmptyColl(formatted)) return null
 
   mapObj(formatted, (depName, versions) => {
     const versArr = mapObj(versions, (ver) => cleanVersion(ver))
@@ -175,6 +193,11 @@ const updateVersion = (repos, diff) => {
     return [ depName, needUpdate, version ]
   })
   .map(args => updateVersionInDependencies(...args))
+
+  Logger.empty()
+  Logger.success(`The package.json dependency versions have been updated across keg-hub repos!`)
+  Logger.info(`No git commands have been run. You must do that manually!`)
+  Logger.empty()
 
 }
 
@@ -198,9 +221,7 @@ const hubDeps = async args => {
   }})
 
   const diff = compareVersions(repos, display)
-  // update && updateVersion(repos, diff)
-
-  updateVersion(repos, diff)
+  update && updateVersion(repos, diff)
 
   return repos
 }
@@ -219,11 +240,17 @@ module.exports = {
         example: 'keg hub dependencies --scope cli',
         default: 'all'
       },
+      display: {
+        alias: [ 'dis' ],
+        description: 'Display dependency mismatches across keg-hub repos',
+        example: 'keg hub dependencies --no-display',
+        default: true
+      },
       update: {
         alias: [ 'up' ],
         description: 'Updates a specific dependency in all repos where it exists',
         example: 'keg hub dependencies --update <dependency>:<version>',
-        default: true
+        default: false,
       }
     }
   }
