@@ -21,8 +21,12 @@ const cleanVersion = ver => semver.clean(ver.replace('^', ''))
  *
  * @returns {Object} - Mapped dependencies version mismatches
  */
-const loopDependency = (repo, allDependencies, dependencies, type) => {
+const loopDependency = (repo, depFilters, allDependencies, dependencies, type) => {
   return reduceObj(dependencies, (dependency, version, updated) => {
+    // If there are dependency filters, then check if it should be included
+    // If not, skip it, by returning early
+    if(depFilters && !depFilters.includes(dependency)) return updated
+
     !updated.cache[dependency]
       ? (updated.cache[dependency] = { [repo]: { version, type } })
       : (updated.versions[dependency] = {
@@ -43,10 +47,11 @@ const loopDependency = (repo, allDependencies, dependencies, type) => {
  *
  * @returns {Object} - Mapped dependencies version mismatches
  */
-const buildDepMap = (allDependencies, package, repo) => {
+const buildDepMap = (allDependencies, package, repo, depFilters) => {
   const { dependencies, devDependencies, peerDependencies } = package
   let mappedDependencies = loopDependency(
     repo,
+    depFilters,
     allDependencies,
     devDependencies,
     'devDependencies',
@@ -54,6 +59,7 @@ const buildDepMap = (allDependencies, package, repo) => {
 
   mappedDependencies = loopDependency(
     repo,
+    depFilters,
     mappedDependencies,
     dependencies,
     'dependencies'
@@ -61,6 +67,7 @@ const buildDepMap = (allDependencies, package, repo) => {
 
   return loopDependency(
     repo,
+    depFilters,
     mappedDependencies,
     peerDependencies,
     'peerDependencies'
@@ -157,9 +164,10 @@ const displayMismatches = formatted => {
  *
  * @returns {void}
  */
-const compareVersions = (repos, display) => {
+const compareVersions = (repos, display, depFilters) => {
   const allDependencies = { cache: {}, versions: {} }
-  mapObj(repos, (repo, { package }) => buildDepMap(allDependencies, package, repo))
+  mapObj(repos, (repo, { package }) => buildDepMap(allDependencies, package, repo, depFilters))
+  
   const mismatched = diffDepVersions(allDependencies.versions)
   const formatted = formatMismatches(mismatched)
 
@@ -213,14 +221,18 @@ const updateVersion = (repos, diff) => {
  */
 const hubDeps = async args => {
   const { params } = args
-  const { update, display } = params
+  const { update, display, dependencies } = params
   const repos = {}
+
+  const depFilters = dependencies && dependencies.length
+    ? dependencies
+    : false
 
   await getHubRepos({ ...params, callback: (repo, package, { location }) => {
     repos[repo] = { repo, package, location }
   }})
 
-  const diff = compareVersions(repos, display)
+  const diff = compareVersions(repos, display, depFilters)
   update && updateVersion(repos, diff)
 
   return repos
@@ -239,6 +251,13 @@ module.exports = {
         description: 'Filter results based on a repo(s) name',
         example: 'keg hub dependencies --scope cli',
         default: 'all'
+      },
+      dependencies: {
+        alias: [ 'deps', 'dep'],
+        description: 'File the dependencies that will be checked',
+        example: 'keg hub dependencies --dependencies expo,rollup',
+        type: 'array',
+        default: [],
       },
       display: {
         alias: [ 'dis' ],
