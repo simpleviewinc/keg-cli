@@ -2,7 +2,7 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
 const { buildDockerCmd } = require('KegUtils/docker')
-const { throwRequired, throwNoTapLoc } = require('KegUtils/error')
+const { throwRequired, throwNoTapLoc, generalError } = require('KegUtils/error')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
@@ -54,8 +54,8 @@ const dockerBuild = async args => {
   // Remove container from the params if it exists
   // Otherwise it would cause getContext to fail
   // Because it thinks it needs to ask for the non-existent container
-  const { container, ...params } = args.params
-  const { context, log, pull, buildArgs, push, from } = params
+  const { container, from, ...params } = args.params
+  const { context, log, pull, buildArgs, push } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
@@ -103,10 +103,12 @@ const dockerBuild = async args => {
 
   Logger.pair(`\nBuilding docker image`, image || cmdContext)
 
+  const buildImg = image || cmdContext || contextEnvs.IMAGE
+  
   // Run the built docker command
   const exitCode = await docker.build(
     dockerCmd,
-    { log, options: { env: contextEnvs }, context: image || cmdContext },
+    { log, options: { env: contextEnvs }, context: buildImg },
     location
   )
 
@@ -116,7 +118,8 @@ const dockerBuild = async args => {
 
   // Return the built image as a json object
   // This is needed for internal keg-cli calls
-  const imgRef = await docker.image.get(image || contextEnvs.IMAGE)
+  const imgRef = await docker.image.get(buildImg)
+  !imgRef && generalError(`Docker image ${buildImg} could not be found after it was built!`)
 
   // push the new image to the docker provider 
   push && await runInternalTask(
@@ -126,14 +129,16 @@ const dockerBuild = async args => {
       command: 'push',
       __internal: {
         ...args.__internal,
+        imgRef,
         containerContext,
       },
       params: {
-        ...args.params,
+        ...params,
         context,
         // Force set build false, cause we just built the image
         build: false,
-        image: image || imgRef.rootId,
+        tag: imgRef.tag,
+        image: imgRef.rootId,
       }
     }
   )
