@@ -1,8 +1,8 @@
 const { Logger } = require('KegLog')
 const { getHubRepos } = require('KegUtils/hub/getHubRepos')
 const { spawnCmd } = require('KegProc')
-const { get } = require('@keg-hub/jsutils')
-const { runYarnScript } = require('KegUtils/helpers/runYarnScript')
+const { get, wordCaps, isObj } = require('@keg-hub/jsutils')
+const { runYarnScript, runYarnScriptPipe } = require('KegUtils/helpers/runYarnScript')
 
 /**
  * Allowed yarn commands that can run for every repo
@@ -15,6 +15,28 @@ const allowedNotDefined = [
 ]
 
 /**
+ * Logs an error message when a script fails
+ * @param {Object} resp - Response from the yarn cmd
+ * @param {string} resp.data - stdOut from yarn cmd
+ * @param {string} resp.error - stdErr from yarn cmd
+ * @param {number} resp.exitCode - exit code of the yarn cmd
+ * @param {string} script - Name of script that failed
+ *
+ * @returns {void}
+ */
+const logScriptError = (resp, script) => {
+  const jestTestSplit = 'Summary of all failing tests'
+
+  Logger.colors.brightRed(`  - Script failed!`)
+
+  script !== 'test'
+    ? Logger.error(`\n${resp.error}`)
+    : Logger.error(`\n${jestTestSplit}\n${resp.error.split(jestTestSplit).pop()}`)
+
+  Logger.empty()
+}
+
+/**
  * Runs the passed in script from the package.json of the passed in repos
  * <br/>If the script does not exist, it skips it
  * @function
@@ -22,10 +44,10 @@ const allowedNotDefined = [
  * @param {string} script - Name of the script to run
  * @param {string} script - Name of the script to run
  *
- * @returns {Void}
+ * @returns {*} - Response from the runYarnScript method
  */
-const runScript = (repo, package, args={}) => {
-  const { location, script='' } = args
+const runScript = async (repo, package, args={}) => {
+  const { location, script='', pipe=true } = args
 
   const firstWord = script.split(' ')[0]
   const isAllowed = allowedNotDefined.includes(firstWord)
@@ -33,14 +55,73 @@ const runScript = (repo, package, args={}) => {
   if(!location || (!isAllowed && (!script || !get(package, `scripts.${script}`))))
     return false
 
-  Logger.log(
-    Logger.colors.brightWhite(`Running`),
-    Logger.colors.brightCyan(`"yarn ${script}"`),
-    Logger.colors.brightWhite(`for repo`),
-    Logger.colors.brightCyan(`"${repo}"`),
-  )
+  const repoName = wordCaps(repo)
+  const title = [
+    Logger.colors.brightWhite(`\n${repoName} -`),
+    Logger.colors.brightCyan(`yarn ${script}`),
+  ].join(' ')
 
-  return runYarnScript(location, script)
+  Logger.log(title)
+
+  const resp = pipe
+    ? await runYarnScriptPipe(location, script, { title })
+    : await runYarnScript(location, script)
+  
+  ;isObj(resp) && (() => {
+    resp.exitCode === 0
+      ? Logger.log(Logger.colors.brightGreen(`  - Script ran successfully!`))
+      : logScriptError(resp, script)
+  })()
+
+  return resp
+}
+
+/**
+ * Runs the passed in script for all found repos asynchronously
+ * @function
+ * @param {Array} repos - All repos that the script should run on
+ * @param {string} script - Name of the script to run
+ * @param {boolean} pipe - Should the output be piped to the main process
+ *
+ * @returns {Array<*>} - Responses from the runYarnScript method
+ */
+const runAsync = (repos, script, pipe) => {
+  const promises = repos.map(({ repo, package, location }) => {    
+    return runScript(
+      repo,
+      package,
+      { location, script, pipe }
+    )
+  })
+
+  return Promise.all(promises)
+}
+
+/**
+ * Runs the passed in script for all found repos synchronously
+ * @function
+ * @param {Array} repos - All repos that the script should run on
+ * @param {string} script - Name of the script to run
+ * @param {boolean} pipe - Should the output be piped to the main process
+ *
+ * @returns {Array<*>} - Responses from the runYarnScript method
+ */
+const runSync = async (repos, script, pipe, responses=[]) => {
+  await repos.reduce(async (scriptResp, { repo, package, location }) => {
+    await scriptResp
+    scriptResp && responses.push(scriptResp)
+
+    const resp = await runScript(
+      repo,
+      package,
+      { location, script, pipe }
+    )
+
+    return resp
+  }, Promise.resolve(false))
+
+  return responses
+
 }
 
 /**
@@ -55,17 +136,21 @@ const runScript = (repo, package, args={}) => {
  */
 const runRepos = async args => {
   const { params } = args
+  const { script, pipe, sync } = params
 
-  Logger.empty()
-
+  const repos = []
   await getHubRepos({
     ...params,
-    callback: runScript,
+    callback: (repo, package, { location }) => repos.push({ repo, package, location })
   })
 
-  Logger.empty()
-  return true
+  ;sync
+    ? await runSync(repos, script, pipe)
+    : await runAsync(repos, script, pipe)
 
+  Logger.empty()
+
+  return true
 }
 
 module.exports = {
@@ -86,6 +171,12 @@ module.exports = {
         description: 'Filter which repo(s) to run the script on!',
         example: 'keg hub run --context cli',
         default: 'all'
+      },
+      pipe: {
+        alias: [ 'pip' ],
+        description: 'When not set, all output of a script is logged to the terminal',
+        example: 'keg hub run --no-pipe',
+        default: true
       },
       sync: {
         alias: [ 'sy' ],

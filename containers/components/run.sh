@@ -13,7 +13,7 @@ else
 
   # Check if no exect command exists, or if it's set to web
   # Then default it to storybook
-  if [ -z "$KEG_EXEC_CMD" || "$KEG_EXEC_CMD" == 'web' ]; then
+  if [ -z "$KEG_EXEC_CMD" ] || [ "$KEG_EXEC_CMD" == "web" ]; then
     KEG_EXEC_CMD="sb"
   fi
 

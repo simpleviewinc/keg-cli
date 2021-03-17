@@ -11,9 +11,8 @@ else
   # cd into the tap repo
   cd $DOC_APP_PATH
 
-  # Check if no exect command exists, or if it's set to web
-  # Then default it to storybook
-  if [ -z "$KEG_EXEC_CMD" || "$KEG_EXEC_CMD" == 'web' ]; then
+  # Check if no exect command exists, then default it to web
+  if [ -z "$KEG_EXEC_CMD" ]; then
     KEG_EXEC_CMD="web"
   fi
 

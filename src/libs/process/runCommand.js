@@ -81,6 +81,15 @@ const executeCmd = (cmd, ...args) => {
   return asyncCmd(cmd, options)
 }
 
+/**
+ * Listen for "(cmd|ctrl) + c" keyboard events, and exit the running process
+ */
+process.on("SIGINT", () => {
+  Logger.empty()
+  Logger.info(`\n[ Keg-CLI ] task terminated by user!\n`)
+  process.exit(0)
+})
+
 module.exports = {
   spawnProc,
   executeCmd,
