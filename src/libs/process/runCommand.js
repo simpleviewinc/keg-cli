@@ -1,5 +1,5 @@
 const { Logger } = require('KegLog')
-const { isObj, isArr, isBool, setLogs } = require('@keg-hub/jsutils')
+const { isObj, isArr, isBool } = require('@keg-hub/jsutils')
 const { spawnCmd, asyncCmd } = require('@keg-hub/spawn-cmd')
 
 /**
