@@ -1,5 +1,5 @@
 const { Logger } = require('KegLog')
-const { isObj, isArr, isBool } = require('@keg-hub/jsutils')
+const { isObj, isArr, isBool, setLogs } = require('@keg-hub/jsutils')
 const { spawnCmd, asyncCmd } = require('@keg-hub/spawn-cmd')
 
 /**
@@ -28,7 +28,7 @@ const logSpawn = (args, message) => {
   const lastArg = args[ args.length - 1 ]
 
   // Check if the command should br logged
-  ;( args.length < 3 || !isBool(lastArg) || lastArg !== false ) && Logger.pair(...message)
+  ( args.length < 3 || !isBool(lastArg) || lastArg !== false ) && Logger.pair(...message)
 }
 
 /**
@@ -80,6 +80,15 @@ const executeCmd = (cmd, ...args) => {
 
   return asyncCmd(cmd, options)
 }
+
+/**
+ * Listen for "(cmd|ctrl) + c" keyboard events, and exit the running process
+ */
+process.on("SIGINT", () => {
+  Logger.empty()
+  Logger.info(`\n[ Keg-CLI ] task terminated by user!\n`)
+  process.exit(0)
+})
 
 module.exports = {
   spawnProc,
