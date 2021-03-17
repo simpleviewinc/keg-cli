@@ -1,7 +1,7 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { ask } = require('@keg-hub/ask-it')
-const { get } = require('@keg-hub/jsutils')
+const { get, isObj, noOpObj } = require('@keg-hub/jsutils')
 const { getImageRef } = require('KegUtils/docker/getImageRef')
 const { generalError } = require('KegUtils/error/generalError')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
@@ -16,10 +16,13 @@ const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
  *
  * @returns {Promise<Object> - Docker Image ref}
  */
-const checkBuildImage = async (args, imgNameContext) => {
+const checkBuildImage = async (args, imgNameContext, build) => {
+  let doBuild = build
 
-  Logger.info(`\nThe ${imgNameContext.imageWTag} image could not be found.\n`)
-  const doBuild = await ask.confirm(`Would you like to build it?`)
+  if(!doBuild){
+    Logger.info(`\nThe ${imgNameContext.imageWTag} image could not be found.\n`)
+    doBuild = await ask.confirm(`Would you like to build it?`)
+  }
 
   // If we should build, call the internal build task 
   if(doBuild)
@@ -34,7 +37,7 @@ const checkBuildImage = async (args, imgNameContext) => {
     })
 
   // Log and exit, if no image to push
-  Logger.warn(`\nImage NOT pushed to provider. User canceled!\n`)
+  Logger.warn(`\nNo Image exists to push to provider. User canceled!\n`)
   process.exit(0)
 
 }
@@ -52,21 +55,23 @@ const checkBuildImage = async (args, imgNameContext) => {
  * @returns {Promise<Void>}
  */
 const providerPush = async (args) => {
-  const { params, task } = args
-  const { log=true } = params
+  const { __internal=noOpObj, task } = args
+  const { log=true, from, build, ...params } = args.params
 
   /*
   * ----------- Step 1 ----------- *
   * Get the Image name context and inspect meta data
   */
-  const imgNameContext = await getImgNameContext(params)
-  const { imgRef } = await getImageRef(imgNameContext)
+  const imgNameContext = __internal.imgNameContext || await getImgNameContext(params)
+  const { imgRef } = isObj(__internal.imgRef) && __internal || await getImageRef(imgNameContext)
 
   /*
   * ----------- Step 2 ----------- *
   * Ensure we have an image to reference
   */
-  const imageRef = imgRef || await checkBuildImage(args, imgNameContext)
+  const imageRef = build || !imgRef
+    ? await checkBuildImage(args, imgNameContext, build)
+    : imgRef
 
   !imageRef && throwNoDockerImg(imgNameContext.full)
 

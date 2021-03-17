@@ -104,5 +104,6 @@ keg(){
   # All other commands get passed on to the node keg-cli script
   node $KEG_CLI_PATH/keg-cli $@
 
-  return 0
+  # return the exit code of the node keg-cli script
+  return "$?"
 }

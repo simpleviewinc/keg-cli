@@ -1,3 +1,4 @@
+const { fromImage } = require('./singleOptions')
 const { dockerOptions } = require('./dockerOptions')
 const { contextOptions } = require('./contextOptions')
 
@@ -26,6 +27,7 @@ const pushOptions = (task, action) => {
       example: `keg ${task} ${action} --log`,
       default: false,
     },
+    from: fromImage(task, action),
     ...dockerOptions(task, action),
   }
 }
