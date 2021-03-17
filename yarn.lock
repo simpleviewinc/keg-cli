@@ -1290,45 +1290,35 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@keg-hub/args-parse@6.2.2":
-  version "6.2.2"
-  resolved "https://registry.npmjs.org/@keg-hub/args-parse/-/args-parse-6.2.2.tgz#1f80bb44e2745031ba56a22e1c7e2d4b047bbe33"
-  integrity sha512-bpvOUPdrmn4IIdDebggk8MxzYY0urtNZJqsTjp/z52fSZ4F8sBmnCQeZuMsfAuO+Gw/IsYK8OAFlk+GhJajAdw==
+"@keg-hub/args-parse@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.npmjs.org/@keg-hub/args-parse/-/args-parse-6.2.3.tgz#853ec4bfe7eb369b863bfc670e7f610bddc58060"
+  integrity sha512-Q0G+/l2Qio0iWdph/9h6u11xfhEzaPiEHcTm7GCqH+R8JTZ8h63i78aU9vvPX9f91g7zkStO/iOyZ7PTOCYdLg==
   dependencies:
-    "@keg-hub/ask-it" "0.0.1"
-    "@keg-hub/jsutils" "8.2.0"
+    "@keg-hub/ask-it" "0.0.2"
+    "@keg-hub/jsutils" "8.4.0"
     app-root-path "3.0.0"
 
-"@keg-hub/ask-it@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@keg-hub/ask-it/-/ask-it-0.0.1.tgz#49af762e0069b4dbe062f658a53f43c9cf3a988f"
-  integrity sha512-agTe1LPIAbXOoZjQ3nxoHDLLVpKkeVIj0UJAoKVX2T87UUO/kO0N4sumRQHXja3yZEqspbdMOR0VLFNhvCGlWg==
+"@keg-hub/ask-it@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.npmjs.org/@keg-hub/ask-it/-/ask-it-0.0.2.tgz#f586289082ffd4e218de0d11d24903592d13ba25"
+  integrity sha512-I8n/qUH+dOYKXtYo6ydOq8jeOIVTDYi4l24Dv4Q7BRbSsJOlFSUMiXuNz0Ji3h5+Vu4D0iP61e0fWVwy7zSqEg==
   dependencies:
-    "@keg-hub/jsutils" "0.0.1"
+    "@keg-hub/jsutils" "8.4.0"
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/jsutils@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@keg-hub/jsutils/-/jsutils-0.0.1.tgz#6be5fd8398324c51a320f9f8460dbcdcf9faec24"
-  integrity sha512-1oAyR0FuHb6ICHd1sacvGhm0O4/w/BDT+RNQO13Lcy1hh7QgAibOG7ylioPFkOQWBFN1nCMdgW9xRVe3peEUVQ==
+"@keg-hub/jsutils@8.4.0":
+  version "8.4.0"
+  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.4.0.tgz#e2dd2794ccc60f8c2e5ee1aa12ec6f8d9217c209"
+  integrity sha512-dKduqKAHh2AqKymyHR0boje7x8kPkTK8vkFI46OUS+Ar9tZjjMgX8CoQuOoCzvpc/pbCaINgbSQCfrcOPidQQg==
 
-"@keg-hub/jsutils@8.2.0":
-  version "8.2.0"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.2.0.tgz#c9f20bbc5ef439c78ed6ccd113e57d2b84b01a98"
-  integrity sha512-KXooZivpaA3+cmbYI6PntkSUp5GE6/qhdwKMWa2hSRGJ34HSrNII9hSMSgOFZiqGJZKAIr39VVR9WsI+n3nmZA==
-
-"@keg-hub/jsutils@8.3.0":
-  version "8.3.0"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.3.0.tgz#559d61c4d20bcca33358685547ba8975cf0f8f47"
-  integrity sha512-kmWMkbL2w7Eg89JXqdTC2OedwpD4eL/5KRbSOUbIRCum3xQl/2S1D/FraeJKwlW14NCpOWjfRHPnfxWgwPcAqw==
-
-"@keg-hub/spawn-cmd@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.1.tgz#931965f250a19a36b12f1dfbae7cef1d707d0355"
-  integrity sha512-FNbcs6k/hG4g1MjgIsdH8iyG/6rDac3Vyx5xR84I43DtvQ3YbMSQHygeXVyk61nE14Y31AcFdEeG3Iy22WBAow==
+"@keg-hub/spawn-cmd@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.2.tgz#30bd37e03a3c2cb98235fa300ef06c0505404392"
+  integrity sha512-6Q4jFxbnTbX4eAnaMcIgGfUstQ8/UIVVD/MaT89IOZ2yNjQYMxbhompDSr7P38RVekIiEWZZE2W/VA8IAA8/Cg==
   dependencies:
-    "@keg-hub/jsutils" "8.3.0"
+    "@keg-hub/jsutils" "8.4.0"
     app-root-path "3.0.0"
     cross-spawn "7.0.3"
     shell-exec "1.0.2"
