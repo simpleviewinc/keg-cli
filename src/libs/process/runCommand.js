@@ -28,7 +28,7 @@ const logSpawn = (args, message) => {
   const lastArg = args[ args.length - 1 ]
 
   // Check if the command should br logged
-  ( args.length < 3 || !isBool(lastArg) || lastArg !== false ) && Logger.pair(...message)
+  ;( args.length < 3 || !isBool(lastArg) || lastArg !== false ) && Logger.pair(...message)
 }
 
 /**
