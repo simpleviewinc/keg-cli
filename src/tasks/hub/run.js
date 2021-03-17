@@ -15,6 +15,28 @@ const allowedNotDefined = [
 ]
 
 /**
+ * Logs an error message when a script fails
+ * @param {Object} resp - Response from the yarn cmd
+ * @param {string} resp.data - stdOut from yarn cmd
+ * @param {string} resp.error - stdErr from yarn cmd
+ * @param {number} resp.exitCode - exit code of the yarn cmd
+ * @param {string} script - Name of script that failed
+ *
+ * @returns {void}
+ */
+const logScriptError = (resp, script) => {
+  const jestTestSplit = 'Summary of all failing tests'
+
+  Logger.colors.brightRed(`  - Script failed!`)
+
+  script !== 'test'
+    ? Logger.error(`\n${resp.error}`)
+    : Logger.error(`\n${jestTestSplit}\n${resp.error.split(jestTestSplit).pop()}`)
+
+  Logger.empty()
+}
+
+/**
  * Runs the passed in script from the package.json of the passed in repos
  * <br/>If the script does not exist, it skips it
  * @function
@@ -45,15 +67,24 @@ const runScript = async (repo, package, args={}) => {
     ? await runYarnScriptPipe(location, script, { title })
     : await runYarnScript(location, script)
   
-  ;isObj(resp) && Logger.log(
+  ;isObj(resp) && (() => {
     resp.exitCode === 0
-      ? Logger.colors.brightGreen(`  - Script ran successfully!`)
-      : Logger.colors.brightRed(`  - Script failed!`)
-  )
+      ? Logger.log(Logger.colors.brightGreen(`  - Script ran successfully!`))
+      : logScriptError(resp, script)
+  })()
 
   return resp
 }
 
+/**
+ * Runs the passed in script for all found repos asynchronously
+ * @function
+ * @param {Array} repos - All repos that the script should run on
+ * @param {string} script - Name of the script to run
+ * @param {boolean} pipe - Should the output be piped to the main process
+ *
+ * @returns {Array<*>} - Responses from the runYarnScript method
+ */
 const runAsync = (repos, script, pipe) => {
   const promises = repos.map(({ repo, package, location }) => {    
     return runScript(
@@ -66,6 +97,15 @@ const runAsync = (repos, script, pipe) => {
   return Promise.all(promises)
 }
 
+/**
+ * Runs the passed in script for all found repos synchronously
+ * @function
+ * @param {Array} repos - All repos that the script should run on
+ * @param {string} script - Name of the script to run
+ * @param {boolean} pipe - Should the output be piped to the main process
+ *
+ * @returns {Array<*>} - Responses from the runYarnScript method
+ */
 const runSync = async (repos, script, pipe, responses=[]) => {
   await repos.reduce(async (scriptResp, { repo, package, location }) => {
     await scriptResp
