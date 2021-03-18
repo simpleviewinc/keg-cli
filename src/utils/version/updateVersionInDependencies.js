@@ -6,7 +6,7 @@ const { writePackageVersion } = require('./writePackageVersion')
  * <br/>If repoName is found, it updates the version to the passed in version
  * <br/>Rewrites the package.json if a dependency update if found
  * @function
- * @param {string} repoName - Name of the repo to search fro
+ * @param {string} repoName - Name of the repo to search for
  * @param {array} repos - Repos to search for the repoName dependency
  * @param {string} version - New version to update to
  * 
@@ -14,7 +14,7 @@ const { writePackageVersion } = require('./writePackageVersion')
  */
 const updateVersionInDependencies = async (repoName, repos, version) => {
 
-  // Loop over all the repos and check for the repo as a dependancy
+  // Loop over all the repos and check for the repo as a dependency
   return repos.map(otherRepo => {
     const { package } = otherRepo
 
