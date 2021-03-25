@@ -97,7 +97,7 @@ const dockerPackage = async args => {
 
   const id = get(resolvedContainerContext, 'id')
   if (!id)
-    generalError(`Container context id is not available. Are you sure you the container "${image}" exists?`)
+    generalError(`Container context id is not available. Are you sure the container "${image}" exists?`)
 
   // Get the current branch name at the location
   const currentBranch = tag || await getCommitTag(location)
