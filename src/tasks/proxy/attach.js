@@ -34,7 +34,7 @@ module.exports = {
       cmd: {
         description: 'Docker container command to run. Default ( /bin/bash )',
         example: 'keg proxy att --cmd test',
-        default: 'bash'
+        default: '/bin/sh'
       },
       options: {
         alias: [ 'opts' ],
