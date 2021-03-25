@@ -78,3 +78,4 @@
       * example: `keg evf build --tag my-changes-tag --push`
     * Then, to test it, run the package locally using the `--from` flag:
       * example: `keg evf start --from evf:my-changes-tag`
+      * ensure you use the same branch as the one you were on when you ran `build`, otherwise the mutagen sync will overwrite changes within the docker container
