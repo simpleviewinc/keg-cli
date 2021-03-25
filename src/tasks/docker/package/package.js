@@ -89,16 +89,15 @@ const dockerPackage = async args => {
   // Really the ID should be coming from buildContainerContext
   // Need to investigate why
 
+  // Ensure we get the container context, either from the existing container context
+  // Or from the container context for internal apps, or the image name
   const resolvedContainerContext = containerContext.id
     ? containerContext
     : await docker.container.get(CONTEXT_TO_CONTAINER[cmdContext] || image)
 
-  if (!resolvedContainerContext || !resolvedContainerContext.id)
-    generalError('Container context id is not available. Are you sure you have the container running?')
-
-  // Ensure we get the container ID, either from the container context
-  // Or from the container context for internal apps or the image name
-  const { id } = resolvedContainerContext
+  const id = get(resolvedContainerContext, 'id')
+  if (!id)
+    generalError(`Container context id is not available. Are you sure you the container "${image}" exists?`)
 
   // Get the current branch name at the location
   const currentBranch = tag || await getCommitTag(location)
