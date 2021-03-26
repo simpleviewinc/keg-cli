@@ -1,6 +1,7 @@
 
 env:
   # --- LOCAL ENV CONTEXT --- #
+  IMAGE: 'keg-proxy'
 
   KEG_DOCKER_FILE: "{{ cli.paths.containers }}/proxy/Dockerfile"
   KEG_VALUES_FILE: "{{ cli.paths.containers }}/proxy/values.yml"
