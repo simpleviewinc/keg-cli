@@ -33,3 +33,6 @@ env:
 
   # Entry port for trafik to route to keg containers
   PROXY_ENTRY_PORT: 80
+
+  # Ensures watchtower won't restart the container when a new image is found (default is true)
+  KEG_WATCHTOWER_ENABLED: false
