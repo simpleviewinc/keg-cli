@@ -199,7 +199,7 @@ const buildIgnore = (ignore={}) => {
  *
  * @returns {string} - Joined create arguments as a string
  */
-const buildMutagenArgs = ({ ignore, mode, ...args }) => {
+const buildMutagenArgs = ({ ignore, mode, mergeDefault, ...args }) => {
   const mutagenArgs = reduceObj(args, (key, value, buildArgs) => {
     const useKey = trainCase(key)
     return value === true

@@ -1,5 +1,5 @@
 const path = require('path')
-const { deepMerge, deepClone } = require('@keg-hub/jsutils')
+const { deepMerge, deepClone, isObj } = require('@keg-hub/jsutils')
 const { loadYml, writeYml, stat } = require('KegFileSys')
 const { generalError } = require('KegUtils/error')
 
@@ -29,7 +29,7 @@ const configDefs = {
   ignore: {
     paths: [
       'node_modules',
-      '/core/base/assets/*',
+      '/core/base/assets/*.js',
       '/.*',
       '!/.storybook',
       '!/.npmrc',
@@ -59,8 +59,12 @@ class Config {
   *
   * @returns {Object} - Mutagen config
   */
-  get = (overrides={}) => {
-    return deepMerge(this.defaults, overrides)
+  get = (overrides) => {
+    return !isObj(overrides)
+      ? this.defaults
+      : overrides.mergeDefault
+        ? deepMerge(this.defaults, overrides)
+        : overrides
   }
 
 
