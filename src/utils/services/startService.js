@@ -29,7 +29,7 @@ const startService = async (args, exArgs) => {
   const { imgNameContext, isNewImage } = await pullService(serviceArgs, 'compose')
 
   const internalOpts = { imgNameContext }
-  // Setup internal options for running the docker exec command can creating the muatagen auto-sync
+  // Setup internal options for running the docker exec command can creating the mutagen auto-sync
   getContainerConst(cmdContext, 'ENV.KEG_DOCKER_EXEC') && (internalOpts.skipDockerExec = true)
   getContainerConst(cmdContext, 'ENV.KEG_AUTO_SYNC') && (internalOpts.skipDockerSyncs = true)
 

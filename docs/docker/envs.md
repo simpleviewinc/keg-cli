@@ -8,7 +8,6 @@
 ### KEG_EXEC_CMD vs KEG_DOCKER_EXEC
 * TODO - explain difference and reasoning for them
 
-
 ### ENV Functionality
 * **DOC_APP_PATH**
   * Path to the application within the docker image or container
@@ -57,5 +56,18 @@
 * **KEG_EXEC_CMD**
   * TODO
 * **KEG_DOCKER_EXEC**
-  * * TODO
+  * TODO
+* **KEG_AUTO_SYNC**
+  * Disables creating a mutagen sync from a tap's folder and the docker container
+  * Definition
+    * @optional
+    * @type *Boolean*
+    * @cli-option `N/A`
+* **KEG_USE_PROXY**
+  * Disables keg-proxy container check when executing a task
+  * Definition
+    * @optional
+    * @type *Boolean*
+    * @cli-option `N/A`
+
 * *more coming soon...*
