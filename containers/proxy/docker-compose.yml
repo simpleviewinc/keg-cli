@@ -26,6 +26,10 @@ services:
       # All other docker containers use a sub-domain
       - traefik.http.routers.api.rule=Host(`${KEG_PROXY_HOST}`)
       - traefik.http.routers.api.service=api@internal
+
+      # Watchtower; https://containrrr.dev/watchtower/arguments/#filter_by_enable_label
+      # TODO: make this label assignment dynamic, for any container
+      - com.centurylinklabs.watchtower.enable=${KEG_WATCHTOWER_ENABLED}
     ports:
       - ${PROXY_INSECURE_PORT}:${PROXY_INSECURE_PORT:-80}
       - ${PROXY_SECURE_PORT}:${PROXY_SECURE_PORT:-443}
