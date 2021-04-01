@@ -122,9 +122,6 @@ const setupTapTask = async ({ globalConfig, allTasks, command, options }) => {
       params: { tap: command }
     }, globalConfig)
 
-  // Add the tap as the second-to-last option incase last option is the help option
-  taskData.options.splice(taskData.options.length - 1, 0, `tap=${ command }`)
-
   return taskData
 }
 
