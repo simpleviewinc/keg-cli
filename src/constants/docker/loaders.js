@@ -125,7 +125,7 @@ const loadValuesFiles = args => {
     ...buildValueDup(GLOBAL_CONFIG_FOLDER, env, container),
   ]
 
-  // If it's an injected app, load the injected values fiels
+  // If it's an injected app, load the injected values files
   // Otherwise load the internal values paths
   const ymlPaths = containerPath
   ? [
@@ -143,7 +143,7 @@ const loadValuesFiles = args => {
       path.join(containersPath, container, 'values.yml'),
       // ENVs in the container folder based on current environment
       // Example => /containers/core/values_local.yml
-      ...buildValueDup(containersPath, env, container),
+      ...buildValueDup(path.join(containersPath, container), env),
       // Load the global values after the internal values
       // This allows global defaults to overwrite internal values
       ...globalPaths,
