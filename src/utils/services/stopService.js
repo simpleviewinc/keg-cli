@@ -1,6 +1,7 @@
-const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { getServiceArgs } = require('./getServiceArgs')
 const { Logger } = require('KegLog')
+const { getServiceArgs } = require('./getServiceArgs')
+const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { checkEnvConstantValue } = require('KegUtils/helpers/checkEnvConstantValue')
 
 /**
  * Stops a running docker-compose service
@@ -18,8 +19,12 @@ const stopService = async (args, argsExt) => {
   // Call the docker-compose stop task
   const containerContext = await runInternalTask('docker.tasks.compose.tasks.stop', serviceArgs)
 
-  // Just terminate the Mutagen sync, no point in keeping it around
-  await runInternalTask('mutagen.tasks.terminate', serviceArgs)
+  // Check envs for creating the mutagen auto-sync
+  // If auto-sync is turned on, try to terminate it
+  // If KEG_AUTO_SYNC is set to false then don't call mutagen terminate
+  // If it's true or not defined, then kill the mutagen sync
+  !checkEnvConstantValue(cmdContext, 'KEG_AUTO_SYNC', false) &&
+    await runInternalTask('mutagen.tasks.terminate', serviceArgs)
 
   Logger.highlight(
     `Stopped`,

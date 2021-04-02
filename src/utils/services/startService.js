@@ -1,9 +1,9 @@
-const { get, set, deepMerge } = require('@keg-hub/jsutils')
-const { composeService } = require('./composeService')
 const { pullService } = require('./pullService')
 const { proxyService } = require('./proxyService')
+const { composeService } = require('./composeService')
 const { getServiceArgs } = require('./getServiceArgs')
-const { getContainerConst } = require('KegUtils/docker/getContainerConst')
+const { get, set, deepMerge } = require('@keg-hub/jsutils')
+const { checkEnvConstantValue } = require('KegUtils/helpers/checkEnvConstantValue')
 
 /**
  * Runs the build service, then the compose service
@@ -29,9 +29,18 @@ const startService = async (args, exArgs) => {
   const { imgNameContext, isNewImage } = await pullService(serviceArgs, 'compose')
 
   const internalOpts = { imgNameContext }
-  // Setup internal options for running the docker exec command can creating the mutagen auto-sync
-  getContainerConst(cmdContext, 'ENV.KEG_DOCKER_EXEC') && (internalOpts.skipDockerExec = true)
-  getContainerConst(cmdContext, 'ENV.KEG_AUTO_SYNC') && (internalOpts.skipDockerSyncs = true)
+
+  // Check envs for running the docker exec command
+  // If KEG_AUTO_DOCKER_EXEC is set to false then don't call docker exec
+  // If it's true or not defined, then call docker exec
+  checkEnvConstantValue(cmdContext, 'KEG_AUTO_DOCKER_EXEC', false)
+    && (internalOpts.skipDockerExec = true)
+
+  // Check envs for creating the mutagen auto-sync
+  // If KEG_AUTO_SYNC is set to false then don't create a mutagen sync
+  // If it's true or not defined, then create a mutagen sync
+  checkEnvConstantValue(cmdContext, 'KEG_AUTO_SYNC', false)
+    && (internalOpts.skipDockerSyncs = true)
 
   // Call the compose service to start the application
   // Pass in recreate, base on if a new image was pulled

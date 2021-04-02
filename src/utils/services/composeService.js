@@ -3,10 +3,11 @@ const { buildContainerSync } = require('./syncService')
 const { mutagenService } = require('./mutagenService')
 const { getServiceArgs } = require('./getServiceArgs')
 const { runInternalTask } = require('../task/runInternalTask')
-const { get, isArr, set, noOpObj, deepMerge } = require('@keg-hub/jsutils')
 const { buildExecParams } = require('../docker/buildExecParams')
 const { getContainerCmd } = require('../docker/getContainerCmd')
 const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
+const { checkEnvConstantValue } = require('KegUtils/helpers/checkEnvConstantValue')
+const { get, isArr, set, noOpObj, deepMerge, exists } = require('@keg-hub/jsutils')
 
 /**
  * Runs `docker-compose` up command based on the passed in args
@@ -50,15 +51,18 @@ const checkServiceSync = async (args, serviceArgs, containerContext, tap, contex
   // Only create syncs in the development env
   const doSync = get(args, 'params.env') !== 'production' &&
     get(args, 'params.service') === 'mutagen' &&
-    get(containerContext, 'contextEnvs.KEG_AUTO_SYNC') !== false
+    !checkEnvConstantValue(containerContext.cmdContext, 'KEG_AUTO_SYNC', false)
 
   // Run the mutagen service if needed
-  return doSync
+  const currentContext = doSync
     ? await mutagenService(serviceArgs, {
         tap: get(serviceArgs, 'params.tap', tap),
         context: get(serviceArgs, 'params.context', context),
       })
     : containerContext
+
+  return { doSync, currentContext }
+
 }
 
 /**
@@ -104,7 +108,7 @@ const composeService = async (args, exArgs=noOpObj) => {
   )
 
   // Check if we should to a sync for the service we just started
-  const composeContext = await checkServiceSync(
+  const { doSync, currentContext:composeContext} = await checkServiceSync(
     args,
     serviceArgs,
     containerContext,
@@ -115,8 +119,8 @@ const composeService = async (args, exArgs=noOpObj) => {
   // Log that the compose service has been started
   logComposeStarted(serviceArgs, context, composeTask)
 
-  // Create any other syncs for the service based on the passed in params
-  !get(args, '__internal.skipDockerSyncs') &&
+  // Create any other syncs for the service based on the passed in sync param
+  get(args, 'params.sync') &&
     await createSyncs(
       serviceArgs,
       composeContext,
@@ -139,8 +143,13 @@ const composeService = async (args, exArgs=noOpObj) => {
   */
   const { cmdContext, image } = composeContext
 
-  // Check internally if we should skip the docker exec command
-  return get(args, '__internal.skipDockerExec')
+  // Check if we should skip the docker exec command
+  const internalSkipExec = get(args, '__internal.skipDockerExec')
+  const skipDockerExec = exists(internalSkipExec)
+    ? internalSkipExec
+    : checkEnvConstantValue(cmdContext, 'KEG_AUTO_DOCKER_EXEC', false)
+
+  return skipDockerExec
     ? composeContext
     : runInternalTask('tasks.docker.tasks.exec', deepMerge(args, {
         __internal: { containerContext: composeContext },
