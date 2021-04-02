@@ -88,10 +88,10 @@ const buildValueDup = (rootPath, env, container) => {
     : container
       ? [
           path.join(rootPath, `${ container }.yml`),
-          path.join(rootPath, `${ container }_values.yml`),
-          path.join(rootPath, `${ container }-values.yml`),
-          path.join(rootPath, `${ container }_${ env }_values.yml`),
-          path.join(rootPath, `${ container }-${ env }-values.yml`),
+          path.join(rootPath, `values_${ container }.yml`),
+          path.join(rootPath, `values-${ container }.yml`),
+          path.join(rootPath, `values_${ container }_${ env }.yml`),
+          path.join(rootPath, `values-${ container }-${ env }.yml`),
         ]
       : [
           path.join(rootPath, `values_${ env }.yml`),
@@ -121,11 +121,11 @@ const loadValuesFiles = args => {
     ...buildValueDup(GLOBAL_CONFIG_FOLDER, env),
 
     // ENVs in the global config folder based on current container and environment
-    // Example => ~/.kegConfig/core_values_local.yml
+    // Example => ~/.kegConfig/values_core_local.yml
     ...buildValueDup(GLOBAL_CONFIG_FOLDER, env, container),
   ]
 
-  // If it's an injected app, load the injected values fiels
+  // If it's an injected app, load the injected values files
   // Otherwise load the internal values paths
   const ymlPaths = containerPath
   ? [
@@ -143,7 +143,7 @@ const loadValuesFiles = args => {
       path.join(containersPath, container, 'values.yml'),
       // ENVs in the container folder based on current environment
       // Example => /containers/core/values_local.yml
-      ...buildValueDup(containersPath, env, container),
+      ...buildValueDup(path.join(containersPath, container), env),
       // Load the global values after the internal values
       // This allows global defaults to overwrite internal values
       ...globalPaths,
