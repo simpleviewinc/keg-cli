@@ -11,6 +11,8 @@ const { decrypt } = require('KegCrypto')
  * @returns {string} - Found git key
  */
 const gitKeyExists = globalConfig => {
+  // TODO: update this to allow passing a context argument
+  // `CORE` should not be hard-coded
   return Boolean(
     process.env[ get(DOCKER, 'CONTAINERS.CORE.ARGS.GIT_KEY') ] ||
       get(globalConfig, `${GLOBAL_CONFIG_PATHS.GIT}.key`)

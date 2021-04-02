@@ -5,6 +5,7 @@ const { DOCKER } = require('KegConst/docker')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { buildCmdContext } = require('KegUtils/builders/buildCmdContext')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 /**
  * Asks for the image to remove, then removes it
@@ -66,7 +67,7 @@ const removeDockerImage = async args => {
 
   // Get the image name from the context, or use the passed in context
   const imgRef = imageParam || context &&
-    get(DOCKER.CONTAINERS, `${context && context.toUpperCase()}.ENV.IMAGE`) || context
+    getContainerConst(context, 'IMAGE', context) || context
 
   const remoteUrl = remote && isStr(remote)
     ? remote

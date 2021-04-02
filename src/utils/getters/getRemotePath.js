@@ -1,5 +1,6 @@
 const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 /**
  * Gets the path in the docker container the sync will use
@@ -10,9 +11,9 @@ const { DOCKER } = require('KegConst/docker')
  * @returns {string}
  */
 const getRemotePath = (context, dependency, remote) => {
-  return remote || get(
-    DOCKER,
-    `CONTAINERS.${ context.toUpperCase() }.ENV.DOC_${ dependency.toUpperCase() }_PATH`
+  return remote || getContainerConst(
+    context,
+    `DOC_${ dependency.toUpperCase() }_PATH`
   )
 }
 

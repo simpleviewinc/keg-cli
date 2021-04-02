@@ -5,6 +5,7 @@ const { get, reduceObj } = require('@keg-hub/jsutils')
 const { runInternalTask } = require('../task/runInternalTask')
 const { getContext } = require('../getters/getContext')
 const { generalError } = require('../error/generalError')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 /**
  * Gets all container names of containers managed by the Keg-CLI
@@ -14,7 +15,7 @@ const { generalError } = require('../error/generalError')
  */
 const getKegContainers = () => {
   return reduceObj(DOCKER.CONTAINERS, (keg, value, names) => {
-    const contName = get(value, `ENV.CONTAINER_NAME`)
+    const contName = getContainerConst(value, 'CONTAINER_NAME')
 
     return contName
       ? names.concat([ contName ])

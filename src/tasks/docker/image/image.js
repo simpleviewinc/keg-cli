@@ -1,8 +1,8 @@
 const { get } = require('@keg-hub/jsutils')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { dockerLog } = require('KegUtils/log/dockerLog')
-const { CONTAINERS } = require('KegConst/docker/containers')
 const docker = require('KegDocCli')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 /**
  * Run a docker image command
@@ -17,7 +17,7 @@ const docker = require('KegDocCli')
 const dockerImage = async args => {
   const { command, globalConfig, options, params, task, tasks } = args
   const { cmd, name, force, format } = params
-  const image = name && get(CONTAINERS, `${name.toUpperCase()}.ENV.IMAGE`)
+  const image = name && getContainerConst(name, 'IMAGE', name)
 
   const cmdArgs = { ...params }
 

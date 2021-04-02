@@ -51,7 +51,11 @@ const buildContextEnvs = async (args) => {
 
     // Set the project name to allow linking services if needed
     ...(projectName && { COMPOSE_PROJECT_NAME: projectName }),
-  })
+  },
+    // TODO: add the container context name here as the prefix
+    // Need to ensure it use BASE when container is base
+    // And CORE when the container is core
+  )
 
 }
 

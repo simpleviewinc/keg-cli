@@ -3,14 +3,13 @@ const { DOCKER } = require('KegConst/docker')
 const { kegLabels } = require('KegConst/docker/labels')
 const { isArr, isStr, get, exists } = require('@keg-hub/jsutils')
 const { fillTemplate } = require('KegUtils/template/fillTemplate')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 const kegHubRepos = `keg-hub/repos/`
 
 /**
  * Cleans up the label value when it's a local path
  * @param {string} value - Value to set to the label
- * @param {string} key - ENV Keg from the context envs that holds the label value
- * @param {Object} contextEnvs - The envs for the docker image
  *
  * @returns {string} - Docker command with the passed in labels added
  */
@@ -86,13 +85,16 @@ const buildLabel = (cmdWithLabels, label, args, key, value) => {
 const buildDefaultLabels = (args, dockerCmd) => {
   const { params={} } = args
   const { context } = params
-  const { ENV:contextEnvs } = get(DOCKER, `CONTAINERS.${context.toUpperCase()}`)
 
   return kegLabels.reduce((cmdWithLabels, labelData) => {
     const [ key, valuePath, label ] = labelData
 
     const value = cleanUpValue(
-      get(contextEnvs, key.toUpperCase(), get(args, valuePath))
+      getContainerConst(
+        context,
+        key.toUpperCase(),
+        get(args, valuePath)
+      )
     )
 
     return value

@@ -23,6 +23,9 @@ const getContainerConst = (container, key='', alt) => {
   // Check the process env if the main key is env
   // This ensures it follows the same pattern as loading the contextEnvs
   // This way getting a constant is consistent
+
+  // TODO: add a prefix (container) to container specific envs
+  // Container specific envs should be defined in KegConstants then checked here
   return mainKey === 'ENV' && process.env[key]
     ? process.env[key]
     : get(

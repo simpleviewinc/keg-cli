@@ -3,8 +3,8 @@ const { throwRequired, generalError } = require('KegUtils/error')
 const { getPathFromConfig } = require('KegUtils/globalConfig')
 const { dockerLog } = require('KegUtils/log/dockerLog')
 const { spawnCmd } = require('KegProc')
-const { CONTAINERS } = require('KegConst/docker/containers')
 const docker = require('KegDocCli')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 /**
  * Run a docker container command
@@ -19,7 +19,7 @@ const docker = require('KegDocCli')
 const dockerContainer = async args => {
   const { command, globalConfig, options, params, task, tasks } = args
   let { cmd, name, force, format } = params
-  let container = name && get(CONTAINERS, `${name.toUpperCase()}.ENV.CONTAINER_NAME`, name)
+  let container = name && getContainerConst(name, 'CONTAINER_NAME', name)
 
   const apiMethod = docker.container[cmd]
   if(apiMethod) return apiMethod({ item: container, force, format })

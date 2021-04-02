@@ -1,6 +1,7 @@
 const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
 const { getGitPath } = require('../git/getGitPath')
+const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 /**
  * Gets the local path the sync will use
@@ -12,12 +13,9 @@ const { getGitPath } = require('../git/getGitPath')
  * @returns {string}
  */
 const getLocalPath = (globalConfig, context, dependency, local) => {
-  return local || get(
-    DOCKER,
-    `CONTAINERS.${ context.toUpperCase() }.ENV.${ dependency.toUpperCase() }_PATH`,
-    // TODO: seems like this is not returning the path from the globalConfig
-    // keg-components sync retheme did not work when RETHEME_PATH was not 
-    // defined in default.envs
+  return local || getContainerConst(
+    context,
+    `${ dependency.toUpperCase() }_PATH`,
     getGitPath(globalConfig, dependency)
   )
 }

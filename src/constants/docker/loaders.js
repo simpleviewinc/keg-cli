@@ -7,6 +7,7 @@ const { checkLoadEnv } = require('../../libs/fileSys/env')
 const { cliRootDir, containersPath } = require('./values')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
+const { mapProcessEnvsToContextEnvs } = require('KegUtils/helpers/mapProcessEnvsToContextEnvs')
 
 /*
  * Adds extra data to the object passed to the template fill function
@@ -65,10 +66,13 @@ const loadEnvFiles = args => {
 
   // Try to load each of the envPaths if then exists
   // Then merge and return them
-  return deepMerge(
-    ...envPaths.reduce((envs, envPath) => {
-      return envs.concat([ checkLoadEnv(envPath, extraData) ])
-    }, [])
+  return mapProcessEnvsToContextEnvs(
+    deepMerge(
+      ...envPaths.reduce((envs, envPath) => {
+        return envs.concat([ checkLoadEnv(envPath, extraData) ])
+      }, [])
+    ),
+    container
   )
 
 }
@@ -149,14 +153,20 @@ const loadValuesFiles = args => {
     ]
 
   // Try to load each of the envPaths if it exists, then merge and return them
-  return deepMerge(
-    ...ymlPaths.reduce((ymls, ymlPath) => {
-      const loadedYml = ymlPath && loadYmlSync(ymlPath, false, extraData)
-      return loadedYml
-        ? ymls.concat([ loadPath ? loadedYml[loadPath] : loadedYml ])
-        : ymls
-    }, [])
+  const ymlEnvs = mapProcessEnvsToContextEnvs(
+    deepMerge(
+      ...ymlPaths.reduce((ymls, ymlPath) => {
+        const loadedYml = ymlPath && loadYmlSync(ymlPath, false, extraData)
+        return loadedYml
+          ? ymls.concat([ loadPath ? loadedYml[loadPath] : loadedYml ])
+          : ymls
+      }, [])
+    ),
+    container
   )
+
+
+  return ymlEnvs
 
 }
 
