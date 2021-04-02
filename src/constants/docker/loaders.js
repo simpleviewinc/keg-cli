@@ -88,10 +88,10 @@ const buildValueDup = (rootPath, env, container) => {
     : container
       ? [
           path.join(rootPath, `${ container }.yml`),
-          path.join(rootPath, `${ container }_values.yml`),
-          path.join(rootPath, `${ container }-values.yml`),
-          path.join(rootPath, `${ container }_${ env }_values.yml`),
-          path.join(rootPath, `${ container }-${ env }-values.yml`),
+          path.join(rootPath, `values_${ container }.yml`),
+          path.join(rootPath, `values-${ container }.yml`),
+          path.join(rootPath, `values_${ container }_${ env }.yml`),
+          path.join(rootPath, `values-${ container }-${ env }.yml`),
         ]
       : [
           path.join(rootPath, `values_${ env }.yml`),
@@ -121,7 +121,7 @@ const loadValuesFiles = args => {
     ...buildValueDup(GLOBAL_CONFIG_FOLDER, env),
 
     // ENVs in the global config folder based on current container and environment
-    // Example => ~/.kegConfig/core_values_local.yml
+    // Example => ~/.kegConfig/values_core_local.yml
     ...buildValueDup(GLOBAL_CONFIG_FOLDER, env, container),
   ]
 
