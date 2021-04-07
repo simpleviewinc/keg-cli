@@ -159,7 +159,3 @@ test-report.xml
 # Ingnore docker-sync deamon logs
 .docker-sync
 reports
-
-.kegConfig
-
-repos/**/node_modules
