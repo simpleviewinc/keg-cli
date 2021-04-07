@@ -12,6 +12,7 @@ module.exports = {
   ...require('./getDockerCmdArgs'),
   ...require('./getInspectValue'),
   ...require('./getImageRef'),
+  ...require('./getOptsWithLabels'),
   ...require('./imageSelect'),
   ...require('./removeLabels'),
 }
