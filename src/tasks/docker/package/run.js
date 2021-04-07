@@ -13,7 +13,7 @@ const { buildContextEnvs } = require('KegUtils/builders/buildContextEnvs')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { checkContainerExists } = require('KegUtils/docker/checkContainerExists')
 const { getImgInspectContext } = require('KegUtils/getters/getImgInspectContext')
-const { getOptsWithLabels } = require('./labelHelpers')
+const { getOptsWithLabels } = require('KegUtils/docker/getOptsWithLabels')
 
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { PACKAGE } = CONTAINER_PREFIXES
@@ -101,7 +101,7 @@ const checkProxyUrl = (optsWLabels, imgLabels, args) => {
   // are set as well, and we only need to run the container with the
   // updated container url that uses the host environment's domain.
   const { builtOpts, fullProxyUrl } = subdomain
-    ? getOptsWithLabels(subdomain, KEG_ENVS.KEG_PROXY_HOST, optsWLabels)
+    ? getOptsWithLabels(subdomain, optsWLabels)
     // Otherwise, build all the labels we need now
     : addProxyLabels(optsWLabels, args)
 

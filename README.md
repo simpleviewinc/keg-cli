@@ -27,3 +27,25 @@
     * This task should validate the install
     * If a problem is found it will try to fix it
     * If the problem can not be fixed, it will let you know
+
+### Architecture
+* `src/`
+  * `libs/`
+    * wrappers around external APIs, such as the Docker CLI
+  * `tasks/`
+    * implementations of cli commands
+  * `templates/`
+    * templates used for generated files
+  * `utils/`
+    * helper functions 
+
+### Configuration
+* taps have envs set in their containers folder
+  * example: `containers/proxy/values-staging.yml`
+* custom configuration files are located at `.kegConfig/` in your home directory
+* the `.kegConfig/defaults.env` file sets defaults not defined by the `containers/*` configs
+* you can also override these values for specific containers and environments
+  * add a `.kegConfig/<repo_name>-<environment>.env` file 
+  * example: `.kegConfig/evf-staging.env`
+    * this will override envs for the `evf` tap when in the `staging` environment
+    * `-<environment>` is optional. If omitted, the file will apply to all environments.
