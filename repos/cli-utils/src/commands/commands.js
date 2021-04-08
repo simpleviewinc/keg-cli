@@ -1,5 +1,6 @@
 const { getAppRoot } = require('../appRoot')
-const { isArr, noOpObj, noPropArr, camelCase } = require('@keg-hub/jsutils')
+const { Logger } = require('../logger/logger')
+const { isArr, noOpObj, noPropArr, camelCase, isStr, exists } = require('@keg-hub/jsutils')
 const { spawnCmd } = require('@keg-hub/spawn-cmd')
 
 /**
@@ -7,11 +8,23 @@ const { spawnCmd } = require('@keg-hub/spawn-cmd')
  * If data is not an array, it must has a split method to convert to an array
  * @function
  * @private
- * @param {string|Array} data - Data to ensure is an array
+ * @param {string|Array} [data=[]] - Data to ensure is an array
  *
  * @returns {Array} - Data converted to an array
  */
-const ensureArray = data => (isArr(data) ? data : data.split(' '))
+const ensureArray = (data=noPropArr) => (
+  !exists(data)
+    ? noPropArr
+    : isArr(data)
+      ? data
+      : isStr(data)
+        ? data.split(' ')
+        : Logger.error(
+            `The runCmd method requires arguments be an Array or string.\n`,
+            `Instead got ${typeof data}: ${data}\n`,
+            `Args will be ignored!\n`,
+          ) || noPropArr
+)
 
 /**
  * Runs a child process using spawnCmd
@@ -25,10 +38,10 @@ const ensureArray = data => (isArr(data) ? data : data.split(' '))
  *
  * @returns {*} - Response from spawnCmd
  */
-const runCmd = (cmd, args=noPropArr, env=noOpObj, cwd) => {
+const runCmd = (cmd, args=noPropArr, opts=noOpObj, cwd) => {
   return spawnCmd(cmd, {
-    args,
-    options: { env: { ...process.env, ...env } },
+    args: ensureArray(args),
+    options: { ...opts, env: { ...process.env, ...opts.env } },
     cwd: cwd || getAppRoot(),
   })
 }
@@ -49,7 +62,7 @@ const shortcutCmds = Array.from([
    * Creates a helper to call the executable within a child process
    * @param {Array|string} args - Arguments to pass to the npm command
    */
-  cmds[camelCase(cmd)] = (args, ...opts) => runCmd(cmd, ensureArray(args), ...opts)
+  cmds[camelCase(cmd)] = (args, ...opts) => runCmd(cmd, args, ...opts)
 
   return cmds
 }, {})
@@ -68,6 +81,7 @@ const dockerExec = (containerName, args, ...opts) => {
 }
 
 module.exports = {
+  runCmd,
   spawnCmd,
   dockerExec,
   ...shortcutCmds,
