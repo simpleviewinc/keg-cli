@@ -17,7 +17,7 @@ env:
   KEG_AUTO_SYNC: false
 
   # Default host for the keg proxy
-  KEG_PROXY_HOST: local.kegdev.xyz
+  KEG_PROXY_HOST: local.keghub.io
 
   # Proxy port testing to be exposed by docker
   PROXY_INSECURE_PORT: 80
