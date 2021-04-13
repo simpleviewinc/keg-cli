@@ -178,20 +178,20 @@ describe('buildTags', () => {
   it('should use the version param with the env as a tag when passed as a string', async () => {
 
     const baseResp = await buildTags(args.base, buildParams('base', { version: 'test-version' }))
-    expect(baseResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-base:development-test-version')
+    expect(baseResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-base:local-test-version')
 
     const coreResp = await buildTags(args.core, buildParams('core', { version: '1.0.0' }))
-    expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-core:development-1.0.0')
+    expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-core:local-1.0.0')
 
   })
 
   it('should use the constants version with the env when version is passed as true', async () => {
 
     const baseResp = await buildTags(args.base, buildParams('base', { version: true }))
-    expect(baseResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-base:development-${baseVersion}`)
+    expect(baseResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-base:local-${baseVersion}`)
 
     const coreResp = await buildTags(args.core, buildParams('core', { version: true }))
-    expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-core:development-${coreVersion}`)
+    expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-core:local-${coreVersion}`)
 
   })
 
@@ -233,7 +233,7 @@ describe('buildTags', () => {
     expect(compResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-components:git-test-branch-${componentsVersion}`)
 
     const coreResp = await buildTags(args.core, buildParams('core', { tagVariable: ['env:branch'] }))
-    expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-core:development-git-test-branch`)
+    expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-core:local-git-test-branch`)
 
   })
 
