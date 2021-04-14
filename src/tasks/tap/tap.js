@@ -12,6 +12,7 @@ module.exports = {
       ...require('./container'),
       ...require('./destroy'),
       ...require('./docker'),
+      ...require('./inspect'),
       ...require('./link'),
       ...require('./list'),
       ...require('./log'),
