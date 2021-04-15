@@ -88,7 +88,7 @@ module.exports = deepFreeze({
   ],
 
   // --- GIT Constants --- //
-  // Path the the git ssh key
+  // Path to the git ssh key
   GIT_SSH_KEY_PATH: path.join(homeDir, '.ssh/github'),
   GIT_SSH_COMMAND: "ssh",
   GIT_SSH_KEY: '-i {{ GIT_KEY_PATH }}',

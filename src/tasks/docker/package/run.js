@@ -4,7 +4,7 @@ const { DOCKER } = require('KegConst/docker')
 const { KEG_ENVS } = require('KegConst/envs')
 const { logVirtualUrl } = require('KegUtils/log')
 const { isUrl, get, pickKeys } = require('@keg-hub/jsutils')
-const { proxyLabels } = require('KegConst/docker/labels')
+const { proxyLabels, kegLabelKeys } = require('KegConst/docker/labels')
 const { generalError } = require('KegUtils/error/generalError')
 const { buildLabel } = require('KegUtils/docker/getBuildLabels')
 const { removeLabels } = require('KegUtils/docker/removeLabels')
@@ -13,12 +13,10 @@ const { buildContextEnvs } = require('KegUtils/builders/buildContextEnvs')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { checkContainerExists } = require('KegUtils/docker/checkContainerExists')
 const { getImgInspectContext } = require('KegUtils/getters/getImgInspectContext')
-const { getOptsWithLabels } = require('KegUtils/docker/getOptsWithLabels')
+const { getOptsWithProxyRule } = require('KegUtils/docker/getOptsWithProxyRule')
 
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { PACKAGE } = CONTAINER_PREFIXES
-
-const proxyHostKey = 'KEG_PROXY_HOST'
 
 /**
  * Search for the keg-proxy-port to use for registering with the keg-proxy
@@ -35,7 +33,7 @@ const getKegProxyPort = (ports, proxyPort, kegProxyPort, { labels, ports:imgPort
   // Otherwise search for the keg port label
   return proxyPort ||
     kegProxyPort ||
-    labels['com.keg.env.port'] ||
+    labels[kegLabelKeys.KEG_ENV_PORT] ||
     get(imgPorts, '0') ||
     ports && ports.length && ports[0].split(':').pop()
 }
@@ -71,7 +69,7 @@ const addProxyLabels = (optsWLabels, args) => {
 
     // Check if the key is for the proxy host, and get the url to be logged
     builtLabel && 
-      key === proxyHostKey &&
+      key === 'KEG_PROXY_HOST' &&
       (fullProxyUrl = builtLabel.split('`')[1])
 
   })
@@ -95,13 +93,13 @@ const addProxyLabels = (optsWLabels, args) => {
  * @returns {Array} - Built options array with the proxy labels added if needed
  */
 const checkProxyUrl = (optsWLabels, imgLabels, args) => {
-  const subdomain = imgLabels && imgLabels['com.keg.proxy.domain']
+  const subdomain = imgLabels && imgLabels[kegLabelKeys.KEG_PROXY_DOMAIN]
 
   // If subdomain label is set, then that means all the proxy labels
   // are set as well, and we only need to run the container with the
   // updated container url that uses the host environment's domain.
   const { builtOpts, fullProxyUrl } = subdomain
-    ? getOptsWithLabels(subdomain, optsWLabels)
+    ? getOptsWithProxyRule(subdomain, optsWLabels)
     // Otherwise, build all the labels we need now
     : addProxyLabels(optsWLabels, args)
 
@@ -153,7 +151,7 @@ const setupLabels = async (opts, inspectContext, contextEnvs, proxyDomain,) => {
  * @returns {Object} - Build image as a json object
  */
 const dockerPackageRun = async args => {
-  const { globalConfig, options, params, task, tasks } = args
+  const { globalConfig, params } = args
   const {
     command,
     context,

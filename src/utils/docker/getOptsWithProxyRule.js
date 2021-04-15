@@ -15,8 +15,8 @@ const getTraefikRuleKey = (subdomain) => `traefik.http.routers.${subdomain}.rule
 const buildLabelString = (key, value) => `--label "${key}=${value}"`
 
 /**
- * Returns the opts to pass to the docker run command, updated with labels specific to this
- * environment (e.g. the proxy host url)
+ * Returns the opts to pass to the docker run command, updated with the current environment's
+ * traefik host rule
  * @param {string} subdomain - container subdomain
  * @param {Array<string>} opts - the current options to be passed to the run command
  * @returns {Object} {
@@ -24,7 +24,7 @@ const buildLabelString = (key, value) => `--label "${key}=${value}"`
  *  builtOpts: updated options list to pass to docker run
  * }
  */
-const getOptsWithLabels = (subdomain, opts) => {
+const getOptsWithProxyRule = (subdomain, opts) => {
   const fullProxyUrl = `${subdomain}.${KEG_ENVS.KEG_PROXY_HOST}`
   const traefikRule = `Host(\`${fullProxyUrl}\`)`
   const key = getTraefikRuleKey(subdomain)
@@ -40,5 +40,5 @@ const getOptsWithLabels = (subdomain, opts) => {
 }
 
 module.exports = {
-  getOptsWithLabels,
+  getOptsWithProxyRule,
 }
