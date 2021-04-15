@@ -91,6 +91,7 @@
       "__DEV__": true
     },
     "moduleNameMapper": {
+      "^KegConst/envs$": "<rootDir>/src/__mocks__/constants/envs",
       "^KegConst(.*)$": "<rootDir>/src/constants$1",
       "^KegCrypto(.*)$": "<rootDir>/src/libs/crypto$1",
       "^KegDocCli(.*)$": "<rootDir>/src/libs/docker$1",

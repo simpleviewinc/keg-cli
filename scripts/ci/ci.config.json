@@ -24,6 +24,7 @@
     "taps": {},
     "settings": {
       "defaultEnv": "ci",
+      "defaultDomain": "keghub.io",
       "docker": {
         "preConfirm": true,
         "buildKit": true,

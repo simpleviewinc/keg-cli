@@ -22,7 +22,8 @@
     },
     "taps": {},
     "settings": {
-      "defaultEnv": "development",
+      "defaultEnv": "local",
+      "defaultDomain": "keghub.io",
       "docker": {
         "preConfirm": true,
         "buildKit": true,

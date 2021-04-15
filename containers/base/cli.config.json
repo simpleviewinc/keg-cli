@@ -40,6 +40,7 @@
     },
     "settings": {
       "defaultEnv": "development",
+      "defaultDomain": "keghub.io",
       "docker": {
         "preConfirm": false,
         "buildKit": true,
