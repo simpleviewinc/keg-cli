@@ -34,7 +34,7 @@ const setSharedOptions = (options = noOpObj, groups) => {
 }
 
 /**
- * Gets the options to launch the Playwright browser based on passed in options and config settings
+ * Gets the shared options to based on passed in arguments
  * @function
  * @private
  * @param {string} action - Name of the task action getting the options
