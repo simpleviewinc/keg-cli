@@ -38,7 +38,7 @@ describe('appRoot', () => {
       expect(appRoot).toBe(cliUtilsRoot)
     })
 
-    it('should set the appRoot if its already been set', () => {
+    it('should NOT set the appRoot if its already been set', () => {
       jest.resetModules()
       delete require.cache['../appRoot']
       const { getAppRoot, setAppRoot } = require('../appRoot')
