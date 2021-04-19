@@ -54,7 +54,4 @@ const runTask = async (customTasks, customDefParams) => {
 // So we should return the task definition instead of running the task action
 module.parent
   ? (module.exports = { runTask })
-  : (async () => {
-      const response = await runTask()
-      return response
-    })()
+  : runTask()
