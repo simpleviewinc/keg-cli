@@ -1,5 +1,5 @@
-const { injectedTest, injectedContainer } = require('KegMocks/injected/injectedTest')
-const { docker, dockerData } = require('KegMocks/libs/docker')
+const { injectedContainer } = require('KegMocks/injected/injectedTest')
+const { docker } = require('KegMocks/libs/docker')
 const { testEnum } = require('KegMocks/jest/testEnum')
 
 const globalConfig = global.getGlobalCliConfig()
