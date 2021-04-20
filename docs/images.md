@@ -14,15 +14,15 @@
     * You are building a new image for a tap
   * All images use the base image, but only when being built
     * All images should be built in the CI (except new ones)
-  * Anytime there are changes pushed to the `keg-hub` master branch
+  * Anytime there are changes pushed to the `keg-hub` develop branch
     * A new base image is built
     * Using this new base image, new keg-hub images are built
     * This process should be automated inside a github action
 
 ### Process 
-* Build base image with master tag
+* Build base image with "develop" tag
   * This is the starting point for all other images
-* Build base images for keg-hub repos with default tag ( master )
+* Build base images for keg-hub repos with default tag ( develop )
   * They should all use the `base:develop` image in the `FROM` of the Dockerfile
   * Images include `keg-core`, `keg-components`, `tap`
 
@@ -35,7 +35,7 @@
     * Manually build a new image
       * Even in this case, the base image should be pulled from the provider first
       * It should not need to build the base image locally
-    * Tag it with `master`, then push it to your provider
+    * Tag it with `develop`, then push it to your provider
       * This should happen automatically
     * All further development should just pull that image
 
@@ -49,7 +49,7 @@
   * **Running an Image**
     * Should automatically pull from the docker provider any time an image is started
     * Should pull the most recent version of the `KEG_IMAGE_FROM` from the provider
-      * In most cases this would be the `master` tagged version
+      * In most cases this would be the `develop` tagged version
 
 ### Important ENVS
   * `KEG_BASE_IMAGE`: ghcr.io/simpleviewinc/tap:develop
