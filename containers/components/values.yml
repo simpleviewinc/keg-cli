@@ -35,10 +35,10 @@ env:
   KEG_EXEC_CMD: sb
 
   # Image to use when running keg-components
-  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-components:master
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-components:develop
 
   # Image to use when building keg-components
-  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:master
+  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:develop
 
   # --- KEG-PROXY ENVs --- #
 
