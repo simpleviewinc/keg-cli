@@ -43,5 +43,5 @@ const imageFromContainer = async params => {
 }
 
 module.exports = {
-  containerToImage
+  imageFromContainer
 }
