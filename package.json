@@ -111,6 +111,9 @@
       "^KegTasks(.*)$": "<rootDir>/src/tasks$1",
       "^KegUtils(.*)$": "<rootDir>/src/utils$1"
     },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/repos/*"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.js?(x)",
       "<rootDir>/scripts/**/__tests__/**/*.js?(x)"

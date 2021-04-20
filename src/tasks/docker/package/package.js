@@ -1,90 +1,29 @@
 const docker = require('KegDocCli')
 const { git } = require('KegGitCli')
 const { Logger } = require('KegLog')
-const { ask } = require('@keg-hub/ask-it')
 const { DOCKER } = require('KegConst/docker')
 const { CONTEXT_TO_CONTAINER } = require('KegConst/constants')
+const { getCommitTag } = require('KegUtils/package/getCommitTag')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
+const { buildAppBundle } = require('KegUtils/package/buildAppBundle')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { isStr, get, isFunc, isArr, checkCall } = require('@keg-hub/jsutils')
+const { imageFromContainer } = require('KegUtils/package/imageFromContainer')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
- * Gets the author to use for the docker commit command
- * @function
- * @param {Object} globalConfig - Kec CLI global config object
- * @param {string} author - Name of author passed from the command line
- *
- * @returns {*} - Response from the docker raw method
- */
-const getAuthor = (globalConfig, author) => {
-  return author || get(globalConfig, 'docker.user', get(globalConfig, 'cli.git.user'))
-}
-
-/**
- * Gets the current branch to use as the commit tag of the image
- * @function
- * @param {string} location - Local path of the repo to get the current branch from
- *
- * @returns {string} - Name of the current branch
- */
-const getCommitTag = async location => {
-  const currentBr = await git.branch.current({ location })
-  return currentBr && currentBr.name
-}
-
-/**
- * Checks if an image already exists with the passed in tag
- * <br/> If it does, asks user if they want to remove it
- * @function
- * @param {string} imgTag - Image name plus the commit tag
- * @param {string} commitTag - Tag to use when creating the image
- *
- * @returns {boolean} - false is the image does not already exist
- */
-const checkImgExists = async (imgTag, commitTag) => {
-  const exists = await docker.image.getByTag(commitTag)
-  if(!exists) return
-
-  Logger.empty()
-  Logger.highlight(`Image`,`"${ imgTag }"`, `already exists.`)
-  Logger.empty()
-
-  const replace = await ask.confirm(`Would you like to replace it?`)
-  replace && await docker.image.removeTag({ image: exists, tag: commitTag })
-
-  // Return the opposite of replace because we want to know if the image exist
-  // If not replace, then the image still exists
-  return !replace
-
-}
-
-/**
- * Packages a docker container to be deployed to a docker providerCan 
+ * Gets the container context object containing the container id and repo location
+ * Ensures the id exists within the context object
  * @function
  * @param {Object} args - arguments passed from the runTask method
- * @param {string} args.command - Initial command being run
- * @param {Array} args.options - arguments passed from the command line
- * @param {Object} args.tasks - All registered tasks of the CLI
- * @param {Object} args.task - The current task being run
- * @param {Object} args.params - Formatted options as an object
- * @param {Object} globalConfig - Global config object for the keg-cli
  *
- * @returns {Object} - Build image as a json object
+ * @returns {Object} - containerContext object with id
  */
-const dockerPackage = async args => {
-
-  const { params, globalConfig, task } = args
-  const { author, context, cmd, log, message, options, push, tag='' } = params
-
-  // Ensure we have a content to build the container
-  !context && throwRequired(task, 'context', task.options.context)
-
+const getResolvedContext = async args => {
   // Get the context data for the command to be run
   const containerContext = await buildContainerContext(args)
-  const { cmdContext, contextEnvs, location, tap, image } = containerContext
-
   // TODO: This should not be using the image name for finding the image
   // Really the ID should be coming from buildContainerContext
   // Need to investigate why
@@ -96,11 +35,27 @@ const dockerPackage = async args => {
     : await docker.container.get(CONTEXT_TO_CONTAINER[cmdContext] || image)
 
   const id = get(resolvedContainerContext, 'id')
-  if (!id)
-    generalError(`Container context id is not available. Are you sure the container "${image}" exists?`)
+  
+  !resolvedContainerContext.id &&
+    generalError(
+      `Container context id is not available. Are you sure the container "${image}" exists?`
+    )
 
-  // Get the current branch name at the location
-  const currentBranch = tag || await getCommitTag(location)
+  return { ...containerContext, id: resolvedContainerContext.id }
+}
+
+/**
+ * Gets the correct image tags to be used to when creating the image
+ * @function
+ * @param {Object} params - Formatted options as an object
+ * @param {string} location - Location of the repo the image is being created from
+ * @param {string} tag - Custom tag to override the default tags
+ *
+ * @returns {Object} - Contains the image tags to use when creating
+ */
+const getImgTags = async (params, location, tag) => {
+  // Get passed in tag, or the first tag from tags array or branch name at the location
+  const currentBranch = tag || get(params, 'tags', [])[0] || await getCommitTag(location)
   // If none found, use the current time
   const commitTag = (currentBranch || 'package-' + Date.now()).toLowerCase()
 
@@ -115,30 +70,21 @@ const dockerPackage = async args => {
     .replace(/[&\/\\#, +()$~%.'"*?<>{}]/g, '-')
 
   const imgTag = imgNameContext.providerImage + `:` + cleanedTag
-  const exists = await checkImgExists(imgTag, cleanedTag)
 
-  /*
-  * Create image of the container using docker commit
-  * Docker commit command creates a new image of a running container
-  */
-  ;exists
-    ? Logger.highlight(`Skipping image commit!`)
-    : await checkCall(async () => {
-        Logger.highlight(`Creating image of container with tag`, `"${ imgTag }"`, `...`)
-        
-        await docker.container.commit({
-          tag: imgTag,
-          container: id,
-          message: message,
-          author: getAuthor(globalConfig, author),
-        })
+  return { imgTag, cleanedTag, commitTag }
+}
 
-        Logger.info(`Finished creating image!`)
-      })
-
-  /*
-  * Push docker image to docker provider registry
-  */
+/**
+ * Pushes the new image created by docker commit, to the docker provider
+ * @function
+ * @param {Object} args - arguments passed from the runTask method
+ * @param {string} image - Name of the image to be pushed
+ * @param {string} imgTag - Image and Tag joined as a string
+ * @param {string} cleanedTag - Tag without the image name attached
+ *
+ * @returns {void}
+ */
+const pushImageToProvider = async (args, { image, imgTag, commitTag }) => {
   Logger.empty()
   Logger.highlight(`Pushing image`,`"${ imgTag }"`,`to provider ...`)
   Logger.empty()
@@ -159,9 +105,59 @@ const dockerPackage = async args => {
 
   Logger.success(`Finished pushing docker image "${ imgTag }" to provider!`)
   Logger.empty()
+}
 
+/**
+ * Packages a docker container to be deployed to a docker providerCan 
+ * @function
+ * @param {Object} args - arguments passed from the runTask method
+ * @param {string} args.command - Initial command being run
+ * @param {Array} args.options - arguments passed from the command line
+ * @param {Object} args.tasks - All registered tasks of the CLI
+ * @param {Object} args.task - The current task being run
+ * @param {Object} args.params - Formatted options as an object
+ * @param {Object} globalConfig - Global config object for the keg-cli
+ *
+ * @returns {Object} - Build image as a json object
+ */
+const dockerPackage = async args => {
+
+  const { params, globalConfig, task } = args
+  const { author, context, cmd, log, message, options, push, tag='' } = params
+
+  // Ensure we have a context to build the container
+  !context && throwRequired(task, 'context', task.options.context)
+
+  /* ---- Step 1: Get the container / image context info ---- */
+  const { cmdContext, contextEnvs, location, tap, image, id } = await getResolvedContext(args)
+
+  /* ---- Step 2: Get the the image tags and status ---- */
+  const { imgTag, cleanedTag, commitTag } = await getImgTags(params, location, tag)
+
+  /* ---- Step 3: Build the production app bundle for non-dev environments ---- */
+  await buildAppBundle(args, { id, location, contextEnvs })
+
+  /* ---- Step 4: Create image of the container using docker commit ---- */
+  await imageFromContainer({
+    id,
+    author,
+    imgTag,
+    message,
+    cleanedTag,
+    globalConfig,
+  })
+
+  /* ---- Step 5: Push docker image to docker provider registry ---- */
+  await pushImageToProvider(args, {
+    image,
+    imgTag,
+    commitTag
+  })
+
+  // Return true so we know the image was pushed successfully
+  // We should only get here if all above steps are successful
+  // If they fail, they should throw
   return true
-
 }
 
 module.exports = {
@@ -175,17 +171,7 @@ module.exports = {
     tasks: {
       ...require('./run'),
     },
-    options: {
-      context: {
-        alias: [ 'name' ],
-        description: 'Context of the docker container to build',
-        example: 'keg docker package --context core',
-        enforced: true,
-      },
-      log: {
-        description: 'Log the output the of commands',
-        default: false,
-      },
+    options: mergeTaskOptions(`docker`, `package`, `push`, {
       push: {
         description: 'Push the packaged image up to a docker provider registry',
         default: true,
@@ -195,10 +181,6 @@ module.exports = {
         description: 'Tag for the image create for the package. Defaults to the current branch of the passed in context',
         example: 'keg docker package tag=my-tag',
       },
-      tap: {
-        description: 'Name of the tap to build. Only needed if "context" argument is "tap"',
-        example: 'keg docker package --context tap --tap visitapps',
-      },
-    }
+    })
   }
 }

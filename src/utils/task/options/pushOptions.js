@@ -12,6 +12,7 @@ const pushOptions = (task, action) => {
     },
     tags: {
       description: 'Extra tags to add to the docker image after its build. Uses commas (,) to separate',
+      type: 'array',
       example: `keg ${task} ${action} tags=my-tag,local,develop`
     },
     token: {
