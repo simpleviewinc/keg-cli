@@ -45,7 +45,8 @@
         "preConfirm": false,
         "buildKit": true,
         "force": true,
-        "defaultLocalBuild": true
+        "defaultLocalBuild": true,
+        "defaultTag": "develop"
       },
       "checkUpdates": false,
       "editorCmd": false,
