@@ -1,6 +1,5 @@
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 const { tagFromVersion } = require('KegUtils/docker/tags/tagFromVersion')
-const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { tagFromVariables } = require('KegUtils/docker/tags/tagFromVariables')
 const { getRepoGitTag, tagsFromParams } = require('KegUtils/docker/tags/tagHelpers')
@@ -36,7 +35,7 @@ const addTagsToCommand = (dockerCmd, { tag, providerImage }, tags) => {
  */
 const buildTags = async (args, params, dockerCmd='') => {
   const { containerContext } = args
-  const { context, tagGit, tagVariable, image } = params
+  const { tagGit, tagVariable } = params
 
   // Ensure we have an environment
   const env = params.env || getSetting('defaultEnv')
