@@ -1,14 +1,13 @@
 const docker = require('KegDocCli')
-const { git } = require('KegGitCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
 const { CONTEXT_TO_CONTAINER } = require('KegConst/constants')
 const { getCommitTag } = require('KegUtils/package/getCommitTag')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { buildAppBundle } = require('KegUtils/package/buildAppBundle')
+const { runBuildAction } = require('KegUtils/package/runBuildAction')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
-const { isStr, get, isFunc, isArr, checkCall } = require('@keg-hub/jsutils')
+const { get, noOpObj } = require('@keg-hub/jsutils')
 const { imageFromContainer } = require('KegUtils/package/imageFromContainer')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
@@ -24,6 +23,7 @@ const { buildContainerContext } = require('KegUtils/builders/buildContainerConte
 const getResolvedContext = async args => {
   // Get the context data for the command to be run
   const containerContext = await buildContainerContext(args)
+  const { cmdContext, image } = containerContext
   // TODO: This should not be using the image name for finding the image
   // Really the ID should be coming from buildContainerContext
   // Need to investigate why
@@ -53,11 +53,13 @@ const getResolvedContext = async args => {
  *
  * @returns {Object} - Contains the image tags to use when creating
  */
-const getImgTags = async (params, location, tag) => {
+const getImgTags = async (params, location) => {
+  const overrideTag = get(params, 'tag', get(params, 'tags', [])[0])
+
   // Get passed in tag, or the first tag from tags array or branch name at the location
-  const currentBranch = tag || get(params, 'tags', [])[0] || await getCommitTag(location)
+  const tag = overrideTag || await getCommitTag(location)
   // If none found, use the current time
-  const commitTag = (currentBranch || 'package-' + Date.now()).toLowerCase()
+  const commitTag = (tag || 'package-' + Date.now()).toLowerCase()
 
   // Get the imgNameContext, with the custom commitTag
   const imgNameContext = await getImgNameContext({ ...params, tag: commitTag })
@@ -69,9 +71,9 @@ const getImgTags = async (params, location, tag) => {
     .toLowerCase()
     .replace(/[&\/\\#, +()$~%.'"*?<>{}]/g, '-')
 
-  const imgTag = imgNameContext.providerImage + `:` + cleanedTag
+  const imgWTag = `${imgNameContext.providerImage}:${cleanedTag}`
 
-  return { imgTag, cleanedTag, commitTag }
+  return { imgWTag, cleanedTag, commitTag }
 }
 
 /**
@@ -79,17 +81,15 @@ const getImgTags = async (params, location, tag) => {
  * @function
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} image - Name of the image to be pushed
- * @param {string} imgTag - Image and Tag joined as a string
+ * @param {string} imgWTag - Image and Tag joined as a string
  * @param {string} cleanedTag - Tag without the image name attached
  *
  * @returns {void}
  */
-const pushImageToProvider = async (args, { image, imgTag, commitTag }) => {
-  Logger.empty()
-  Logger.highlight(`Pushing image`,`"${ imgTag }"`,`to provider ...`)
-  Logger.empty()
+const pushImageToProvider = async (args, { image, imgWTag, commitTag }, log) => {
+  log && Logger.highlight(`Pushing image`,`"${ imgWTag }"`,`to provider ...`)
 
-  push && await runInternalTask(
+  await runInternalTask(
     'tasks.docker.tasks.provider.tasks.push',
     {
       ...args,
@@ -103,8 +103,6 @@ const pushImageToProvider = async (args, { image, imgTag, commitTag }) => {
     }
   )
 
-  Logger.success(`Finished pushing docker image "${ imgTag }" to provider!`)
-  Logger.empty()
 }
 
 /**
@@ -122,37 +120,53 @@ const pushImageToProvider = async (args, { image, imgTag, commitTag }) => {
  */
 const dockerPackage = async args => {
 
-  const { params, globalConfig, task } = args
-  const { author, context, cmd, log, message, options, push, tag='' } = params
+  const { params, __internal=noOpObj } = args
+  const { action, author, context, message, push, } = params
+
+  const log = __internal.skipLog ? false : params.log
 
   // Ensure we have a context to build the container
-  !context && throwRequired(task, 'context', task.options.context)
+  !context && throwRequired(args.task, 'context', args.task.options.context)
 
   /* ---- Step 1: Get the container / image context info ---- */
-  const { cmdContext, contextEnvs, location, tap, image, id } = await getResolvedContext(args)
+  const { contextEnvs, location, image, id } = await getResolvedContext(args)
 
-  /* ---- Step 2: Get the the image tags and status ---- */
-  const { imgTag, cleanedTag, commitTag } = await getImgTags(params, location, tag)
+  /* ---- Step 2: Get the the image tags ---- */
+  const { imgWTag, cleanedTag, commitTag } = await getImgTags(params, location)
+
+  log && Logger.spacedMsg(`Creating docker package for ${imgWTag}...`)
 
   /* ---- Step 3: Build the production app bundle for non-dev environments ---- */
-  await buildAppBundle(args, { id, location, contextEnvs })
+  action &&
+    await runBuildAction(id, args, {
+      action,
+      location,
+      container: id,
+      envs: contextEnvs,
+    }, true)
+
+  log && Logger.log(`Creating image from container ( ${id} )`)
 
   /* ---- Step 4: Create image of the container using docker commit ---- */
-  await imageFromContainer({
+  const imageCreated = await imageFromContainer({
     id,
+    log,
     author,
-    imgTag,
+    imgWTag,
     message,
     cleanedTag,
-    globalConfig,
   })
 
   /* ---- Step 5: Push docker image to docker provider registry ---- */
-  await pushImageToProvider(args, {
-    image,
-    imgTag,
-    commitTag
-  })
+  push &&
+    imageCreated &&
+    await pushImageToProvider(args, {
+      image,
+      imgWTag,
+      commitTag
+    }, log)
+
+  log && Logger.success(`Finished running docker package task!\n`)
 
   // Return true so we know the image was pushed successfully
   // We should only get here if all above steps are successful
@@ -174,12 +188,8 @@ module.exports = {
     options: mergeTaskOptions(`docker`, `package`, `push`, {
       push: {
         description: 'Push the packaged image up to a docker provider registry',
+        example: `keg docker package --no-push`,
         default: true,
-      },
-      tag: {
-        alias: [ 'tg' ],
-        description: 'Tag for the image create for the package. Defaults to the current branch of the passed in context',
-        example: 'keg docker package tag=my-tag',
       },
     })
   }

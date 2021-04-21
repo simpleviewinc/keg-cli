@@ -6,17 +6,17 @@ const { ask } = require('@keg-hub/ask-it')
  * Checks if an image already exists with the passed in tag
  * <br/> If it does, asks user if they want to remove it
  * @function
- * @param {string} imgTag - Image name plus the commit tag
+ * @param {string} imgWTag - Image name plus the commit tag
  * @param {string} commitTag - Tag to use when creating the image
  *
  * @returns {boolean} - false is the image does not already exist
  */
-const checkReplaceImage = async (imgTag, commitTag) => {
+const checkReplaceImage = async (imgWTag, commitTag) => {
   const exists = await docker.image.getByTag(commitTag)
   if(!exists) return
 
   Logger.empty()
-  Logger.highlight(`Image`,`"${ imgTag }"`, `already exists.`)
+  Logger.highlight(`Image`,`"${ imgWTag }"`, `already exists...`)
   Logger.empty()
 
   const replace = await ask.confirm(`Would you like to replace it?`)

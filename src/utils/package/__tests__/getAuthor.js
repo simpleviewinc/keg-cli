@@ -17,12 +17,12 @@ const testArgs = {
   },
   globalConfigOverride: {
     description: 'It should use the passed in globalConfig over the default loaded config',
-    inputs: [customUserConfig],
+    inputs: [undefined, customUserConfig],
     outputs: 'override'
   },
   authOverride: {
     description: 'It should use the passed in author over the one loaded from the config',
-    inputs: [{}, 'author-override'],
+    inputs: ['author-override', {}],
     outputs: 'author-override'
   }
 }

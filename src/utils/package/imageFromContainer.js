@@ -10,36 +10,38 @@ const { checkReplaceImage } = require('../docker/checkReplaceImage')
  * @param {Object} params - Formatted options as an object
  * @param {string} params.id - Id of the running container
  * @param {string} params.author - Name of the user who's creating the image
- * @param {string} params.imgTag - Image and Tag joined as a string
+ * @param {string} params.imgWTag - Image and Tag joined as a string
  * @param {string} params.message - Message to add to the image when it's created
  * @param {string} params.cleanedTag - Tag without the image name attached
  * @param {string} params.globalConfig - Keg-CLI global config object
  *
- * @returns {void}
+ * @returns {boolean} - True if the image was created from the container
  */
 const imageFromContainer = async params => {
   const {
     id,
+    log,
     author,
-    imgTag,
+    imgWTag,
     message,
     cleanedTag,
     globalConfig,
   } = params
 
-  const exists = await checkReplaceImage(imgTag, cleanedTag)
-  if(exists) return Logger.highlight(`Skipping image commit!`)
-
-  Logger.highlight(`Creating image of container with tag`, `"${ imgTag }"`, `...`)
+  const exists = await checkReplaceImage(imgWTag, cleanedTag)
+  if(exists) return log ? Logger.warn(`\nSkipping image commit!\n`) : false
 
   await docker.container.commit({
-    tag: imgTag,
+    log,
+    tag: imgWTag,
     container: id,
     message: message,
-    author: getAuthor(globalConfig, author),
+    author: getAuthor(author, globalConfig),
   })
 
-  Logger.info(`Finished creating image!`)
+  log && Logger.success(`Finished creating image!\n`)
+
+  return true
 }
 
 module.exports = {
