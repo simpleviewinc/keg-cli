@@ -4,7 +4,7 @@
 set -e
 
 # Source the keg-cli so we have access to it
-export KEG_CLI_PATH=${KEG_CLI_PATH:=../../}
+export KEG_CLI_PATH=${KEG_CLI_PATH:=../..}
 . $KEG_CLI_PATH/keg
 
 # Ensure the build tag is set
