@@ -1,5 +1,5 @@
 const path = require('path')
-const { Logger } = require('../libs/logger')
+const { Logger } = require('../../repos/cli-utils/src/logger')
 const { copyFileSync, loadENV } = require('../libs/fileSys')
 const { CLI_ROOT, GLOBAL_CONFIG_FOLDER, DEFAULT_ENV } = require('../constants')
 

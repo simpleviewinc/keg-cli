@@ -3,7 +3,7 @@ const { testEnum } = require('KegMocks/jest/testEnum')
 const testArgs = {
   test: {
     description: '',
-    inputs: [''],
+    inputs: [{}, '', true],
     outputs: ''
   },
 }
