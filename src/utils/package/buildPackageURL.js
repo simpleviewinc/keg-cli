@@ -1,5 +1,6 @@
 const path = require('path')
 const { validate, isStr, isObj, get } = require('@keg-hub/jsutils')
+const { getSetting } = require('KegUtils/globalConfig/getSetting')
 
 /**
  * Checks if an item is a string or falsy
@@ -12,14 +13,14 @@ const strOrNothing = item => !item || isStr(item)
  * @param {Object} options - Items used to build the package Url
  * @param {string} options.provider - registry url, defaults to github docker packages
  * @param {string} options.version - used if defined, otherwise uses branch
- * @param {string} options.branch - name of branch. used only if version is undefined. 
+ * @param {string} options.branch - name of branch. used only if version is undefined. This is used as the package's docker tag.
  * @param {string} options.package - Package to build the url from
  * @param {string} options.package.owner - (required) User that owns the package
  * @param {string} options.package.repo - (required) name of repo
  * @param {string} options.package.image - (required) name of container/image to pull (e.g keg-base)
  */
 const buildPackageURL = (options={}) => {
-  const { version, globalConfig, branch='master', package, provider } = options
+  const { version, globalConfig, branch=getSetting('docker.defaultTag'), package, provider } = options
 
   // Validate the options to ensure we can build a valid url
   validate(options, {
