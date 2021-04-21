@@ -33,17 +33,12 @@ keg_build_images(){
   # Clear out any old docker images so we start fresh
   keg_clean_docker
 
-  keg_message "Building keg-base:$KEG_BUILD_TAG image..."
-  keg base build --push --tag $KEG_BUILD_TAG --no-cache
-
-  keg_message "Building keg-core:$KEG_BUILD_TAG image..."
-  keg core build --push --tag $KEG_BUILD_TAG --no-cache
-
-  keg_message "Building keg-components:$KEG_BUILD_TAG image..."
-  keg components build --push --tag $KEG_BUILD_TAG --no-cache
-
-  keg_message "Building tap:$KEG_BUILD_TAG image..."
-  keg tap build --push --tag $KEG_BUILD_TAG --no-cache
+  # build and push each keg-hub image
+  for REPO in base core components tap retheme
+  do
+    keg_message "Building $repo:$KEG_BUILD_TAG image..."
+    keg "$REPO" build --push --tag $KEG_BUILD_TAG --no-cache
+  done
 }
 
 # Kick off the image builds and pushes
