@@ -9,7 +9,8 @@ set -e
 # And sets up and env for it's path
 keg_setup_keg_hub(){
   # Set the keg-hub root directory
-  export KEG_ROOT_DIR="$(dirname $(dirname $(pwd)))/keg-hub"
+  local DEFAULT_KEG_ROOT_DIR="$(dirname $(dirname $(pwd)))/keg-hub"
+  export KEG_ROOT_DIR="${KEG_ROOT_DIR:=$DEFAULT_KEG_ROOT_DIR}"
   echo "::debug::Root directory for keg-hub => $KEG_ROOT_DIR"
 
   local CUR_CLI_PATH=$(pwd)
