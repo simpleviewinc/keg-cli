@@ -136,10 +136,10 @@ describe('buildTags', () => {
   it('should get the image name from the passed in param', async () => {
 
     const compResp = await buildTags(args.components, buildParams('components', { image: 'test' }))
-    expect(compResp.trim()).toBe('-t ghcr.io/simpleviewinc/test:master')
+    expect(compResp.trim()).toBe('-t ghcr.io/simpleviewinc/test:develop')
 
     const coreResp = await buildTags(args.core, buildParams('core', { image: 'duper' }))
-    expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/duper:master')
+    expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/duper:develop')
 
   })
 
@@ -147,11 +147,11 @@ describe('buildTags', () => {
 
     const compImg = DOCKER.CONTAINERS.COMPONENTS.ENV.IMAGE
     const compResp = await buildTags(args.components, args.components.params)
-    expect(compResp.trim()).toBe(`-t ghcr.io/simpleviewinc/${compImg}:master`)
+    expect(compResp.trim()).toBe(`-t ghcr.io/simpleviewinc/${compImg}:develop`)
 
     const coreImg = DOCKER.CONTAINERS.CORE.ENV.IMAGE
     const coreResp = await buildTags(args.core, args.core.params)
-    expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/${coreImg}:master`)
+    expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/${coreImg}:develop`)
 
   })
 
@@ -168,10 +168,10 @@ describe('buildTags', () => {
   it('should add the default tag, when no tag params are set', async () => {
 
     const baseResp = await buildTags(args.base, args.base.params)
-    expect(baseResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-base:master')
+    expect(baseResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-base:develop')
 
     const coreResp = await buildTags(args.core, args.core.params)
-    expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-core:master')
+    expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/keg-core:develop')
 
   })
 

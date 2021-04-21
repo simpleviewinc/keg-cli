@@ -37,9 +37,9 @@ const testArgs = {
       image: 'keg-core',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      tag: 'master',
-      imageWTag: 'keg-core:master',
-      full: 'ghcr.io/simpleviewinc/keg-core:master',
+      tag: 'develop',
+      imageWTag: 'keg-core:develop',
+      full: 'ghcr.io/simpleviewinc/keg-core:develop',
       providerImage: 'ghcr.io/simpleviewinc/keg-core',
     }
   },
@@ -61,11 +61,11 @@ const testArgs = {
     inputs: [{ context: 'components' }],
     outputs: {
       image: 'keg-components',
-      tag: 'master',
+      tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-components:master',
-      full: 'ghcr.io/simpleviewinc/keg-components:master',
+      imageWTag: 'keg-components:develop',
+      full: 'ghcr.io/simpleviewinc/keg-components:develop',
       providerImage: 'ghcr.io/simpleviewinc/keg-components',
     }
   },
@@ -74,11 +74,11 @@ const testArgs = {
     inputs: [{ context: 'injected', tap: 'injected' }],
     outputs: {
       image: 'tap-injected-test',
-      tag: 'master',
+      tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'tap-injected-test:master',
-      full: 'ghcr.io/simpleviewinc/tap-injected-test:master',
+      imageWTag: 'tap-injected-test:develop',
+      full: 'ghcr.io/simpleviewinc/tap-injected-test:develop',
       providerImage: 'ghcr.io/simpleviewinc/tap-injected-test',
     }
   },
@@ -100,11 +100,11 @@ const testArgs = {
     inputs: [{ context: 'core', provider: 'my.test-provider.com' }],
     outputs: {
       image: 'keg-core',
-      tag: 'master',
+      tag: 'develop',
       provider: 'my.test-provider.com',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-core:master',
-      full: 'my.test-provider.com/simpleviewinc/keg-core:master',
+      imageWTag: 'keg-core:develop',
+      full: 'my.test-provider.com/simpleviewinc/keg-core:develop',
       providerImage: 'my.test-provider.com/simpleviewinc/keg-core',
     }
   },
@@ -113,11 +113,11 @@ const testArgs = {
     inputs: [{ context: 'components', namespace: 'test-namespace' }],
     outputs: {
       image: 'keg-components',
-      tag: 'master',
+      tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'test-namespace',
-      imageWTag: 'keg-components:master',
-      full: 'ghcr.io/test-namespace/keg-components:master',
+      imageWTag: 'keg-components:develop',
+      full: 'ghcr.io/test-namespace/keg-components:develop',
       providerImage: 'ghcr.io/test-namespace/keg-components',
     }
   },
@@ -136,7 +136,7 @@ const testArgs = {
   },
   fromOverride: {
     description: 'It use the from param over other params',
-    inputs: [{ context: 'components', tag: 'master', from: `provider/namespace/keg-items:test` }],
+    inputs: [{ context: 'components', tag: 'develop', from: `provider/namespace/keg-items:test` }],
     outputs: {
       image: 'keg-items',
       provider: 'provider',
@@ -191,11 +191,11 @@ const testArgs = {
     inputs: [{ from: `keg-items` }],
     outputs: {
       image: 'keg-items',
-      tag: 'master',
+      tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-items:master',
-      full: 'ghcr.io/simpleviewinc/keg-items:master',
+      imageWTag: 'keg-items:develop',
+      full: 'ghcr.io/simpleviewinc/keg-items:develop',
       providerImage: 'ghcr.io/simpleviewinc/keg-items'
     }
   },
@@ -214,14 +214,14 @@ const testArgs = {
   },
   contextId: {
     description: 'It should allow passing in an image id as the context',
-    inputs: [{ context: 'b80dcb1cac10', tag: 'master' }],
+    inputs: [{ context: 'b80dcb1cac10', tag: 'develop' }],
     outputs: {
       image: 'keg-core',
-      tag: 'master',
+      tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-core:master',
-      full: 'ghcr.io/simpleviewinc/keg-core:master',
+      imageWTag: 'keg-core:develop',
+      full: 'ghcr.io/simpleviewinc/keg-core:develop',
       providerImage: 'ghcr.io/simpleviewinc/keg-core',
     }
   },

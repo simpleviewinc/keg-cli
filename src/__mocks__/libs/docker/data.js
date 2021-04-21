@@ -110,11 +110,11 @@ const dockerData = {
       repository: "ghcr.io/simpleviewinc/tap-injected-test",
       sharedSize: "N/A",
       size: "2.19GB",
-      tag: "master",
+      tag: "develop",
       uniqueSize: "N/A",
       virtualSize: "2.193GB",
       tags: [
-        "master"
+        "develop"
       ],
       rootId: "tap-injected-test"
     },

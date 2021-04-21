@@ -37,7 +37,7 @@ const parseOrgPackage = components => {
 const validateUrl = (url, components) => {
   ;(components.length < 3) && generalError(
     `Malformed package url. Your package url should conform to: <provider>/<account>/<image>:<tag> or <provider>/<account>/repo/<image>:<tag>
-    - Example: ghcr.io/simpleviewinc/keg-core/keg-core:master or ghcr.io/simpleviewinc/keg-core:master
+    - Example: ghcr.io/simpleviewinc/keg-core/keg-core:develop or ghcr.io/simpleviewinc/keg-core:develop
     - Your url: ${url}
     `
   )

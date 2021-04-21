@@ -8,7 +8,7 @@ set -e
 
 # Ensure the build tag is set
 if [ -z "$KEG_BUILD_TAG" ]; then
-  KEG_BUILD_TAG='master'
+  KEG_BUILD_TAG='develop'
 fi
 
 # Overwrite the defualt tag if the first argument exists
