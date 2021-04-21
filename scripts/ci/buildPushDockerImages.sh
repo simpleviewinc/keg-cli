@@ -3,7 +3,6 @@
 # Exit when any command fails
 set -e
 
-echo "Existing path: $KEG_CLI_PATH"
 # Source the keg-cli so we have access to it
 export KEG_CLI_PATH=${KEG_CLI_PATH:=../..}
 . $KEG_CLI_PATH/keg
