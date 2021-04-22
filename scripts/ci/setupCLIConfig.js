@@ -31,7 +31,6 @@ const fs = require('fs-extra')
 const ciConfig = require('./ci.config.json')
 const { deepMerge, isFunc } = require('@keg-hub/jsutils')
 
-console.log('Keg Config Path', process.env.KEG_CONFIG_PATH)
 const {
   GITHUB_TOKEN,
   KEG_CLI_PATH=path.join(__dirname, '../../'),

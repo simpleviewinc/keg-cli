@@ -101,6 +101,19 @@ const loadENV = ({ envPath, encoding='utf8', data }) => {
   return parseENVCache[envPath]
 }
 
+/**
+ * @param {Object} options - loadENV options param
+ * @returns {Object} the result of loadENV, or empty object if it can't find the file
+ */
+const optionalLoadENV = options => {
+  try {
+    return loadENV(options)
+  }
+  catch {
+    return {}
+  }
+}
+
   // Try to load the file if it exists
 /**
  * Checks if an env file exists first the tries to load it
@@ -117,4 +130,5 @@ module.exports = {
   parseContent,
   checkLoadEnv,
   loadENV,
+  optionalLoadENV,
 }

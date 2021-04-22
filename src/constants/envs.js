@@ -1,7 +1,7 @@
 const path = require('path')
 const { Logger } = require('../../repos/cli-utils/src/logger')
-const { copyFileSync, loadENV } = require('../libs/fileSys')
-const { CLI_ROOT, GLOBAL_CONFIG_FOLDER, DEFAULT_ENV } = require('../constants')
+const { copyFileSync, loadENV, optionalLoadENV } = require('../libs/fileSys')
+const { CLI_ROOT, CLI_ROOT_CONFIG_FOLDER, GLOBAL_CONFIG_FOLDER, DEFAULT_ENV } = require('../constants')
 
 /**
  * Holds the loaded env file, so we don't keep reloading it
@@ -42,6 +42,7 @@ const getDefaultENVs = cliRootDir => {
 
   // Build the path to the global defaults env
   const globalDefEnv = path.join(GLOBAL_CONFIG_FOLDER, '/', DEFAULT_ENV)
+  const cliRootDefEnv = path.join(CLI_ROOT_CONFIG_FOLDER, DEFAULT_ENV)
 
   // Try to load the default envs
   try {
@@ -49,7 +50,9 @@ const getDefaultENVs = cliRootDir => {
       // Join the local cli default envs with the users global envs
       // This ensures all needed envs get loaded
       ...loadENV({ envPath: cliDefaultEnvs }),
-      // Add the users global envs last to ensure they override the cli defaults
+      // Add the user's optional cli-root envs, overriding defaults
+      ...optionalLoadENV({ envPath: cliRootDefEnv }),
+      // Add the user's global envs last to ensure they override the cli defaults
       ...loadENV({ envPath: globalDefEnv })
     }
 
@@ -66,6 +69,8 @@ const getDefaultENVs = cliRootDir => {
   return __DEFAULT_ENVS
 
 }
+
+
 
 
 module.exports = {
