@@ -20,15 +20,16 @@ const runBuildAction = async (containerRef, args, templateData=noOp, allowUndefi
     __internal: templateData,
   })
 
+  const actionName = get(args, 'params.action', 'tap.build')
   const buildAction = validateAction(
     actions,
-    get(args, 'params.action', 'tap.build'),
+    actionName,
     allowUndefined
   )
 
   return buildAction
     ? await runActionCmds(args, buildAction)
-    : Logger.warn(`Could not find build action for image; skipping!`)
+    : Logger.warn(`[ WARNING ] - Could not find action ${actionName}; skipping!\n`)
 }
 
 
