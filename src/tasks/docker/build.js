@@ -79,7 +79,7 @@ const dockerBuild = async args => {
   cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
 
   // Use the from option if passed, or the KEG_BASE_IMAGE to get the build image context
-  const { full } = await getImgNameContext({ from: from || contextEnvs.KEG_BASE_IMAGE })
+  const { full } = await getImgNameContext({ from: from || contextEnvs.KEG_BASE_IMAGE || context })
 
   // Build the docker build command
   const dockerCmd = await buildDockerCmd({
