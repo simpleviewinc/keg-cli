@@ -1,3 +1,4 @@
+const { Logger } = require('KegLog')
 const { get, noOp } = require('@keg-hub/jsutils')
 const { validateAction } = require('./validateAction')
 const { runActionCmds } = require('KegUtils/actions/runActionCmds')
@@ -25,7 +26,9 @@ const runBuildAction = async (containerRef, args, templateData=noOp, allowUndefi
     allowUndefined
   )
 
-  return buildAction && await runActionCmds(args, buildAction)
+  return buildAction
+    ? await runActionCmds(args, buildAction)
+    : Logger.warn(`Could not find build action for image; skipping!`)
 }
 
 

@@ -1,4 +1,13 @@
-
+actions:
+  tap:
+    build:
+      cmds:
+        - yarn sb:build
+        - rm -rf /keg/components-build
+        - cp -R /keg/keg-components/docs /keg/components-build
+    serve:
+      cmds:
+        - npx serve /keg/components-build --cors -n -l {{ envs.KEG_PROXY_PORT }}
 env:
   # --- LOCAL ENV CONTEXT --- #
 
