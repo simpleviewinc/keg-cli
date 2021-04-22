@@ -1,4 +1,3 @@
-const path = require('path')
 const { isArr, isStrBool, toBool } = require('@keg-hub/jsutils')
 const { KEY_VAL_MATCH, NEWLINE, NEWLINES_MATCH, NEWLINES_ESC } = require('KegConst/patterns')
 const { parseTemplate } = require('./parseTemplate')
@@ -65,7 +64,7 @@ const parseContent = ({ file, fill=true, data }) => {
     // Split each line to isolate the keg value pair
     return content && content.split(NEWLINES_MATCH)
       // Loop over each line an parse the key value pair
-      .reduce((obj, line, idx) => {
+      .reduce((obj, line) => {
 
         // Check if line is valid key=value pair that can be split into an array
         const parsed = getParsedEntry(line)
@@ -83,12 +82,11 @@ const parseContent = ({ file, fill=true, data }) => {
 /**
  * Loads a .env file from path, and calls the parseContent method on it
  * @function
- * @param {string} envPath - Path to the .env file to parse
- * @param {string} [encoding='utf8'] - File encoding of the .env file
- *
+ * @param {string} options.envPath - Path to the .env file to parse
+ * @param {Object?} options.data - data to fill a template
  * @returns {Object} - response from the parseContent method
  */
-const loadENV = ({ envPath, encoding='utf8', data }) => {
+const loadENV = ({ envPath, data }) => {
   // If the file has not been parsed already, load it and parse it
   !parseENVCache[envPath] &&
     ( parseENVCache[envPath] = parseContent({
@@ -102,20 +100,6 @@ const loadENV = ({ envPath, encoding='utf8', data }) => {
 }
 
 /**
- * @param {Object} options - loadENV options param
- * @returns {Object} the result of loadENV, or empty object if it can't find the file
- */
-const optionalLoadENV = options => {
-  try {
-    return loadENV(options)
-  }
-  catch {
-    return {}
-  }
-}
-
-  // Try to load the file if it exists
-/**
  * Checks if an env file exists first the tries to load it
  * @function
  * @param {string} envPath - Path to the .env file to parse
@@ -126,9 +110,23 @@ const checkLoadEnv = (envPath, data) => {
   return pathExistsSync(envPath) ? loadENV({ envPath, data }) : {}
 }
 
+/**
+ * Tries to load all of the envs at the specified paths.
+ * @throws {Error} if no paths exist
+ * @param {Array<string>} paths 
+ */
+const loadENVs = (...paths) => {
+  const exists = paths && paths.some(pathExistsSync)
+  if (!exists) throw new Error('Could not find at least one global config from paths: ' + JSON.stringify(paths))
+  return paths.reduce(
+    (merged, envPath) => ({ ...merged, ...checkLoadEnv(envPath)}),
+    {}
+  )
+}
+
 module.exports = {
   parseContent,
   checkLoadEnv,
   loadENV,
-  optionalLoadENV,
+  loadENVs
 }
