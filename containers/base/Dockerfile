@@ -31,10 +31,10 @@ RUN git clone --single-branch --branch $GIT_CLI_BRANCH $GIT_CLI_URL /keg-hub/rep
 
 # TODO: Remove this out once the file have been merge into the upstream
 # Copy over the local keg-cli setup files
-COPY ./repos/keg-cli/containers/base/build.sh /keg-setup/build.sh
-COPY ./repos/keg-cli/containers/base/keg-exec.sh /keg-setup/keg-exec.sh
-COPY ./repos/keg-cli/containers/base/cli.config.json /keg-setup/cli.config.json
-COPY ./repos/keg-cli/containers/base/defaults.env /keg-setup/defaults.env
+COPY ./containers/base/build.sh /keg-setup/build.sh
+COPY ./containers/base/keg-exec.sh /keg-setup/keg-exec.sh
+COPY ./containers/base/cli.config.json /keg-setup/cli.config.json
+COPY ./containers/base/defaults.env /keg-setup/defaults.env
 
 # ------- Final Build Stage ------- #
 
