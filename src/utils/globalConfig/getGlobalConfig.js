@@ -1,6 +1,6 @@
 const path = require('path')
 const { tryRequireSync } = require('@keg-hub/jsutils/src/node')
-const { CLI_ROOT, GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE } = require('KegConst/constants')
+const { CLI_ROOT_CONFIG_FOLDER, GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE } = require('KegConst/constants')
 const { __getGlobalConfig, __updateGlobalConfig } = require('./globalConfigCache')
 
 /**
@@ -8,7 +8,7 @@ const { __getGlobalConfig, __updateGlobalConfig } = require('./globalConfigCache
  */
 const CONFIG_PATHS = [ 
   path.join(GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE),
-  path.join(CLI_ROOT, GLOBAL_CONFIG_FILE)
+  path.join(CLI_ROOT_CONFIG_FOLDER, GLOBAL_CONFIG_FILE)
 ]
 
 /**

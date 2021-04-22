@@ -5,9 +5,11 @@ const { KEG_GLOBAL_CONFIG } = process.env
 
 // Cache the root of the CLI for easy access
 const CLI_ROOT = path.join(__dirname, '../../')
+const CONFIG_FOLDER_NAME = '.kegConfig'
+const CLI_ROOT_CONFIG_FOLDER = path.join(CLI_ROOT, CONFIG_FOLDER_NAME)
 
 // The default global config path and config file
-let GLOBAL_CONFIG_FOLDER = path.join(homeDir, '.kegConfig')
+let GLOBAL_CONFIG_FOLDER = path.join(homeDir, CONFIG_FOLDER_NAME)
 let GLOBAL_CONFIG_FILE = 'cli.config.json'
 
 // If the global config path is passed in as an ENV, use that instead
@@ -62,6 +64,7 @@ module.exports = deepFreeze({
   },
 
   CLI_ROOT,
+  CLI_ROOT_CONFIG_FOLDER, 
   GLOBAL_CONFIG_FILE,
   GLOBAL_INJECT_FOLDER,
   GLOBAL_CONFIG_FOLDER,
