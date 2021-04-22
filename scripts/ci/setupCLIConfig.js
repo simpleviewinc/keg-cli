@@ -29,37 +29,17 @@ require('module-alias/register')
 const path = require('path')
 const fs = require('fs-extra')
 const ciConfig = require('./ci.config.json')
-const { deepMerge, isFunc } = require('@keg-hub/jsutils')
+const { deepMerge } = require('@keg-hub/jsutils')
 
 const {
   GITHUB_TOKEN,
   KEG_CLI_PATH=path.join(__dirname, '../../'),
   KEG_CONFIG_FILE=`cli.config.json`,
   KEG_CONFIG_PATH=path.join(KEG_CLI_ROOT, '.kegConfig'),
-  KEG_CUSTOM_PATH,
   KEG_ROOT_DIR,
   NODE_ENV,
   USER,
 } = process.env
-
-
-const loadCustomConfig = () => {
-  if(!KEG_CUSTOM_PATH) return {}
-
-  try {
-    const customConfig = require(path.join(KEG_CLI_PATH, KEG_CUSTOM_PATH))
-    return isFunc(customConfig)
-      ? customConfig()
-      : customConfig
-  }
-  catch(err){
-    console.error(err.message)
-    throw new Error(
-      `Error loading config ${KEG_CUSTOM_PATH}.\nPath must be relative to the Keg-CLI root dir!`
-    )
-  }
-
-}
 
 const buildCIConfig = (customConfig) => {
   return deepMerge(ciConfig, {
@@ -108,9 +88,7 @@ const buildCIConfig = (customConfig) => {
   process.stdout.write(`::debug::Creating ci.env file at path ${ciENVTo}\n`)
   fs.copySync(ciENVFrom, ciENVTo) 
 
-  // Try to load a custom config file
-  const customConfig = {} //loadCustomConfig()
-  const globalConfig = buildCIConfig(customConfig)
+  const globalConfig = buildCIConfig({})
   
   process.stdout.write(`::debug::Docker User is ${globalConfig.docker.user}\n`)
   process.stdout.write(`::debug::Default Env is ${globalConfig.cli.settings.defaultEnv}\n`)
