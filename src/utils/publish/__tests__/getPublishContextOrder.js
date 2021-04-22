@@ -1,5 +1,5 @@
 const { generalError } = require('KegMocks/utils/error/generalError')
-const { repos: mockRepos } = require('KegMocks/data')
+const { mockRepos } = require('KegMocks/helpers/mockRepos')
 const globalConfig = global.getGlobalCliConfig()
 const publishContext = globalConfig.publish.test
 

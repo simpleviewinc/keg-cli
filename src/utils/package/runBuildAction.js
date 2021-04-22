@@ -1,4 +1,3 @@
-const docker = require('KegDocCli')
 const { get, noOp } = require('@keg-hub/jsutils')
 const { validateAction } = require('./validateAction')
 const { runActionCmds } = require('KegUtils/actions/runActionCmds')

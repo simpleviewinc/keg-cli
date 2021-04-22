@@ -1,4 +1,4 @@
-const { get, isArr, eitherArr } = require('@keg-hub/jsutils')
+const { get, isArr, eitherArr, isFunc } = require('@keg-hub/jsutils')
 
 /**
  * @typedef TestItem
@@ -31,16 +31,19 @@ const testEnum = (testItems, testAction, log) => {
 
       const testMethod = async () => {
         const resp = await testAction(...(eitherArr(data.inputs, [data.inputs])))
+        if(log) return console.log(resp)
+
+        if(isFunc(data.outputs))
+            return await data.outputs(resp, name, data)
+
         const expected = expect(resp)
         const received = eitherArr(data.outputs, [data.outputs])
-  
-        return log
-          ? console.log(resp)
-          : isArr(matchers)
-            ? matchers.map(match => get(expected, match)(...received))
-            : inverse
-              ? expected.not[matcher](...received)
-              : get(expected, matcher)(...received)
+
+        return isArr(matchers)
+          ? matchers.map(match => get(expected, match)(...received))
+          : inverse
+            ? expected.not[matcher](...received)
+            : get(expected, matcher)(...received)
       }
     
       return data.only

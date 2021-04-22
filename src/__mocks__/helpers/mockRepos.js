@@ -1,4 +1,4 @@
-const repos = [
+const mockRepos = [
   {
     repo: 'jsutils',
     package: {
@@ -31,5 +31,5 @@ const repos = [
 ]
 
 module.exports = {
-  repos
+  mockRepos
 }

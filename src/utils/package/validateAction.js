@@ -24,10 +24,10 @@ const validateAction = (actions, actionRef, allowUndefined) => {
       : throwMissingAction(`actions.${actionRef}`)
 
   // Ensure there are commands to run for the action
-  return !action.cmds || !action.cmds.length
+  return  (!action.cmds || !action.cmds.length) && !action.cmd
     ? generalError(
-        `The cmds property of the action is missing or empty!`,
-        `At least on command is required to run the action.`,
+        `The cmd or cmds property of the action is missing or empty!`,
+        `At least one command is required to run the action.`,
         actionRef
       )
     : action

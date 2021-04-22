@@ -7,5 +7,4 @@ module.exports = {
   ...require('./libs'),
   ...require('./logger'),
   ...require('./node'),
-  ...require('./data')
 }
