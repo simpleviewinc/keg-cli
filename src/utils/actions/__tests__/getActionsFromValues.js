@@ -1,8 +1,11 @@
 const { testEnum } = require('KegMocks/jest/testEnum')
+const { docker } = require('KegMocks/libs/docker')
+jest.setMock('KegDocCli', docker)
 
-const getSettingMock = jest.fn(() => {
-  return 'default-env'
-})
+const getKegContextMock = jest.fn(containerName => containerName)
+jest.setMock('KegUtils/getters/getKegContext', { getKegContext: getKegContextMock })
+
+const getSettingMock = jest.fn(() => ('default-env'))
 jest.setMock('KegUtils/globalConfig/getSetting', { getSetting: getSettingMock })
 
 const loadValuesFilesMock = jest.fn()
@@ -84,6 +87,28 @@ const testArgs = {
     inputs: [{ 
       containerRef: 'overrides-container',
       container: 'test-container',
+      env: 'test-env', 
+    }],
+    outputs: () => {
+      expect(loadValuesFilesMock.mock.calls[0][0].container).toBe('overrides-container')
+    }
+  },
+  contextOverridesContainerRef: {
+    description: 'The context property overrides the containerRef property',
+    inputs: [{ 
+      context: 'overrides-container',
+      containerRef: 'test-container',
+      env: 'test-env', 
+    }],
+    outputs: () => {
+      expect(loadValuesFilesMock.mock.calls[0][0].container).toBe('overrides-container')
+    }
+  },
+  cmdContextOverridesContext: {
+    description: 'The cmdContext property overrides the context property',
+    inputs: [{ 
+      cmdContext: 'overrides-container',
+      context: 'test-container',
       env: 'test-env', 
     }],
     outputs: () => {
