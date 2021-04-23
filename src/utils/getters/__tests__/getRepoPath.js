@@ -6,12 +6,9 @@ const globalConfig = deepClone(orgGlobalConfig)
 const { getRepoPath } = require('../getRepoPath')
 const fakeTapPath = 'fake/tap/path'
 
-const originalComponentsPath = orgGlobalConfig.cli.paths.components
+const originalComponentsPath = orgGlobalConfig.cli.taps.components.path
 const testComponentsPath = 'test/components/path'
-globalConfig.cli.paths = {
-  ...globalConfig.cli.paths,
-  components: testComponentsPath
-}
+globalConfig.cli.taps.components.path = testComponentsPath 
 
 globalConfig.cli.taps = {
   ...globalConfig.cli.taps,

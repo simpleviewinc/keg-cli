@@ -3,7 +3,7 @@ jest.setMock('KegLog', { Logger })
 
 const args = {
   core: [ { proxyDomain: 'core-develop' }, 'test.proxy.host' ],
-  components: [ 'components-test.custom.proxy.host' ],
+  coreStr: ['core-develop.custom.proxy.host'],
 }
 
 const { logVirtualUrl } = require('../logVirtualUrl')
@@ -39,9 +39,9 @@ describe('logVirtualUrl', () => {
   })
 
   it('should accept the first argument as a string only', () => {
-    logVirtualUrl(...args.components)
-    const componentsUrl = Logger.pair.mock.calls[0][1]
-    expect(componentsUrl).toBe(`http://components-test.custom.proxy.host`)
+    logVirtualUrl(...args.coreStr)
+    const coreUrl = Logger.pair.mock.calls[0][1]
+    expect(coreUrl).toBe(`http://core-develop.custom.proxy.host`)
   })
 
 })

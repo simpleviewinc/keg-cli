@@ -84,23 +84,6 @@ const args = {
       },
     },
   },
-  components: {
-    globalConfig,
-    task: testTask,
-    command: 'components',
-    containerContext: containerContexts.components,
-    params: {
-      ...defParams,
-      context: 'components',
-      tap: 'components',
-      location: DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH,
-      cmd: 'components',
-      image: 'keg-components',
-      buildArgs: {
-        ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-      },
-    },
-  },
   injected: {
     globalConfig,
     task: testTask,
@@ -117,7 +100,6 @@ const args = {
 
 const baseVersion = DOCKER.CONTAINERS.BASE.ENV.VERSION
 const coreVersion = DOCKER.CONTAINERS.CORE.ENV.VERSION
-const componentsVersion = DOCKER.CONTAINERS.COMPONENTS.ENV.VERSION
 
 const buildParams = (type, overrides) => {
   return deepMerge(get(args, [ type, 'params']), overrides)
@@ -135,19 +117,12 @@ describe('buildTags', () => {
 
   it('should get the image name from the passed in param', async () => {
 
-    const compResp = await buildTags(args.components, buildParams('components', { image: 'test' }))
-    expect(compResp.trim()).toBe('-t ghcr.io/simpleviewinc/test:develop')
-
     const coreResp = await buildTags(args.core, buildParams('core', { image: 'duper' }))
     expect(coreResp.trim()).toBe('-t ghcr.io/simpleviewinc/duper:develop')
 
   })
 
   it('should get the image name from constants when no image param is passed', async () => {
-
-    const compImg = DOCKER.CONTAINERS.COMPONENTS.ENV.IMAGE
-    const compResp = await buildTags(args.components, args.components.params)
-    expect(compResp.trim()).toBe(`-t ghcr.io/simpleviewinc/${compImg}:develop`)
 
     const coreImg = DOCKER.CONTAINERS.CORE.ENV.IMAGE
     const coreResp = await buildTags(args.core, args.core.params)
@@ -228,9 +203,6 @@ describe('buildTags', () => {
 
     const baseResp = await buildTags(args.base, buildParams('base', { tagVariable: ['commit:version'] }))
     expect(baseResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-base:${gitTagHash}-${baseVersion}`)
-
-    const compResp = await buildTags(args.components, buildParams('components', { tagVariable: ['branch:version'] }))
-    expect(compResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-components:git-test-branch-${componentsVersion}`)
 
     const coreResp = await buildTags(args.core, buildParams('core', { tagVariable: ['env:branch'] }))
     expect(coreResp.trim()).toBe(`-t ghcr.io/simpleviewinc/keg-core:local-git-test-branch`)

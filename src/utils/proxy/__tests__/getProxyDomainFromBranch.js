@@ -1,6 +1,5 @@
 const currentBranchMocks = {
   'keg-core': `add-plugin`,
-  'keg-components': `new-component`,
   'tap-test': `tap-feature`,
 }
 const currentMock = jest.fn((data) => {
@@ -26,13 +25,6 @@ describe('getProxyDomainFromBranch', () => {
     expect(currentMock).not.toHaveBeenCalled()
     const proxyDomain = await getProxyDomainFromBranch('keg-core', 'keg-core')
     expect(proxyDomain).toBe(`keg-core-${currentBranchMocks['keg-core']}`)
-    expect(currentMock).toHaveBeenCalled()
-  })
-
-  it('Should return the correct proxyDomain for keg-components', async () => {
-    expect(currentMock).not.toHaveBeenCalled()
-    const proxyDomain = await getProxyDomainFromBranch('keg-components', 'keg-components')
-    expect(proxyDomain).toBe(`keg-components-${currentBranchMocks['keg-components']}`)
     expect(currentMock).toHaveBeenCalled()
   })
 

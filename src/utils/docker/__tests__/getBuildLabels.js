@@ -39,19 +39,6 @@ const args = {
       ...DOCKER.CONTAINERS.CORE.ENV,
     },
   },
-  components: {
-    globalConfig,
-    params: {
-      context: 'components',
-      image: 'keg-components',
-    },
-    cmd: 'up',
-    proxyDomain: 'components',
-    cmdContext: 'components',
-    contextEnvs: {
-      ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-    },
-  },
   proxy: {
     globalConfig,
     params: {
@@ -84,11 +71,6 @@ describe('getBuildLabels', () => {
   it('Should return the default labels when no labels are passed in for keg-core', () => {
     const labels = getBuildLabels(args.core)
     expect(labels).toBe(dockerLabels.core)
-  })
-
-  it('Should return the default labels when no labels are passed in for keg-components', () => {
-    const labels = getBuildLabels(args.components)
-    expect(labels).toBe(dockerLabels.components)
   })
 
   it('Should return the default labels when no labels are passed in for keg-proxy', () => {

@@ -41,12 +41,6 @@ const open = async args => {
       openPath = getPathFromConfig(globalConfig, 'core')
       break
     }
-    case 'components':
-    case 'comp':
-    case 'cm': {
-      logText = `Opening components folder!`
-      openPath = getPathFromConfig(globalConfig, 'components')
-    }
     default: {
       logText = `Opening ${ toOpen } folder!`
       openPath = getPathFromConfig(globalConfig, toOpen) || getTapPath(globalConfig, toOpen)
