@@ -1,69 +1,35 @@
-const axios = require('axios')
 const { Logger } = require('KegLog')
-const { limbo, isArr, noOpObj, wordCaps } = require('@keg-hub/jsutils')
-const { generalError } = require('KegUtils/error/generalError')
-const { getSetting } = require('KegUtils/globalConfig/getSetting')
-
-const defFilters = [
-  'dashboard@internal',
-  'ping@internal',
-  'api@internal'
-]
-
-/**
- * Gets a list of all containers registered to the keg-proxy
- * @param {Object} env - The env the keg-proxy was started in
- *
- * @returns {Array} - List of container routes from traefik
- */
-const getListFromAPI = async env => {
-  const domain = getSetting('defaultDomain')
-  const [ err, res ] = await limbo(axios.get(`http://${env}.${domain}/api/http/routers`))
-
-  return err
-    ? generalError(err.message)
-    : !isArr(res.data)
-      ? generalError(`No routes returned from the proxy server!`, res)
-      : res.data
-}
-
-/**
- * Filters items returned from the traefik api based on the passed in filter
- * @param {Object} items - Items returned from traefik api
- * @param {string} filter - Text content that items should contain to be included
- *
- * @returns {Array} - All items that match the passed in filter
- */
-const filterList = (list, filter) => {
-  return list.reduce((filtered, item) => {
-    item &&
-      (!filter || !(
-        (filter !== 'no-internal' && !item.service.includes(filter)) ||
-        defFilters.includes(item.service)
-      )) &&
-      filtered.push(item)
-
-    return filtered
-  }, [])
-
-}
+const { getProxyRoutes } = require('KegUtils/proxy/getProxyRoutes')
+const { filterProxyRoutes } = require('KegUtils/proxy/filterProxyRoutes')
+const { noOpObj, wordCaps, mapObj } = require('@keg-hub/jsutils')
 
 /**
  * Logs the items returned from the traefik api to the terminal
- * @param {Object} items - Items returned from traefik api after being filtered
+ * @param {Array} items - Items returned from traefik api after being filtered
  *
  * @returns {Void}
  */
 const logList = list => {
   Logger.subHeader(`Keg-Proxy Container Routes`)
+  const groups = {}
+  // Convert the array into an object grouped by app name
   list.map(item => {
     const [ name, ...rest ] = item.service.split('-')
-    Logger.yellow(`  ${ wordCaps(name) }`)
+    groups[name] = groups[name] || []
+    groups[name].push({
+      branch: `    * ${rest.join('-')}`,
+      url: `    * https://${item.rule.split('`')[1]}`
+    })
+  })
 
-    const branch = rest.join('-')
-    Logger.pair(`    * ${branch}:`, `https://${item.rule.split('`')[1]}`)
+  // Print each group to the terminal
+  mapObj(groups, (name, items) => {
+    Logger.yellow(`  ${ wordCaps(name) }`)
+    items.map(item => Logger.log(item.url))
+    Logger.empty()
   })
   Logger.empty()
+
 }
 
 /**
@@ -81,8 +47,8 @@ const listProxy = async args => {
   const { filter, env} = params
   const log = __internal.skipLog !== true && params.log
 
-  const list = await getListFromAPI(env)
-  const filtered = filterList(list, filter)
+  const list = await getProxyRoutes(env)
+  const filtered = filterProxyRoutes(list, filter)
   log && logList(filtered)
 
   return filtered
@@ -99,7 +65,6 @@ module.exports = {
       filter: {
         description: 'Filter items displayed the printed list. Matching items will be shown',
         example: 'keg proxy list --filter proxy',
-        default: 'no-internal'
       },
       log: {
         alias: [ 'lg', 'print', 'pr' ],
