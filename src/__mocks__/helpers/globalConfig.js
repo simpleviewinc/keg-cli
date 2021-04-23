@@ -45,9 +45,11 @@ module.exports = deepMerge(defaultConfig, {
         path: path.join(cliRoot, 'src/__mocks__/tap')
       },
       components: {
-        core: path.join(kegRepos, 'keg-components'),
-        retheme: path.join(kegRepos, 're-theme'),
-      }
+        path: path.join(kegRepos, 'keg-components'),
+      },
+      retheme: {
+        path: path.join(kegRepos, 're-theme')
+      },
     }
   },
   publish: {
