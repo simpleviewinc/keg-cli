@@ -20,7 +20,7 @@ const askForRoute = async items => {
 
       return `${wordCaps(name)}${branch}${url}`
     }),
-    'Proxy Routs: ( Route | URL )\n',
+    'Proxy Routes: ( Route | URL )\n',
     'Select a Route:'
   )
   return items[index]

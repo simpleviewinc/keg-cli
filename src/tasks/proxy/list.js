@@ -24,7 +24,7 @@ const logList = list => {
 
   // Print each group to the terminal
   mapObj(groups, (name, items) => {
-    Logger.yellow(`  ${ wordCaps(name) }`)
+    Logger.blue(`  ${ wordCaps(name) }`)
     items.map(item => Logger.log(item.url))
     Logger.empty()
   })
