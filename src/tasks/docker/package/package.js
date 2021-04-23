@@ -108,6 +108,7 @@ const pushImageToProvider = async (args, { image, imgWTag, commitTag }, log) => 
 /**
  * Packages a docker container to be deployed to a docker providerCan 
  * @function
+ * @throws
  * @param {Object} args - arguments passed from the runTask method
  * @param {string} args.command - Initial command being run
  * @param {Array} args.options - arguments passed from the command line
@@ -116,7 +117,7 @@ const pushImageToProvider = async (args, { image, imgWTag, commitTag }, log) => 
  * @param {Object} args.params - Formatted options as an object
  * @param {Object} globalConfig - Global config object for the keg-cli
  *
- * @returns {Object} - Build image as a json object
+ * @returns {Boolean} - True if the image pushed to the provider
  */
 const dockerPackage = async args => {
 

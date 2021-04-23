@@ -4,14 +4,14 @@ const { runInternalTask } = require('../task/runInternalTask')
 const { buildExecParams } = require('../docker/buildExecParams')
 
 /**
- * Runs the sync actions defined in the mutagen.yml sync config
+ * Runs actions defined in the values.yml files
  * Runs each cmd in series, one after the other
  * @function
  * @param {Object} taskArgs - arguments passed from the runTask method
- * @param {string} cmdContext - Context of the container to sync with
  * @param {Array} action - Action to run in the container for the sync
+ * @param {string} context - Context of the container to sync with
  *
- * @returns {Array} - Array of Promises of each sync action
+ * @returns {Promise} - response from the last run exec task call 
  */
 const runActionCmds = (taskArgs, action, context) => {
 
