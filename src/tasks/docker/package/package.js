@@ -187,6 +187,7 @@ module.exports = {
       ...require('./run'),
     },
     options: mergeTaskOptions(`docker`, `package`, `push`, {
+      context: {},
       push: {
         description: 'Push the packaged image up to a docker provider registry',
         example: `keg docker package --no-push`,
