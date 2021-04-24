@@ -59,7 +59,7 @@ module.exports = {
     options: {
       context: {
         allowed: DOCKER.IMAGES,
-        description: 'Context of docker compose down command (tap | core | components)',
+        description: 'Context of docker compose down command (tap | core)',
         example: 'keg docker compose stop --context core',
         required: true
       },

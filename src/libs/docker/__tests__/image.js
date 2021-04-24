@@ -86,17 +86,13 @@ describe('Docker Image', () => {
       expect(baseImg.rootId).toBe('keg-base')
       expect(baseImg.id).toBe('3b74af475ff2')
 
-      const componentsImg = await Image.get('a56406239194')
-      expect(componentsImg.rootId).toBe('keg-components')
-      expect(componentsImg.id).toBe('a56406239194')
-
     })
 
     it('Should get an image if the ID is passed with a tag that exists', async () => {
 
-      const componentsImg = await Image.get('a56406239194:0.0.1')
-      expect(componentsImg.rootId).toBe('keg-components')
-      expect(componentsImg.id).toBe('a56406239194')
+      const coreImg = await Image.get('b80dcb1cac10:0.0.1')
+      expect(coreImg.rootId).toBe('keg-core')
+      expect(coreImg.id).toBe('b80dcb1cac10')
 
     })
 

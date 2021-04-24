@@ -10,7 +10,7 @@ const { fromImage, pullImage } = require('./singleOptions')
 const startServiceOptions = (task='', action='') => {
   return {
     build: {
-      description: 'Removes and rebuilds the docker container before running keg-components',
+      description: `Removes and rebuilds the docker container before running ${task} ${action}`,
       example: `keg ${ task } ${ action } --build`,
       default: false,
     },
@@ -66,7 +66,7 @@ const startServiceOptions = (task='', action='') => {
     },
     mounts: {
       description: `List of key names or folder paths to mount into the docker container. Only used when service === 'container'`,
-      example: `keg ${ task } ${ action } --mounts cli,components`,
+      example: `keg ${ task } ${ action } --mounts cli,core`,
     },
     recreate: {
       alias: [ 'rec', `create` ],
@@ -78,7 +78,7 @@ const startServiceOptions = (task='', action='') => {
       alias: [ 'syncs', 'sy' ],
       type: 'array',
       description: 'List of key names or folder paths to sync through mutagen into the docker container.',
-      example: `keg ${ task } ${ action } --sync cli,components`,
+      example: `keg ${ task } ${ action } --sync cli,core`,
     },
     detach: {
       alias: [ 'detached' ],

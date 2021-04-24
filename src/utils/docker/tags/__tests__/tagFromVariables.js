@@ -76,23 +76,6 @@ const args = {
         ...DOCKER.CONTAINERS.CORE.ENV,
       },
     },
-  },
-  comp: {
-    globalConfig,
-    task: testTask,
-    command: 'components',
-    containerContext: containerContexts.components,
-    params: {
-      ...defParams,
-      context: 'components',
-      tap: 'components',
-      location: DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH,
-      cmd: 'components',
-      image: 'keg-components',
-      buildArgs: {
-        ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-      },
-    },
   }
 }
 
@@ -127,14 +110,6 @@ describe('tagFromVariables', () => {
       args.core,
     )
     expect(coreResp[0]).toBe(`test-core-env-git-test-branch`)
-
-    const compResp = await tagFromVariables(
-      ['branch:version'],
-      `comp-version`,
-      `test-comp-env`,
-      args.comp,
-    )
-    expect(compResp[0]).toBe(`git-test-branch-comp-version`)
 
   })
 

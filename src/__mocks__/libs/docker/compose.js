@@ -22,12 +22,6 @@ ${proxyLabels('core', 'core.${KEG_PROXY_HOST}')}
 ${kegShared}
       - com.keg.proxy.domain=core
 `,
-      components: `      - traefik.enable=true
-${proxyLabels('components', 'components.${KEG_PROXY_HOST}')}
-      - com.keg.env.context=keg-components
-${kegShared}
-      - com.keg.proxy.domain=components
-`,
       injected: `      - traefik.enable=true
 ${proxyLabels('injected', 'injected.${KEG_PROXY_HOST}')}
       - com.keg.env.context=tap-injected-test

@@ -49,11 +49,11 @@ Creates an exact copy the a docker container at the time of its instantiation
   * To do this run the start task as described below
     * `keg <context> start <options>`
       * `context` - the name of the repo to be run w/ `keg`
-        * Examples - `core` | `components` | `linked tap name`
+        * Examples - `core` | `linked tap name`
           * **Important** - A tap must be linked for it to work properly
           * See `keg tap link` task for more information
       * `options` - See start task options in the Keg-CLI for more information
-2. Make the changes to the repository as needed to complete the feature
+3. Make the changes to the repository as needed to complete the feature
   * The local changes should be auto-magically synced into the container
   * The containers application should see these changes and update accordingly 
 3. Once complete, run the `keg docker package <options>` task

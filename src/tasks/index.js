@@ -27,7 +27,6 @@ module.exports = globalConfig => {
   return {
     ...initialize('base', globalConfig),
     ...initialize('cli', globalConfig),
-    ...initialize('components', globalConfig),
     ...initialize('config', globalConfig),
     ...initialize('core', globalConfig),
     ...initialize('docker', globalConfig),

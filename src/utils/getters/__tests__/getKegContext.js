@@ -10,8 +10,7 @@ describe('getKegContext', () => {
   it('should return the context without the keg prefix', async () => {
 
     expect(getKegContext('keg-core')).toBe('core')
-    expect(getKegContext('keg-components')).toBe('components')
-    expect(getKegContext('kegcomponents')).toBe('components')
+    expect(getKegContext('keg-proxy')).toBe('proxy')
 
   })
 

@@ -21,7 +21,7 @@ const buildPrefixData = (toFilter, prefix) => {
     noPrefix: context,
   }
 
-  // This will be true for internal repos like keg-core / keg-components / retheme
+  // This will be true for internal repos like keg-core / keg-proxy
   // It's essentially a shortcut to know if its an internal repo
   const hasContext = Boolean(CONTAINER_TO_CONTEXT[prefixData.noPrefix])
 
