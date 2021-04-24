@@ -71,7 +71,7 @@
     "KegFileSys": "src/libs/fileSys",
     "KegGitCli": "src/libs/git",
     "KegLibs": "src/libs",
-    "KegLog": "src/libs/logger",
+    "KegLog": "repos/cli-utils/src/logger",
     "KegMocks": "src/__mocks__",
     "KegProc": "src/libs/process",
     "KegMutagen": "src/libs/mutagen",
@@ -99,7 +99,7 @@
       "^KegFileSys(.*)$": "<rootDir>/src/libs/fileSys$1",
       "^KegGitCli(.*)$": "<rootDir>/src/libs/git$1",
       "^KegLibs(.*)$": "<rootDir>/src/libs$1",
-      "^KegLog(.*)$": "<rootDir>/src/libs/logger$1",
+      "^KegLog(.*)$": "<rootDir>/repos/cli-utils/src/logger$1",
       "^KegMocks(.*)$": "<rootDir>/src/__mocks__$1",
       "^KegMutagen(.*)$": "<rootDir>/src/libs/mutagen$1",
       "^KegProc(.*)$": "<rootDir>/src/libs/process$1",
@@ -112,6 +112,9 @@
       "^KegTasks(.*)$": "<rootDir>/src/tasks$1",
       "^KegUtils(.*)$": "<rootDir>/src/utils$1"
     },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/repos/*"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.js?(x)",
       "<rootDir>/scripts/**/__tests__/**/*.js?(x)"

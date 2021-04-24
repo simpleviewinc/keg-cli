@@ -1,1 +1,4 @@
-module.exports = require('./logger')
+module.exports = {
+  ...require('./showHelp'),
+  ...require('./logger'),
+}

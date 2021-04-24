@@ -1,5 +1,6 @@
-const { packageService } = require('KegUtils/services/packageService')
 const { DOCKER } = require('KegConst/docker')
+const { packageService } = require('KegUtils/services/packageService')
+const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
 
 /**
  * Package a running tap container into an image and push to the docker provider
@@ -34,26 +35,17 @@ module.exports = {
     tasks: {
       ...require('./run')
     },
-    options: {
-      tap: { 
+    options: mergeTaskOptions(`tap`, `package`, `push`, {
+      tap: {
         description: 'Name of the tap to run. Must be a tap linked in the global config',
-        example: 'keg tap package --tap my-tap',
+        example: 'keg tap package --tap <linked-tap-name>',
         required: true,
-      },
-      log: {
-        description: 'Log the output the of commands',
-        default: false,
-      },
-      tag: {
-        alias: [ 'tg' ],
-        description: 'Tag for the image created in the package. Defaults to the current branch of the passed in context',
-        example: 'keg tap package tag=my-tag',
       },
       push: {
         description: 'Push the packaged image up to a docker provider registry',
-        required: true,
+        example: `keg tap package --no-push`,
         default: true,
-      }
-    }
+      },
+    }),
   }
 }

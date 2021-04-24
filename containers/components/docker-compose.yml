@@ -13,6 +13,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING
       - DOC_APP_PATH
+      - DOC_BUILD_PATH
       - DOC_RETHEME_PATH
       - DOC_JSUTILS_PATH
       - KEG_EXEC_CMD

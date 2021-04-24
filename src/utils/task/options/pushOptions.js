@@ -10,8 +10,14 @@ const pushOptions = (task, action) => {
       example: `keg ${task} ${action} --build`,
       default: false
     },
+    tag: {
+      alias: [ 'tg' ],
+      description: 'Tag for the image create for the package. Defaults to the current branch of the passed in context',
+      example: `keg ${task} ${action} tag=my-tag`,
+    },
     tags: {
-      description: 'Extra tags to add to the docker image after its build. Uses commas (,) to separate',
+      description: 'Extra tags to add to the docker image after its built. Uses commas (,) to separate',
+      type: 'array',
       example: `keg ${task} ${action} tags=my-tag,local,develop`
     },
     token: {
@@ -26,6 +32,11 @@ const pushOptions = (task, action) => {
       description: 'Log the output the of commands',
       example: `keg ${task} ${action} --log`,
       default: false,
+    },
+    action: {
+      description: 'Runs an action defined in the Values files before packaging the container. Use --no-action to bypass',
+      example: `keg ${task} ${action} --action build.web`,
+      default: 'tap.build'
     },
     from: fromImage(task, action),
     ...dockerOptions(task, action),

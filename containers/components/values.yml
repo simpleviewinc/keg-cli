@@ -1,4 +1,13 @@
-
+actions:
+  tap:
+    build:
+      cmds:
+        - yarn sb:build
+        - rm -rf {{ envs.DOC_BUILD_PATH }}
+        - cp -R /keg/keg-components/docs {{ envs.DOC_BUILD_PATH }}
+    serve:
+      cmds:
+        - npx serve {{ envs.DOC_BUILD_PATH }} --cors -n -l {{ envs.KEG_PROXY_PORT }}
 env:
   # --- LOCAL ENV CONTEXT --- #
 
@@ -26,6 +35,7 @@ env:
   # Location of the application within the docker container
   # Defines the WORKDIR within the Dockerfile and docker-compose.yml
   DOC_APP_PATH: /keg/keg-components
+  DOC_BUILD_PATH: /keg/components-build
 
   # Defines the location in a docker container for a dependency
   # This allows mutagen to know where to sync the local version of the dependency

@@ -1,4 +1,14 @@
-
+actions:
+  tap:
+    build:
+      cmds:
+        - yarn web:build
+        - rm -rf {{ envs.DOC_BUILD_PATH }}
+        - cp -R {{ envs.DOC_APP_PATH }}/web-build {{ envs.DOC_BUILD_PATH }}
+    serve:
+      detach: true
+      cmds:
+        - npx serve {{ envs.DOC_BUILD_PATH }} --cors -n -l {{ envs.KEG_PROXY_PORT }}
 env:
   # --- LOCAL ENV CONTEXT --- #
   COMPONENTS_PATH: "{{ cli.paths.components }}"
@@ -32,6 +42,8 @@ env:
   # --- DOCKER ENV CONTEXT --- #
 
   DOC_APP_PATH: /keg/keg-core
+
+  DOC_BUILD_PATH: /keg/core-build
 
   # Port the application will use when running within the container
   # Required to allow the keg-proxy to route traffic to it
