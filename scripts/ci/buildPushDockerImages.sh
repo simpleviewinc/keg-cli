@@ -36,7 +36,7 @@ keg_build_images(){
   # build and push each keg-hub image
   for REPO in base core components tap retheme
   do
-    keg_message "Building $repo:$KEG_BUILD_TAG image..."
+    keg_message "Building $REPO:$KEG_BUILD_TAG image..."
     keg "$REPO" build --push --tag $KEG_BUILD_TAG --no-cache
   done
 }
