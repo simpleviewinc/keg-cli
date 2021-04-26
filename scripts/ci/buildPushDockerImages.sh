@@ -27,17 +27,27 @@ keg_clean_docker(){
   keg d clean -f
 }
 
+keg_build_repo () {
+    keg_message "Building $1:$2 image..."
+    keg "$1" build --push --tag "$2" --no-cache
+}
+
 # Build all the keg-hub images 
 keg_build_images(){
 
   # Clear out any old docker images so we start fresh
   keg_clean_docker
 
-  # build and push each keg-hub image
+  # only build one repo if the env is set
+  if [[ ! -z "$KEG_REPO" ]]; then
+    keg_build_repo $KEG_REPO $KEG_BUILD_TAG
+    return 
+  fi
+
+  # otherwise build and push each keg-hub image
   for REPO in base core components tap retheme
   do
-    keg_message "Building $REPO:$KEG_BUILD_TAG image..."
-    keg "$REPO" build --push --tag $KEG_BUILD_TAG --no-cache
+    keg_build_repo $REPO $KEG_BUILD_TAG
   done
 }
 
