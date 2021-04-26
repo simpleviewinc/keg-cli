@@ -29,14 +29,14 @@ keg_clean_docker(){
 
 keg_build_repo () {
     keg_message "Building $1:$2 image..."
-    # keg "$1" build --push --tag "$2" --no-cache
+    keg "$1" build --push --tag "$2" --no-cache
 }
 
 # Build all the keg-hub images 
 keg_build_images(){
 
   # Clear out any old docker images so we start fresh
-  # keg_clean_docker
+  keg_clean_docker
 
   # only build one repo if the env is set
   if [[ ! -z "$KEG_REPO" ]]; then
