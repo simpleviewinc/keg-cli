@@ -13,7 +13,7 @@ const { throwTaskFailed } = require('./throwTaskFailed')
 */
 const throwNoTapLink = (globalConfig, tapName) => {
 
-  Logger.error(`\n Linked path for tap '${tapName}' does on exist in the Global config!`)
+  Logger.error(`\n Linked path for tap '${tapName}' does not exist in the Global config!`)
 
   Logger.empty()
 

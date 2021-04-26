@@ -15,7 +15,7 @@ const throwNoConfigPath = (globalConfig, pathName) => {
 
   Logger.empty()
 
-  Logger.error(`Global config path '${pathName}' does on exist in the paths config!`)
+  Logger.error(`Global config path '${pathName}' does not exist in the paths config!`)
 
   Logger.empty()
   Logger.empty()
