@@ -3,12 +3,14 @@ jest.resetAllMocks()
 jest.clearAllMocks()
 
 const spawnCmdMock = jest.fn()
-jest.setMock('@keg-hub/spawn-cmd', { spawnCmd: spawnCmdMock })
+const asyncCmdMock = jest.fn()
+jest.setMock('@keg-hub/spawn-cmd', { spawnCmd: spawnCmdMock, asyncCmd: asyncCmdMock })
 const errorLogMock = jest.fn()
 jest.setMock('../../logger/logger', { Logger: { error: errorLogMock }})
 
 const {
   runCmd,
+  execCmd,
   spawnCmd,
   dockerExec,
   ...shortcutCmds
