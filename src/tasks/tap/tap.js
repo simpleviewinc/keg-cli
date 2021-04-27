@@ -9,6 +9,7 @@ module.exports = {
       ...require('./action'),
       ...require('./attach'),
       ...require('./build'),
+      ...require('./config'),
       ...require('./container'),
       ...require('./destroy'),
       ...require('./docker'),

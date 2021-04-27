@@ -159,6 +159,17 @@ module.exports = deepFreeze({
       'minor',
       'patch',
     ]
-  }
+  },
 
+  TAP_CONFIG_NAMES: [
+    'tap.config.js',
+    'tap.js',
+    'tap.config.json',
+    'tap.json',
+    'app.config.js',
+    'app.js',
+    'app.config.json',
+    'app.json',
+    'package.json',
+  ]
 })
