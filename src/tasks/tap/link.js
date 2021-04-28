@@ -5,6 +5,7 @@ const { ask } = require('@keg-hub/ask-it')
 const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
 const { addTapLink } = require('KegUtils/globalConfig/addTapLink')
 const { checkCustomTaskFolder } = require('KegUtils/task/checkCustomTaskFolder')
+const { generalError } = require('KegUtils/error')
 
 /**
  * Checks if the link already exists, and if it does asks if the user wants to overwrite
@@ -72,8 +73,13 @@ const linkTap = async args => {
   // get the tap config located at our current location to determine the default alias name
   const [ tapConfig ] = getTapConfig({ path: location })
 
+  // get the tap name, or throw an error if not specified
+  const alias = name || tapConfig.alias || generalError(
+    'Error: Tap name required. Ensure your tap config defines an `alias` key.'
+  )
+
   // Try to build the tap object.
-  const tapObj = await buildTapObj(globalConfig, silent, name || tapConfig.alias, location)
+  const tapObj = await buildTapObj(globalConfig, silent, alias, location)
 
   // Check if we should add the link or custom task file, or log that the link was canceled!
   ;tapObj
