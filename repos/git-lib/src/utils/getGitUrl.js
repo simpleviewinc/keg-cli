@@ -1,6 +1,8 @@
 const { get, isUrl } = require('@keg-hub/jsutils')
 const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
 
+// TODO: Add cli-utils to load the globalConfig, to get the git url
+
 /**
  * Builds the git url to clone the repo
  * If the name is a url, then uses that, otherwise name is joined of the the org url

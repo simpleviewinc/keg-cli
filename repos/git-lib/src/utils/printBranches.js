@@ -1,4 +1,4 @@
-const { Logger } = require('KegLog')
+const { Logger } = require('@keg-hub/cli-utils')
 const { mapObj, reduceObj } = require('@keg-hub/jsutils')
 
 /**
@@ -27,12 +27,12 @@ const printBranchIndex = (branch, index) => {
  *
  * @returns {void}
  */
-const printGitBranches = (branches=[]) => {
+const printBranches = (branches=[]) => {
   Logger.header(`GIT BRANCHES`)
   branches.map((branch, index) => printBranchIndex(branch, index))
   Logger.empty()
 }
 
 module.exports = {
-  printGitBranches
+  printBranches
 }
