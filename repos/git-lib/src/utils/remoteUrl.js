@@ -1,5 +1,7 @@
-const { executeCmd } = require('KegProc')
-const { NEWLINES_MATCH, WHITESPACE_MATCH } = require('KegConst/patterns')
+const { executeCmd } = require('./process')
+const { PATTERNS } = require('./constants/constants')
+
+const { NEWLINES_MATCH, WHITESPACE_MATCH } = PATTERNS
 
 /**
  * Calls git remote at the passed in path

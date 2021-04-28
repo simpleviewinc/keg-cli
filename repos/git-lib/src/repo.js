@@ -1,6 +1,7 @@
 const { gitCli, gitCmd } = require('./commands')
-const { getLogArgs, getFetchArgs, getCheckoutArgs } = require('./utils/helpers')
 const { isStr, isBool } = require('@keg-hub/jsutils')
+const { getLogArgs, getFetchArgs, getCheckoutArgs } = require('./utils/helpers')
+
 class Repo {
 
   constructor(git, options){

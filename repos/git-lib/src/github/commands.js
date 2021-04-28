@@ -1,6 +1,6 @@
 const { Logger } = require('@keg-hub/cli-utils')
+const { executeCmd } = require('../utils/process')
 const { cliError, cliSuccess } = require('./helpers')
-const { executeCmd, spawnCmd, spawnProc } = require('KegProc')
 
 /**
  * Calls the gh cli from the command line and returns the response
@@ -12,11 +12,9 @@ const { executeCmd, spawnCmd, spawnProc } = require('KegProc')
 const ghCli = async ({ cmd, opts, log }) => {
 
   opts = isArr(opts) ? opts.join(' ') : opts
-
   const cmdToRun = `gh ${ cmd } ${ opts }`.trim()
 
   log && Logger.spacedMsg(`  Running command: `, cmdToRun)
-
   const { error, data } = await executeCmd(cmdToRun, cmdOpts)
 
   return error

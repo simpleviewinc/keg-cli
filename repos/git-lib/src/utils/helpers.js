@@ -1,6 +1,8 @@
-const { checkCall, reduceObj, isStr, deepMerge } = require('@keg-hub/jsutils')
 const { Logger } = require('@keg-hub/cli-utils')
-const { NEWLINES_MATCH, WHITESPACE_MATCH } = require('KegConst/patterns')
+const { PATTERNS } = require('./constants/constants')
+const { checkCall, reduceObj, isStr, deepMerge } = require('@keg-hub/jsutils')
+
+const { NEWLINES_MATCH, WHITESPACE_MATCH } = PATTERNS
 
 /**
 * Extra git log arguments map. Maps passed in arguments to the real value

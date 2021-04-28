@@ -1,8 +1,10 @@
 const { Logger } = require('@keg-hub/cli-utils')
 const { gitCli, gitCmd } = require('./commands')
 const { checkCall } = require('@keg-hub/jsutils')
-const { NEWLINES_MATCH, WHITESPACE_MATCH } = require('KegConst/patterns')
+const { PATTERNS } = require('./constants/constants')
 const { buildCmdOpts, ensureGitRemote, ensureGitBranch } = require('./utils/helpers')
+
+const { NEWLINES_MATCH, WHITESPACE_MATCH } = PATTERNS
 
 /**
  * Matches any * or - character that does not have a alphanumeric character following it

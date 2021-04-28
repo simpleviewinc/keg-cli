@@ -1,5 +1,4 @@
 const { Logger } = require('@keg-hub/cli-utils')
-const { mapObj, reduceObj } = require('@keg-hub/jsutils')
 
 /**
  * Prints a formatted git branch with index

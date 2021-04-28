@@ -1,7 +1,9 @@
-const { isArr, isStr, toStr, isObj } = require('@keg-hub/jsutils')
 const { Logger } = require('@keg-hub/cli-utils')
-const { executeCmd, spawnCmd, spawnProc } = require('KegProc')
-const { NEWLINES_MATCH } = require('KegConst/patterns')
+const { PATTERNS } = require('./constants/constants')
+const { executeCmd, spawnCmd } = require('./utils/process')
+const { isArr, isStr, toStr, isObj } = require('@keg-hub/jsutils')
+
+const { NEWLINES_MATCH } = PATTERNS
 
 /**
  * Calls the git cli from the command line and returns the response
@@ -52,8 +54,8 @@ const gitCli = async (args={}, cmdOpts={}, location) => {
   const options = isArr(opts) ? opts.join(' ').trim() : toStr(opts)
   const useForce = force ? '--force' : ''
   const cmdToRun = ensureGit(`${ options } ${ useForce }`.trim())
-  log && Logger.spacedMsg(`Running command: `, cmdToRun)
 
+  log && Logger.spacedMsg(`Running command: `, cmdToRun)
   const { error, data } = await executeCmd(cmdToRun, cmdOpts, location)
 
   return error ? cliError(error, skipError) : data
@@ -78,7 +80,7 @@ const raw = async (cmd, args={}, loc=process.cwd(), log) => {
   const toRun = ensureGit(cmd)
 
   // Run the git command
-  const { error, data } = await spawnProc(toRun, args, loc)
+  const { error, data } = await spawnCmd(toRun, args, loc)
 
   error && !data
     ? cliError(error)
