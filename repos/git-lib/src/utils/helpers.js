@@ -1,5 +1,5 @@
 const { Logger } = require('@keg-hub/cli-utils')
-const { PATTERNS } = require('./constants/constants')
+const { PATTERNS } = require('../constants/constants')
 const { checkCall, reduceObj, isStr, deepMerge } = require('@keg-hub/jsutils')
 
 const { NEWLINES_MATCH, WHITESPACE_MATCH } = PATTERNS

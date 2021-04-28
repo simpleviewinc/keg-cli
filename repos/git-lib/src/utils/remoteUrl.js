@@ -1,5 +1,5 @@
 const { executeCmd } = require('./process')
-const { PATTERNS } = require('./constants/constants')
+const { PATTERNS } = require('../constants/constants')
 
 const { NEWLINES_MATCH, WHITESPACE_MATCH } = PATTERNS
 
