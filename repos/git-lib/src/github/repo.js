@@ -1,6 +1,6 @@
 const { ghCli } = require('./commands')
 const { injectGlobalConfig } = require('./helpers')
-const { getGitUrl } = require('../utils/getGitUrl')
+const { configUrl } = require('../utils/configUrl')
 
 /**
  * Clones a repo based on the passed in arguments
@@ -11,7 +11,7 @@ const { getGitUrl } = require('../utils/getGitUrl')
  */
 const clone = injectGlobalConfig((getGlobalConfig, args) => {
   const { repo, owner, cloneTo } = args
-  const repoUrl = getGitUrl({ globalConfig, repo })
+  const repoUrl = configUrl({ globalConfig, repo })
   
 })
 
@@ -24,7 +24,7 @@ const clone = injectGlobalConfig((getGlobalConfig, args) => {
  */
 const create = injectGlobalConfig((getGlobalConfig, args) => {
   const { repo, owner } = args
-  const repoUrl = getGitUrl({ globalConfig, repo })
+  const repoUrl = configUrl({ globalConfig, repo })
   
 })
 
@@ -37,7 +37,7 @@ const create = injectGlobalConfig((getGlobalConfig, args) => {
  */
 const fork = injectGlobalConfig((getGlobalConfig, args) => {
   const { repo, owner } = args
-  const repoUrl = getGitUrl({ globalConfig, repo })
+  const repoUrl = configUrl({ globalConfig, repo })
   
 })
 
@@ -50,7 +50,7 @@ const fork = injectGlobalConfig((getGlobalConfig, args) => {
  */
 const view = injectGlobalConfig((getGlobalConfig, args) => {
   const { repo, owner } = args
-  const repoUrl = getGitUrl({ globalConfig, repo })
+  const repoUrl = configUrl({ globalConfig, repo })
   
 })
 

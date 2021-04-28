@@ -26,7 +26,7 @@ const buildGitUrl = (orgUrl, name, branch) => {
  *
  * @returns {string} - Found repo url
  */
-const getGitUrl = ({ globalConfig, repo, branch, org }) => {
+const configUrl = ({ globalConfig, repo, branch, org }) => {
 
   const { orgUrl, repos } = get(globalConfig, GLOBAL_CONFIG_PATHS.GIT)
 
@@ -39,5 +39,5 @@ const getGitUrl = ({ globalConfig, repo, branch, org }) => {
 }
 
 module.exports = {
-  getGitUrl
+  configUrl
 }

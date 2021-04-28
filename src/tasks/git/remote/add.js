@@ -40,7 +40,7 @@ const remoteAdd =  async args => {
   const { params } = args
   const { remote, url } = params
 
-  // TODO: Update to use libs/git
+  // TODO: Update to use git-lib
   // const gitUrl = buildGitUrl(url)
   // const [ err, data ] = await limbo(addRemote(remote, url))
   // return err ? false : true

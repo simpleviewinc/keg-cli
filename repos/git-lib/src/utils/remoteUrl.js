@@ -10,7 +10,7 @@ const { NEWLINES_MATCH, WHITESPACE_MATCH } = require('KegConst/patterns')
  *
  * @returns {string} - Git remote's url
  */
-const getRemoteUrl = async (repoPath=process.cwd(), remote='origin') => {
+const remoteUrl = async (repoPath=process.cwd(), remote='origin') => {
   const { data, error } = await executeCmd(`git remote -v`, { cwd: repoPath })
 
   return error
@@ -30,5 +30,5 @@ const getRemoteUrl = async (repoPath=process.cwd(), remote='origin') => {
 }
 
 module.exports = {
-  getRemoteUrl
+  remoteUrl
 }
