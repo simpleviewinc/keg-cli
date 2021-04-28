@@ -1,20 +1,24 @@
 jest.mock('@keg-hub/jsutils/src/node')
+jest.mock('../getTapPath')
 const { TAP_CONFIG_NAMES } = require('KegConst/constants')
 const { tryRequireSync } = require('@keg-hub/jsutils/src/node')
 const { getTapConfig, getTapPackage } = require('../getTapConfig')
+const { getTapPath } = require('../getTapPath')
 const path = require('path')
 
-const tapRoot = 'foo/bar/'
+const tapPath = '/bar/foo'
+const tapName = 'foo'
 
 describe('getTapConfig', () => {
 
   afterEach(() => jest.resetAllMocks())
+  beforeEach(() => getTapPath.mockReturnValue(tapPath))
 
   it('should try all config paths', () => {
-    getTapConfig(tapRoot)
+    getTapConfig({ name: tapName })
 
     TAP_CONFIG_NAMES.map(name =>
-      expect(tryRequireSync).toHaveBeenCalledWith(path.join(tapRoot, name))
+      expect(tryRequireSync).toHaveBeenCalledWith(path.join(tapPath, name))
     )
   })
 
@@ -26,35 +30,48 @@ describe('getTapConfig', () => {
       .mockReturnValueOnce(config)
       .mockReturnValue(undefined)
 
-    const [ result, cfgPath ] = getTapConfig(tapRoot)
+    const [ result, cfgPath ] = getTapConfig({ name: tapName })
     expect(result).toBe(config)
-    expect(cfgPath).toBe(path.join(tapRoot, TAP_CONFIG_NAMES[2]))
+    expect(cfgPath).toBe(path.join(tapPath, TAP_CONFIG_NAMES[2]))
     expect(tryRequireSync).toHaveBeenCalledTimes(3)
   })
 
   it('should return null for no found config', () => {
     expect(
-      getTapConfig(tapRoot)
+      getTapConfig({ name: tapName })
     ).toEqual([ null, null ])
+  })
+
+  it ('should accept the path to the tap', () => {
+    const config = { id: '123' }
+    tryRequireSync.mockReturnValueOnce(config)
+
+    const [ result, cfgPath ] = getTapConfig({ path: tapPath })
+    expect(result).toBe(config)
+    expect(cfgPath).toBe(path.join(tapPath, TAP_CONFIG_NAMES[0]))
+    expect(tryRequireSync).toHaveBeenCalledTimes(1)
   })
 })
 
 describe('getTapPackage', () => {
+
+  beforeEach(() => getTapPath.mockReturnValue(tapPath))
+
   it('should get the tap package', () => {
     const package = { dependencies: {} }
     tryRequireSync.mockReturnValueOnce(package)
     expect(
-      getTapPackage(tapRoot)
+      getTapPackage({ name: tapName })
     ).toEqual([
       package,
-      path.join(tapRoot, 'package.json')
+      path.join(tapPath, 'package.json')
     ])
   })
 
   it('should return null values in the array if no package is found', () => {
     tryRequireSync.mockReturnValueOnce(null)
     expect(
-      getTapPackage(tapRoot)
+      getTapPackage({ name: tapName })
     ).toEqual([
       null,
       null

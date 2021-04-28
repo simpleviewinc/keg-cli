@@ -1,4 +1,5 @@
 const { getTapConfig, getTapPackage } = require('KegUtils/tap/getTapConfig')
+const { getTapPath } = require('KegUtils/tap/getTapPath')
 const { Logger } = require('KegLog')
 const { get } = require('@keg-hub/jsutils')
 const { generalError } = require('KegUtils/error')
@@ -31,17 +32,16 @@ const packageNames = [ 'package', 'pkg', 'p']
  * @param {Object} args - arguments passed from the runTask method
  */
 const printConfig = args => {
-  const { globalConfig, params } = args
+  const { params } = args
   const { tap, path, verbose } = params
 
   !tap && generalError('Cannot print config without a tap parameter.')
-  const tapPath = get(globalConfig, `cli.taps.${tap}.path`) 
 
   const [ fileType, subPath ] = splitPath(path)
   const [ config, foundPath ] = configNames.includes(fileType)
-    ? getTapConfig(tapPath)
+    ? getTapConfig({ name: tap })
     : packageNames.includes(fileType)
-      ? getTapPackage(tapPath)
+      ? getTapPackage({ name: tap })
       : []
 
   !config && 

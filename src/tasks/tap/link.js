@@ -1,3 +1,4 @@
+const { getTapConfig } = require('KegUtils/tap/getTapConfig')
 const { Logger } = require('KegLog')
 const { get } = require('@keg-hub/jsutils')
 const { ask } = require('@keg-hub/ask-it')
@@ -17,7 +18,6 @@ const ensureAddLink = async (currentTap, tapName, tapPath, silent) => {
     ? !silent && ask.confirm(`Overwrite tap link '${tapName}' => '${tapPath}'?`)
     : true
 }
-
 
 /**
  * Checks for a current tap path, and compares with the passed in location
@@ -52,7 +52,6 @@ const buildTapObj = async (globalConfig, silent, name, location) => {
   customTasksFile && (tapObj.tasks = customTasksFile)
 
   return tapObj
-
 }
 
 /**
@@ -66,17 +65,20 @@ const buildTapObj = async (globalConfig, silent, name, location) => {
  * @returns {void}
  */
 const linkTap = async args => {
-  const { command, globalConfig, options, params, tasks } = args
+  const { globalConfig, params } = args
+
   const { name, location, silent } = params
 
+  // get the tap config located at our current location to determine the default alias name
+  const [ tapConfig ] = getTapConfig({ path: location })
+
   // Try to build the tap object.
-  const tapObj = await buildTapObj(globalConfig, silent, name, location)
+  const tapObj = await buildTapObj(globalConfig, silent, name || tapConfig.alias, location)
 
   // Check if we should add the link or custom task file, or log that the link was canceled!
   ;tapObj
     ? addTapLink(globalConfig, name, tapObj)
     : !silent && (Logger.warn(`Tap link canceled!`) || Logger.empty())
-
 }
 
 module.exports = {
@@ -88,8 +90,8 @@ module.exports = {
     example: 'keg tap link <options>',
     options: {
       name: {
-        description: 'Name used to access the linked tap',
-        required: true,
+        description: 'Name used to access the linked tap. If omitted, it will use the "alias" value in the tap config.',
+        required: false,
       },
       location: {
         alias: [ 'path', 'loc' ],
