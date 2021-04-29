@@ -13,7 +13,7 @@ const { buildContainerContext } = require('../builders/buildContainerContext')
  * @param {Object} args - arguments passed from the runTask method
  * @param {Object} args.globalConfig - Global config object for the keg-cli
  * @param {Object} args.params - Formatted object of the passed in options 
- * @param {string} params.container - Name of the container to run ( core / components / tap )
+ * @param {string} params.container - Name of the container to run ( core / tap )
  * @param {string} params.tap - Name of tap, if container arg value is `tap`
  * @param {string} params.location - Location where the command should be run
  *
@@ -84,7 +84,7 @@ const buildContainerSync = async (args, argsExt) => {
  * @param {Object} args - arguments passed from the runTask method
  * @param {Object} args.globalConfig - Global config object for the keg-cli
  * @param {Object} args.params - Formatted object of the passed in options 
- * @param {string} params.container - Name of the container to run ( core / components / tap )
+ * @param {string} params.container - Name of the container to run ( core / tap )
  * @param {string} params.tap - Name of tap, if container arg value is `tap`
  * @param {string} params.location - Location where the command should be run
  *

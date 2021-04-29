@@ -20,20 +20,20 @@ const args = {
       ...DOCKER.CONTAINERS.CORE.ENV,
     },
   },
-  components: {
+  coreNoId: {
     globalConfig,
     params: {
-      context: 'components',
-      image: 'keg-components',
+      context: 'core',
+      image: 'keg-core',
     },
-    cmdContext: 'components',
+    cmdContext: 'core',
     contextData: {
-      context: 'components',
-      image: 'keg-components',
-      ...global.testDocker.images.components,
+      context: 'core',
+      image: 'keg-core',
+      ...global.testDocker.images.core,
     },
     contextEnvs: {
-      ...DOCKER.CONTAINERS.COMPONENTS.ENV,
+      ...DOCKER.CONTAINERS.CORE.ENV,
     },
   },
   injected: {
@@ -44,7 +44,6 @@ const args = {
 
 const proxyDomainMocks = {
   'keg-core': `proxy-domain-add-plugin`,
-  'keg-components': `proxy-domain-new-component`,
   'tap-test': `proxy-domain-tap-feature`,
   'tap-injected-test': 'injected-proxy-value'
 }
@@ -81,7 +80,7 @@ describe('getKegProxyDomain', () => {
   it('Should get the domain from label when id || rootId is passed', async () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
     expect(domainFromLabel).not.toHaveBeenCalled()
-    const proxyDomain = await getKegProxyDomain(args.components, args.components.contextEnvs)
+    const proxyDomain = await getKegProxyDomain(args.coreNoId, args.coreNoId.contextEnvs)
     expect(domainFromLabel).toHaveBeenCalled()
     expect(domainFromBranch).not.toHaveBeenCalled()
   })
@@ -90,17 +89,17 @@ describe('getKegProxyDomain', () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
     expect(domainFromLabel).not.toHaveBeenCalled()
 
-    const rootId = args.components.contextEnvs.rootId
+    const rootId = args.coreNoId.contextEnvs.rootId
     const proxyDomain = await getKegProxyDomain({
-      ...args.components,
+      ...args.coreNoId,
       params: {
-        image: 'keg-components',
+        image: 'keg-core',
         tag: 'develop'
       },
       contextData: {}
-    }, args.components.contextEnvs)
+    }, args.coreNoId.contextEnvs)
 
-    expect(proxyDomain).toBe('keg-components:develop-container')
+    expect(proxyDomain).toBe('keg-core:develop-container')
 
     expect(domainFromLabel).toHaveBeenCalled()
     expect(domainFromBranch).not.toHaveBeenCalled()
@@ -110,17 +109,17 @@ describe('getKegProxyDomain', () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
     expect(domainFromLabel).not.toHaveBeenCalled()
 
-    const rootId = args.components.contextEnvs.rootId
+    const rootId = args.coreNoId.contextEnvs.rootId
     const proxyDomain = await getKegProxyDomain({
-      ...args.components,
+      ...args.coreNoId,
       params: {
-        image: 'keg-components',
+        image: 'keg-core',
         tag: 'develop'
       },
-      contextData: { rootId: 'keg-components' }
-    }, args.components.contextEnvs)
+      contextData: { rootId: 'keg-core' }
+    }, args.core.contextEnvs)
 
-    expect(proxyDomain).toBe('keg-components:develop-image')
+    expect(proxyDomain).toBe('keg-core:develop-image')
 
     expect(domainFromLabel).toHaveBeenCalled()
     expect(domainFromBranch).not.toHaveBeenCalled()

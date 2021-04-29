@@ -58,15 +58,15 @@ const testArgs = {
   },
   context: {
     description: 'It should return the imageName context with only a context',
-    inputs: [{ context: 'components' }],
+    inputs: [{ context: 'components', tap: 'components' }],
     outputs: {
-      image: 'keg-components',
+      image: 'components',
       tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-components:develop',
-      full: 'ghcr.io/simpleviewinc/keg-components:develop',
-      providerImage: 'ghcr.io/simpleviewinc/keg-components',
+      imageWTag: 'components:develop',
+      full: 'ghcr.io/simpleviewinc/components:develop',
+      providerImage: 'ghcr.io/simpleviewinc/components',
     }
   },
   injected: {
@@ -84,15 +84,15 @@ const testArgs = {
   },
   tagOverride: {
     description: 'It should override the image tag',
-    inputs: [{ context: 'components', tag: 'test-tag' }],
+    inputs: [{ context: 'components', tap: 'components', tag: 'test-tag' }],
     outputs: {
-      image: 'keg-components',
+      image: 'components',
       tag: 'test-tag',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-components:test-tag',
-      full: 'ghcr.io/simpleviewinc/keg-components:test-tag',
-      providerImage: 'ghcr.io/simpleviewinc/keg-components',
+      imageWTag: 'components:test-tag',
+      full: 'ghcr.io/simpleviewinc/components:test-tag',
+      providerImage: 'ghcr.io/simpleviewinc/components',
     }
   },
   providerOverride: {
@@ -110,15 +110,15 @@ const testArgs = {
   },
   namespaceOverride: {
     description: 'It should override the url namespace',
-    inputs: [{ context: 'components', namespace: 'test-namespace' }],
+    inputs: [{ context: 'components', tap: 'components', namespace: 'test-namespace' }],
     outputs: {
-      image: 'keg-components',
+      image: 'components',
       tag: 'develop',
       provider: 'ghcr.io',
       namespace: 'test-namespace',
-      imageWTag: 'keg-components:develop',
-      full: 'ghcr.io/test-namespace/keg-components:develop',
-      providerImage: 'ghcr.io/test-namespace/keg-components',
+      imageWTag: 'components:develop',
+      full: 'ghcr.io/test-namespace/components:develop',
+      providerImage: 'ghcr.io/test-namespace/components',
     }
   },
   fromOnly: {
@@ -136,7 +136,7 @@ const testArgs = {
   },
   fromOverride: {
     description: 'It use the from param over other params',
-    inputs: [{ context: 'components', tag: 'develop', from: `provider/namespace/keg-items:test` }],
+    inputs: [{ context: 'components', tap: 'components', tag: 'master', from: `provider/namespace/keg-items:test` }],
     outputs: {
       image: 'keg-items',
       provider: 'provider',
@@ -201,15 +201,15 @@ const testArgs = {
   },
   imageId: {
     description: 'It should allow passing in an image id',
-    inputs: [{ image: 'a56406239194' }],
+    inputs: [{ image: 'b80dcb1cac10' }],
     outputs: {
-      image: 'keg-components',
+      image: 'keg-core',
       tag: '0.0.1',
       provider: 'ghcr.io',
       namespace: 'simpleviewinc',
-      imageWTag: 'keg-components:0.0.1',
-      full: 'ghcr.io/simpleviewinc/keg-components:0.0.1',
-      providerImage: 'ghcr.io/simpleviewinc/keg-components',
+      imageWTag: 'keg-core:0.0.1',
+      full: 'ghcr.io/simpleviewinc/keg-core:0.0.1',
+      providerImage: 'ghcr.io/simpleviewinc/keg-core',
     }
   },
   contextId: {

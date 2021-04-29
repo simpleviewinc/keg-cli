@@ -304,8 +304,8 @@ const setupSettings = async (globalConf) => {
  */
 const setupTaps = async (globalConf) => {
   set(globalConf, 'cli.taps.retheme', { path: `${defPaths.repos}/re-theme`})
+  set(globalConf, 'cli.taps.components', { path: `${defPaths.repos}/keg-components`})
   set(globalConf, 'cli.taps.rc', { path: `${defPaths.taps}/tap-release-client`})
-  set(globalConf, 'cli.taps.evf', { path: `${defPaths.taps}/tap-events-force` })
 }
 
 /**

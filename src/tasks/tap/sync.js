@@ -27,7 +27,7 @@ module.exports = {
     options: {
       dependency: {
         alias: [ 'dep' ],
-        description: 'Name of the dependency to sync into the components container',
+        description: 'Name of the dependency to sync into the tap container',
         enforced: true
       },
       tap: { 
@@ -37,12 +37,12 @@ module.exports = {
       },
       local: {
         alias: [ 'from' ],
-        description: 'Local path to sync into the keg-components container',
+        description: 'Local path to sync into the tap container',
         enforced: true
       },
       remote: {
         alias: [ 'to' ],
-        description: 'Path on the keg-components container to sync to',
+        description: 'Path on the tap container to sync to',
         enforced: true
       },
       syncForce: {

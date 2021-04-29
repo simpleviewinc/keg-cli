@@ -35,18 +35,6 @@ const args = {
       ...DOCKER.CONTAINERS.CORE.ENV,
     },
   },
-  components: {
-    globalConfig,
-    params: {
-      context: 'components',
-      image: 'keg-components',
-    },
-    cmd: 'up',
-    cmdContext: 'components',
-    contextEnvs: {
-      ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-    },
-  },
   injected: {
     globalConfig,
     ...injectedTest
@@ -64,7 +52,6 @@ describe('buildComposeCmd', () => {
 
     beforeEach(async () => {
       await removeInjectedCompose(`keg-core`)
-      await removeInjectedCompose(`keg-components`)
       getKegProxyDomainMock.mockClear()
     })
 
@@ -78,22 +65,6 @@ describe('buildComposeCmd', () => {
       expect(injectedFilePath.indexOf(`.tmp/keg-core.yml`) !== -1).toBe(true)
       expect(defaultFileKey).toBe('-f')
       expect(defaultFilePath.indexOf(`core/docker-compose.yml`) !== -1).toBe(true)
-      expect(cmdArgs.indexOf('up')).not.toBe(-1)
-      expect(cmdArgs.indexOf('--detach')).not.toBe(-1)
-      expect(getKegProxyDomainMock).toHaveBeenCalled()
-
-    })
-
-    it('Should build the correct docker-compose up command for keg-components', async () => {
-      const { dockerCmd, composeData } = await buildComposeCmd(args.components)
-      expect(isStr(dockerCmd)).toBe(true)
-      const [ compose, injectedFileKey, injectedFilePath, defaultFileKey, defaultFilePath, ...cmdArgs ] = dockerCmd.split(' ')
-    
-      expect(compose).toBe('docker-compose')
-      expect(injectedFileKey).toBe('-f')
-      expect(injectedFilePath.indexOf(`.tmp/keg-components.yml`) !== -1).toBe(true)
-      expect(defaultFileKey).toBe('-f')
-      expect(defaultFilePath.indexOf(`components/docker-compose.yml`) !== -1).toBe(true)
       expect(cmdArgs.indexOf('up')).not.toBe(-1)
       expect(cmdArgs.indexOf('--detach')).not.toBe(-1)
       expect(getKegProxyDomainMock).toHaveBeenCalled()
@@ -134,7 +105,6 @@ describe('buildComposeCmd', () => {
 
     beforeEach(async () => {
       await removeInjectedCompose(`keg-core`)
-      await removeInjectedCompose(`keg-components`)
     })
 
     it('Should build the correct docker-compose down command for keg-core', async () => {
@@ -147,20 +117,6 @@ describe('buildComposeCmd', () => {
       expect(injectedFilePath.indexOf(`.tmp/keg-core.yml`) !== -1).toBe(true)
       expect(defaultFileKey).toBe('-f')
       expect(defaultFilePath.indexOf(`core/docker-compose.yml`) !== -1).toBe(true)
-      expect(cmdArgs.indexOf('down')).not.toBe(-1)
-
-    })
-
-    it('Should build the correct docker-compose down command for keg-components', async () => {
-      const { dockerCmd, composeData } = await buildComposeCmd({ ...args.components, cmd: 'down' })
-      expect(isStr(dockerCmd)).toBe(true)
-      const [ compose, injectedFileKey, injectedFilePath, defaultFileKey, defaultFilePath, ...cmdArgs ] = dockerCmd.split(' ')
-    
-      expect(compose).toBe('docker-compose')
-      expect(injectedFileKey).toBe('-f')
-      expect(injectedFilePath.indexOf(`.tmp/keg-components.yml`) !== -1).toBe(true)
-      expect(defaultFileKey).toBe('-f')
-      expect(defaultFilePath.indexOf(`components/docker-compose.yml`) !== -1).toBe(true)
       expect(cmdArgs.indexOf('down')).not.toBe(-1)
 
     })

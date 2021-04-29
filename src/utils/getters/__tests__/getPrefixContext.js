@@ -25,10 +25,10 @@ describe('getPrefixContext', () => {
   })
 
   it('should return the noPrefix with keg when its part of the passed in context', () => {
-    const { context, noPrefix } = getPrefixContext('package-keg-components')
+    const { context, noPrefix } = getPrefixContext('package-keg-core')
 
-    expect(context).toBe('components')
-    expect(noPrefix).toBe('keg-components')
+    expect(context).toBe('core')
+    expect(noPrefix).toBe('keg-core')
 
   })
 

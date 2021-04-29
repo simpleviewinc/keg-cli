@@ -128,8 +128,6 @@ module.exports = deepFreeze({
 
   CONTEXT_TO_CONTAINER: {
     base: 'keg-base',
-    comp: 'keg-components',
-    components: 'keg-components',
     core: 'keg-core',
     proxy: 'keg-proxy',
   },
@@ -138,10 +136,6 @@ module.exports = deepFreeze({
   CONTAINER_TO_CONTEXT: {
     kegbase: 'base',
     'keg-base': 'base',
-    kegcomp: 'components',
-    kegcomponents: 'components',
-    'keg-comp': 'components',
-    'keg-components': 'components',
     kegcore: 'core',
     'keg-core': 'core',
     kegproxy: 'proxy',

@@ -11,7 +11,6 @@ const kegTaps = path.join(kegHub, 'taps')
 
 const defPaths = {
   cli: path.join(kegRepos, 'keg-cli'),
-  components: path.join(kegRepos, 'keg-components'),
   containers: path.join(kegRepos, 'keg-cli/containers'),
   core: path.join(kegRepos, 'keg-core'),
   hub: kegHub,

@@ -30,7 +30,6 @@ module.exports = deepMerge(defaultConfig, {
       repos: kegRepos,
       taps: kegTaps,
       cli: path.join(kegRepos, 'keg-cli'),
-      components: path.join(kegRepos, 'keg-components'),
       containers: path.join(kegRepos, 'keg-cli/containers'),
       core: path.join(kegRepos, 'keg-core'),
       proxy: path.join(kegRepos, 'keg-proxy'),
@@ -44,6 +43,12 @@ module.exports = deepMerge(defaultConfig, {
     taps: {
       test: {
         path: path.join(cliRoot, 'src/__mocks__/tap')
+      },
+      components: {
+        path: path.join(kegRepos, 'keg-components'),
+      },
+      retheme: {
+        path: path.join(kegRepos, 're-theme')
       },
     }
   },

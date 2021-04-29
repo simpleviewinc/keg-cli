@@ -60,7 +60,7 @@ module.exports = {
     example: 'keg docker compose down <options>',
     options: {
       context: {
-        description: 'Context of docker compose down command (tap | core | components)',
+        description: 'Context of docker compose down command (tap | core)',
         example: 'keg docker compose down --context core',
         required: true
       },

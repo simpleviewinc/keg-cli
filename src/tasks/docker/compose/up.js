@@ -24,7 +24,7 @@ const pullDockerImg = async (args, cmdContext, tap) => {
 }
 
 /**
- * Runs docker-compose up command for (components | core | tap)
+ * Runs docker-compose up command for (core | tap)
  * @function
  * @param {Object} args - arguments passed from the runTask method
  * @param {Object} args.globalConfig - Global config object for the keg-cli
@@ -91,7 +91,7 @@ module.exports = {
       mergeTaskOptions('docker compose', 'up', 'startService', {
         context: {
           allowed: DOCKER.IMAGES,
-          description: 'Context of docker compose up command (components || core || tap)',
+          description: 'Context of docker compose up command (core || tap)',
           example: 'keg docker compose up --context core',
           required: true
         }
