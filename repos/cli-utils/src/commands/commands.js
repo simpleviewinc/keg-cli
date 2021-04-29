@@ -1,7 +1,7 @@
 const { getAppRoot } = require('../appRoot')
 const { Logger } = require('../logger/logger')
 const { isArr, noOpObj, noPropArr, camelCase, isStr, exists } = require('@keg-hub/jsutils')
-const { spawnCmd } = require('@keg-hub/spawn-cmd')
+const { spawnCmd, asyncCmd:execCmd } = require('@keg-hub/spawn-cmd')
 
 /**
  * Ensures the passed in data is an array
@@ -33,13 +33,17 @@ const ensureArray = (data=noPropArr) => (
  * @private
  * @param {string} cmd - Command to run in the child process
  * @param {Array} args - Arguments to pass to the cmd within the child process
- * @param {Object} env - Environment variables to be accessible in the child process
+ * @param {Object} options - Options forwarded to the child process
  * @param {string} cwd - Directory where the child process should be run from
+ * @param {boolean} asExec - Run command with execCmd instead of spawnCmd
  *
  * @returns {*} - Response from spawnCmd
  */
-const runCmd = (cmd, args=noPropArr, opts=noOpObj, cwd) => {
-  return spawnCmd(cmd, {
+const runCmd = (cmd, args=noPropArr, options=noOpObj, cwd, asExec) => {
+  const { exec, ...opts } = options
+  const runProc = (exec || asExec) ? execCmd : spawnCmd
+
+  return runProc(cmd, {
     args: ensureArray(args),
     options: { ...opts, env: { ...process.env, ...opts.env } },
     cwd: cwd || getAppRoot(),
@@ -81,6 +85,7 @@ const dockerExec = (containerName, args, ...opts) => {
 }
 
 module.exports = {
+  execCmd,
   runCmd,
   spawnCmd,
   dockerExec,

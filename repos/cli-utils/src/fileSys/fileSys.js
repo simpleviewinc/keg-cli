@@ -360,7 +360,7 @@ const removeFile = file => limboify(fs.unlink, file)
  *
  * @returns {void}
  */
-const removeFileSync = file => fs.unlinkSync(filePath, callbackFunction)
+const removeFileSync = file => fs.unlinkSync(file, callbackFunction)
 
 /**
  * Wraps require in a try catch so app doesn't throw when require is called inline
