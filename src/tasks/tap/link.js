@@ -83,7 +83,7 @@ const linkTap = async args => {
 
   // Check if we should add the link or custom task file, or log that the link was canceled!
   ;tapObj
-    ? addTapLink(globalConfig, name, tapObj)
+    ? addTapLink(globalConfig, alias, tapObj)
     : !silent && (Logger.warn(`Tap link canceled!`) || Logger.empty())
 }
 
