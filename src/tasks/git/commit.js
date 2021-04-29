@@ -60,7 +60,7 @@ const doCommit = async (git, args) => {
  */
 const gitCommitRepo = async args => {
 
-  // TODO: Update to use libs/git
+  // TODO: Update to use git-lib
   // await doCommit(git, args)
 
 }

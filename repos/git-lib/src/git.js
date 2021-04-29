@@ -1,9 +1,10 @@
-const { Logger } = require('KegLog')
+const gitUtils = require('./utils')
 const { Repo } = require('./repo')
 const { Remote } = require('./remote')
 const { Branch } = require('./branch')
-const { gitSSHEnv, buildCmdOpts } = require('./helpers')
-const { gitCli } = require('./commands')
+const { Logger } = require('@keg-hub/cli-utils')
+const { gitSSHEnv, buildCmdOpts } = require('./utils/helpers')
+
 
 class Git {
 
@@ -11,6 +12,7 @@ class Git {
     this.branch = new Branch(this, options)
     this.repo = new Repo(this, options)
     this.remote = new Remote(this, options)
+    this.utils = gitUtils
 
     options.sshKey && this.setSSHKey(options.sshKey)
   }

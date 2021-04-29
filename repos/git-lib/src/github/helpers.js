@@ -1,6 +1,5 @@
-const { Logger } = require('KegLog')
-const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
 const { checkCall } = require('@keg-hub/jsutils')
+const { getKegGlobalConfig } = require('@keg-hub/cli-utils')
 
 /**
  * Called on failed ghCli call
@@ -31,7 +30,11 @@ const cliSuccess = () => {
  *
  * @returns {*} - Response of the passed in method
  */
-const injectGlobalConfig = method => (...args) => checkCall(method, getGlobalConfig(), ...args)
+const injectGlobalConfig = method => (...args) => checkCall(
+  method,
+  getKegGlobalConfig(),
+  ...args
+)
 
 module.exports = {
   cliError,

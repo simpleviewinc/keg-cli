@@ -1,5 +1,5 @@
-const { executeCmd } = require('KegProc')
-const { generalError } = require('../error/generalError')
+const { executeCmd } = require('./process')
+const { error } = require('@keg-hub/cli-utils')
 
 /**
  * Gets a value from the local git config based on passed in key
@@ -10,10 +10,10 @@ const { generalError } = require('../error/generalError')
 const getGitConfigItem = async key => {
   const { err, data, exitCode } = key
     ? await executeCmd(`git config ${ key }`)
-    : generalError(`The "getGitConfigItem" method requires a key as the first argument`)
+    : error.throwError(`The "getGitConfigItem" method requires a key as the first argument`)
 
   return err || exitCode > 0
-    ? generalError(err || `Failed to get git config value for key "${ key }"`)
+    ? error.throwError(err || `Failed to get git config value for key "${ key }"`)
     : (data || '').trim()
 }
 

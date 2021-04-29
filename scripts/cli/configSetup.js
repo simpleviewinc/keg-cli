@@ -1,12 +1,12 @@
 require('module-alias/register')
 
 const path = require('path')
-const { ask } = require('@keg-hub/ask-it')
+const { git } = require('KegGitCli')
 const { Logger } = require('KegLog')
 const homeDir = require('os').homedir()
 const { encrypt } = require('KegCrypto')
+const { ask } = require('@keg-hub/ask-it')
 const packageJson = require('KegRoot/package.json')
-const { getGitUrl } = require('KegUtils/git/getGitUrl')
 const { requireFile } = require('KegFileSys/fileSys')
 const cliJson = require('KegRoot/scripts/setup/cli.config.json')
 const { throwExitError } = require('KegUtils/error/throwExitError')
@@ -187,7 +187,7 @@ const installRepos = async (globalConf) => {
     // Check if the repo should be cloned
     if(NO_CUSTOM.indexOf(key) !== -1) return true
 
-    const repoUrl = getGitUrl({ globalConf, name })
+    const repoUrl = git.utils.configUrl({ globalConf, name })
 
     // TODO: Add code to clone the repo locally
     // const [ cloneErr, cloned ] = await git.repo.clone(repoUrl, location)

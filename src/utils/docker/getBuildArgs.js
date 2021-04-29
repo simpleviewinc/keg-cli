@@ -1,8 +1,8 @@
-const { isArr, get, reduceObj, isObj, softFalsy, noOpObj, exists } = require('@keg-hub/jsutils')
-const { getGitUrl, getGitKey, getTapPath } = require('KegUtils')
-const { getRemoteUrl } = require('KegUtils/git/getRemoteUrl')
 const docker = require('KegDocCli')
+const { git } = require('KegGitCli')
 const { DOCKER } = require('KegConst/docker')
+const { getGitKey, getTapPath } = require('KegUtils')
+const { get, reduceObj, isObj, noOpObj, exists } = require('@keg-hub/jsutils')
 
 /**
  * Adds build args to the a docker the build command
@@ -23,7 +23,9 @@ const getBuildArgs = async (globalConfig, params, dockerCmd='') => {
   if(!isObj(containerOpts.ARGS)) return dockerCmd
   
   const gitKey = await getGitKey(globalConfig)
-  const tapUrl = context ==='tap' && tap && await getRemoteUrl(getTapPath(globalConfig, tap))
+  const tapUrl = tap &&
+    context ==='tap' &&
+    await git.utils.remoteUrl(getTapPath(globalConfig, tap))
 
   // Add the context build ENVs to the command
   dockerCmd = docker.toBuildArgs(buildArgs, dockerCmd, get(containerOpts, 'BUILD_ARGS_FILTER'))
@@ -37,7 +39,7 @@ const getBuildArgs = async (globalConfig, params, dockerCmd='') => {
         break
       }
       case 'GIT_CLI_URL':{
-        useVal = getGitUrl({ globalConfig, repo: 'cli' })
+        useVal = git.utils.configUrl({ globalConfig, repo: 'cli' })
         break
       }
       case 'GIT_APP_URL': {

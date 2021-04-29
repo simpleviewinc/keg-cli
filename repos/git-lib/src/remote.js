@@ -1,6 +1,6 @@
-const { checkCall, isStr } = require('@keg-hub/jsutils')
 const { gitCli } = require('./commands')
-const { formatRemotes } = require('./helpers')
+const { formatRemotes } = require('./utils/helpers')
+const { checkCall, isStr } = require('@keg-hub/jsutils')
 
 
 class Remote {

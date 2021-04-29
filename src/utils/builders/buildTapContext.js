@@ -1,5 +1,5 @@
+const { git } = require('KegGitCli')
 const { generalError, throwNoTapLink } = require('../error')
-const { getRemoteUrl } = require('KegUtils/git/getRemoteUrl')
 const { CONTEXT_TO_CONTAINER } = require('KegConst/constants')
 const { getTapPath } = require('KegUtils/globalConfig/getTapPath')
 
@@ -29,7 +29,7 @@ const buildTapContext = async ({ globalConfig, cmdContext, tap, envs }) => {
 
   const tapPath = getTapPath(globalConfig, tap)
 
-  const tapUrl = tapPath && await getRemoteUrl(tapPath)
+  const tapUrl = tapPath && await git.utils.remoteUrl(tapPath)
 
   return !tapPath
     ? throwNoTapLink(globalConfig, tap)
