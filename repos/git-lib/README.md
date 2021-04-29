@@ -39,9 +39,9 @@ await git.commit({
 // Push the changed files...
 await git.push({
   // Optional, uses the current working branch
-  to: `remote-branch-name`,
+  branch: `remote-branch-name`,
   // Optional, default is origin
-  remove: 'upstream',
+  remote: 'upstream',
   // Optional, uses process.cwd() when not passed
   root: `path/to/git/directory`,
 })
