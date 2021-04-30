@@ -18,13 +18,14 @@ const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
  */
 const addGitKey = (args) => {
   const { globalConfig, params, task } = args
-  const { value } = params
+  const { value, confirm } = params
 
   // Ensure we have a value for the git key, or throw error
   if(!value) throwRequired(task, key, task.options.value)
 
   confirmExec({
     confirm: `Overwrite current git key in global config?`,
+    force: !confirm,
     success: `Set git key in global config!`,
     cancel: `Set git key in global config cancelled!`,
     preConfirm: !Boolean(gitKeyExists(globalConfig)),
@@ -57,6 +58,12 @@ module.exports = {
         description: 'Git key to access repos from a git provider ( github )',
         example: 'key git key add value=<Git Key Value>',
         required: true
+      },
+      confirm: {
+        alias: [ 'c' ],
+        description: 'If true, add will ask you if you want to overwrite an existing key',
+        example: 'key git key add value=123 --no-confirm',
+        default: true
       }
     }
   }
