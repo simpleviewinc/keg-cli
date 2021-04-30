@@ -1,8 +1,8 @@
 const { getTapConfig, getTapPackage } = require('KegUtils/tap/getTapConfig')
-const { getTapPath } = require('KegUtils/tap/getTapPath')
 const { Logger } = require('KegLog')
 const { get } = require('@keg-hub/jsutils')
 const { generalError } = require('KegUtils/error')
+const nodePath = require('path')
 
 const colorLog = (color, str) => Logger.print(Logger.color(color, str))
 
@@ -54,7 +54,7 @@ const printConfig = args => {
 
   verbose && colorLog(
     'green', 
-    `Found ${path.basename(foundPath)} in "${path.dirname(foundPath)}":`
+    `Found ${nodePath.basename(foundPath)} in "${nodePath.dirname(foundPath)}":`
   )
 
   colorLog('blue', JSON.stringify(value, null, 2))
