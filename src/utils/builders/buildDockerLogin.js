@@ -1,8 +1,8 @@
-const { get, reduceObj } = require('@keg-hub/jsutils')
-const { getGlobalConfig } = require('../globalConfig/getGlobalConfig')
+const { git } = require('KegGitCli')
 const { getGitKey } = require('../git/getGitKey')
-const { getGitConfigItem } = require('../git/getGitConfigItem')
+const { get, reduceObj } = require('@keg-hub/jsutils')
 const { throwDockerCreds } = require('../error/throwDockerCreds')
+const { getGlobalConfig } = require('../globalConfig/getGlobalConfig')
 
 /**
  * Validates the login creds to ensure all keys exist
@@ -37,7 +37,7 @@ const buildDockerLogin = async ({ profile, user, token, provider, namespace }) =
 
   return validateLoginCreds({
     token: creds.token || token || await getGitKey(globalConfig),
-    user: creds.user || user || get(globalConfig, 'docker.user') || await getGitConfigItem('user.name'),
+    user: creds.user || user || get(globalConfig, 'docker.user') || await git.utils.configItem('user.name'),
     providerUrl: creds.providerUrl || provider || get(globalConfig, 'docker.providerUrl'),
     namespace: creds.namespace || namespace && get(globalConfig, 'docker.namespace'),
   })

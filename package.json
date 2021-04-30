@@ -1,6 +1,6 @@
 {
   "name": "keg-cli",
-  "version": "3.2.1",
+  "version": "5.0.0",
   "description": "Node.js CLI for working with Keg Repos and Taps",
   "main": "./keg",
   "repository": "https://github.com/lancetipton/Keg-CLI",
@@ -23,6 +23,7 @@
   "scripts": {
     "build": "exit 0",
     "postinstall": "node ./scripts/postinstall/index.js",
+    "install:repos": "node ./scripts/postinstall/installRepos.js",
     "clean:full": "yarn clean && yarn install",
     "clean": "yarn clean:lock && yarn cache clean && rimraf node_modules && npm cache clean --force",
     "clean:lock": "rimraf ./yarn.lock && rimraf ./package.lock",
@@ -50,6 +51,7 @@
     "log-update": "4.0.0",
     "module-alias": "2.2.2",
     "ngrok": "3.2.7",
+    "open": "^8.0.6",
     "qrcode-terminal": "0.12.0",
     "rimraf": "3.0.2",
     "semver": "^7.3.2",
@@ -68,9 +70,9 @@
     "KegCrypto": "src/libs/crypto",
     "KegDocCli": "src/libs/docker",
     "KegFileSys": "src/libs/fileSys",
-    "KegGitCli": "src/libs/git",
+    "KegGitCli": "repos/git-lib",
     "KegLibs": "src/libs",
-    "KegLog": "src/libs/logger",
+    "KegLog": "repos/cli-utils/src/logger",
     "KegMocks": "src/__mocks__",
     "KegProc": "src/libs/process",
     "KegMutagen": "src/libs/mutagen",
@@ -91,13 +93,14 @@
       "__DEV__": true
     },
     "moduleNameMapper": {
+      "^KegConst/envs$": "<rootDir>/src/__mocks__/constants/envs",
       "^KegConst(.*)$": "<rootDir>/src/constants$1",
       "^KegCrypto(.*)$": "<rootDir>/src/libs/crypto$1",
       "^KegDocCli(.*)$": "<rootDir>/src/libs/docker$1",
       "^KegFileSys(.*)$": "<rootDir>/src/libs/fileSys$1",
-      "^KegGitCli(.*)$": "<rootDir>/src/libs/git$1",
+      "^KegGitCli(.*)$": "<rootDir>/repos/git-lib$1",
       "^KegLibs(.*)$": "<rootDir>/src/libs$1",
-      "^KegLog(.*)$": "<rootDir>/src/libs/logger$1",
+      "^KegLog(.*)$": "<rootDir>/repos/cli-utils/src/logger$1",
       "^KegMocks(.*)$": "<rootDir>/src/__mocks__$1",
       "^KegMutagen(.*)$": "<rootDir>/src/libs/mutagen$1",
       "^KegProc(.*)$": "<rootDir>/src/libs/process$1",
@@ -110,6 +113,9 @@
       "^KegTasks(.*)$": "<rootDir>/src/tasks$1",
       "^KegUtils(.*)$": "<rootDir>/src/utils$1"
     },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/repos/*"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.js?(x)",
       "<rootDir>/scripts/**/__tests__/**/*.js?(x)"

@@ -8,6 +8,7 @@ module.exports = {
   ...require('./throwExitError'),
   ...require('./throwGitCmd'),
   ...require('./throwInvalidParamMatch'),
+  ...require('./throwMissingAction'),
   ...require('./throwNoAction'),
   ...require('./throwNoComposeService'),
   ...require('./throwNoConfigPath'),

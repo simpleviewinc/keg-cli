@@ -1,6 +1,5 @@
-const { spawn } = require('child_process')
 const docker = require('KegDocCli')
-const { getServiceArgs } = require('./getServiceArgs')
+const { Logger } = require('KegLog')
 const { exists, get, isObj, deepMerge } = require('@keg-hub/jsutils')
 const { runInternalTask } = require('../task/runInternalTask')
 const { getImgNameContext } = require('../getters/getImgNameContext')
@@ -45,10 +44,18 @@ const pullService = async (serviceArgs, pullService='docker') => {
 
   const pullArgs = deepMerge(serviceArgs, { __internal: { imgNameContext }})
 
-  // Check and pull the image if needed
-  return pullService !== 'docker'
-    ? await runInternalTask('docker.tasks.compose.tasks.pull', pullArgs)
-    : await runInternalTask('docker.tasks.provider.tasks.pull', pullArgs)
+  try {
+    // Check and pull the image if needed
+    return pullService !== 'docker'
+      ? await runInternalTask('docker.tasks.compose.tasks.pull', pullArgs)
+      : await runInternalTask('docker.tasks.provider.tasks.pull', pullArgs)
+  }
+  catch(err){
+    // TODO: Check the error type
+    // If the error is due to something other then a time out we want to throw
+    err.message && Logger.warn(err.message)
+    return { imgNameContext, isNewImage: false }
+  }
 
 }
 

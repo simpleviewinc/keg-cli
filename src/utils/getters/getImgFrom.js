@@ -1,4 +1,4 @@
-const { get, isStr, noOpObj } = require('@keg-hub/jsutils')
+const { get, noOpObj } = require('@keg-hub/jsutils')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 
 
@@ -36,7 +36,7 @@ const getImgFrom = (params=noOpObj, contextEnvs=noOpObj, context) => {
     get(params, `__injected.tap`) ||
     get(params, 'cmdContext') ||
     get(params, 'context')
-
+  
   const fromImg = get(params, 'from') || get(contextEnvs, 'KEG_IMAGE_FROM')
 
   const foundImgFrom = fromImg || !context
@@ -47,7 +47,6 @@ const getImgFrom = (params=noOpObj, contextEnvs=noOpObj, context) => {
         getContainerConst(context, `env.image`, context)
       )
 
-  // After finding the image, check for the tag as well
   return checkImgTag(foundImgFrom, params.tag, contextEnvs)
 }
 

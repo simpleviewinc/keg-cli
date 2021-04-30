@@ -101,7 +101,7 @@ const getTagFromName = (imgName, tag) => {
 }
 
 /**
- * Gets the KEG_IMAGE_FROM from the context's ENV's
+ * Gets the KEG_IMAGE_FROM from the context's ENVs
  * Then parses it to get the image name context information
  * @function
  * @param {string} context - Name of the image name to be parsed
@@ -161,7 +161,6 @@ const findTruthyVal = (...args) => {
 }
 
 /**
- * Funds the first truthy value in an array of values
  * @function
  * @param {Object} params - Options passed to the task from the command line
  * @param {Object} imgRef - Docker image reference object
@@ -169,8 +168,7 @@ const findTruthyVal = (...args) => {
  * @returns {Object} - Updated params with image or passed in params
  */
 const checkDockerId = async (params, imgRef) => {
-  const { context, image, provider, namespace, tag } = params
-
+  const { context, image, tag } = params
   const docImg = isObj(imgRef) && imgRef.repository && imgRef.rootId
     ? imgRef
     : docker.isDockerId(image)
@@ -201,8 +199,6 @@ const checkDockerId = async (params, imgRef) => {
  * @returns {Object} - Parse image data
  */
 const checkFromParam = params => {
-  const { from } = params
-
   return {
     ...params,
     /*
@@ -242,7 +238,6 @@ const checkFromParam = params => {
  * @returns {Object} - Parse image data
  */
 const getImgNameContext = async (params, imgRef) => {
-  // Check if the from param exists and use that over the other params
   const fromParams = exists(params.from) ? checkFromParam(params) : params
 
   const {
@@ -267,7 +262,7 @@ const getImgNameContext = async (params, imgRef) => {
   )
 
   const globalConfig = getGlobalConfig()
-  
+
   // The the image name and tag from the passed in params or KEG_IMAGE_FROM
   return buildImgVariants({
     ...baseFromEnv,

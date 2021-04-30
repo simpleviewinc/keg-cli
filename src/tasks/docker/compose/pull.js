@@ -28,7 +28,6 @@ const composePull = async args => {
   // Build the docker compose command
   const {
     dockerCmd,
-    composeData=noOpObj,
     imgNameContext=noOpObj,
   } = await buildComposeCmd({
     params,
@@ -56,6 +55,10 @@ const composePull = async args => {
     },
     { log: false },
   )
+
+  // TODO: check the error-message
+  // If it's a timeout from the docker provider
+  // Then down throw, as we might be able to run with a local version of the image
 
   // exitCode is 0 if the command is successful, which is falsy
   // So check for truthy value, which means the command failed

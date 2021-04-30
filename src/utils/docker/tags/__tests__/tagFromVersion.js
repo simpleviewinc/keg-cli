@@ -65,23 +65,6 @@ const args = {
         ...DOCKER.CONTAINERS.CORE.ENV,
       },
     },
-  },
-  comp: {
-    globalConfig,
-    task: testTask,
-    command: 'components',
-    containerContext: containerContexts.components,
-    params: {
-      ...defParams,
-      context: 'components',
-      tap: 'components',
-      location: DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH,
-      cmd: 'components',
-      image: 'keg-components',
-      buildArgs: {
-        ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-      },
-    },
   }
 }
 
@@ -103,9 +86,6 @@ describe('tagFromVersion', () => {
     const coreVer = await tagFromVersion(buildParams('core', { version: 'core-version' }), args.core)
     expect(coreVer).toBe('core-version')
 
-    const compVer = await tagFromVersion(buildParams('comp', { version: 'comp-version' }), args.comp)
-    expect(compVer).toBe('comp-version')
-
   })
 
   it('should return the version from ENVs when no param or package.json version', async () => {
@@ -115,9 +95,6 @@ describe('tagFromVersion', () => {
 
     const coreVer = await tagFromVersion(args.core.params, args.core)
     expect(coreVer).toBe(DOCKER.CONTAINERS.CORE.ENV.VERSION)
-
-    const compVer = await tagFromVersion(args.comp.params, args.comp)
-    expect(compVer).toBe(DOCKER.CONTAINERS.COMPONENTS.ENV.VERSION)
 
   })
 
@@ -129,11 +106,6 @@ describe('tagFromVersion', () => {
     const corePackage = require(path.join(coreLoc, './package.json'))
     const coreVer = await tagFromVersion(buildParams('core', { tagPackage }), args.core)
     expect(coreVer).toBe(corePackage.version)
-
-    const compLoc = DOCKER.CONTAINERS.COMPONENTS.ENV.KEG_CONTEXT_PATH
-    const compPackage = require(path.join(compLoc, './package.json'))
-    const compVer = await tagFromVersion(buildParams('comp', { tagPackage }), args.comp)
-    expect(compVer).toBe(compPackage.version)
 
   })
 

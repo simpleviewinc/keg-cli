@@ -1,7 +1,17 @@
-
+actions:
+  tap:
+    build:
+      cmds:
+        - yarn web:build
+        - rm -rf {{ envs.DOC_BUILD_PATH }}
+        - cp -R {{ envs.DOC_APP_PATH }}/web-build {{ envs.DOC_BUILD_PATH }}
+    serve:
+      detach: true
+      cmds:
+        - npx serve {{ envs.DOC_BUILD_PATH }} --cors -n -l {{ envs.KEG_PROXY_PORT }}
 env:
   # --- LOCAL ENV CONTEXT --- #
-  COMPONENTS_PATH: "{{ cli.paths.components }}"
+  COMPONENTS_PATH: "{{ cli.taps.components.path }}"
   RETHEME_PATH: "{{ cli.taps.retheme.path }}"
   RESOLVER_PATH: "{{ cli.paths.resolver }}"
 
@@ -24,14 +34,16 @@ env:
   KEG_EXEC_CMD: tap:start
 
   # Image to use when build keg-core
-  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:master
+  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:develop
 
   # Image to use when running keg-core
-  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-core:master
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-core:develop
 
   # --- DOCKER ENV CONTEXT --- #
 
   DOC_APP_PATH: /keg/keg-core
+
+  DOC_BUILD_PATH: /keg/core-build
 
   # Port the application will use when running within the container
   # Required to allow the keg-proxy to route traffic to it

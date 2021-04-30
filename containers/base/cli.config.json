@@ -28,7 +28,6 @@
       "kegConfig": "/root/.kegConfig",
       "containers": "/keg-hub/repos/keg-cli/containers",
       "cli": "/keg-hub/repos/keg-cli",
-      "components": "/keg-hub/repos/keg-components",
       "core": "/keg-hub/repos/keg-core",
       "external": "/keg-hub/external",
       "hub": "/keg-hub",
@@ -40,11 +39,13 @@
     },
     "settings": {
       "defaultEnv": "development",
+      "defaultDomain": "keghub.io",
       "docker": {
         "preConfirm": false,
         "buildKit": true,
         "force": true,
-        "defaultLocalBuild": true
+        "defaultLocalBuild": true,
+        "defaultTag": "develop"
       },
       "checkUpdates": false,
       "editorCmd": false,
@@ -58,8 +59,11 @@
       }
     },
     "taps": {
-      "links": {
-        "retheme": "/keg-hub/repos/re-theme"
+      "retheme": {
+        "path": "/keg-hub/repos/re-theme"
+      },
+      "components": {
+        "path": "/keg-hub/repos/keg-components"
       }
     }
   },

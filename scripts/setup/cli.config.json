@@ -22,14 +22,15 @@
     },
     "taps": {},
     "settings": {
-      "defaultEnv": "development",
+      "defaultEnv": "local",
+      "defaultDomain": "keghub.io",
       "docker": {
         "preConfirm": true,
         "buildKit": true,
         "force": true,
         "defaultLocalBuild": true,
         "imagePullPolicy": "Always",
-        "defaultTag": "master"
+        "defaultTag": "develop"
       },
       "checkUpdates": false,
       "editorCmd": "code",

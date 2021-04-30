@@ -18,19 +18,6 @@ const args = {
       ...DOCKER.CONTAINERS.CORE.ENV,
     },
   },
-  components: {
-    globalConfig,
-    params: {
-      context: 'components',
-      image: 'keg-components',
-    },
-    cmd: 'up',
-    proxyDomain: 'components',
-    cmdContext: 'components',
-    contextEnvs: {
-      ...DOCKER.CONTAINERS.COMPONENTS.ENV,
-    },
-  },
   injected: {
     globalConfig,
     proxyDomain: 'injected',
@@ -45,11 +32,6 @@ describe('generateComposeLabels', () => {
   it('It generate the correct labels for keg-core', async () => {
     const labels = generateComposeLabels(args.core)
     expect(labels).toEqual(generatedLabels.core)
-  })
-
-  it('It generate the correct labels for keg-components', async () => {
-    const labels = generateComposeLabels(args.components)
-    expect(labels).toEqual(generatedLabels.components)
   })
 
   it('It generate the correct labels for injected apps', async () => {

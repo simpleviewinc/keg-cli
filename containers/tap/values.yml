@@ -1,8 +1,18 @@
-
+actions:
+  tap:
+    build:
+      cmds:
+        - yarn web:build
+        - rm -rf {{ envs.DOC_BUILD_PATH }}
+        - cp -R {{ envs.DOC_CORE_PATH }}/web-build {{ envs.DOC_BUILD_PATH }}
+    serve:
+      detached: true
+      cmds:
+        - npx serve {{ envs.DOC_BUILD_PATH }} --cors -n -l {{ envs.KEG_PROXY_PORT }}
 env:
   # --- LOCAL ENV CONTEXT --- #
-  COMPONENTS_PATH: "{{ cli.paths.components }}"
-  RETHEME_PATH: "{{ cli.taps.links.retheme }}"
+  COMPONENTS_PATH: "{{ cli.taps.components.path }}"
+  RETHEME_PATH: "{{ cli.taps.retheme.path }}"
   RESOLVER_PATH: "{{ cli.paths.resolver }}"
   CLI_PATH: "{{ cli.paths.cli }}"
   
@@ -29,10 +39,10 @@ env:
   KEG_EXEC_CMD: tap:start
 
   # Image to use when build keg-core
-  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:master
+  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:develop
 
   # Image to use when running keg-core
-  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/tap:master
+  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/tap:develop
 
   # --- DOCKER ENV CONTEXT --- #
 
@@ -43,6 +53,9 @@ env:
 
   # Default location of the tap in the docker container
   DOC_APP_PATH: /keg/tap
+
+  # Default location of the tap web bundle export
+  DOC_BUILD_PATH: /keg/tap-build
 
   # Defines the location in a docker container for a dependency
   # This allows mutagen to know where to sync the local version of the dependency

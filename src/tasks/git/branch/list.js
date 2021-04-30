@@ -3,7 +3,6 @@ const { Logger } = require('KegLog')
 const { git } = require('KegGitCli')
 const { isNum, exists } = require('@keg-hub/jsutils')
 const { getGitPath } = require('KegUtils/git/getGitPath')
-const { printGitBranches } = require('KegUtils/git/printGitBranches')
 const { generalError } = require('KegUtils/error')
 
 
@@ -41,7 +40,7 @@ const branchList = async (args) => {
   const branches = await git.branch.list(gitPath)
 
   // Check if we should print the branch list
-  !__skipLog && log && printGitBranches(branches)
+  !__skipLog && log && git.utils.printBranches(branches)
 
   // If no branch, just return the response
   if(!exists(branch)) return { branches, location: gitPath, __internal: {} }

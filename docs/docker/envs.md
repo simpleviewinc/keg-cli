@@ -8,7 +8,6 @@
 ### KEG_EXEC_CMD vs KEG_DOCKER_EXEC
 * TODO - explain difference and reasoning for them
 
-
 ### ENV Functionality
 * **DOC_APP_PATH**
   * Path to the application within the docker image or container
@@ -55,7 +54,35 @@
     * @type *string*
     * @cli-option `N/A`
 * **KEG_EXEC_CMD**
-  * TODO
-* **KEG_DOCKER_EXEC**
-  * * TODO
+  * The command within the container to call when running the `docker exec command`
+    * Most tap's `Dockerfile` defines running the `container/run.sh` script when starting
+    * The `container/run.sh` script then uses `KEG_EXEC_CMD` as the `yarn` script to be run
+      * Looks something like `yarn <KEG_EXEC_CMD>`
+    * This ENV will be **ignored**, unless configure in a fashion similar to above
+  * Definition
+    * @optional
+    * @type *String*
+    * @cli-option `--exec`
+* **KEG_AUTO_DOCKER_EXEC***
+  * Disables calling docker exec command after starting the docker container
+  * Must explicitly set to `false`
+  * Definition
+    * @optional
+    * @type *Boolean*
+    * @cli-option `N/A`
+* **KEG_AUTO_SYNC**
+  * Disables creating a mutagen sync from a tap's folder and the docker container
+  * Must explicitly set to `false`
+  * Definition
+    * @optional
+    * @type *Boolean*
+    * @cli-option `N/A`
+* **KEG_USE_PROXY**
+  * Disables keg-proxy container check when executing a task
+  * Must explicitly set to `false`
+  * Definition
+    * @optional
+    * @type *Boolean*
+    * @cli-option `N/A`
+
 * *more coming soon...*

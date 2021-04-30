@@ -72,14 +72,14 @@ describe('buildCmdContext', () => {
 
     const res = await buildCmdContext({
       globalConfig,
-      params: { container: 'keg-components' },
+      params: { container: 'keg-core' },
       askFor: false
     })
 
-    expect(res.cmdContext).toBe('components')
-    expect(res.context).toBe('components')
-    expect(res.tap).toBe('components')
-    expect(res.noPrefix).toBe('keg-components')
+    expect(res.cmdContext).toBe('core')
+    expect(res.context).toBe('core')
+    expect(res.tap).toBe('core')
+    expect(res.noPrefix).toBe('keg-core')
 
   })
 
@@ -87,27 +87,27 @@ describe('buildCmdContext', () => {
 
     const res = await buildCmdContext({
       globalConfig,
-      params: { image: 'img-keg-components' },
+      params: { image: 'img-keg-core' },
       askFor: false
     })
 
-    expect(res.withPrefix).toBe('img-keg-components')
+    expect(res.withPrefix).toBe('img-keg-core')
 
     const res2 = await buildCmdContext({
       globalConfig,
-      params: { context: 'img-keg-components' },
+      params: { context: 'img-keg-core' },
       askFor: false
     })
 
-    expect(res2.withPrefix).toBe('img-keg-components')
+    expect(res2.withPrefix).toBe('img-keg-core')
 
     const res3 = await buildCmdContext({
       globalConfig,
-      params: { container: 'img-keg-components' },
+      params: { container: 'img-keg-core' },
       askFor: false
     })
 
-    expect(res3.withPrefix).toBe('img-keg-components')
+    expect(res3.withPrefix).toBe('img-keg-core')
 
   })
 
