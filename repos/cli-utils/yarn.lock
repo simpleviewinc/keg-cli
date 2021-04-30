@@ -675,36 +675,21 @@
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/jsutils@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-0.0.1.tgz#6be5fd8398324c51a320f9f8460dbcdcf9faec24"
-  integrity sha512-1oAyR0FuHb6ICHd1sacvGhm0O4/w/BDT+RNQO13Lcy1hh7QgAibOG7ylioPFkOQWBFN1nCMdgW9xRVe3peEUVQ==
-
-"@keg-hub/jsutils@6.2.1":
-  version "6.2.1"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-6.2.1.tgz#0d9dbf562e313eb7690d36a2b8e9147b1e08d52a"
-  integrity sha512-aCZ86nB+f6awWbDIPd6VPaePQjm8AYNXvGrwe2Ip06F6oVJZ7tiOIBwFHeK/gAKqmw1wnxl4B0z21vQeINd6dw==
-
-"@keg-hub/jsutils@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.0.0.tgz#740e05e10128be53d2ffea72a6c8990b57745679"
-  integrity sha512-omgYOX0p9H6GsQQ5onEJK56pUI/z1CoblFqjWy/SpwANwsuqEFEG3EKDdcRwwpLjaEl8qQWQzfQ1Z6Pc+OOgqQ==
-
-"@keg-hub/jsutils@8.5.0":
+"@keg-hub/jsutils@0.0.1", "@keg-hub/jsutils@6.2.1", "@keg-hub/jsutils@8.4.0", "@keg-hub/jsutils@8.5.0":
   version "8.5.0"
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.5.0.tgz#cc81b730b6875d889e968100bd1302e0fb22d8f4"
   integrity sha512-aF0mLfc1o0fRdoEaAopEkwCHfEKSz+Kjfb5goSELBkPJyulRzPz+6OTRk7XDV6VXtiq8kGJomGDAsBLW7htk4Q==
 
-"@keg-hub/spawn-cmd@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.0.tgz#4050dfa1681f4cfdf85ef27ca11724e1603b2b48"
-  integrity sha512-R+beqPFVga+XXRcnmALZe2VEYVk5S0eyhURLkOGFEJlbeQxvBZgcRdnEGVCQF7x65aw+A5ktDiOPtN9rEWsL8Q==
+"@keg-hub/spawn-cmd@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.2.tgz#30bd37e03a3c2cb98235fa300ef06c0505404392"
+  integrity sha512-6Q4jFxbnTbX4eAnaMcIgGfUstQ8/UIVVD/MaT89IOZ2yNjQYMxbhompDSr7P38RVekIiEWZZE2W/VA8IAA8/Cg==
   dependencies:
-    "@keg-hub/jsutils" "8.0.0"
+    "@keg-hub/jsutils" "8.4.0"
     app-root-path "3.0.0"
     cross-spawn "7.0.3"
     shell-exec "1.0.2"
-    tree-kill "1.2.1"
+    tree-kill "1.2.2"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.2"
@@ -4126,10 +4111,10 @@ tr46@^2.0.2:
   dependencies:
     punycode "^2.1.1"
 
-tree-kill@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.1.tgz#5398f374e2f292b9dcc7b2e71e30a5c3bb6c743a"
-  integrity sha512-4hjqbObwlh2dLyW4tcz0Ymw0ggoaVDMveUB9w8kFSQScdRLo0gxO9J7WFcUBo+W3C1TLdFIEwNOWebgZZ0RH9Q==
+tree-kill@1.2.2:
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.2.tgz#4ca09a9092c88b73a7cdc5e8a01b507b0790a0cc"
+  integrity sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==
 
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"

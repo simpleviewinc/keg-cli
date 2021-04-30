@@ -34,11 +34,14 @@
     "@keg-hub/args-parse": "6.2.1",
     "@keg-hub/ask-it": "0.0.1",
     "@keg-hub/jsutils": "8.5.0",
-    "@keg-hub/spawn-cmd": "0.1.0",
+    "@keg-hub/spawn-cmd": "0.1.2",
     "app-root-path": "3.0.0",
     "colors": "1.4.0",
     "fs-extra": "9.0.1",
     "jest-cli": "^26.6.3"
+  },
+  "resolutions": {
+    "@keg-hub/jsutils": "8.5.0"
   },
   "devDependencies": {
     "babel-eslint": "10.1.0",
