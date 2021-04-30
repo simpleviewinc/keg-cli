@@ -1,13 +1,3 @@
-
-// Setup the keg-hub root directory to be based on the current home path
-// This fixes issues with CI envs where keg-hub is no run from the home directory
-// For example in Github Actions, keg-hub is located at ~/work/keg-hub
-const homeDir = require('os').homedir()
-const kegRoot = process.env.KEG_ROOT_DIR || '/keg-hub'
-const kegHubRoot = kegRoot.indexOf(homeDir) === 0
-  ? kegRoot.replace(homeDir, '')
-  : kegRoot
-
 const dockerData = {
   containers: {
     tap: {
@@ -223,7 +213,7 @@ const dockerOutput = {
 const dockerObjLabels = {
   base: {
     'com.keg.env.context': 'keg-base',
-    'com.keg.path.context': kegHubRoot,
+    'com.keg.path.context': 'keg-cli',
     'com.keg.path.container': '/keg-hub',
     'com.keg.path.compose': 'keg-cli/containers/base/docker-compose.yml',
     'com.keg.path.values': 'keg-cli/containers/base/values.yml',
