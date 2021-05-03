@@ -1,11 +1,13 @@
+const tap = require('./tap')
 const error = require('./error')
 const fileSys = require('./fileSys')
 const commands = require('./commands')
 const { Logger } = require('./logger')
 const { runTask } = require('./runTask')
 const { getAppRoot, setAppRoot } = require('./appRoot')
-const { constants } = require('./constants')
+const constants = require('./constants')
 const { registerTasks } = require('./tasks/tasks')
+
 const {
   getKegGlobalConfig,
   findTask,
@@ -15,6 +17,7 @@ const {
 
 module.exports = {
   ...commands,
+  ...tap,
   constants,
   getKegGlobalConfig,
   findTask,

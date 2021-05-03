@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Utility methods for writing Custom Tasks consumed by the Keg-CLI",
   "main": "index.js",
-  "repository": "https://github.com/lancetipton/keg-cli-uilts",
+  "repository": "https://github.com/lancetipton/keg-cli-utils",
   "author": "Lance Tipton",
   "license": "MIT",
   "private": false,
@@ -38,7 +38,8 @@
     "app-root-path": "3.0.0",
     "colors": "1.4.0",
     "fs-extra": "9.0.1",
-    "jest-cli": "^26.6.3"
+    "jest-cli": "^26.6.3",
+    "module-alias": "2.2.2"
   },
   "devDependencies": {
     "babel-eslint": "10.1.0",

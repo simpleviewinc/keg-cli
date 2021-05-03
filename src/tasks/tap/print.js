@@ -52,8 +52,7 @@ const printConfig = args => {
 
   const value = get(config, subPath, config)
 
-  verbose && colorLog(
-    'green', 
+  verbose && Logger.success(
     `Found ${nodePath.basename(foundPath)} in "${nodePath.dirname(foundPath)}":`
   )
 

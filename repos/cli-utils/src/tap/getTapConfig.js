@@ -1,5 +1,6 @@
 const { getTapPath } = require('./getTapPath')
-const { TAP_CONFIG_NAMES } = require('KegConst/constants')
+const { getKegGlobalConfig } = require('../task/getKegGlobalConfig')
+const { TAP_CONFIG_NAMES } = require('../constants')
 const { tryRequireSync } = require('@keg-hub/jsutils/src/node')
 const { isObj } = require('@keg-hub/jsutils')
 const nodePath = require('path')
@@ -23,7 +24,7 @@ const nodePath = require('path')
  * // => [ { <tap's config> }, <file path to that config> ]  
  */
 const getTapConfig = ({ path, name, configNames=TAP_CONFIG_NAMES }={}) => {
-  const tapPath = path || getTapPath(name)
+  const tapPath = path || getTapPath(getKegGlobalConfig(), name)
 
   for (let i = 0; i < configNames.length; i++) {
     const possiblePath = nodePath.join(tapPath, configNames[i])

@@ -1,6 +1,6 @@
 jest.mock('@keg-hub/jsutils/src/node')
 jest.mock('../getTapPath')
-const { TAP_CONFIG_NAMES } = require('KegConst/constants')
+const { TAP_CONFIG_NAMES } = require('../../constants')
 const { tryRequireSync } = require('@keg-hub/jsutils/src/node')
 const { getTapConfig, getTapPackage } = require('../getTapConfig')
 const { getTapPath } = require('../getTapPath')

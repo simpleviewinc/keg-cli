@@ -1,4 +1,5 @@
-const { deepFreeze, keyMap } = require('@keg-hub/jsutils')
+const { deepFreeze } = require('@keg-hub/jsutils')
+const cliUtilsConstants = require('KegRepos/cli-utils/src/constants')
 const homeDir = require('os').homedir()
 const path = require('path')
 const { KEG_GLOBAL_CONFIG } = process.env
@@ -45,6 +46,8 @@ const ENV_OPTIONS = Object.entries(ENV_MAP)
   }, [])
 
 module.exports = deepFreeze({
+  // include all constants from repos/cli-utils
+  ...cliUtilsConstants,
 
   // Tasks settings
   TASK_REQUIRED: [
@@ -53,15 +56,6 @@ module.exports = deepFreeze({
     'action',
     'description'
   ],
-
-  // Global config settings
-  GLOBAL_CONFIG_PATHS: {
-    CLI: 'cli',
-    CLI_PATHS: 'cli.paths',
-    GIT: 'cli.git',
-    TAPS: `cli.taps`,
-    TAP_LINKS: `cli.taps`,
-  },
 
   CLI_ROOT,
   CLI_ROOT_CONFIG_FOLDER, 
@@ -161,15 +155,4 @@ module.exports = deepFreeze({
     ]
   },
 
-  TAP_CONFIG_NAMES: [
-    'tap.config.js',
-    'tap.js',
-    'tap.config.json',
-    'tap.json',
-    'app.config.js',
-    'app.js',
-    'app.config.json',
-    'app.json',
-    'package.json',
-  ]
 })

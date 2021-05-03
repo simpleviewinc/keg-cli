@@ -1,4 +1,3 @@
-const path = require('path')
 const { Logger } = require('KegLog')
 const { requireFile } = require('KegFileSys')
 const { get, mapObj, wordCaps, checkCall, isObj } = require('@keg-hub/jsutils')
