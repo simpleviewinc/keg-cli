@@ -15,11 +15,8 @@
       * Default is cli.config.json
     * KEG_CONFIG_PATH - Folder Location where the cli config files should be saved
       * Default is <KEG_CLI_PATH env>/.kegConfig
-    * KEG_CUSTOM_PATH - Custom Keg-CLI config file path
-      * Path must be relative to the Keg-CLI root directory
-      * Config file can be JSON, or a .js file
-      * If using .js file; it must export an object, or a function that returns an object
     * NODE_ENV - Will be used as the default environment for the keg-cli
+    * USER - (Optional) The docker user
  *
  * @returns {void}
 */
@@ -49,8 +46,6 @@ const buildCIConfig = (customConfig) => {
         containers: path.join(KEG_CLI_PATH, 'containers'),
         kegConfig: KEG_CONFIG_PATH,
         keg: KEG_ROOT_DIR,
-        core: path.join(KEG_ROOT_DIR, 'repos', 'keg-core'),
-        components: path.join(KEG_ROOT_DIR, 'repos', 'keg-components'),
         retheme: path.join(KEG_ROOT_DIR, 'repos', 're-theme'),
       },
       git: {

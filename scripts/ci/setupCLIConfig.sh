@@ -6,7 +6,7 @@
 set -e
 
 # Clones the keg-hub repo locally
-# And sets up and env for it's path
+# And sets up and env for its path
 keg_setup_keg_hub(){
   # Set the keg-hub root directory
   local DEFAULT_KEG_ROOT_DIR="$(dirname $(dirname $(pwd)))/keg-hub"
