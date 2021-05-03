@@ -1,4 +1,4 @@
-const { getTapConfig, getTapPackage } = require('KegUtils/tap/getTapConfig')
+const { getTapConfig, getTapPackage } = require('KegRepos/cli-utils')
 const { Logger } = require('KegLog')
 const { get } = require('@keg-hub/jsutils')
 const { generalError } = require('KegUtils/error')
