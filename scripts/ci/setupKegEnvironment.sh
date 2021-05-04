@@ -5,7 +5,7 @@
 ##   - KEG_CLI_USER: docker login user
 ##   - GIT_TOKEN: git token for interacting with github repos and docker registry
 
-if [[ ! -z "$KEG_CLI_PATH" ]]; then
+if [[ -z "$KEG_CLI_PATH" ]]; then
   echo "Env KEG_CLI_PATH is required"
   exit 1
 fi
