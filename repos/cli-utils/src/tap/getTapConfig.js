@@ -24,6 +24,9 @@ const nodePath = require('path')
  * // => [ { <tap's config> }, <file path to that config> ]  
  */
 const getTapConfig = ({ path, name, configNames=TAP_CONFIG_NAMES }={}) => {
+  if (!path && !name) 
+    throw new Error('Either path or name parameters for tap must be defined.')
+
   const tapPath = path || getTapPath(getKegGlobalConfig(), name)
 
   for (let i = 0; i < configNames.length; i++) {

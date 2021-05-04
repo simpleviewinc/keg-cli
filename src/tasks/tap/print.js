@@ -1,10 +1,8 @@
 const { getTapConfig, getTapPackage } = require('KegRepos/cli-utils')
 const { Logger } = require('KegLog')
-const { get } = require('@keg-hub/jsutils')
+const { get, isObj } = require('@keg-hub/jsutils')
 const { generalError } = require('KegUtils/error')
 const nodePath = require('path')
-
-const colorLog = (color, str) => Logger.print(Logger.color(color, str))
 
 /**
  * Helper that splits the full path into parts: fileType and subPath
@@ -56,11 +54,15 @@ const printConfig = args => {
     `Found ${nodePath.basename(foundPath)} in "${nodePath.dirname(foundPath)}":`
   )
 
-  colorLog('blue', JSON.stringify(value, null, 2))
+  Logger.stdout(
+    isObj(value)
+      ? JSON.stringify(value, null, 2)
+      : value
+  )
 }
 
 module.exports = {
-  action: {
+  print: {
     name: 'print',
     action: printConfig,
     description: `Prints out the tap config or package json`,
