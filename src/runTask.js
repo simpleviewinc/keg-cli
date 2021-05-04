@@ -1,5 +1,4 @@
 const Tasks = require('KegTasks')
-const { get, isFunc, isObj } = require('@keg-hub/jsutils')
 const { findTask, executeTask } = require('KegUtils/task')
 const { throwExitError } = require('KegUtils/error')
 const { hasHelpArg } = require('KegUtils/helpers/hasHelpArg')

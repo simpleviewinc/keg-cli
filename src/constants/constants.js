@@ -13,7 +13,7 @@ let GLOBAL_CONFIG_FOLDER = path.join(homeDir, CONFIG_FOLDER_NAME)
 let GLOBAL_CONFIG_FILE = 'cli.config.json'
 
 // If the global config path is passed in as an ENV, use that instead
-if(KEG_GLOBAL_CONFIG){
+if (KEG_GLOBAL_CONFIG) {
   const configPathSplit = KEG_GLOBAL_CONFIG.split('/')
   GLOBAL_CONFIG_FILE = configPathSplit.pop()
   GLOBAL_CONFIG_FOLDER = configPathSplit.join('/')
