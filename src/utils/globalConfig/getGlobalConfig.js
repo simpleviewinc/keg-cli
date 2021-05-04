@@ -1,15 +1,9 @@
 const path = require('path')
 const { tryRequireSync } = require('@keg-hub/jsutils/src/node')
-const { CLI_ROOT_CONFIG_FOLDER, GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE } = require('KegConst/constants')
+const { GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE } = require('KegConst/constants')
 const { __getGlobalConfig, __updateGlobalConfig } = require('./globalConfigCache')
 
-/**
- * Possible paths for the keg-cli config
- */
-const CONFIG_PATHS = [ 
-  path.join(GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE),
-  path.join(CLI_ROOT_CONFIG_FOLDER, GLOBAL_CONFIG_FILE)
-]
+const globalConfigPath = path.join(GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE)
 
 /**
  * Loads the global cli config from the global config folder ( ~/.kegConfig )
@@ -25,10 +19,10 @@ const getGlobalConfig = () => {
   // If it's cached, return the cached version
   if(globalConfig) return globalConfig
 
-  // get the first path the resolves to a file
-  const config = CONFIG_PATHS.reduce((config, path) => config || tryRequireSync(path), null)
+  // try to load the global config
+  const config = tryRequireSync(globalConfigPath)
 
-  // Update the globalConfig cache with the loaded globalConfig
+  // Update the globalConfig cache with the loaded globalConfig, if it exists
   config && __updateGlobalConfig(config)
 
   // Return the global config after it's been cached
