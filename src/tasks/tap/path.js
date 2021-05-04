@@ -2,7 +2,7 @@ const { getTapPath, getTapConfig, getTapPackage } = require('KegRepos/cli-utils'
 const { generalError } = require('KegUtils/error')
 
 /**
- * Prints out a tap's config or package.json (see options)
+ * Prints out a tap's root, config, or package.json file path.
  * @param {Object} args - arguments passed from the runTask method
  */
 const printPath = args => {
