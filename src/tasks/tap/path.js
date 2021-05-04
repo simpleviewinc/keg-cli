@@ -1,5 +1,4 @@
 const { getTapPath, getTapConfig, getTapPackage } = require('KegRepos/cli-utils')
-const { Logger } = require('KegLog')
 const { generalError } = require('KegUtils/error')
 
 /**
@@ -16,9 +15,9 @@ const printPath = args => {
   const [ , configPath ] = getTapConfig({ name: tap })
   const [ , packagePath ] = getTapPackage({ name: tap })
   
-  if (package) return Logger.stdout(packagePath)
-  else if (config) return Logger.stdout(configPath)
-  else return Logger.stdout(tapPath)
+  if (package) return console.log(packagePath)
+  else if (config) console.log(configPath)
+  else return console.log(tapPath)
 }
 
 module.exports = {
