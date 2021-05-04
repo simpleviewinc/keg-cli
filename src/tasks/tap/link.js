@@ -74,9 +74,12 @@ const linkTap = async args => {
   const [ tapConfig ] = getTapConfig({ path: location })
 
   // get the tap name, or throw an error if not specified
-  const alias = name || get(tapConfig, 'keg.alias') || generalError(
-    'Error: Tap name required. Ensure your tap config defines a `keg.alias` key.'
-  )
+  const alias = name || get(tapConfig, 'keg.alias')
+  if (!alias) {
+    silent 
+      ? process.exit(1)
+      : generalError('Error: Tap name required. Ensure your tap config defines a `keg.alias` key.')
+  }
 
   // Try to build the tap object.
   const tapObj = await buildTapObj(globalConfig, silent, alias, location)
