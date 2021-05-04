@@ -1,12 +1,13 @@
 ##
 ## Description: sets up the current machine's environment to use the keg cli
 ## Expected ENVS:
-##   - KEG_CLI_PATH: (optional) path to the root keg-cli directory (defaults to current directory)
+##   - KEG_CLI_PATH: path to the root keg-cli directory
 ##   - KEG_CLI_USER: docker login user
 ##   - GIT_TOKEN: git token for interacting with github repos and docker registry
 
 if [[ ! -z "$KEG_CLI_PATH" ]]; then
-  cd $KEG_CLI_PATH
+  echo "Env KEG_CLI_PATH is required"
+  exit 1
 fi
 
 if [[ -z "$KEG_CLI_USER" ]]; then
