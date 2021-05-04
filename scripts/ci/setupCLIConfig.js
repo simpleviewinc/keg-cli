@@ -46,7 +46,7 @@ const buildCIConfig = (customConfig) => {
         containers: path.join(KEG_CLI_PATH, 'containers'),
         kegConfig: KEG_CONFIG_PATH,
         keg: KEG_ROOT_DIR,
-        retheme: path.join(KEG_ROOT_DIR, 'repos', 're-theme'),
+        core: path.join(KEG_ROOT_DIR, 'repos', 'keg-core'),
       },
       git: {
         orgName: `simpleviewinc`,
