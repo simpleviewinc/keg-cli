@@ -98,7 +98,7 @@ const dockerBuild = async args => {
         ...contextEnvs,
         ...(buildArgs && createEnvFromBuildArgs(buildArgs)),
         // Ensure the KEG_BASE_IMAGE env uses the passed in from option or the KEG_BASE_IMAGE
-        KEG_BASE_IMAGE: full || baseImage,
+        KEG_BASE_IMAGE: full,
       },
       ...(tap && { tap }),
       ...(image && { image }),
