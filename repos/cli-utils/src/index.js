@@ -3,10 +3,10 @@ const error = require('./error')
 const fileSys = require('./fileSys')
 const commands = require('./commands')
 const { Logger } = require('./logger')
-const { runTask } = require('./runTask')
-const { getAppRoot, setAppRoot } = require('./appRoot')
 const constants = require('./constants')
+const { runTask } = require('./runTask')
 const { registerTasks } = require('./tasks/tasks')
+const { getAppRoot, setAppRoot } = require('./appRoot')
 
 const {
   getKegGlobalConfig,
