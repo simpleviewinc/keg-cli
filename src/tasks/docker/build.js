@@ -78,12 +78,12 @@ const dockerBuild = async args => {
   // If using a tap, and no location is found, throw an error
   cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
 
-  const baseImage = contextEnvs.KEG_BASE_IMAGE || generalError(
-    `To build an image, the env KEG_BASE_IMAGE is required. Ensure you have set it in an env file.`
+  const baseImage = from || contextEnvs.KEG_BASE_IMAGE || generalError(
+    `To build an image, either the env KEG_BASE_IMAGE or the "from" parameter must be defined. Ensure you have one of these set.`
   )
 
   // Use the from option if passed, or the KEG_BASE_IMAGE to get the build image context
-  const { full } = await getImgNameContext({ from: from || baseImage })
+  const { full } = await getImgNameContext({ from: baseImage })
 
   // Build the docker build command
   const dockerCmd = await buildDockerCmd({
