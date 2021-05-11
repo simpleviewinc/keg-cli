@@ -40,7 +40,7 @@ npm install @keg-hub/cli-utils
 
         runTask()
       ```
-  * This method will handel
+  * This method will handle
     * Loading the global config defined at `~/.kegConfig/cli.config.json` if it exists
     * Parsing options relative to a task-definitions `options` property
       * They are then passed to the task as the `params` key of the `args` object  
