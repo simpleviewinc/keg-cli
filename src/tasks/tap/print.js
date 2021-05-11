@@ -70,18 +70,16 @@ module.exports = {
     options: {
       path: {
         description: 'Optional path to a value within the config you want to read. Needs to start with either "config" for the tap config or "package" for package.json',
-        alias: [ 'path', 'p', 'key', 'k' ],
+        alias: [ 'path', 'key', 'k' ],
         default: 'config',
         example: 'keg evf print config.expo.slug or keg evf print package'
       },
       tap: {
         description: 'Name of tap. This is automatically set when running through injected tap aliases (e.g. keg evf config)',
         example: 'keg evf prn, or keg tap prn --tap evf',
-        alias: ['t'],
       },
       verbose: {
         description: 'If true, prints out additional data, like the path to the resolved config',
-        alias: ['v'],
         example: 'keg evf prn --verbose',
         default: false,
       },
