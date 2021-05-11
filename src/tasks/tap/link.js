@@ -124,7 +124,7 @@ module.exports = {
         description: 'Will fail silently if any errors occur',
         alias: ['s'],
         example: 'keg tap link --silent',
-        default: false
+        type: 'boolean'
       }
     }
   }
