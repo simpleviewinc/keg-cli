@@ -38,7 +38,7 @@
     "app-root-path": "3.0.0",
     "colors": "1.4.0",
     "fs-extra": "9.0.1",
-    "jest-cli": "^26.6.3",
+    "jest-cli": "26.6.3",
     "module-alias": "2.2.2"
   },
   "devDependencies": {
