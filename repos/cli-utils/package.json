@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Utility methods for writing Custom Tasks consumed by the Keg-CLI",
   "main": "index.js",
-  "repository": "https://github.com/lancetipton/keg-cli-utils",
+  "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/cli-utils",
   "author": "Lance Tipton",
   "license": "MIT",
   "private": false,
