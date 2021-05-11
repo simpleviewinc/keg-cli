@@ -1,6 +1,6 @@
 const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
 
 /**
  * Gets the git key to allow cloning private repos

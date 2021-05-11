@@ -1,6 +1,6 @@
 const { Logger } = require('KegLog')
 const { get, mapObj } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
 const { throwTaskFailed } = require('./throwTaskFailed')
 
 /*

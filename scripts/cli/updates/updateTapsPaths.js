@@ -3,7 +3,7 @@ require('module-alias/register')
 const { Logger } = require('KegLog')
 const { get, isStr, reduceObj } = require('@keg-hub/jsutils')
 const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
 const { addGlobalConfigProp } = require('KegUtils/globalConfig/addGlobalConfigProp')
 
 ;(async () => {

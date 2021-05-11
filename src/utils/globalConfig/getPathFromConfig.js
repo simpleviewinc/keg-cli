@@ -1,5 +1,5 @@
 const { get } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { UTILS: { GLOBAL_CONFIG_PATHS, GLOBAL_CONFIG_FOLDER } } = require('KegConst/constants')
 
 /**
  * Gets a path from the stored paths in the globalConfig object

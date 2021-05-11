@@ -1,6 +1,6 @@
 const { decrypt } = require('KegCrypto')
 const { get } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
 const { throwWrongPassword } = require('../error/throwWrongPassword')
 
 /**

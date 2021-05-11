@@ -46,7 +46,7 @@ const ENV_OPTIONS = Object.entries(ENV_MAP)
 
 module.exports = deepFreeze({
   // include all constants from repos/cli-utils
-  ...cliUtilsConstants,
+  UTILS: cliUtilsConstants,
 
   // Tasks settings
   TASK_REQUIRED: [

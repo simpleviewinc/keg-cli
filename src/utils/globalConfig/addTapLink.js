@@ -1,6 +1,6 @@
 const { Logger } = require('KegLog')
 const { get, set, isObj } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
 const { addGlobalConfigProp } = require('./addGlobalConfigProp')
 
 /**
