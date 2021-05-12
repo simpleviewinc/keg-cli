@@ -1,7 +1,7 @@
 const { Logger } = require('KegLog')
 const { requireFile } = require('KegFileSys')
 const { get, mapObj, wordCaps, checkCall, isObj } = require('@keg-hub/jsutils')
-const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
+const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 
 const pkgVals = [
   'version',

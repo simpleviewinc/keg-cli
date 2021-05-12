@@ -1,5 +1,4 @@
 const { deepFreeze } = require('@keg-hub/jsutils')
-const cliUtilsConstants = require('KegRepos/cli-utils/src/constants')
 const homeDir = require('os').homedir()
 const path = require('path')
 const { KEG_GLOBAL_CONFIG } = process.env
@@ -45,9 +44,6 @@ const ENV_OPTIONS = Object.entries(ENV_MAP)
   }, [])
 
 module.exports = deepFreeze({
-  // include all constants from repos/cli-utils
-  UTILS: cliUtilsConstants,
-
   // Tasks settings
   TASK_REQUIRED: [
     'prefix',

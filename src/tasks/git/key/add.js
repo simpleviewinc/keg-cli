@@ -7,7 +7,7 @@ const { throwRequired } = require('KegUtils/error')
 const { getSetting } = require('KegUtils/globalConfig')
 const { encrypt } = require('KegCrypto')
 const { ask } = require('@keg-hub/ask-it')
-const { UTILS: { GLOBAL_CONFIG_PATHS } } = require('KegConst/constants')
+const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 
 /**
  * Encrypts then adds a git key to the global config.
