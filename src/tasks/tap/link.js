@@ -112,8 +112,7 @@ module.exports = {
     options: {
       name: {
         description: 'Name used to access the linked tap. If omitted, it will use the "alias" value in the tap config.',
-        enforced: true,
-        required: false,
+        enforced: true
       },
       location: {
         alias: [ 'path', 'loc' ],
