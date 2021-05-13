@@ -65,6 +65,7 @@
     "jest-sonar-reporter": "2.0.0"
   },
   "_moduleAliases": {
+    "KegCliUtils": "repos/cli-utils",
     "KegConst": "src/constants",
     "KegCrypto": "src/libs/crypto",
     "KegDocCli": "src/libs/docker",
