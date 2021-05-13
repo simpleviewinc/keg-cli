@@ -1,5 +1,5 @@
-const { get } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { get, validate, isObj, isStr } = require('@keg-hub/jsutils')
+const { GLOBAL_CONFIG_PATHS } = require('../constants/constants')
 
 /**
  * Gets a path from the stored paths in the globalConfig object
@@ -9,6 +9,11 @@ const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
  * @returns {string} - Found path
  */
 const getTapPath = (globalConfig, tapName) => {
+  validate(
+    { globalConfig, tapName }, 
+    { globalConfig: isObj, tapName: isStr }, 
+    { throws: true }
+  )
   return get(globalConfig, `${GLOBAL_CONFIG_PATHS.TAP_LINKS}.${tapName}.path`)
 }
 

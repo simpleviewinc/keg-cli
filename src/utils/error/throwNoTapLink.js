@@ -1,6 +1,6 @@
 const { Logger } = require('KegLog')
 const { get, mapObj } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 const { throwTaskFailed } = require('./throwTaskFailed')
 
 /*
@@ -13,7 +13,7 @@ const { throwTaskFailed } = require('./throwTaskFailed')
 */
 const throwNoTapLink = (globalConfig, tapName) => {
 
-  Logger.error(`\n Linked path for tap '${tapName}' does on exist in the Global config!`)
+  Logger.error(`\n Linked path for tap '${tapName}' does not exist in the Global config!`)
 
   Logger.empty()
 

@@ -1,17 +1,18 @@
-const { deepFreeze, keyMap } = require('@keg-hub/jsutils')
+const { deepFreeze } = require('@keg-hub/jsutils')
 const homeDir = require('os').homedir()
 const path = require('path')
 const { KEG_GLOBAL_CONFIG } = process.env
 
 // Cache the root of the CLI for easy access
 const CLI_ROOT = path.join(__dirname, '../../')
+const CONFIG_FOLDER_NAME = '.kegConfig'
 
 // The default global config path and config file
-let GLOBAL_CONFIG_FOLDER = path.join(homeDir, '.kegConfig')
+let GLOBAL_CONFIG_FOLDER = path.join(homeDir, CONFIG_FOLDER_NAME)
 let GLOBAL_CONFIG_FILE = 'cli.config.json'
 
 // If the global config path is passed in as an ENV, use that instead
-if(KEG_GLOBAL_CONFIG){
+if (KEG_GLOBAL_CONFIG) {
   const configPathSplit = KEG_GLOBAL_CONFIG.split('/')
   GLOBAL_CONFIG_FILE = configPathSplit.pop()
   GLOBAL_CONFIG_FOLDER = configPathSplit.join('/')
@@ -43,7 +44,6 @@ const ENV_OPTIONS = Object.entries(ENV_MAP)
   }, [])
 
 module.exports = deepFreeze({
-
   // Tasks settings
   TASK_REQUIRED: [
     'prefix',
@@ -51,15 +51,6 @@ module.exports = deepFreeze({
     'action',
     'description'
   ],
-
-  // Global config settings
-  GLOBAL_CONFIG_PATHS: {
-    CLI: 'cli',
-    CLI_PATHS: 'cli.paths',
-    GIT: 'cli.git',
-    TAPS: `cli.taps`,
-    TAP_LINKS: `cli.taps`,
-  },
 
   CLI_ROOT,
   GLOBAL_CONFIG_FILE,
@@ -156,6 +147,6 @@ module.exports = deepFreeze({
       'minor',
       'patch',
     ]
-  }
+  },
 
 })

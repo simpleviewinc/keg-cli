@@ -1,4 +1,4 @@
-const { injectedTest, injectedContainer } = require('KegMocks/injected/injectedTest')
+const { injectedContainer } = require('KegMocks/injected/injectedTest')
 const { docker, dockerData } = require('KegMocks/libs/docker')
 const { testEnum } = require('KegMocks/jest/testEnum')
 

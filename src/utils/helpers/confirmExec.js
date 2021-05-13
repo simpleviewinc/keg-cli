@@ -7,6 +7,7 @@ const { Logger } = require('KegLog')
  * @function
  * @param {Object} args - Items to check and perform a task
  * @param {function} args.execute - Task for be preformed
+ * @param {boolean} args.force - if true, bypasses confirm step and proceeds as if user confirmed
  * @param {string} args.confirm - Message to print when confirming the task
  * @param {boolean} args.preConfirm - True if the action has already been confirmed
  * @param {string} args.cancel - Message to print when the task was canceled

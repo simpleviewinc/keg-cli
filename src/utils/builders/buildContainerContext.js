@@ -1,7 +1,5 @@
-const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { get } = require('@keg-hub/jsutils')
-const { DOCKER } = require('KegConst/docker')
 const { getPrefix } = require('../getters/getPrefix')
 const { CONTEXT_KEYS } = require('KegConst/constants')
 const { buildCmdContext } = require('./buildCmdContext')
@@ -9,7 +7,6 @@ const { buildContextEnvs } = require('./buildContextEnvs')
 const { getContainerConst } = require('../docker/getContainerConst')
 const { getLocationContext } = require('../getters/getLocationContext')
 const { getContainerFromContext } = require('../docker/getContainerFromContext')
-const { IMAGES } = DOCKER
 
 /**
  * Checks that the __internal object contains all required keys

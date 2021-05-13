@@ -1,8 +1,6 @@
-const { reduceObj } = require('@keg-hub/jsutils')
 const { generalError } = require('../error/generalError')
-const { getTapPath } = require('../globalConfig/getTapPath')
 const { getContext } = require('../getters/getContext')
-const { getContainerConst } = require('../docker/getContainerConst')
+const { getTapPath } = require('KegRepos/cli-utils')
 
 /**
  * Gets the cmdContext for the task based on the passed in params

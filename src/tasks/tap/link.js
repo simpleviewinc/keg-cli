@@ -1,9 +1,11 @@
+const { getTapConfig } = require('KegRepos/cli-utils')
 const { Logger } = require('KegLog')
-const { get } = require('@keg-hub/jsutils')
+const { get, isEmpty } = require('@keg-hub/jsutils')
 const { ask } = require('@keg-hub/ask-it')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 const { addTapLink } = require('KegUtils/globalConfig/addTapLink')
 const { checkCustomTaskFolder } = require('KegUtils/task/checkCustomTaskFolder')
+const { generalError } = require('KegUtils/error')
 
 /**
  * Checks if the link already exists, and if it does asks if the user wants to overwrite
@@ -17,7 +19,6 @@ const ensureAddLink = async (currentTap, tapName, tapPath, silent) => {
     ? !silent && ask.confirm(`Overwrite tap link '${tapName}' => '${tapPath}'?`)
     : true
 }
-
 
 /**
  * Checks for a current tap path, and compares with the passed in location
@@ -52,7 +53,23 @@ const buildTapObj = async (globalConfig, silent, name, location) => {
   customTasksFile && (tapObj.tasks = customTasksFile)
 
   return tapObj
+}
 
+/**
+ * Helper for `linkTap` that asks the user for an alias name, 
+ * unless silent is defined or in a ci environment
+ */
+const askAlias = async (silent, location, env) => {
+  const alias = !silent && env !== 'ci' && 
+    await ask.input(`Please enter an alias name for the tap at ${location}`)
+
+  if (!alias || isEmpty(alias)) {
+    silent
+      ? process.exit(1)
+      : generalError(`Error: Tap alias cannot be empty.`)
+  }
+
+  return alias
 }
 
 /**
@@ -66,17 +83,23 @@ const buildTapObj = async (globalConfig, silent, name, location) => {
  * @returns {void}
  */
 const linkTap = async args => {
-  const { command, globalConfig, options, params, tasks } = args
-  const { name, location, silent } = params
+  const { globalConfig, params } = args
+
+  const { name, location, silent, env } = params
+
+  // get the tap config located at our current location to determine the default alias name
+  const [ tapConfig ] = getTapConfig({ path: location })
+
+  // get the tap name, or throw an error if not specified
+  const alias = name || get(tapConfig, 'keg.alias') || await askAlias(silent, location, env)
 
   // Try to build the tap object.
-  const tapObj = await buildTapObj(globalConfig, silent, name, location)
+  const tapObj = await buildTapObj(globalConfig, silent, alias, location)
 
   // Check if we should add the link or custom task file, or log that the link was canceled!
   ;tapObj
-    ? addTapLink(globalConfig, name, tapObj)
+    ? addTapLink(globalConfig, alias, tapObj)
     : !silent && (Logger.warn(`Tap link canceled!`) || Logger.empty())
-
 }
 
 module.exports = {
@@ -88,8 +111,8 @@ module.exports = {
     example: 'keg tap link <options>',
     options: {
       name: {
-        description: 'Name used to access the linked tap',
-        required: true,
+        description: 'Name used to access the linked tap. If omitted, it will use the "alias" value in the tap config.',
+        enforced: true
       },
       location: {
         alias: [ 'path', 'loc' ],
@@ -97,9 +120,9 @@ module.exports = {
         default: process.cwd(),
       },
       silent: {
-        description: 'Will fail silently if any errors occure',
+        description: 'Will fail silently if any errors occur',
         example: 'keg tap link --silent',
-        default: false
+        type: 'boolean'
       }
     }
   }

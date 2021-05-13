@@ -13,7 +13,7 @@ const throwNoPathExists = (localPath, message) => {
 
   Logger.empty()
   message && Logger.error(message)
-  Logger.error(`Local path '${ localPath }' does on exist!`)
+  Logger.error(`Local path '${ localPath }' does not exist!`)
 
   Logger.empty()
 

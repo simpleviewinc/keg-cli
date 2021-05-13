@@ -49,8 +49,8 @@ const getDefaultENVs = cliRootDir => {
       // Join the local cli default envs with the users global envs
       // This ensures all needed envs get loaded
       ...loadENV({ envPath: cliDefaultEnvs }),
-      // Add the users global envs last to ensure they override the cli defaults
-      ...loadENV({ envPath: globalDefEnv })
+      // Add the user's global envs last to ensure they override the cli defaults
+      ...loadENV({ envPath: globalDefEnv }),
     }
 
   }
@@ -64,9 +64,7 @@ const getDefaultENVs = cliRootDir => {
   }
 
   return __DEFAULT_ENVS
-
 }
-
 
 module.exports = {
   KEG_ENVS: getDefaultENVs(CLI_ROOT)

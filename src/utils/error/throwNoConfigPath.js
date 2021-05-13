@@ -1,6 +1,6 @@
 const { Logger } = require('KegLog')
 const { get, mapObj } = require('@keg-hub/jsutils')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
+const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 const { throwTaskFailed } = require('./throwTaskFailed')
 
 /*
@@ -15,7 +15,7 @@ const throwNoConfigPath = (globalConfig, pathName) => {
 
   Logger.empty()
 
-  Logger.error(`Global config path '${pathName}' does on exist in the paths config!`)
+  Logger.error(`Global config path '${pathName}' does not exist in the paths config!`)
 
   Logger.empty()
   Logger.empty()

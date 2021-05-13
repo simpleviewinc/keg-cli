@@ -1,8 +1,8 @@
 const { Logger } = require('KegLog')
-const { get, set, isObj } = require('@keg-hub/jsutils')
 const { ask } = require('@keg-hub/ask-it')
-const { GLOBAL_CONFIG_PATHS } = require('KegConst/constants')
-const { removeGlobalConfigProp, getTapPath } = require('KegUtils')
+const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
+const { removeGlobalConfigProp } = require('KegUtils')
+const { getTapPath } = require('KegRepos/cli-utils')
 
 /**
  * Confirms removing the tap link from the global config
