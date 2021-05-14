@@ -3,7 +3,6 @@ module.exports = {
   ...require('./getContext'),
   ...require('./getImgFrom'),
   ...require('./getImgNameContext'),
-  ...require('./getInternalIp'),
   ...require('./getLocationContext'),
   ...require('./getLocalPath'),
   ...require('./getMutagenConfig'),
