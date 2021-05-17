@@ -1,4 +1,1 @@
-
-module.exports = {
-  ...require('./mutagen'),
-}
+module.exports = require('./src')

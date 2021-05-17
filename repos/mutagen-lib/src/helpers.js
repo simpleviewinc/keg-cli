@@ -1,4 +1,4 @@
-const { NEWLINES_MATCH, SPACE_MATCH, TAB_MATCH } = require('KegConst/patterns')
+const { NEWLINES_MATCH } = require('KegConst/patterns')
 const {
   reduceObj,
   snakeCase,
