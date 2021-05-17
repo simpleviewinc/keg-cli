@@ -1,6 +1,10 @@
 
 const { commands } = require('../__mocks__/mutagen')
-jest.setMock('../../process/runCommand', { executeCmd: commands.listResponse })
+jest.setMock('@keg-hub/cli-utils', {
+  execCmd: commands.listResponse,
+  runCmd: commands.listResponse,
+  Logger: jest.fn(),
+})
 
 const { Sync } = require('../sync')
 const sync = new Sync({})
