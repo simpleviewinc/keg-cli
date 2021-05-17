@@ -21,9 +21,8 @@
     "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js"
   },
   "dependencies": {
-    "@keg-hub/ask-it": "0.0.2",
-    "@keg-hub/cli-utils": "0.1.0",
-    "@keg-hub/jsutils": "8.5.0",
+    "@keg-hub/cli-utils": "0.2.0",
+    "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
     "rimraf": "3.0.2"
   }

@@ -1,9 +1,9 @@
 const { Sync } = require('./sync')
 const { Config } = require('./config')
 const { mutagenCli } = require('./commands')
-const { GLOBAL_CONFIG_FOLDER, CLI_ROOT } = require('KegConst/constants')
 const { deepMerge } = require('@keg-hub/jsutils')
-const { executeCmd } = require('KegProc')
+const { execCmd, constants } = require('@keg-hub/cli-utils')
+const { GLOBAL_CONFIG_FOLDER } = constants
 
 /**
  * Default Mutagen argument options
@@ -11,7 +11,6 @@ const { executeCmd } = require('KegProc')
  */
 const defOptions = {
   configFolder: GLOBAL_CONFIG_FOLDER,
-  cliRoot: CLI_ROOT,
 }
 
 class Mutagen {
@@ -52,7 +51,7 @@ class Mutagen {
   * @returns {boolean|string} - False if the daemon is not running, or the daemon pid
   */
   isRunning = async () => {
-    const { error, data } = await executeCmd(
+    const { error, data } = await execCmd(
       `ps ax | grep -v docker | grep -v grep  | grep "mutagen"`
     )
 

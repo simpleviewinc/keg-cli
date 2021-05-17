@@ -1,6 +1,5 @@
 
-const { mutagen } = require('KegMocks')
-const { commands } = mutagen
+const { commands } = require('../__mocks__/mutagen')
 jest.setMock('../../process/runCommand', { executeCmd: commands.listResponse })
 
 const { Sync } = require('../sync')
