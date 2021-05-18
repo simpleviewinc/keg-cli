@@ -1160,6 +1160,11 @@
   resolved "https://registry.yarnpkg.com/@keg-hub/jsutils/-/jsutils-8.4.0.tgz#e2dd2794ccc60f8c2e5ee1aa12ec6f8d9217c209"
   integrity sha512-dKduqKAHh2AqKymyHR0boje7x8kPkTK8vkFI46OUS+Ar9tZjjMgX8CoQuOoCzvpc/pbCaINgbSQCfrcOPidQQg==
 
+"@keg-hub/jsutils@8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@keg-hub/jsutils/-/jsutils-8.6.0.tgz#c6a4511b5439ffe73ff50aa9319f17d1d7701e2a"
+  integrity sha512-J6o5lOL4p3idqxJkh+VHmppNFuQhC2IbwUrJiMFjXJbKLsylPQVOKZvRJ7ICHidc9fLw9Qvyd7BIgwo0Nn4iAg==
+
 "@keg-hub/spawn-cmd@0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.2.tgz#30bd37e03a3c2cb98235fa300ef06c0505404392"
@@ -3750,9 +3755,9 @@ node-notifier@^8.0.0:
     which "^2.0.2"
 
 node-releases@^1.1.71:
-  version "1.1.71"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.71.tgz#cb1334b179896b1c89ecfdd4b725fb7bbdfc7dbb"
-  integrity sha512-zR6HoT6LrLCRBwukmrVbHv0EpEQjksO6GmFcZQQuCAy139BEsoVKPYnf3jongYW83fAa1torLGYwxxky/p28sg==
+  version "1.1.72"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.72.tgz#14802ab6b1039a79a0c7d662b610a5bbd76eacbe"
+  integrity sha512-LLUo+PpH3dU6XizX3iVoubUNheF/owjXCZZ5yACDxNnPtgFuludV1ZL3ayK1kVep42Rmm0+R9/Y60NQbZ2bifw==
 
 nopt@^3.0.1:
   version "3.0.6"
