@@ -1,14 +1,14 @@
 const { isNum } = require('@keg-hub/jsutils')
 
-const { getInternalIp } = require('../getInternalIp')
+const { getHostIP } = require('../')
 
-describe('getInternalIp', () => {
+describe('getHostIP', () => {
 
   afterAll(() => jest.resetAllMocks())
 
   it('should get the internal ip address of the machine', async () => {
 
-    const internalIp = getInternalIp()
+    const internalIp = getHostIP()
     const ipSplit = internalIp.split('.')
     const possibleIPParts = [ '192', '172', '127', '0', '10' ]
 

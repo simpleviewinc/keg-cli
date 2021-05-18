@@ -7,6 +7,7 @@ const constants = require('./constants')
 const { runTask } = require('./runTask')
 const { registerTasks } = require('./tasks/tasks')
 const { getAppRoot, setAppRoot } = require('./appRoot')
+const network = require('./network')
 
 const {
   getKegGlobalConfig,
@@ -17,6 +18,7 @@ const {
 
 module.exports = {
   ...commands,
+  ...network,
   ...tap,
   constants,
   getKegGlobalConfig,

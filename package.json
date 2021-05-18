@@ -39,7 +39,7 @@
   "dependencies": {
     "@keg-hub/args-parse": "6.2.3",
     "@keg-hub/ask-it": "0.0.2",
-    "@keg-hub/jsutils": "8.4.0",
+    "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
     "axios": "0.21.1",
     "cli-progress": "3.8.2",

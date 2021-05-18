@@ -31,9 +31,10 @@
     "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js"
   },
   "dependencies": {
+    "axios": "0.21.1",
     "@keg-hub/args-parse": "6.2.1",
     "@keg-hub/ask-it": "0.0.1",
-    "@keg-hub/jsutils": "8.5.0",
+    "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
     "app-root-path": "3.0.0",
     "colors": "1.4.0",
@@ -42,7 +43,7 @@
     "module-alias": "2.2.2"
   },
   "resolutions": {
-    "@keg-hub/jsutils": "8.5.0"
+    "@keg-hub/jsutils": "8.6.0"
   },
   "devDependencies": {
     "babel-eslint": "10.1.0",
