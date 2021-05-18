@@ -1,7 +1,10 @@
 const path = require('path')
+const { error, fileSys, Logger } = require('@keg-hub/cli-utils')
 const { deepMerge, deepClone, isObj } = require('@keg-hub/jsutils')
-const { loadYml, writeYml, stat } = require('KegFileSys')
-const { generalError } = require('KegUtils/error')
+
+const { throwError } = error 
+const { stat, loadYml, writeYml } = fileSys
+
 
 /**
 * Helper to build the mutagen config path
@@ -77,7 +80,9 @@ class Config {
   * @returns {Object} - Mutagen config file
   */
   load = async name => {
-    return loadYml(buildPath(this.mutagen.options, name))
+    Logger.warn(`Loading mutagen yaml config is not currently supported!`)
+    // TODO: Uncomment once fileSys with yml support is fully migrated to repos folder
+    // return loadYml(buildPath(this.mutagen.options, name))
   }
 
   /**
@@ -90,7 +95,9 @@ class Config {
   * @returns {boolean} - True if the file could be saved
   */
   write = (name, content) => {
-    return writeYml(buildPath(this.mutagen.options, name), content)
+    Logger.warn(`Writing mutagen yaml config is not currently supported!`)
+    // TODO: Uncomment once fileSys with yml support is fully migrated to repos folder
+    // return writeYml(buildPath(this.mutagen.options, name), content)
   }
 
   /**
@@ -103,7 +110,7 @@ class Config {
   */
   exists = async name => {
     const [ err, doesExist ] = await stat(buildPath(this.mutagen.options, name))
-    return err ? generalError(err) : doesExist
+    return err ? throwError(err) : doesExist
   }
 
 }

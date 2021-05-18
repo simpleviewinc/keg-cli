@@ -1,0 +1,29 @@
+{
+  "name": "mutagen-lib",
+  "version": "0.0.0",
+  "description": "Wrapper around the mutagen command line executable",
+  "main": "index.js",
+  "repository": "https://github.com/simpleviewinc/keg-cli",
+  "author": "Lance Tipton",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "mutagen",
+    "sync",
+    "keg-hub",
+    "node-mutagen",
+    "cli"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js"
+  },
+  "dependencies": {
+    "@keg-hub/cli-utils": "0.2.0",
+    "@keg-hub/jsutils": "8.6.0",
+    "@keg-hub/spawn-cmd": "0.1.2",
+    "rimraf": "3.0.2"
+  }
+}

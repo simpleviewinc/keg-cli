@@ -1,17 +1,5 @@
 const path = require('path')
-const homeDir = require('os').homedir()
-const { KEG_GLOBAL_CONFIG } = process.env
-
-// The default global config path and config file
-let GLOBAL_CONFIG_FOLDER = path.join(homeDir, '.kegConfig')
-let GLOBAL_CONFIG_FILE = 'cli.config.json'
-
-// If the global config path is passed in as an ENV, use that instead
-if (KEG_GLOBAL_CONFIG) {
-  const configPathSplit = KEG_GLOBAL_CONFIG.split('/')
-  GLOBAL_CONFIG_FILE = configPathSplit.pop()
-  GLOBAL_CONFIG_FOLDER = configPathSplit.join('/')
-}
+const { GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE } = require('../constants')
 
 /**
  * Attempts to load the Keg-CLI global config from the user home directory
