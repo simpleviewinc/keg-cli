@@ -1,7 +1,6 @@
 const { mutagenCli } = require('./commands')
-const { deepMerge, get } = require('@keg-hub/jsutils')
+const { get } = require('@keg-hub/jsutils')
 const {
-  buildIgnore,
   buildMountPath,
   buildMutagenArgs,
   cleanPath

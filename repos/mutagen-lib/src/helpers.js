@@ -1,4 +1,3 @@
-const { NEWLINES_MATCH, SPACE_MATCH, TAB_MATCH } = require('KegConst/patterns')
 const {
   reduceObj,
   snakeCase,
@@ -11,7 +10,8 @@ const {
   uniqArr,
   isArr,
 } = require('@keg-hub/jsutils')
-const { Logger } = require('KegLog')
+const { Logger } = require('@keg-hub/cli-utils')
+const NEWLINES_MATCH = /\n|\r|\r\n/
 
 /**
  * Error handler for error in the Mutagen CLI
@@ -82,7 +82,7 @@ const parseListLine = line => {
   // Some values are split by the = sign, so validate and parse that if needed
   // Check if theres no value and the key has an equals sign
   if(key.indexOf('=') !== -1 && !value){
-    // Use the = sign as the seperator, and get the key value from that
+    // Use the = sign as the separator, and get the key value from that
     const [ equalKey, equalValue ] = key.split('=')
     key = equalKey.trim()
     value = equalValue.trim()
@@ -122,7 +122,7 @@ const jsonListOutput = (data, skipError) => {
       let added = false
       let childObj
 
-      // Split the item on new lines, to parse each line individuallys
+      // Split the item on new lines, to parse each line individually
       item.split(NEWLINES_MATCH).map(lineSplit => {
         const line = lineSplit.replace(/\\t/g, '').trim()
         if(!line) return
