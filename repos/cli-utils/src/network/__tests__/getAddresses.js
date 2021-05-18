@@ -1,26 +1,16 @@
 
 jest.mock('os')
 
-const { getAddresses } = require('../')
+const { getAddresses }  = require('../')
+const { privateIPMock, publicIPMock } = require('../__mocks__/getAddresses')
 const os = require('os')
 
-const privateAddress = {
-  address: '192.168.1.2',
-  internal: true,
-  family: 'IPv4'
-}
-
-const publicAddress = {
-  address: '171.255.255.255',
-  internal: false,
-  family: 'IPv4'
-}
 
 describe('getAddresses', () => {
   it('should get the address(es) matching the parameters', () => {
 
     os.networkInterfaces.mockReturnValueOnce({
-      en0: [ privateAddress, publicAddress ]
+      en0: [ privateIPMock, publicIPMock ]
     })
 
     const addresses = getAddresses({
@@ -34,14 +24,14 @@ describe('getAddresses', () => {
     expect(
       addresses[0]
     ).toEqual(
-      privateAddress
+      privateIPMock
     )
   })
 
   it('should do no filtering if no parameters are passed', () => {
 
     os.networkInterfaces.mockReturnValueOnce({
-      en0: [privateAddress, publicAddress ]
+      en0: [ privateIPMock, publicIPMock ]
     })
 
     const addresses = getAddresses({})
@@ -51,7 +41,7 @@ describe('getAddresses', () => {
     expect(
       addresses
     ).toEqual(
-      expect.arrayContaining([ privateAddress, publicAddress ])
+      expect.arrayContaining([ privateIPMock, publicIPMock ])
     )
   })
 })
