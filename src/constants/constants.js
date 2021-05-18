@@ -133,16 +133,6 @@ module.exports = deepFreeze({
     'keg-proxy': 'proxy',
   },
 
-  // Allowed value types to inspecting docker images or containers
-  KEG_DOCKER_INSPECT_OPTS: {
-    i: 'image',
-    img: 'image',
-    image: 'image',
-    c: 'container_name',
-    cont: 'container_name',
-    container: 'container_name',
-  },
-
   // docker exec constants and options for the utils/services/composeService.js
   KEG_DOCKER_EXEC: 'KEG_DOCKER_EXEC',
   KEG_EXEC_OPTS: {
