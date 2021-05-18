@@ -500,10 +500,10 @@
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/cli-utils@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.2.0.tgz#6f6a29d05402a8b506df30314ffeae18f2bfe822"
-  integrity sha512-vMRWZ8hPcLpY2/xdgf+JCWfbLp/Gs5bRAmQ2s/jw7GDFUtIx5iwx6cAIApSPDUOCpOIabwRh0rcHWa3N9F67Kg==
+"@keg-hub/cli-utils@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.2.1.tgz#8f156425a5d26bbec2392e88b624d76668443c89"
+  integrity sha512-htMJsJvp+aYOHDe19YS3rfPYEJNvj7HtqzzF6xrNdPIbztobXm4J7ufIfEFg3vYd0SanFScHabEGam9zytj8ug==
   dependencies:
     "@keg-hub/args-parse" "6.2.1"
     "@keg-hub/ask-it" "0.0.1"
