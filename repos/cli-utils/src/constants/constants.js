@@ -22,6 +22,8 @@ module.exports = deepFreeze({
     'app.json',
     'package.json',
   ],
+
+  // private ranges of ip addresses
   PRIVATE_IPV4_CLASSES: {
     A: [ '10.0.0.0', '10.255.255.255' ],
     B: [ '172.16.0.0', '172.31.255.255' ],
