@@ -2,11 +2,13 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { ask } = require('@keg-hub/ask-it')
 const { DOCKER } = require('KegConst/docker')
-const { get, noOpObj } = require('@keg-hub/jsutils')
+const { noOpObj } = require('@keg-hub/jsutils')
 const { imageSelect } = require('KegUtils/docker/imageSelect')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
+const { getWithStringKeys } = require('KegUtils/getters/getWithStringKeys')
+
 
 /**
  * Ask the user if they want to inspect an image or container
@@ -105,8 +107,7 @@ const dockerInspect = async args => {
   !inspectObj &&
     generalError(`Could not find ${inspectType} to inspect for context ${context}`)
 
-
-  const item = key ? get(inspectObj, key) : inspectObj
+  const item = key ? getWithStringKeys(inspectObj, key) : inspectObj
   !__internal.skipLog && Logger.log(item)
 
   return item
