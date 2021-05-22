@@ -79,7 +79,7 @@ describe('commands', () => {
 
     })
 
-    it(`Should join the options.evn with process.env`, async () => {
+    it(`Should join the options.env with process.env`, async () => {
       process.env.TEST_CLI_UTILS_PROC_ENV = `process.env`
       await runCmd('test', [], { env: { TEST_OPT_ENV: 'option.env' } }, process.cwd())
       const callOpts = spawnCmdMock.mock.calls[0][1].options
