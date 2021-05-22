@@ -1,7 +1,7 @@
 const path = require('path')
-const { getTapPath } = require('KegUtils/globalConfig/getTapPath')
-const { throwNoTapLoc } = require('KegUtils/error/throwNoTapLoc')
-const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
+const { getTapPath } = require('./getTapPath')
+const { throwNoTapLoc } = require('../error')
+const { getKegGlobalConfig } = require('../task/getKegGlobalConfig')
 
 /**
  * Builds a path to a file in a taps folder
@@ -14,7 +14,7 @@ const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
  * @return {string} - Path to the taps file
  */
 const getTapFile = (tapName, file, globalConfig) => {
-  globalConfig = globalConfig || getGlobalConfig()
+  globalConfig = globalConfig || getKegGlobalConfig()
   const tapPath = getTapPath(globalConfig, tapName)
   !tapPath && throwNoTapLoc(globalConfig, tapName)
 
