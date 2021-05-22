@@ -1,5 +1,6 @@
-
+const constants = require('../../constants/constants')
 jest.mock('os')
+jest.setMock('../../constants/constants', constants)
 
 const { getAddresses }  = require('../')
 const { privateIPMock, publicIPMock } = require('../__mocks__/getAddresses')

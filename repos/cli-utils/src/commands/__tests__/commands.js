@@ -20,7 +20,73 @@ describe('commands', () => {
 
   beforeEach(() => {
     spawnCmdMock.mockClear()
+    asyncCmdMock.mockClear()
     errorLogMock.mockClear()
+  })
+
+  describe('runCmd', () => {
+
+    it(`Should call asyncCmd when asExec is true`, async () => {
+      await runCmd('test', [], {}, process.cwd(), true)
+      expect(asyncCmdMock).toHaveBeenCalled()
+    })
+
+    it(`Should not call asyncCmd when isExec is false`, async () => {
+      await runCmd('test', [], {}, process.cwd(), false)
+      expect(asyncCmdMock).not.toHaveBeenCalled()
+    })
+
+    it(`Should call asyncCmd when exec is true`, async () => {
+      await runCmd('test', [], { exec: true }, process.cwd())
+      expect(asyncCmdMock).toHaveBeenCalled()
+    })
+
+    it(`Should not call asyncCmd when exec is false`, async () => {
+      await runCmd('test', [], { exec: false }, process.cwd())
+      expect(asyncCmdMock).not.toHaveBeenCalled()
+    })
+
+    it(`Should convert the cmd and args into a string when calling exec command`, async () => {
+      await runCmd('test', [ '--arg', '1' ], { exec: true }, process.cwd())
+      expect(typeof asyncCmdMock.mock.calls[0][0]).toBe('string')
+      const args = asyncCmdMock.mock.calls[0][0].split(' ')
+      expect(args[0]).toBe('test')
+      expect(args[1]).toBe('--arg')
+      expect(args[2]).toBe('1')
+    })
+
+    it(`Should not convert the cmd and args into a string when exec is false`, async () => {
+      const args = [ '--arg', '1' ]
+      await runCmd('test', args, {}, process.cwd())
+      expect(spawnCmdMock.mock.calls[0][0]).toBe('test')
+      expect(spawnCmdMock.mock.calls[0][1].args).toEqual(args)
+    })
+
+    it(`Should pass the event callbacks to the config`, async () => {
+      const options = {
+        onStdOut: jest.fn(),
+        onStdErr: jest.fn(),
+        onError: jest.fn(),
+        onExit: jest.fn(),
+      }
+      await runCmd('test', [], options, process.cwd())
+
+      const callConf = spawnCmdMock.mock.calls[0][1]
+      expect(callConf.onStdOut).toBe(options.onStdOut)
+      expect(callConf.onStdErr).toBe(options.onStdErr)
+      expect(callConf.onError).toBe(options.onError)
+      expect(callConf.onExit).toBe(options.onExit)
+
+    })
+
+    it(`Should join the options.evn with process.env`, async () => {
+      process.env.TEST_CLI_UTILS_PROC_ENV = `process.env`
+      await runCmd('test', [], { env: { TEST_OPT_ENV: 'option.env' } }, process.cwd())
+      const callOpts = spawnCmdMock.mock.calls[0][1].options
+      expect(callOpts.env.TEST_CLI_UTILS_PROC_ENV).toBe(`process.env`)
+      expect(callOpts.env.TEST_OPT_ENV).toBe('option.env')
+    })
+
   })
 
   Object.entries(shortcutCmds).map(([ key, method ]) => {
