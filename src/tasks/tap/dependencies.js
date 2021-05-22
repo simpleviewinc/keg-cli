@@ -112,7 +112,7 @@ const tapDepsTask = async args => {
   const { tap, display, dependencies, update, ...params } = args.params
 
   const packages = {}
-  const tapPackage = getTapPackage({ name: tap })
+  const [ tapPackage ] = getTapPackage({ name: tap })
   await getHubRepos({
     ...params,
     context: dependencies || 'all',
