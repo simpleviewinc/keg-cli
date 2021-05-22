@@ -1,9 +1,8 @@
 const semver = require('semver')
 const { Logger } = require('KegLog')
 const { getHubRepos } = require('KegUtils/hub/getHubRepos')
-const { getTapPackage } = require('KegUtils/tap/getTapPackage')
-const { getTapPath } = require('KegUtils/globalConfig/getTapPath')
 const { get, mapObj, isEmptyColl } = require('@keg-hub/jsutils')
+const { getTapPackage, getTapPath } = require('KegRepos/cli-utils')
 const { updateVersionInDependencies } = require('KegUtils/version/updateVersionInDependencies')
 
 const depKeys = [
@@ -113,7 +112,7 @@ const tapDepsTask = async args => {
   const { tap, display, dependencies, update, ...params } = args.params
 
   const packages = {}
-  const tapPackage = getTapPackage(tap, globalConfig)
+  const tapPackage = getTapPackage({ name: tap })
   await getHubRepos({
     ...params,
     context: dependencies || 'all',

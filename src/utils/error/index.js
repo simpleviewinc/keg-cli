@@ -22,7 +22,6 @@ module.exports = {
   ...require('./throwPackageError'),
   ...require('./throwRequired'),
   ...require('./throwNoTask'),
-  ...require('./throwNoTapLoc'),
   ...require('./throwTaskFailed'),
   ...require('./throwMissingFile'),
   ...require('./throwWrap'),

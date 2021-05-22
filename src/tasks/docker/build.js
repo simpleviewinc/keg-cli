@@ -2,9 +2,10 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
 const { buildDockerCmd } = require('KegUtils/docker')
+const { throwRequired, generalError } = require('KegUtils/error')
+const { error: { throwNoTapLoc } } = require('KegRepos/cli-utils')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
-const { throwRequired, throwNoTapLoc, generalError } = require('KegUtils/error')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
