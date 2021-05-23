@@ -84,5 +84,13 @@
     * @optional
     * @type *Boolean*
     * @cli-option `N/A`
+* **KEG_BASE_PROVIDER**
+  * Sets if the base image should be pulled from the configured docker provider
+  * Must explicitly set to `false`
+  * Definition
+    * @optional
+    * @type *Boolean*
+    * @cli-option `--no-useProvider`
+
 
 * *more coming soon...*
