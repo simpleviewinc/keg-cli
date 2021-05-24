@@ -84,12 +84,6 @@ const buildOptions = (task, action, options) => {
       description: `Extra build args as key / value pairs to pass on to the docker build command.`,
       example: `keg ${task} ${action} --buildArgs custom:arg,other:arg`,
       type: 'array',
-    },
-    useProvider: {
-      alias: [ 'usp', 'upro' ],
-      description: 'Use the configured docker provider when building the base image',
-      example: `keg ${task} ${action} --no-useProvider`,
-      default: true
     }
   }
 }

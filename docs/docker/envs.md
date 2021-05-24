@@ -93,16 +93,5 @@
     * @required
     * @type *String*
     * @cli-option `--from` (docker build task only)
-* **KEG_BASE_USE_PROVIDER**
-  * Use when the image defined in `KEG_BASE_IMAGE` is
-    * **Not** from the configured docker provider
-    * Does **NOT** include the full docker url
-  * It tells the `keg-cli` not to apply the configured docker url setting to the image
-  * Must explicitly set to `false`
-  * Definition
-    * @optional
-    * @type *Boolean*
-    * @cli-option `--no-useProvider`
-
 
 * *more coming soon...*
