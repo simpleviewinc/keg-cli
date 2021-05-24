@@ -1,5 +1,9 @@
-
+// Because the constants uses the os lib, we need to import them first before mocking it
+// That way we can load them and use the os lib without any errors
+// Then mock the os lib and the constants with the previously loaded constants
+const constants = require('../../constants/constants')
 jest.mock('os')
+jest.setMock('../../constants/constants', constants)
 
 const { getAddresses }  = require('../')
 const { privateIPMock, publicIPMock } = require('../__mocks__/getAddresses')
