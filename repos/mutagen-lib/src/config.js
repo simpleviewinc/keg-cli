@@ -1,6 +1,6 @@
 const path = require('path')
 const { error, fileSys, Logger } = require('@keg-hub/cli-utils')
-const { deepMerge, deepClone, isObj } = require('@keg-hub/jsutils')
+const { deepMerge, deepClone, isObj, isEmpty } = require('@keg-hub/jsutils')
 
 const { throwError } = error 
 const { stat, loadYml, writeYml } = fileSys
@@ -63,7 +63,7 @@ class Config {
   * @returns {Object} - Mutagen config
   */
   get = (overrides) => {
-    return !isObj(overrides)
+    return !isObj(overrides) || isEmpty(overrides)
       ? this.defaults
       : overrides.mergeDefault
         ? deepMerge(this.defaults, overrides)

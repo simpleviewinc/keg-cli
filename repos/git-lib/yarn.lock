@@ -509,19 +509,20 @@
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/cli-utils@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.1.0.tgz#c7c25a90c06a4dc44ac0038c3a528930bead0b55"
-  integrity sha512-aDnjBJiSkFglgH2LCWfVp5O2CIVkFum/62CVvFYBiXHYtTERhwcRnAZaBB0+MfMRozQeK6SK/rTqjzNAvmzbBA==
+"@keg-hub/cli-utils@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.2.1.tgz#8f156425a5d26bbec2392e88b624d76668443c89"
+  integrity sha512-htMJsJvp+aYOHDe19YS3rfPYEJNvj7HtqzzF6xrNdPIbztobXm4J7ufIfEFg3vYd0SanFScHabEGam9zytj8ug==
   dependencies:
     "@keg-hub/args-parse" "6.2.1"
     "@keg-hub/ask-it" "0.0.1"
     "@keg-hub/jsutils" "8.5.0"
-    "@keg-hub/spawn-cmd" "0.1.0"
+    "@keg-hub/spawn-cmd" "0.1.2"
     app-root-path "3.0.0"
     colors "1.4.0"
     fs-extra "9.0.1"
-    jest-cli "^26.6.3"
+    jest-cli "26.6.3"
+    module-alias "2.2.2"
 
 "@keg-hub/jsutils@0.0.1":
   version "0.0.1"
@@ -533,11 +534,6 @@
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-6.2.1.tgz#0d9dbf562e313eb7690d36a2b8e9147b1e08d52a"
   integrity sha512-aCZ86nB+f6awWbDIPd6VPaePQjm8AYNXvGrwe2Ip06F6oVJZ7tiOIBwFHeK/gAKqmw1wnxl4B0z21vQeINd6dw==
 
-"@keg-hub/jsutils@8.0.0":
-  version "8.0.0"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.0.0.tgz#740e05e10128be53d2ffea72a6c8990b57745679"
-  integrity sha512-omgYOX0p9H6GsQQ5onEJK56pUI/z1CoblFqjWy/SpwANwsuqEFEG3EKDdcRwwpLjaEl8qQWQzfQ1Z6Pc+OOgqQ==
-
 "@keg-hub/jsutils@8.4.0":
   version "8.4.0"
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.4.0.tgz#e2dd2794ccc60f8c2e5ee1aa12ec6f8d9217c209"
@@ -547,17 +543,6 @@
   version "8.5.0"
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.5.0.tgz#cc81b730b6875d889e968100bd1302e0fb22d8f4"
   integrity sha512-aF0mLfc1o0fRdoEaAopEkwCHfEKSz+Kjfb5goSELBkPJyulRzPz+6OTRk7XDV6VXtiq8kGJomGDAsBLW7htk4Q==
-
-"@keg-hub/spawn-cmd@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.0.tgz#4050dfa1681f4cfdf85ef27ca11724e1603b2b48"
-  integrity sha512-R+beqPFVga+XXRcnmALZe2VEYVk5S0eyhURLkOGFEJlbeQxvBZgcRdnEGVCQF7x65aw+A5ktDiOPtN9rEWsL8Q==
-  dependencies:
-    "@keg-hub/jsutils" "8.0.0"
-    app-root-path "3.0.0"
-    cross-spawn "7.0.3"
-    shell-exec "1.0.2"
-    tree-kill "1.2.1"
 
 "@keg-hub/spawn-cmd@0.1.2":
   version "0.1.2"
@@ -2056,7 +2041,7 @@ jest-changed-files@^26.6.2:
     execa "^4.0.0"
     throat "^5.0.0"
 
-jest-cli@^26.6.3:
+jest-cli@26.6.3:
   version "26.6.3"
   resolved "https://registry.npmjs.org/jest-cli/-/jest-cli-26.6.3.tgz#43117cfef24bc4cd691a174a8796a532e135e92a"
   integrity sha512-GF9noBSa9t08pSyl3CY4frMrqp+aQXFGFkf5hEPbh/pIUFYWMK6ZLTfbmadxJVcJrdRoChlWQsA2VkJcDFK8hg==
@@ -2672,6 +2657,11 @@ mixin-deep@^1.2.0:
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
+
+module-alias@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.npmjs.org/module-alias/-/module-alias-2.2.2.tgz#151cdcecc24e25739ff0aa6e51e1c5716974c0e0"
+  integrity sha512-A/78XjoX2EmNvppVWEhM2oGk3x4lLxnkEA4jTbaK97QKSDjkIoOsKQlfylt/d3kKKi596Qy3NP5XrXJ6fZIC9Q==
 
 ms@2.0.0:
   version "2.0.0"
@@ -3584,11 +3574,6 @@ tr46@^2.0.2:
   integrity sha512-3n1qG+/5kg+jrbTzwAykB5yRYtQCTqOGKq5U5PE3b0a1/mzo6snDhjGS0zJVJunO0NrT3Dg1MLy5TjWP/UJppg==
   dependencies:
     punycode "^2.1.1"
-
-tree-kill@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.1.tgz#5398f374e2f292b9dcc7b2e71e30a5c3bb6c743a"
-  integrity sha512-4hjqbObwlh2dLyW4tcz0Ymw0ggoaVDMveUB9w8kFSQScdRLo0gxO9J7WFcUBo+W3C1TLdFIEwNOWebgZZ0RH9Q==
 
 tree-kill@1.2.2:
   version "1.2.2"
