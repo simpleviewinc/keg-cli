@@ -35,7 +35,7 @@ const createEnvFromBuildArgs = buildArgs => {
  *
  * @returns {string} - Base image to use when building
  */
-const getBaseImage = async ({ from, useProvider }, {  KEG_BASE_IMAGE, KEG_BASE_PROVIDER }) => {
+const getBaseImage = async ({ from, useProvider }, {  KEG_BASE_IMAGE, KEG_BASE_USE_PROVIDER }) => {
   const baseImage = from || KEG_BASE_IMAGE || generalError(
     `To build an image, either the env KEG_BASE_IMAGE or the "from" parameter must be defined. Ensure you have one of these set.`
   )
@@ -44,7 +44,7 @@ const getBaseImage = async ({ from, useProvider }, {  KEG_BASE_IMAGE, KEG_BASE_P
   const { full } = await getImgNameContext({ from: baseImage })
 
   // Check if the base image should come from the configured docker provider
-  return useProvider === false || KEG_BASE_PROVIDER === false
+  return useProvider === false || KEG_BASE_USE_PROVIDER === false
     ? baseImage
     : full
 }
