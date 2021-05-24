@@ -2,10 +2,9 @@ const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
 const { buildDockerCmd } = require('KegUtils/docker')
-const { throwRequired, throwNoTapLoc, generalError } = require('KegUtils/error')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 const { mergeTaskOptions } = require('KegUtils/task/options/mergeTaskOptions')
+const { throwRequired, throwNoTapLoc, generalError } = require('KegUtils/error')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
@@ -25,6 +24,20 @@ const createEnvFromBuildArgs = buildArgs => {
 
       return buildObj
     }, {})
+}
+
+/**
+ * Checks if the configured base provider should be used when building the docker image
+ * @function
+ * @param {boolean} params - Options passed to the build task parsed into an objecct
+ * @param {boolean} contextEnvs - Envs defined for the image being built ( context )
+ *
+ * @returns {string} - Base image to use when building
+ */
+const getBaseImage = async ({ from }, {  KEG_BASE_IMAGE }) => {
+  return from || KEG_BASE_IMAGE || generalError(
+    `To build an image, either the env KEG_BASE_IMAGE or the "from" parameter must be defined. Ensure you have one of these set.`
+  )
 }
 
 /**
@@ -78,12 +91,8 @@ const dockerBuild = async args => {
   // If using a tap, and no location is found, throw an error
   cmdContext === 'tap' && tap && !location && throwNoTapLoc(globalConfig, tap)
 
-  const baseImage = from || contextEnvs.KEG_BASE_IMAGE || generalError(
-    `To build an image, either the env KEG_BASE_IMAGE or the "from" parameter must be defined. Ensure you have one of these set.`
-  )
-
-  // Use the from option if passed, or the KEG_BASE_IMAGE to get the build image context
-  const { full } = await getImgNameContext({ from: baseImage })
+  // Check if the base image should come from the configured docker provider
+  const baseImg = await getBaseImage(params, contextEnvs)
 
   // Build the docker build command
   const dockerCmd = await buildDockerCmd({
@@ -98,7 +107,7 @@ const dockerBuild = async args => {
         ...contextEnvs,
         ...(buildArgs && createEnvFromBuildArgs(buildArgs)),
         // Ensure the KEG_BASE_IMAGE env uses the passed in from option or the KEG_BASE_IMAGE
-        KEG_BASE_IMAGE: full,
+        KEG_BASE_IMAGE: baseImg,
       },
       ...(tap && { tap }),
       ...(image && { image }),

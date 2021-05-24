@@ -141,7 +141,10 @@ const composeService = async (args, exArgs=noOpObj) => {
   * prior to running the app in the container
   * Connect to the service and run the start cmd
   */
-  const { cmdContext, image } = composeContext
+
+  // The KEG_IMAGE_FROM env defines which image to use when starting the container
+  // So use the KEG_IMAGE_FROM env to get the start cmd
+  const { cmdContext, contextEnvs: { KEG_IMAGE_FROM } } = composeContext
 
   // Check if we should skip the docker exec command
   const internalSkipExec = get(args, '__internal.skipDockerExec')
@@ -158,7 +161,7 @@ const composeService = async (args, exArgs=noOpObj) => {
             serviceArgs.params,
             { detach: Boolean(get(serviceArgs, 'params.detach')) },
           ),
-          cmd: await getContainerCmd({ context: cmdContext, image }),
+          cmd: await getContainerCmd({ context: cmdContext, image: KEG_IMAGE_FROM }),
           context: cmdContext,
         },
       }))
