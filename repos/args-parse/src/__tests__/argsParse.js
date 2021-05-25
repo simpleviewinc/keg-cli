@@ -233,6 +233,38 @@ describe('argsParse', () => {
 
   })
 
+  it('should convert an object type to an object when it is a colon string with multiple entries', async () => {
+    const expected = {
+      foo: "1",
+      bar: "2",
+      baz: 'hello'
+    }
+    const parsed = await argsParse({
+      args: [
+        "--object",
+        "foo:1,bar:2,baz:hello"
+      ],
+      task: testTask3,
+    })
+
+    expect(parsed.object).toEqual(expected)
+  })
+
+  it('should convert an object type to an object when it is a colon string with a single entry', async () => {
+    const expected = {
+      foo: "1",
+    }
+    const parsed = await argsParse({
+      args: [
+        "--object",
+        "foo:1"
+      ],
+      task: testTask3,
+    })
+
+    expect(parsed.object).toEqual(expected)
+  })
+
   it('should call @keg-hub/ask-it when no value is passed and task.ask is exist', async () => {
 
     expect(Ask.ask).not.toHaveBeenCalled()

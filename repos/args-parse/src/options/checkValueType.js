@@ -37,6 +37,39 @@ const valueToArray = value => {
 }
 
 /**
+ * @param {string} str 
+ * @returns {Object} the comma-separated colon string converted into an object
+ * @example
+ * colonStringToObject("foo:1,bar:2") => { foo: "1", bar: "2" }
+ */
+const colonStringToObject = str => {
+  const pairs = str.trim().split(',')
+  return pairs.reduce(
+    (obj, pair) => {
+      const [ key, value ] = pair.trim().split(':')
+      obj[key] = value
+      return obj
+    },
+    {}
+  )
+}
+
+/**
+ * Convert the passed in value to an object
+ * <br/>If it can't convert to an object, it returns an empty object
+ * @function
+ * @param {string} value - Data passed from cmd line
+ */
+const valueToObject = value => {
+  if (!isStr(value)) return {}
+
+  // check if the string matches pattern <key>:<value>,<key>:<value>
+  return value.trim().match(/^[^\s{}]+:[^\s{}]+$/g)
+    ? colonStringToObject(value)
+    : parseJSON(value, false) || {}
+}
+
+/**
  * Convert the passed in value to a type based on the meta
  * @function
  * @param {string} key - Option key from the task
@@ -54,7 +87,7 @@ const checkValueType = (key, value, meta) => {
     }
     case 'obj':
     case 'object': {
-      return parseJSON(value, false)
+      return valueToObject(value)
     }
     case 'num':
     case 'number': {
