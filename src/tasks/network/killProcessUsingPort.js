@@ -1,4 +1,4 @@
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { getProcessesUsingPort, printProcesses, kill } = require('KegUtils')
 const { generalError } = require('KegUtils/error')
 

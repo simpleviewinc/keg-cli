@@ -11,7 +11,6 @@ run_repo_tests () {
   local REPOS=$(ls "$REPOS_DIR")
 
   for REPO in $REPOS; do
-    echo "$REPO"
     local REPO_PATH="$REPOS_DIR/$REPO"
 
     # only run a test if the repo is a package

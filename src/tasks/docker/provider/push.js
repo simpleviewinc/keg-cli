@@ -1,6 +1,6 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { get, isObj, noOpObj } = require('@keg-hub/jsutils')
 const { getImageRef } = require('KegUtils/docker/getImageRef')
 const { generalError } = require('KegUtils/error/generalError')

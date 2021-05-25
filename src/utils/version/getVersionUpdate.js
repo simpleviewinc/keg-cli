@@ -1,6 +1,6 @@
 const semver = require('semver')
 const { Logger } = require('KegLog')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { get } = require('@keg-hub/jsutils')
 const { validateVersion } = require('./validateVersion')
 const { VERSION } = require('KegConst/constants')

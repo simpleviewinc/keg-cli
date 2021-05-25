@@ -1,5 +1,5 @@
 const { uuid } = require('@keg-hub/jsutils')
-const { spawnCmd, asyncCmd } = require('@keg-hub/spawn-cmd')
+const { spawnCmd, asyncCmd } = require('KegRepos/spawn-cmd')
 const expect = require('expect')
 const { logFailed } = require('../helpers/logTests')
 

@@ -1,5 +1,5 @@
 const { checkCall } = require('@keg-hub/jsutils')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { Logger } = require('KegLog')
 
 /**

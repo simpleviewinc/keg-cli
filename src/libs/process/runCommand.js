@@ -1,6 +1,6 @@
 const { Logger } = require('KegLog')
 const { isObj, isArr, isBool } = require('@keg-hub/jsutils')
-const { spawnCmd, asyncCmd } = require('@keg-hub/spawn-cmd')
+const { spawnCmd, asyncCmd } = require('KegRepos/spawn-cmd')
 
 /**
  * Gets any extra arguments passed to the spawned command so they can be logged
