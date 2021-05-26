@@ -52,7 +52,7 @@ describe('/asyncCmd', () => {
 
   it('should use the projects root as the default working directory', async () => {
 
-    const appRoot = fs.realpathSync(path.join(__dirname, '../..'))
+    const appRoot = path.join(__dirname, '../..')
 
     const { error, data, exitCode } = await asyncCmd('node -pe process.env.PWD')
 
@@ -64,10 +64,7 @@ describe('/asyncCmd', () => {
 
     const { error, data, exitCode } = await asyncCmd('node -pe process.env.PWD', { cwd: __dirname })
 
-    expect(fs.realpathSync(data.trim())).toEqual(
-      fs.realpathSync(__dirname)
-    )
-
+    expect(fs.realpathSync(data.trim())).toEqual(__dirname)
   })
 
 })
