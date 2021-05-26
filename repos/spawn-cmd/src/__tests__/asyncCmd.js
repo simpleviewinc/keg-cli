@@ -56,7 +56,7 @@ describe('/asyncCmd', () => {
 
     const { error, data, exitCode } = await asyncCmd('node -pe process.env.PWD')
 
-    expect(data.trim()).toEqual(appRoot)
+    expect(fs.realpathSync(data.trim())).toEqual(appRoot)
 
   })
 
@@ -64,7 +64,7 @@ describe('/asyncCmd', () => {
 
     const { error, data, exitCode } = await asyncCmd('node -pe process.env.PWD', { cwd: __dirname })
 
-    expect(data.trim()).toEqual(
+    expect(fs.realpathSync(data.trim())).toEqual(
       fs.realpathSync(__dirname)
     )
 
