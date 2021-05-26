@@ -23,7 +23,7 @@ const ensureArg = async (task, args, key, meta) => {
   // See ./configs/parse.config.js for list of boolean shortcuts
   args[key] = checkBoolValue(args[key])
 
-  // Ensure evn shortcuts are mapped to the correct environment
+  // Ensure env shortcuts are mapped to the correct environment
   // Allows for using shortcuts like 'dev' or 'prod' for 'development' and 'production'
   // See ./configs/parse.config.js for list of env options
   args[key] = checkEnvArg(key, args[key], meta.default)
@@ -35,12 +35,12 @@ const ensureArg = async (task, args, key, meta) => {
   // If a value is found, then just return
   if(exists(args[key])) return args
 
-  // Check if we should ask the user for an option
+  // Check if we should ask the user for an option value
   let value = await optionsAsk(key, meta)
 
   // Run final check to ensure the argument exists
   // If no value exist at this point, check to see if it's required
-  // We treat empty string as no value
+  // We treat empty strings as no value
   ;!exists(value) || value === ''
     ? checkRequired(task, key, meta)
     : ( args[key] = checkBoolValue(value) )
