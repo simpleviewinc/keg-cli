@@ -1,6 +1,6 @@
 {
   "name": "@keg-hub/cli-utils",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Utility methods for writing Custom Tasks consumed by the Keg-CLI",
   "main": "index.js",
   "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/cli-utils",
