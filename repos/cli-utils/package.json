@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "axios": "0.21.1",
-    "@keg-hub/args-parse": "6.2.1",
+    "@keg-hub/args-parse": "6.3.0",
     "@keg-hub/ask-it": "0.0.1",
     "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",

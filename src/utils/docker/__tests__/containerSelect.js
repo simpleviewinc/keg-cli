@@ -1,7 +1,7 @@
 const { docker } = require('KegMocks/libs/docker')
 const { AskIt } = require('KegMocks/ask')
 
-jest.setMock('@keg-hub/ask-it', { ask: AskIt })
+jest.setMock('KegRepos/ask-it', { ask: AskIt })
 jest.setMock('KegDocCli', docker)
 jest.setMock('KegConst/envs', { KEG_ENVS: { KEG_PROXY_HOST: 'local.kegdev.xyz' }})
 

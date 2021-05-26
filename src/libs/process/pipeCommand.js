@@ -1,6 +1,6 @@
 const { Logger } = require('KegLog')
 const { Loading } = require('./loading')
-const { spawnCmd } = require('@keg-hub/spawn-cmd')
+const { spawnCmd } = require('KegRepos/spawn-cmd')
 const {
   get,
   checkCall,
