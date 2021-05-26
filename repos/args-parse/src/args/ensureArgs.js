@@ -18,15 +18,29 @@ const { checkValueType } = require('../options/checkValueType')
  */
 const ensureArg = async (task, args, key, meta) => {
 
+  // Ensure any boolean shortcuts are mapped to true or false
+  // Allows for using shortcuts like 'yes' or 'no' for 'true' and 'false'
+  // See ./configs/parse.config.js for list of boolean shortcuts
   args[key] = checkBoolValue(args[key])
+
+  // Ensure env shortcuts are mapped to the correct environment
+  // Allows for using shortcuts like 'dev' or 'prod' for 'development' and 'production'
+  // See ./configs/parse.config.js for list of env options
   args[key] = checkEnvArg(key, args[key], meta.default)
+
+  // Validate the metadata type, to ensure it matches the value
+  // If no value exists, it will return the meta.default
   args[key] = checkValueType(key, args[key], meta)
   
+  // If a value is found, then just return
   if(exists(args[key])) return args
 
+  // Check if we should ask the user for an option value
   let value = await optionsAsk(key, meta)
 
-  // Treat empty string as no value
+  // Run final check to ensure the argument exists
+  // If no value exist at this point, check to see if it's required
+  // We treat empty strings as no value
   ;!exists(value) || value === ''
     ? checkRequired(task, key, meta)
     : ( args[key] = checkBoolValue(value) )

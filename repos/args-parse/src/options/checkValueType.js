@@ -1,5 +1,5 @@
 const { checkBoolValue } = require('./checkBoolValue')
-const { toBool, toNum, isArr, isStr } = require('@keg-hub/jsutils')
+const { toBool, toNum, isArr, isStr, exists } = require('@keg-hub/jsutils')
 
 /**
  * Convert JSON string into object, wrapped in a try / catch.
@@ -71,6 +71,8 @@ const valueToObject = value => {
 
 /**
  * Convert the passed in value to a type based on the meta
+ * IMPORTANT - If no value exists, and meta.default does exist
+ *             It will return meta.default, which is NOT type validated
  * @function
  * @param {string} key - Option key from the task
  * @param {string} value - Data passed from cmd line
@@ -78,6 +80,10 @@ const valueToObject = value => {
  * @return {Object} - JSON object
  */
 const checkValueType = (key, value, meta) => {
+  // If the value does not exists, but a default does, return that
+  if(!exists(value) && exists(meta.default))
+    return meta.default
+
   if(!meta.type) return value
 
   switch(meta.type.toLowerCase()){
