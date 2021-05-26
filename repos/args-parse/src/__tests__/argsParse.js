@@ -233,36 +233,20 @@ describe('argsParse', () => {
 
   })
 
-  it('should convert an object type to an object when it is a colon string with multiple entries', async () => {
-    const expected = {
-      foo: "1",
-      bar: "2",
-      baz: 'hello'
-    }
+  it(`should use default when no option is passed and type and default exist`, async () => {
+
     const parsed = await argsParse({
-      args: [
-        "--object",
-        "foo:1,bar:2,baz:hello"
-      ],
-      task: testTask3,
+      args: [],
+      task: testTask5,
     })
 
-    expect(parsed.object).toEqual(expected)
-  })
+    expect(parsed.foo).toBe(true)
+    expect(parsed.bar).toBe(false)
+    expect(parsed.str).toBe('Mr. Goat')
+    expect(parsed.num).toBe(5001)
+    expect(parsed.arr).toEqual([1, 2, 'buckle my shoe'])
+    expect(parsed.obj).toEqual({ first: 1, second: 2, finally: 'buckle my shoe' })
 
-  it('should convert an object type to an object when it is a colon string with a single entry', async () => {
-    const expected = {
-      foo: "1",
-    }
-    const parsed = await argsParse({
-      args: [
-        "--object",
-        "foo:1"
-      ],
-      task: testTask3,
-    })
-
-    expect(parsed.object).toEqual(expected)
   })
 
   it('should call @keg-hub/ask-it when no value is passed and task.ask is exist', async () => {

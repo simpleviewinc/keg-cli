@@ -86,6 +86,26 @@ module.exports = {
         type: 'bool',
         default: false
       },
+      str: {
+        description: "defaults to Mr. Goat",
+        type: 'string',
+        default: 'Mr. Goat'
+      },
+      num: {
+        description: "defaults to 5001",
+        type: 'number',
+        default: 5001
+      },
+      arr: {
+        description: "defaults to [1, 2, 'buckle my shoe']",
+        type: 'array',
+        default: [1, 2, 'buckle my shoe']
+      },
+      obj: {
+        description: "defaults to { first: 1, second: 2, finally: 'buckle my shoe' }",
+        type: 'object',
+        default: { first: 1, second: 2, finally: 'buckle my shoe' }
+      },
     }
   },
 }
