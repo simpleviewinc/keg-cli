@@ -240,12 +240,12 @@ describe('argsParse', () => {
       task: testTask5,
     })
 
-    expect(parsed.foo).toBe(true)
-    expect(parsed.bar).toBe(false)
-    expect(parsed.str).toBe('Mr. Goat')
-    expect(parsed.num).toBe(5001)
-    expect(parsed.arr).toEqual([1, 2, 'buckle my shoe'])
-    expect(parsed.obj).toEqual({ first: 1, second: 2, finally: 'buckle my shoe' })
+    expect(parsed.foo).toBe(testTask5.options.foo.default)
+    expect(parsed.bar).toBe(testTask5.options.bar.default)
+    expect(parsed.str).toBe(testTask5.options.str.default)
+    expect(parsed.num).toBe(testTask5.options.num.default)
+    expect(parsed.arr).toEqual(testTask5.options.arr.default)
+    expect(parsed.obj).toEqual(testTask5.options.obj.default)
 
   })
 
