@@ -1,7 +1,7 @@
 const { git } = require('KegGitCli')
 const { Logger } = require('KegLog')
 const { spawnCmd } = require('KegProc')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { copySync, emptyDirSync } = require('KegFileSys/fileSys')
 const { get, exists } = require('@keg-hub/jsutils')
 const { getHubRepos } = require('../hub/getHubRepos')

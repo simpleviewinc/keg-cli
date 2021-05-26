@@ -1,5 +1,5 @@
 const path = require('path')
-const { spawnCmd, asyncCmd } = require('@keg-hub/spawn-cmd')
+const { spawnCmd, asyncCmd } = require('KegRepos/spawn-cmd')
 const kegCliDir = path.join(__dirname, '../../../../')
 const kegExecCmd = path.join(__dirname, `../keg-exec.sh`)
 

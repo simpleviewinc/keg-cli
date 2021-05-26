@@ -482,13 +482,13 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@keg-hub/args-parse@6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@keg-hub/args-parse/-/args-parse-6.2.1.tgz#9397a927ff3e19440b45ba39ecd2b2e5a1b4691e"
-  integrity sha512-NnAux727E5kKqBGrFM1rY5+XUn5Rn7JPLoEjzhyDjNZmJx4oGEen/uBKHGn2zPDmTzes5UAnsPIW1rn2qV0lFg==
+"@keg-hub/args-parse@6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@keg-hub/args-parse/-/args-parse-6.3.0.tgz#74148d8a2316bcb1a8841e4617e3aecc73397833"
+  integrity sha512-1F7fgrtI8mZUP29OyTRYvvDkA61LsKad+4QBHUMpMbqVRTJb4hTkVvIAku4DjK0v15fVlvXBwAKsEqTQks7oVw==
   dependencies:
-    "@keg-hub/ask-it" "0.0.1"
-    "@keg-hub/jsutils" "6.2.1"
+    "@keg-hub/ask-it" "0.0.2"
+    "@keg-hub/jsutils" "8.4.0"
     app-root-path "3.0.0"
 
 "@keg-hub/ask-it@0.0.1":
@@ -500,7 +500,16 @@
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/jsutils@0.0.1", "@keg-hub/jsutils@6.2.1", "@keg-hub/jsutils@8.4.0", "@keg-hub/jsutils@8.6.0":
+"@keg-hub/ask-it@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@keg-hub/ask-it/-/ask-it-0.0.2.tgz#f586289082ffd4e218de0d11d24903592d13ba25"
+  integrity sha512-I8n/qUH+dOYKXtYo6ydOq8jeOIVTDYi4l24Dv4Q7BRbSsJOlFSUMiXuNz0Ji3h5+Vu4D0iP61e0fWVwy7zSqEg==
+  dependencies:
+    "@keg-hub/jsutils" "8.4.0"
+    colors "1.4.0"
+    inquirer "7.0.6"
+
+"@keg-hub/jsutils@0.0.1", "@keg-hub/jsutils@8.4.0", "@keg-hub/jsutils@8.6.0":
   version "8.6.0"
   resolved "https://registry.yarnpkg.com/@keg-hub/jsutils/-/jsutils-8.6.0.tgz#c6a4511b5439ffe73ff50aa9319f17d1d7701e2a"
   integrity sha512-J6o5lOL4p3idqxJkh+VHmppNFuQhC2IbwUrJiMFjXJbKLsylPQVOKZvRJ7ICHidc9fLw9Qvyd7BIgwo0Nn4iAg==

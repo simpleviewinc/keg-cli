@@ -1,6 +1,6 @@
 const path = require('path')
 const { Logger } = require('KegLog')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const packConf = require('KegRoot/package.json')
 const { capitalize } = require('@keg-hub/jsutils')
 const { parseContent } = require('KegFileSys/env')

@@ -1,6 +1,6 @@
-const { limbo } = require('@keg-hub/jsutils')
 const asyncCmd = require('../asyncCmd')
 const path = require('path')
+const fs = require('fs')
 
 describe('/asyncCmd', () => {
   beforeEach(() => jest.resetAllMocks())
@@ -52,13 +52,11 @@ describe('/asyncCmd', () => {
 
   it('should use the projects root as the default working directory', async () => {
 
-    let appRoot = path.join(__dirname, '../../')
-    // Remove the trailing slash
-    appRoot = appRoot.substring(0, appRoot.length - 1)
+    const appRoot = path.join(__dirname, '../..')
 
     const { error, data, exitCode } = await asyncCmd('node -pe process.env.PWD')
 
-    expect(data.trim()).toEqual(appRoot)
+    expect(fs.realpathSync(data.trim())).toEqual(appRoot)
 
   })
 
@@ -66,8 +64,7 @@ describe('/asyncCmd', () => {
 
     const { error, data, exitCode } = await asyncCmd('node -pe process.env.PWD', { cwd: __dirname })
 
-    expect(data.trim()).toEqual(__dirname)
-
+    expect(fs.realpathSync(data.trim())).toEqual(__dirname)
   })
 
 })

@@ -7,7 +7,7 @@ const { saveDefaultsEnv } = require('./saveDefaultsEnv')
 const { removeDefaultEnv } = require('./removeDefaultEnv')
 const { generalError } = require('../error/generalError')
 const { DEFAULT_ENV, GLOBAL_CONFIG_FOLDER } = require('KegConst/constants')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 
 /**
  * Adds an ENV to the Global Defaults.env file
