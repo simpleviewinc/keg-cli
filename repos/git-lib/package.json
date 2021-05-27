@@ -1,6 +1,6 @@
 {
   "name": "git-lib",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Wrapper around the git command line executable",
   "main": "index.js",
   "repository": "https://github.com/simpleviewinc/keg-cli",
