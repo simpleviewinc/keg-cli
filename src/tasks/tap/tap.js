@@ -10,6 +10,7 @@ module.exports = {
       ...require('./attach'),
       ...require('./build'),
       ...require('./container'),
+      ...require('./dependencies'),
       ...require('./destroy'),
       ...require('./docker'),
       ...require('./link'),

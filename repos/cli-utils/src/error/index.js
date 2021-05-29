@@ -1,1 +1,4 @@
-module.exports = require('./error')
+module.exports = {
+  ...require('./error'),
+  ...require('./throwNoTapLoc')
+}
