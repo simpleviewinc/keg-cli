@@ -9,12 +9,12 @@ const { mapFind } = require('@keg-hub/jsutils')
  * @returns {string} - Found host IP address
  */
 const getHostIP = () => {
-  const interfaces = os.networkInterfaces()
+  const ifaces = os.networkInterfaces()
 
   // pass over each interface to find the host address
   return mapFind(
-    interfaces, 
-    interface => mapFind(interface, addrInfo => {
+    ifaces, 
+    iface => mapFind(iface, addrInfo => {
       const { family, internal, address } = addrInfo
 
       // we may have the custom dns resolver running (see scripts/docker/dnsmasq)
