@@ -1,24 +1,24 @@
 {
-  "name": "@keg-hub/cli-utils",
-  "version": "0.2.2",
-  "description": "Utility methods for writing Custom Tasks consumed by the Keg-CLI",
+  "name": "parse-lib",
+  "version": "0.0.0",
+  "description": "Utils to allow loading non-javascript files into a node environment",
   "main": "index.js",
-  "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/cli-utils",
   "author": "Lance Tipton",
   "license": "MIT",
   "private": false,
+  "keywords": [
+    "env",
+    "yml",
+    "yaml",
+    "rc",
+    "file-loader",
+    "keg-hub",
+    "keg-cli",
+    "node",
+    "cli"
+  ],
   "publishConfig": {
     "access": "public"
-  },
-  "files": [
-    "__mocks__",
-    "mocks.js",
-    "configs/",
-    "index.js",
-    "src/"
-  ],
-  "engines": {
-    "node": ">= 12.0.0"
   },
   "scripts": {
     "build": "exit 0",
@@ -31,21 +31,13 @@
     "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js"
   },
   "dependencies": {
-    "axios": "0.21.1",
-    "@keg-hub/args-parse": "6.3.1",
-    "@keg-hub/ask-it": "0.0.1",
     "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
-    "app-root-path": "3.0.0",
-    "colors": "1.4.0",
-    "fs-extra": "9.0.1",
-    "module-alias": "2.2.2"
-  },
-  "resolutions": {
-    "@keg-hub/jsutils": "8.6.0"
+    "fs-extra": "9.1.0",
+    "js-yaml": "3.14.0",
+    "write-yaml-file": "4.0.0"
   },
   "devDependencies": {
-    "jest-cli": "26.6.3",
     "babel-eslint": "10.1.0",
     "eslint": "7.4.0",
     "eslint-plugin-jest": "23.18.0",
