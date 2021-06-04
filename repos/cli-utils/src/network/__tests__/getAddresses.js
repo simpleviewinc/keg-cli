@@ -18,8 +18,8 @@ describe('getAddresses', () => {
     })
 
     const addresses = getAddresses({
-      private: true,
-      public: false,
+      isPrivate: true,
+      isPublic: false,
       version: 4
     })
 

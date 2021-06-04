@@ -12,26 +12,25 @@ const getIPVersion = familyStr => familyStr && parseInt(
 /**
  * Gets network addresses matching the filter parameters
  * @param {Object} options
- * @param {Boolean} options.private - if true, only get private ip addresses
- * @param {Boolean} options.public - if true, only get public ip addresses
- * @param {Object} options.interface - the interface to get addresses for
- * @param {Object} options.internal - whether or the ip address is internal or not
+ * @param {Boolean} options.isPrivate - if true, only get private ip addresses
+ * @param {Boolean} options.isPublic - if true, only get public ip addresses
+ * @param {Object} options.iface - the interface to get addresses for
  * @param {number | string} options.version - the ip version
  * @returns {Array} - array of matching addresses
  */
- const getAddresses = ({ interface='en0', private, public, version }) => {
+ const getAddresses = ({ iface='en0', isPrivate, isPublic, version }) => {
   const interfaces = networkInterfaces()
 
-  if (!interfaces[interface])
-    throw new Error(`Could not find interface ${interface} in network`)
+  if (!interfaces[iface])
+    throw new Error(`Could not find interface ${iface} in network`)
 
-  return interfaces[interface].filter(addr => {
+  return interfaces[iface].filter(addr => {
     const ipVersion = getIPVersion(addr.family)
-    const isPrivate = isPrivateIP(addr.address)
+    const ipIsPrivate = isPrivateIP(addr.address)
 
     return (!version || ipVersion === version)
-      && (!private || isPrivate)
-      && (!public || !isPrivate)
+      && (!isPrivate || ipIsPrivate)
+      && (!isPublic || !ipIsPrivate)
   })
 }
 
