@@ -11,7 +11,12 @@ const privateIPMock = {
 }
 
 module.exports = {
-  getAddresses: () => [ privateIPMock, publicIPMock ],
+  getAddresses: ({ isPrivate, isPublic }) => 
+    isPrivate 
+      ? [ privateIPMock ]
+      : isPublic
+        ? [ publicIPMock ]
+        : [ ],
   privateIPMock,
   publicIPMock,
 }

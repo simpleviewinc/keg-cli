@@ -1,4 +1,5 @@
 module.exports = {
   ...require('./getTapConfig'),
-  ...require('./getTapPath')
+  ...require('./getTapPath'),
+  ...require('./getTapRoot')
 }
