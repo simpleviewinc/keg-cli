@@ -1,5 +1,5 @@
+const { throwError } = require('../error')
 const { execTemplate } = require('../template')
-const { throwError } = require('../error/throwError')
 const { noOp, deepMerge, isStr } = require('@keg-hub/jsutils')
 const { pathExistsSync, pathExists, remove, readFileSync, readFile } = require('fs-extra')
 

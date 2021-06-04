@@ -1,4 +1,4 @@
-const { throwError } = require('../error/throwError')
+const { throwError } = require('../error')
 const { readFile, readFileSync } = require('fs-extra')
 const { template, limbo } = require('@keg-hub/jsutils')
 

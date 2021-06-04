@@ -1,8 +1,8 @@
 const yaml = require('js-yaml')
+const { throwError } = require('../error')
 const { limbo } = require('@keg-hub/jsutils')
 const writeYamlFile = require('write-yaml-file')
-const { throwError } = require('../error/throwError')
-const { getFileContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
+const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
 
 /**
  * Parses the yml content to replaces any template values from the data object
@@ -26,7 +26,7 @@ const loadTemplateYml = (content, data, pattern) => {
  *
  * @returns {Object} - Parse YML file
  */
-const loadYmlSync = (location, data, pattern, throwErr=true) => {
+const loadYmlSync = ({ location, data, pattern, throwErr=true}) => {
   // Load the yaml file content
   const content = getContentSync(location, throwErr, `Yml`)
   // Treat it as a template and try to fill it
@@ -43,9 +43,9 @@ const loadYmlSync = (location, data, pattern, throwErr=true) => {
  *
  * @returns {Object} - Parse YML file
  */
-const loadYml = async (location, data, pattern, throwErr=true) => {
+const loadYml = async ({ location, data, pattern, throwErr=true }) => {
   // Load the yaml file content
-  const content = await getFileContent(location, throwErr, `Yml`)
+  const content = await getContent(location, throwErr, `Yml`)
   // Treat it as a template and try to fill it
   return content ? loadTemplateYml(content, data, pattern) : {}
 }

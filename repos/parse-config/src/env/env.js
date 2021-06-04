@@ -1,6 +1,7 @@
+const { writeFile } = require('fs-extra')
+const { throwError } = require('../error')
 const { parse, stringify } = require('./envParser')
 const { limbo, isStr } = require('@keg-hub/jsutils')
-const { throwError } = require('../error/throwError')
 const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
 
 /**
@@ -25,7 +26,7 @@ const loadTemplateEnv = (content, data, pattern) => {
  *
  * @returns {Object} - Parse ENV file
  */
-const loadEnvSync = (location, data, pattern, throwErr=true) => {
+const loadEnvSync = ({location, data, pattern, throwErr=true}) => {
   // Load the env file content
   const content = getContentSync(location, throwErr, `ENV`)
   // Treat it as a template and try to fill it
@@ -42,7 +43,7 @@ const loadEnvSync = (location, data, pattern, throwErr=true) => {
  *
  * @returns {Object} - Parse ENV file
  */
-const loadEnv = async (location, data, pattern, throwErr=true) => {
+const loadEnv = async ({location, data, pattern, throwErr=true}) => {
   // Load the env file content
   const content = await getContent(location, throwErr, `ENV`)
   // Load the env file
@@ -84,8 +85,7 @@ const removeEnv = async location => {
  */
 const writeEnv = async (location, data) => {
   const content = isStr(data) ? data : stringify(data)
-
-  const [ err, _ ] = await limbo(writeEnv(location, content))
+  const [ err, _ ] = await limbo(writeFile(location, content))
   return err ? throwError(err.stack) : true
 }
 
