@@ -33,7 +33,7 @@ const envStr = `
   OTHER_PATH=/other/path/
 
   # --- Middle comment --- #
-
+  BOOL: true
   # Last
   SOME="VALUE"
   ANOTHER='value'
@@ -44,6 +44,7 @@ const envStr = `
 const envObj = {
   TEST_PATH: `/test/path`,
   OTHER_PATH: `/other/path/`,
+  BOOL: true,
   SOME: 'VALUE',
   ANOTHER: 'value',
   ITEM: '1',

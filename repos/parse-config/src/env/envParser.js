@@ -41,7 +41,7 @@ const parse = content => {
       result[key] = convertValue(value)
 
       return result
-    })
+    }, {})
 }
 
 /** 
