@@ -1,17 +1,22 @@
 jest.resetAllMocks()
 jest.clearAllMocks()
 
-
 const path = require('path')
 const yaml = require('js-yaml')
 const { loadYml } = require('../../yml')
 const writeYamlFile = require('write-yaml-file')
-const { utilValues } = require('../../__mocks__')
 const { isArr, isObj, isStr, limbo } = require('@keg-hub/jsutils')
 const { pathExistsSync, pathExists, remove, readFileSync, readFile } = require('fs-extra')
-const testYmlPath = path.join(__dirname, './ymlTest.yml')
-const testYmlWrite = path.join(__dirname, './ymlWriteTest.yml')
 
+const {
+  removeYmlFile,
+  removeYmlTest,
+  testYmlPath,
+  testYmlWrite,
+  writeYmlTest,
+  writeYmlFile,
+  utilValues
+} = require('../../__mocks__')
 
 const {
   getContent,
@@ -20,14 +25,6 @@ const {
   removeFile,
 } = require('../utils')
 
-const writeToYml = async (file, data) => {
-  await limbo(removeYmlFile(file))
-  return limbo(writeYamlFile(file, data))
-}
-
-const removeYmlFile = (file) => {
-  return pathExistsSync(file) && limbo(removeFile(file))
-}
 
 const testYmlData = {
   test: [ 'baz', 'foo' ],
@@ -47,12 +44,11 @@ bar:
 describe('utils', () => {
 
   beforeEach( async () => {
-    await writeToYml(testYmlPath, testYmlData)
+    await writeYmlTest()
   })
 
   afterAll( async () => {
-    await removeYmlFile(testYmlPath)
-    await removeYmlFile(testYmlWrite)
+    await removeYmlTest()
   })
 
   afterAll(() => jest.resetAllMocks())
@@ -112,7 +108,7 @@ describe('utils', () => {
   describe('mergeFiles', () => {
     it(`should merge two config files together`, async () => {
       const secTestYmlFile = path.join(__dirname, './ymlTest2.yml')
-      await writeToYml(testYmlPath, testYmlData)
+      await writeYmlFile(testYmlPath, testYmlData)
       await writeYamlFile(secTestYmlFile, {
         test: [ 'added' ],
         bar: { 'sub-content': 'overwrite' },
@@ -137,7 +133,7 @@ describe('utils', () => {
 
   describe('removeFile', () => {
     it(`Should remove a file if it exists`, async () => {
-      await writeToYml(testYmlPath, testYmlData)
+      await writeYmlFile(testYmlPath, testYmlData)
       const exists = await pathExistsSync(testYmlPath)
       expect(exists).toBe(true)
 

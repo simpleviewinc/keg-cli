@@ -28,7 +28,7 @@ const setDefaultPattern = (pattern) => {
  * @returns {void}
  */
 const setTemplateRegex = (pattern) => {
-  template.regex = pattern || /{{([^}]*)}}/g
+  template.regex = pattern || defPattern
 }
 
 /**
@@ -70,7 +70,7 @@ const fillTemplate = async ({ location, template:tmp, data={}, pattern }) => {
     ? [null, tmp]
     : await limbo(readFile(location))
 
-  return err ? throwError(err) : execTemplate(toFill, data, pattern)
+  return err ? throwError(err) : execTemplate(toFill.toString(), data, pattern)
 }
 
 /**
@@ -95,6 +95,7 @@ module.exports = {
   execTemplate,
   fillTemplate,
   fillTemplateSync,
+  setDefaultPattern,
   template: {
     exec: execTemplate,
     fill: fillTemplate,
