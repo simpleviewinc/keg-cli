@@ -15,7 +15,7 @@ let defPattern = /{{([^}]*)}}/g
  *
  * @returns {void}
  */
-const setDefaultPattern = (pattern) => {
+const setDefaultPattern = pattern => {
   defPattern = pattern || defPattern
 }
 
@@ -24,10 +24,10 @@ const setDefaultPattern = (pattern) => {
  * @function
  * @private
  * @param {RegEx} pattern - Template pattern to override the default
- * 
+ *
  * @returns {void}
  */
-const setTemplateRegex = (pattern) => {
+const setTemplateRegex = pattern => {
   template.regex = pattern || defPattern
 }
 
@@ -54,7 +54,6 @@ const execTemplate = (tmp, data, pattern) => {
   return filled
 }
 
-
 /**
  * Loads and fills a template from the passed in data
  * @param {Object} args - Arguments to load an fill the template
@@ -62,13 +61,16 @@ const execTemplate = (tmp, data, pattern) => {
  * @param {string} args.location - Location of the template file on the host machine
  * @param {string} args.template - Template to be filled
  * @param {Object} args.data - Data used to fill the template
- * 
+ *
  * @returns {string} - Template with the content filled from the passed in data
  */
-const fillTemplate = async ({ location, template:tmp, data={}, pattern }) => {
-  const [ err, toFill ] = tmp
-    ? [null, tmp]
-    : await limbo(readFile(location))
+const fillTemplate = async ({
+  location,
+  template: tmp,
+  data = {},
+  pattern,
+}) => {
+  const [ err, toFill ] = tmp ? [ null, tmp ] : await limbo(readFile(location))
 
   return err ? throwError(err) : execTemplate(toFill.toString(), data, pattern)
 }
@@ -82,14 +84,9 @@ const fillTemplate = async ({ location, template:tmp, data={}, pattern }) => {
  *
  * @returns {string} - Template with the content filled from the passed in data
  */
-const fillTemplateSync = ({ location, template:tmp, data={}, pattern }) => {
-  return execTemplate(
-    tmp || readFileSync(location),
-    data,
-    pattern
-  )
+const fillTemplateSync = ({ location, template: tmp, data = {}, pattern }) => {
+  return execTemplate(tmp || readFileSync(location), data, pattern)
 }
-
 
 module.exports = {
   execTemplate,
@@ -101,5 +98,5 @@ module.exports = {
     fill: fillTemplate,
     fillSync: fillTemplateSync,
     setDefaultPattern,
-  }
+  },
 }

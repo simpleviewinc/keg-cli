@@ -24,7 +24,7 @@ const envObj = {
   SOME: 'VALUE',
   ANOTHER: 'value',
   ITEM: '1',
-  MR: 'goat'
+  MR: 'goat',
 }
 
 const envStrNoComments = `

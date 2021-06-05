@@ -1,7 +1,13 @@
 const { execTemplate } = require('../template')
 const { throwError, throwNoFile } = require('../error')
-const { noOp, noOpObj, deepMerge, isStr, limbo } = require('@keg-hub/jsutils')
-const { pathExistsSync, pathExists, remove, readFileSync, readFile } = require('fs-extra')
+const { noOp, deepMerge, isStr, limbo } = require('@keg-hub/jsutils')
+const {
+  pathExistsSync,
+  pathExists,
+  remove,
+  readFileSync,
+  readFile,
+} = require('fs-extra')
 
 /**
  * Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
@@ -11,9 +17,8 @@ const { pathExistsSync, pathExists, remove, readFileSync, readFile } = require('
  *
  * @returns {Object} - stripped string
  */
-const stripBom = content => (
-  content.charCodeAt(0) === 0xFEFF ? content.slice(1) : content
-)
+const stripBom = content =>
+  content.charCodeAt(0) === 0xfeff ? content.slice(1) : content
 
 /**
  * Checks it the passed in location exists on th local file system
@@ -25,13 +30,13 @@ const stripBom = content => (
  *
  * @returns {boolean} - True if the file exists
  */
-const checkExists = async (location, error=true, type) => {
+const checkExists = async (location, error = true, type) => {
   const exists = await pathExists(location)
 
   return exists
     ? true
     : error
-      ? throwNoFile(location, `Could not load ${type} file!`) 
+      ? throwNoFile(location, `Could not load ${type} file!`)
       : false
 }
 
@@ -45,14 +50,13 @@ const checkExists = async (location, error=true, type) => {
  *
  * @returns {string} - Loaded file content
  */
-const getContentSync = (location, error=true, type) => {
+const getContentSync = (location, error = true, type) => {
   return pathExistsSync(location)
     ? readFileSync(location)
     : error
       ? throwNoFile(location, `Could not load ${type} file!`)
       : null
 }
-
 
 /**
  * Gets the content of a file from the passed in location
@@ -64,9 +68,9 @@ const getContentSync = (location, error=true, type) => {
  *
  * @returns {string} - Loaded file content
  */
-const getContent = async (location, error=true, type) => {
+const getContent = async (location, error = true, type) => {
   const exists = await checkExists(location, error, type)
-  if(!exists) return ''
+  if (!exists) return ''
 
   // Get the content of the file
   const [ err, content ] = await limbo(readFile(location))
@@ -74,7 +78,7 @@ const getContent = async (location, error=true, type) => {
   return !err
     ? content.toString()
     : error
-      ? throwError(location, `Could not load ${type} file!`) 
+      ? throwError(location, `Could not load ${type} file!`)
       : null
 }
 
@@ -88,9 +92,11 @@ const getContent = async (location, error=true, type) => {
  */
 const removeFile = async (location, type) => {
   !isStr(location) &&
-    throwError(`Remove ${type} file requires a file location, instead got: ${location}`)
+    throwError(
+      `Remove ${type} file requires a file location, instead got: ${location}`
+    )
 
-  const [ err ] = await limbo(remove(location))
+  const [err] = await limbo(remove(location))
   return err ? throwError(err) : true
 }
 
@@ -99,16 +105,16 @@ const removeFile = async (location, type) => {
  * Then merges them all together
  * @function
  * @param {Array} files - Array of files paths to load
- * @param {function} loader - callback to load the file, should return an object 
+ * @param {function} loader - callback to load the file, should return an object
  *
  * @returns {Object} - Merged files as an Object
  */
-const mergeFiles = async ({ files, loader=noOp, ...args }) => {
+const mergeFiles = async ({ files, loader = noOp, ...args }) => {
   const loaded = await Promise.all(
     await files.reduce(async (toResolve, file) => {
       const loaded = await toResolve
-      const loadedYml =  isStr(file) &&
-        await loader({ location: file, ...args })
+      const loadedYml =
+        isStr(file) && (await loader({ location: file, ...args }))
 
       loadedYml && loaded.push(loadedYml)
 
@@ -131,11 +137,7 @@ const mergeFiles = async ({ files, loader=noOp, ...args }) => {
  * @returns {Object|*} - Response from the loader callback
  */
 const loadTemplate = (content, data, pattern, loader) => {
-  return loader(execTemplate(
-    stripBom(content),
-    data,
-    pattern
-  ))
+  return loader(execTemplate(stripBom(content), data, pattern))
 }
 
 module.exports = {
@@ -144,5 +146,5 @@ module.exports = {
   loadTemplate,
   mergeFiles,
   removeFile,
-  stripBom
+  stripBom,
 }

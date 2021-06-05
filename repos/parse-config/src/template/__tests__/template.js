@@ -1,15 +1,12 @@
 jest.resetAllMocks()
 jest.clearAllMocks()
 
-const writeYamlFile = require('write-yaml-file')
 const {
   removeYmlJson,
   testYmlJsonPath,
   writeYmlFile,
-  utilValues
+  utilValues,
 } = require('../../__mocks__')
-
-const defPattern = /{{([^}]*)}}/g
 
 const { template } = require('@keg-hub/jsutils')
 const { execTemplate, fillTemplate, setDefaultPattern } = require('../template')
@@ -26,18 +23,13 @@ variants:
 
 const ymlTmpObjIn = {
   test: {
-    template: '{{mr.goat}}'
+    template: '{{mr.goat}}',
   },
-  variants: [
-    `{{item.0}}`,
-    `{{item.0 }}`,
-    `{{ item.0}}`,
-    `{{ item.0 }}`,
-  ]
+  variants: [ `{{item.0}}`, `{{item.0 }}`, `{{ item.0}}`, `{{ item.0 }}` ],
 }
 const ymlTmpData = {
   mr: { goat: 'I am goat' },
-  item: [ 'mr.goat']
+  item: ['mr.goat'],
 }
 const ymlTmpOut = `
 test:
@@ -50,14 +42,12 @@ variants:
 `.trim()
 
 describe('template', () => {
-
   describe('execTemplate', () => {
-
     it(`Should fill the template with values from the data object`, () => {
       expect(utilValues.ymlStr.includes(`- item3`)).toBe(false)
       expect(utilValues.ymlStr.includes(`item3: 3`)).toBe(false)
 
-      const data = { test: { array: ['item3'], key: 'item3', value: '3' }}
+      const data = { test: { array: ['item3'], key: 'item3', value: '3' } }
       const filled = execTemplate(utilValues.ymlStr, data)
       expect(filled.includes(`- item3`)).toBe(true)
       expect(filled.includes(`item3: 3`)).toBe(true)
@@ -66,11 +56,10 @@ describe('template', () => {
     it(`Should remove template values when they don't exist`, () => {
       expect(utilValues.envStr.includes(`{{ test.path }}`)).toBe(true)
 
-      const filled = execTemplate(utilValues.envStr, {test: {}})
+      const filled = execTemplate(utilValues.envStr, { test: {} })
 
       expect(filled.includes(`{{ test.path }}`)).toBe(false)
     })
-
   })
 
   describe('fillTemplate', () => {
@@ -83,13 +72,19 @@ describe('template', () => {
     })
 
     it(`Should load and fill a template from a location`, async () => {
-      const filled = await fillTemplate({ location: testYmlJsonPath, data: ymlTmpData })
-      
+      const filled = await fillTemplate({
+        location: testYmlJsonPath,
+        data: ymlTmpData,
+      })
+
       expect(filled.trim()).toEqual(ymlTmpOut)
     })
 
     it(`Should load and fill a template from passed in template`, async () => {
-      const filled = await fillTemplate({ template: ymlTmpStrIn, data: ymlTmpData })
+      const filled = await fillTemplate({
+        template: ymlTmpStrIn,
+        data: ymlTmpData,
+      })
       expect(filled.trim()).toEqual(ymlTmpOut)
     })
   })

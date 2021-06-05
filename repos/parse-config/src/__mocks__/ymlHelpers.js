@@ -1,5 +1,3 @@
-
-
 const path = require('path')
 const writeYamlFile = require('write-yaml-file')
 const { limbo } = require('@keg-hub/jsutils')
@@ -10,7 +8,7 @@ const testYmlJsonPath = path.join(__dirname, './ymlJsonTemplateTest.yml')
 
 const testYmlData = {
   test: [ 'baz', 'foo' ],
-  bar: { 'sub-content': { more: [ 'item:item' ] } }
+  bar: { 'sub-content': { more: ['item:item'] } },
 }
 
 const testYmlStr = `
@@ -23,7 +21,6 @@ bar:
       - 'item:item'
 `.trim()
 
-
 const removeYmlTest = async () => {
   await removeYmlFile(testYmlPath)
   await removeYmlFile(testYmlWrite)
@@ -34,8 +31,8 @@ const writeYmlTest = async (file, data) => {
   await writeYmlFile(testYmlPath, testYmlData)
 }
 
-const removeYmlFile = async (file) => {
-  return pathExistsSync(file) && await remove(file)
+const removeYmlFile = async file => {
+  return pathExistsSync(file) && (await remove(file))
 }
 
 const writeYmlFile = async (file, data) => {
@@ -55,5 +52,6 @@ module.exports = {
   testYmlPath,
   testYmlWrite,
   writeYmlTest,
-  writeYmlFile
+  writeYmlFile,
+  testYmlStr,
 }

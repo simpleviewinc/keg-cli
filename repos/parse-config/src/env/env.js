@@ -26,7 +26,7 @@ const loadTemplateEnv = (content, data, pattern) => {
  *
  * @returns {Object} - Parse ENV file
  */
-const loadEnvSync = ({location, data, pattern, error=true}) => {
+const loadEnvSync = ({ location, data, pattern, error = true }) => {
   // Load the env file content
   const content = getContentSync(location, error, `ENV`)
   // Treat it as a template and try to fill it
@@ -43,7 +43,7 @@ const loadEnvSync = ({location, data, pattern, error=true}) => {
  *
  * @returns {Object} - Parse ENV file
  */
-const loadEnv = async ({location, data, pattern, error=true}) => {
+const loadEnv = async ({ location, data, pattern, error = true }) => {
   // Load the env file content
   const content = await getContent(location, error, `ENV`)
   // Load the env file
@@ -93,7 +93,7 @@ const removeEnv = async location => {
  */
 const writeEnv = async (location, data) => {
   const content = isStr(data) ? data : stringify(data)
-  const [ err, _ ] = await limbo(writeFile(location, content))
+  const [err] = await limbo(writeFile(location, content))
   return err ? throwError(err.stack) : true
 }
 
@@ -109,5 +109,5 @@ module.exports = {
     merge: mergeEnv,
     remove: removeEnv,
     write: writeEnv,
-  }
+  },
 }

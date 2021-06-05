@@ -1,4 +1,3 @@
-
 /*
  * Builds an error message based on passed in array
  * @function
@@ -6,8 +5,8 @@
  * @param {Array<string>} messages - Groups of strings to be logged as the error
  *
  * @returns {String} - Joined messages as a single string
-*/
-const buildMessage = (messages) => {
+ */
+const buildMessage = messages => {
   return `\n ${messages.join('\n ')}\n`
 }
 
@@ -20,7 +19,7 @@ const buildMessage = (messages) => {
  * @param {boolean} exit - Should the process exit after the error is logged
  *
  * @returns {void}
-*/
+ */
 const throwNoFile = (filePath, extra, exit) => {
   const defMessage = [`File path does not exist at ${filePath}.`]
   const message = extra ? defMessage.concat([extra]) : defMessage
@@ -35,7 +34,7 @@ const throwNoFile = (filePath, extra, exit) => {
  * @param {Array<string>} message - Strings to be logged as the error
  *
  * @returns {void}
-*/
+ */
 const throwError = (...message) => {
   throw new Error(buildMessage(message))
 }
@@ -46,7 +45,7 @@ const throwError = (...message) => {
  * @param {Array<string>} message - v to be logged as the error
  *
  * @returns {void}
-*/
+ */
 const exitError = (...message) => {
   console.error(buildMessage(message))
   process.exit(1)

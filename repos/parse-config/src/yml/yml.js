@@ -26,7 +26,7 @@ const loadTemplateYml = (content, data, pattern) => {
  *
  * @returns {Object} - Parse YML file
  */
-const loadYmlSync = ({ location, data=noOpObj, pattern, error=true}) => {
+const loadYmlSync = ({ location, data = noOpObj, pattern, error = true }) => {
   // Load the yaml file content
   const content = getContentSync(location, error, `Yml`)
   // Treat it as a template and try to fill it
@@ -43,7 +43,7 @@ const loadYmlSync = ({ location, data=noOpObj, pattern, error=true}) => {
  *
  * @returns {Object} - Parse YML file
  */
-const loadYml = async ({ location, data=noOpObj, pattern, error=true }) => {
+const loadYml = async ({ location, data = noOpObj, pattern, error = true }) => {
   // Load the yaml file content
   const content = await getContent(location, error, `Yml`)
   // Treat it as a template and try to fill it
@@ -61,8 +61,8 @@ const loadYml = async ({ location, data=noOpObj, pattern, error=true }) => {
  *
  * @returns {boolean} - If the YML file could be written
  */
-const writeYml = async (location, data=noOpObj, error) => {
-  const [ err, _ ] = await limbo(writeYamlFile(location, data))
+const writeYml = async (location, data = noOpObj, error) => {
+  const [err] = await limbo(writeYamlFile(location, data))
   return err && error ? throwError(err.stack) : true
 }
 
@@ -109,5 +109,5 @@ module.exports = {
     merge: mergeYml,
     remove: removeYml,
     write: writeYml,
-  }
+  },
 }

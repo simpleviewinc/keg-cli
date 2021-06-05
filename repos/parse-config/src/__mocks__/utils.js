@@ -23,8 +23,8 @@ const ymlObj = {
     object: { item1: 1, item2: 2, item3: 3 },
   },
   root: {
-    test: 'test item under second root'
-  }
+    test: 'test item under second root',
+  },
 }
 
 const envStr = `
@@ -48,15 +48,14 @@ const envObj = {
   SOME: 'VALUE',
   ANOTHER: 'value',
   ITEM: '1',
-  MR: 'goat'
+  MR: 'goat',
 }
 
 const stripBom = jest.fn(content => {
   return content
 })
 
-
-const getContentSync = jest.fn((location, throwErr=true) => {
+const getContentSync = jest.fn((location, throwErr = true) => {
   return location.endsWith('.yml')
     ? ymlStr
     : location.endsWith('.env')
@@ -66,8 +65,7 @@ const getContentSync = jest.fn((location, throwErr=true) => {
         : null
 })
 
-
-const getContent = jest.fn(async (location, throwErr=true) => {
+const getContent = jest.fn(async (location, throwErr = true) => {
   return location.endsWith('.yml')
     ? ymlStr
     : location.endsWith('.env')
@@ -77,14 +75,11 @@ const getContent = jest.fn(async (location, throwErr=true) => {
         : null
 })
 
-
-const removeFile = jest.fn(async (location) => {
-  return location.endsWith('.yml') || location.endsWith('.env')
-    ? true
-    : false
+const removeFile = jest.fn(async location => {
+  return location.endsWith('.yml') || location.endsWith('.env') ? true : false
 })
 
-const mergeFiles = jest.fn(async (files, loader=jest.fn()) => {
+const mergeFiles = jest.fn(async (files, loader = jest.fn()) => {
   return {}
 })
 
@@ -102,7 +97,7 @@ const utils = {
   loadTemplate,
   mergeFiles,
   removeFile,
-  stripBom
+  stripBom,
 }
 
 const resetUtils = () => {
@@ -119,5 +114,5 @@ module.exports = {
     envObj,
     ymlStr,
     ymlObj,
-  }
+  },
 }

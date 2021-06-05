@@ -83,5 +83,7 @@ module.exports = {
     'jest/no-identical-title': 'error',
     'jest/prefer-to-have-length': 'warn',
     'jest/valid-expect': 'error',
+    'jest/no-try-expect': 'warn',
+    'jest/no-mocks-import': 'warn',
   },
 }

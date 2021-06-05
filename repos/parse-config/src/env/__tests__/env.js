@@ -3,7 +3,9 @@ jest.clearAllMocks()
 
 const fs = require('fs-extra')
 const writeFileMock = jest.fn(async (location, data) => {
-  const throwError = () => {throw Error(`Invalid file path`)}
+  const throwError = () => {
+    throw Error(`Invalid file path`)
+  }
   return location.endsWith('.env') ? true : throwError()
 })
 jest.setMock('fs-extra', { ...fs, writeFile: writeFileMock })
@@ -15,12 +17,11 @@ const data = {}
 const { env } = require('../env')
 
 describe('ENV files', () => {
-
   beforeAll(() => {
     resetUtils()
   })
 
-  beforeEach(() =>{
+  beforeEach(() => {
     writeFileMock.mockClear()
   })
 
@@ -42,8 +43,10 @@ describe('ENV files', () => {
         const content = await env.load({ location: `/some/env/path.env`, data })
         expect(content).toEqual(utilValues.envObj)
       }
-      catch(err){
-        throw new Error(`env.load should not throw with a valid path, but it did!`)
+      catch (err) {
+        throw new Error(
+          `env.load should not throw with a valid path, but it did!`
+        )
       }
     })
 
@@ -52,14 +55,15 @@ describe('ENV files', () => {
       try {
         await env.load({ location, data })
       }
-      catch(err){
-        expect(err.message.trim()).toEqual(`Could not load file from ${location}`)
+      catch (err) {
+        expect(err.message.trim()).toEqual(
+          `Could not load file from ${location}`
+        )
       }
     })
   })
 
   describe('writeEnv', () => {
-
     it('should call the fs.writeFile method', async () => {
       await env.write(`/path/to/som/file.env`, data)
       expect(writeFileMock).toHaveBeenCalled()
@@ -69,8 +73,10 @@ describe('ENV files', () => {
       try {
         await env.write(`/path/to/som/file.env`, data)
       }
-      catch(err){
-        throw new Error(`env.write should not throw with a valid path, but it did!`)
+      catch (err) {
+        throw new Error(
+          `env.write should not throw with a valid path, but it did!`
+        )
       }
     })
 
@@ -79,16 +85,15 @@ describe('ENV files', () => {
       try {
         await env.write(location, data)
       }
-      catch(err){
+      catch (err) {
         expect(err.message.includes(`Invalid file path`)).toBe(true)
       }
     })
-
   })
 
   describe('mergeEnv', () => {
     it('should call utils.mergeFiles', async () => {
-      await env.merge({ files: [`some/file/path`, `another/file/path`] })
+      await env.merge({ files: [ `some/file/path`, `another/file/path` ] })
       expect(utils.mergeFiles).toHaveBeenCalled()
     })
   })
@@ -99,5 +104,4 @@ describe('ENV files', () => {
       expect(utils.removeFile).toHaveBeenCalled()
     })
   })
-
 })

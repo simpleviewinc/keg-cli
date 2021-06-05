@@ -17,24 +17,28 @@ const convertValue = value => {
   const isSingleQuoted = value[0] === "'" && value[end] === "'"
 
   // Check if it has quotes, and if so remove them out of the value
-  const cleaned = (isSingleQuoted || isDoubleQuoted)
-    ? value.substring(1, end).trim().replace(NEWLINES_ESC, NEWLINE)
-    : value.trim()
+  const cleaned =
+    isSingleQuoted || isDoubleQuoted
+      ? value.substring(1, end).trim()
+          .replace(NEWLINES_ESC, NEWLINE)
+      : value.trim()
 
   // Check if it's a string boolean and convert or just return the value
-  return isStrBool(cleaned) ? toBool(cleaned): cleaned
+  return isStrBool(cleaned) ? toBool(cleaned) : cleaned
 }
 
 /**
  * Parse an env file string into an object
  * @function
  * @param {string} content - String to be converted
-*/
+ */
 const parse = content => {
-  return content.toString().split('\n')
+  return content
+    .toString()
+    .split('\n')
     .reduce((result, line) => {
       const match = line.match(/^([^=:#]+?)[=:](.*)/)
-      if(!match) return result
+      if (!match) return result
 
       const key = match[1].trim()
       const value = match[2].trim()
@@ -44,22 +48,20 @@ const parse = content => {
     }, {})
 }
 
-/** 
+/**
  * Turn an object into an env file string
  * @function
  * @param {Object} obj - Object to convert
- * 
+ *
  * @returns {string} - Converted object
-*/
+ */
 const stringify = obj => {
-  return Object.entries(obj)
-    .reduce((result, [key, value]) => {
-      return key ? `${result}${key}=${String(value)}\n` : result
-    }, '')
+  return Object.entries(obj).reduce((result, [ key, value ]) => {
+    return key ? `${result}${key}=${String(value)}\n` : result
+  }, '')
 }
 
-module.exports ={
+module.exports = {
   parse,
-  stringify
+  stringify,
 }
-
