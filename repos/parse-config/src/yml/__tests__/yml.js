@@ -88,7 +88,7 @@ describe('Yaml files', () => {
 
   describe('mergeYml', () => {
     it('should call utils.mergeFiles', async () => {
-      await yml.merge(`some/file/path`, `another/file/path`)
+      await yml.merge({ files: [`some/file/path`, `another/file/path`] })
       expect(utils.mergeFiles).toHaveBeenCalled()
     })
   })

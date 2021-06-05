@@ -1,6 +1,6 @@
-const { throwError } = require('../error')
 const { execTemplate } = require('../template')
-const { noOp, deepMerge, isStr } = require('@keg-hub/jsutils')
+const { throwError, throwNoFile } = require('../error')
+const { noOp, noOpObj, deepMerge, isStr, limbo } = require('@keg-hub/jsutils')
 const { pathExistsSync, pathExists, remove, readFileSync, readFile } = require('fs-extra')
 
 /**
@@ -20,17 +20,17 @@ const stripBom = content => (
  * @type {function}
  * @throws
  * @param {string} location - Path to the file
- * @param {boolean} throwErr - If an error should be thrown when file does not exist
+ * @param {boolean} error - If an error should be thrown when file does not exist
  * @param {string} type - Type of file that's being loaded
  *
  * @returns {boolean} - True if the file exists
  */
-const checkExists = async (location, throwErr=true, type) => {
-  const [ err, _ ] = await limbo(pathExists(location))
+const checkExists = async (location, error=true, type) => {
+  const exists = await pathExists(location)
 
-  return !err
+  return exists
     ? true
-    : throwErr
+    : error
       ? throwNoFile(location, `Could not load ${type} file!`) 
       : false
 }
@@ -40,15 +40,15 @@ const checkExists = async (location, throwErr=true, type) => {
  * @type {function}
  * @throws
  * @param {string} location - Path to the file
- * @param {boolean} throwErr - If an error should be thrown when file does not exist
+ * @param {boolean} error - If an error should be thrown when file does not exist
  * @param {string} type - Type of file that's being loaded
  *
  * @returns {string} - Loaded file content
  */
-const getContentSync = (location, throwErr=true, type) => {
+const getContentSync = (location, error=true, type) => {
   return pathExistsSync(location)
     ? readFileSync(location)
-    : throwError
+    : error
       ? throwNoFile(location, `Could not load ${type} file!`)
       : null
 }
@@ -59,21 +59,21 @@ const getContentSync = (location, throwErr=true, type) => {
  * @type {function}
  * @throws
  * @param {string} location - Path to the file
- * @param {boolean} throwErr - If an error should be thrown when file does not exist
+ * @param {boolean} error - If an error should be thrown when file does not exist
  * @param {string} type - Type of file that's being loaded
  *
  * @returns {string} - Loaded file content
  */
-const getContent = async (location, throwErr=true, type) => {
-  const exists = await checkExists(location, throwErr=true, type)
+const getContent = async (location, error=true, type) => {
+  const exists = await checkExists(location, error, type)
   if(!exists) return ''
 
   // Get the content of the file
-  const [ err, content ] = await readFile(location)
+  const [ err, content ] = await limbo(readFile(location))
 
   return !err
-    ? content
-    : throwErr
+    ? content.toString()
+    : error
       ? throwError(location, `Could not load ${type} file!`) 
       : null
 }
@@ -88,10 +88,10 @@ const getContent = async (location, throwErr=true, type) => {
  */
 const removeFile = async (location, type) => {
   !isStr(location) &&
-    throwError(`Remove ${type} file requires a file location, instead got:\n`, `\t${location}`)
+    throwError(`Remove ${type} file requires a file location, instead got: ${location}`)
 
-  const [ err, removed ] = await remove(location)
-  return err ? throwError(err) : removed
+  const [ err ] = await limbo(remove(location))
+  return err ? throwError(err) : true
 }
 
 /**
@@ -103,11 +103,13 @@ const removeFile = async (location, type) => {
  *
  * @returns {Object} - Merged files as an Object
  */
-const mergeFiles = async (files, loader=noOp) => {
+const mergeFiles = async ({ files, loader=noOp, ...args }) => {
   const loaded = await Promise.all(
     await files.reduce(async (toResolve, file) => {
       const loaded = await toResolve
-      const loadedYml = await (isStr(file) && loader(file))
+      const loadedYml =  isStr(file) &&
+        await loader({ location: file, ...args })
+
       loadedYml && loaded.push(loadedYml)
 
       return loaded

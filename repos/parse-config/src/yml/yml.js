@@ -1,6 +1,6 @@
 const yaml = require('js-yaml')
 const { throwError } = require('../error')
-const { limbo } = require('@keg-hub/jsutils')
+const { limbo, noOpObj, noPropArr } = require('@keg-hub/jsutils')
 const writeYamlFile = require('write-yaml-file')
 const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
 
@@ -22,13 +22,13 @@ const loadTemplateYml = (content, data, pattern) => {
  * @param {string} location - Path to the YML file
  * @param {string} data - Data to file the YML file with, if it's a template
  * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} throwErr - If an error should be thrown when yml file does not exist
+ * @param {boolean} error - If an error should be thrown when yml file does not exist
  *
  * @returns {Object} - Parse YML file
  */
-const loadYmlSync = ({ location, data, pattern, throwErr=true}) => {
+const loadYmlSync = ({ location, data=noOpObj, pattern, error=true}) => {
   // Load the yaml file content
-  const content = getContentSync(location, throwErr, `Yml`)
+  const content = getContentSync(location, error, `Yml`)
   // Treat it as a template and try to fill it
   return content ? loadTemplateYml(content, data, pattern) : {}
 }
@@ -39,13 +39,13 @@ const loadYmlSync = ({ location, data, pattern, throwErr=true}) => {
  * @param {string} location - Path to the YML file
  * @param {string} data - Data to file the YML file with, if it's a template
  * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} throwErr - If an error should be thrown when yml file does not exist
+ * @param {boolean} error - If an error should be thrown when yml file does not exist
  *
  * @returns {Object} - Parse YML file
  */
-const loadYml = async ({ location, data, pattern, throwErr=true }) => {
+const loadYml = async ({ location, data=noOpObj, pattern, error=true }) => {
   // Load the yaml file content
-  const content = await getContent(location, throwErr, `Yml`)
+  const content = await getContent(location, error, `Yml`)
   // Treat it as a template and try to fill it
   return content ? loadTemplateYml(content, data, pattern) : {}
 }
@@ -61,21 +61,29 @@ const loadYml = async ({ location, data, pattern, throwErr=true }) => {
  *
  * @returns {boolean} - If the YML file could be written
  */
-const writeYml = async (location, data) => {
+const writeYml = async (location, data=noOpObj, error) => {
   const [ err, _ ] = await limbo(writeYamlFile(location, data))
-  return err ? throwError(err.stack) : true
+  return err && error ? throwError(err.stack) : true
 }
 
 /**
  * Loads multiple yml files from an array of passed in files paths
  * Then merges them all together
  * @function
- * @param {Array} files - Array of yml files paths to load
+ * @param {Array} args.files - Array of yml files paths to load
+ * @param {string} args.data - Data to file the Yml file with, if it's a template
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {boolean} args.error - If an error should be thrown when yml file does not exist
  *
  * @returns {Object} - Merged files as an Object
  */
-const mergeYml = async (...files) => {
-  return await mergeFiles(files, loadYml)
+const mergeYml = async args => {
+  return await mergeFiles({
+    data: noOpObj,
+    files: noPropArr,
+    ...args,
+    loader: loadYml,
+  })
 }
 
 /**

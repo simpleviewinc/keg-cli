@@ -20,7 +20,7 @@ root:
 const ymlObj = {
   test: {
     array: [ 'item1', 'item2', 'item3' ],
-    object: { item1: '1', item2: '2', item3: '3' },
+    object: { item1: 1, item2: 2, item3: 3 },
   },
   root: {
     test: 'test item under second root'

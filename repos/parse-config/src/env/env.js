@@ -1,7 +1,7 @@
 const { writeFile } = require('fs-extra')
 const { throwError } = require('../error')
 const { parse, stringify } = require('./envParser')
-const { limbo, isStr } = require('@keg-hub/jsutils')
+const { limbo, isStr, noOpObj, noPropArr } = require('@keg-hub/jsutils')
 const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
 
 /**
@@ -22,13 +22,13 @@ const loadTemplateEnv = (content, data, pattern) => {
  * @param {string} location - Path to the ENV file
  * @param {string} data - Data to file the ENV file with, if it's a template
  * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} throwError - If an error should be thrown when env file does not exist
+ * @param {boolean} error - If an error should be thrown when env file does not exist
  *
  * @returns {Object} - Parse ENV file
  */
-const loadEnvSync = ({location, data, pattern, throwErr=true}) => {
+const loadEnvSync = ({location, data, pattern, error=true}) => {
   // Load the env file content
-  const content = getContentSync(location, throwErr, `ENV`)
+  const content = getContentSync(location, error, `ENV`)
   // Treat it as a template and try to fill it
   return content ? loadTemplateEnv(content, data, pattern) : {}
 }
@@ -39,13 +39,13 @@ const loadEnvSync = ({location, data, pattern, throwErr=true}) => {
  * @param {string} location - Path to the ENV file
  * @param {string} data - Data to file the ENV file with, if it's a template
  * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} throwErr - If an error should be thrown when env file does not exist
+ * @param {boolean} error - If an error should be thrown when env file does not exist
  *
  * @returns {Object} - Parse ENV file
  */
-const loadEnv = async ({location, data, pattern, throwErr=true}) => {
+const loadEnv = async ({location, data, pattern, error=true}) => {
   // Load the env file content
-  const content = await getContent(location, throwErr, `ENV`)
+  const content = await getContent(location, error, `ENV`)
   // Load the env file
   return content ? loadTemplateEnv(content, data, pattern) : {}
 }
@@ -54,12 +54,20 @@ const loadEnv = async ({location, data, pattern, throwErr=true}) => {
  * Loads multiple env files from an array of passed in files paths
  * <br/> Then merges them all together
  * @function
- * @param {Array} files - Array of env files paths to load
+ * @param {Array} args.files - Array of env files paths to load
+ * @param {string} args.data - Data to file the ENV file with, if it's a template
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {boolean} args.error - If an error should be thrown when env file does not exist
  *
  * @returns {Object} - Merged files as an Object
  */
-const mergeEnv = async (...files) => {
-  return await mergeFiles(files, loadEnv)
+const mergeEnv = async args => {
+  return await mergeFiles({
+    data: noOpObj,
+    files: noPropArr,
+    ...args,
+    loader: loadEnv,
+  })
 }
 
 /**

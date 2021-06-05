@@ -88,7 +88,7 @@ describe('ENV files', () => {
 
   describe('mergeEnv', () => {
     it('should call utils.mergeFiles', async () => {
-      await env.merge(`some/file/path`, `another/file/path`)
+      await env.merge({ files: [`some/file/path`, `another/file/path`] })
       expect(utils.mergeFiles).toHaveBeenCalled()
     })
   })
