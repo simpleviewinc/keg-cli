@@ -9,6 +9,16 @@ const {
   readFile,
 } = require('fs-extra')
 
+const defLoaderArgs = {
+  error: true,
+  fill: true,
+  // TODO: update data to include the global config and envs
+  // Add cli-utils, and load the global config
+  // Also add any other data matched to the keg-cli default data object
+  data: noOpObj,
+  format: 'object',
+}
+
 /**
  * Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
  * conversion translates it to FEFF (UTF-16 BOM)
@@ -150,11 +160,27 @@ const loadTemplate = (args, content, loader) => {
   return format === 'string' ? template : loader(template)
 }
 
+/**
+ * Ensures args is an object for file loading methods
+ * If args is a string, will set it as the location
+ * Sets other defaults where needed
+ * @function
+ * @param {string|Object} args - Path to a file or args object
+ *
+ * @returns {Object} - Args converted into an object if needed
+ */
+const resolveArgs = args => {
+  return !isStr(args)
+    ? deepMerge(defLoaderArgs, args)
+    : defLoaderArgs(defLoaderArgs, { location: args })
+}
+
 module.exports = {
   getContent,
   getContentSync,
   loadTemplate,
   mergeFiles,
   removeFile,
+  resolveArgs,
   stripBom,
 }

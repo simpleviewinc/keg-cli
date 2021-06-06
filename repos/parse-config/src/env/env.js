@@ -7,12 +7,14 @@ const {
   getContentSync,
   loadTemplate,
   mergeFiles,
-  removeFile
+  removeFile,
+  resolveArgs
 } = require('../utils')
 
 /**
  * Loads a ENV file from a path and parses it synchronously
  * @function
+ * @param {Object|string} args - Arguments that describe what file to load
  * @param {Object} args.data - Data to file the file with, if it's a template
  * @param {string} args.format - Type that should be returned ( string || Object )
  * @param {boolean} args.fill - Should the content be treated as a template
@@ -24,7 +26,7 @@ const {
  * @returns {Object|string} - Parse ENV file
  */
 const loadEnvSync = args => {
-  const { location, error=true } = args
+  const { location, error } = resolveArgs(args)
   // Load the env file content
   const content = getContentSync(location, error, `ENV`)
 
@@ -34,6 +36,7 @@ const loadEnvSync = args => {
 /**
  * Loads a ENV file from a path and parses it
  * @function
+ * @param {Object|string} args - Arguments that describe what file to load
  * @param {Object} args.data - Data to file the file with, if it's a template
  * @param {string} args.format - Type that should be returned ( string || Object )
  * @param {boolean} args.fill - Should the content be treated as a template
@@ -45,7 +48,7 @@ const loadEnvSync = args => {
  * @returns {Object|string} - Parse ENV file
  */
 const loadEnv = async args => {
-  const { location, error = true } = args
+  const { location, error } = resolveArgs(args)
   // Load the env file content
   const content = await getContent(location, error, `ENV`)
 

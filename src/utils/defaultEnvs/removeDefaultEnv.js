@@ -1,7 +1,7 @@
 const path = require('path')
-const { isStr } = require('@keg-hub/jsutils')
+const { env } = require('KegPConf')
 const { Logger } = require('KegLog')
-const { parseContent } = require('KegFileSys/env')
+const { isStr } = require('@keg-hub/jsutils')
 const { readFile } = require('KegFileSys/fileSys')
 const { saveDefaultsEnv } = require('./saveDefaultsEnv')
 const { generalError } = require('../error/generalError')
@@ -31,9 +31,9 @@ const removeDefaultEnv = async ({ key, force, comment, log }) => {
   let globalEnvStr = globalEnvString
 
   // Load the contents of the Global ENV file
-  const globalEnvs = parseContent({
-    file: globalEnvsPath,
-    fill: false
+  const globalEnvs = await env.load({
+    fill: false,
+    location: globalEnvsPath,
   })
 
   const curENVStr = `${ removeKey }=${ globalEnvs[removeKey] }`
