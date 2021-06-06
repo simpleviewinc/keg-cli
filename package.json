@@ -68,6 +68,7 @@
     "KegDocCli": "src/libs/docker",
     "KegFileSys": "src/libs/fileSys",
     "KegGitCli": "repos/git-lib",
+    "KegPConf": "repos/parse-config",
     "KegLibs": "src/libs",
     "KegLog": "repos/cli-utils/src/logger",
     "KegMocks": "src/__mocks__",

@@ -70,9 +70,11 @@ const fillTemplate = async ({
   data = {},
   pattern,
 }) => {
-  const [ err, toFill ] = tmp ? [ null, tmp ] : await limbo(readFile(location))
+  const [ err, toFill ] = tmp
+    ? [ null, tmp ]
+    : await limbo(readFile(location, { encoding: 'utf8' }))
 
-  return err ? throwError(err) : execTemplate(toFill.toString(), data, pattern)
+  return err ? throwError(err) : execTemplate(toFill, data, pattern)
 }
 
 /**
@@ -85,7 +87,7 @@ const fillTemplate = async ({
  * @returns {string} - Template with the content filled from the passed in data
  */
 const fillTemplateSync = ({ location, template: tmp, data = {}, pattern }) => {
-  return execTemplate(tmp || readFileSync(location), data, pattern)
+  return execTemplate(tmp || readFileSync(location, { encoding: 'utf8' }), data, pattern)
 }
 
 module.exports = {

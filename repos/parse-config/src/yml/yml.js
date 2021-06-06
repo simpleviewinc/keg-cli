@@ -2,7 +2,13 @@ const yaml = require('js-yaml')
 const { throwError } = require('../error')
 const { limbo, noOpObj, noPropArr } = require('@keg-hub/jsutils')
 const writeYamlFile = require('write-yaml-file')
-const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
+const {
+  getContent,
+  getContentSync,
+  loadTemplate,
+  mergeFiles,
+  removeFile
+} = require('../utils')
 
 /**
  * Parses the yml content to replaces any template values from the data object

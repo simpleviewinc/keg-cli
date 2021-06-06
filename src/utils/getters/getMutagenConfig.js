@@ -1,6 +1,6 @@
 const path = require('path')
+const { yml } = require('KegPConf')
 const { DOCKER } = require('KegConst/docker')
-const { yml } = require('KegFileSys/yml')
 const { getContainerConst } = require('../docker/getContainerConst')
 const { get, deepMerge, isStr, styleCase, checkCall } = require('@keg-hub/jsutils')
 const { MUTAGEN_MAP } = DOCKER
@@ -50,7 +50,7 @@ const getMutagenConfig = async params => {
 
     if(!mutagenPath) return deepMerge(overrides, parseOptions(options))
 
-    const ymlConfig = await yml.load(mutagenPath)
+    const ymlConfig = await yml.load({ location: mutagenPath })
 
     if(!configPath) return ymlConfig
 

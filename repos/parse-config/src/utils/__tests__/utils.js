@@ -16,7 +16,13 @@ const {
   utilValues,
 } = require('../../__mocks__')
 
-const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
+const {
+  getContent,
+  getContentSync,
+  loadTemplate,
+  mergeFiles,
+  removeFile
+} = require('../utils')
 
 const testYmlData = {
   test: [ 'baz', 'foo' ],
@@ -65,11 +71,42 @@ describe('utils', () => {
     it(`should not throw from an invalid file path when second argument is false`, async () => {
       try {
         const content = await getContent(`/invalid/file/path`, false)
-        expect(content).toEqual('')
+        expect(content).toEqual(null)
       }
       catch (err) {
         throw new Error(
           `Utils.getContent should not throw when second argument is false, but it did`
+        )
+      }
+    })
+  })
+
+  describe('getContentSync', () => {
+    it(`should return the content from a valid file path`, () => {
+      const content = getContentSync(testYmlPath)
+      expect(content.trim()).toEqual(testYmlStr)
+    })
+
+    it(`should throw from an invalid file path`, () => {
+      try {
+        getContentSync(`/invalid/file/path`)
+      }
+      catch (err) {
+        expect(
+          err.message.includes('File path does not exist at /invalid/file/path')
+        ).toBe(true)
+        expect(err.message.includes('Could not load undefined file')).toBe(true)
+      }
+    })
+
+    it(`should not throw from an invalid file path when second argument is false`, () => {
+      try {
+        const content = getContentSync(`/invalid/file/path`, false)
+        expect(content).toEqual(null)
+      }
+      catch (err) {
+        throw new Error(
+          `Utils.getContentSync should not throw when second argument is false,\nError: ${err.stack}`,
         )
       }
     })

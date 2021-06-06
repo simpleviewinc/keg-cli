@@ -52,7 +52,7 @@ const checkExists = async (location, error = true, type) => {
  */
 const getContentSync = (location, error = true, type) => {
   return pathExistsSync(location)
-    ? readFileSync(location)
+    ? readFileSync(location, { encoding: 'utf8' })
     : error
       ? throwNoFile(location, `Could not load ${type} file!`)
       : null
@@ -70,13 +70,13 @@ const getContentSync = (location, error = true, type) => {
  */
 const getContent = async (location, error = true, type) => {
   const exists = await checkExists(location, error, type)
-  if (!exists) return ''
+  if (!exists) return null
 
   // Get the content of the file
-  const [ err, content ] = await limbo(readFile(location))
+  const [ err, content ] = await limbo(readFile(location, { encoding: 'utf8' }))
 
   return !err
-    ? content.toString()
+    ? content
     : error
       ? throwError(location, `Could not load ${type} file!`)
       : null
