@@ -15,6 +15,8 @@ const defLoaderArgs = {
   // TODO: update data to include the global config and envs
   // Add cli-utils, and load the global config
   // Also add any other data matched to the keg-cli default data object
+  // See src/libs/fileSys/parseTemplate.js
+  // May need to move it to ../template/template.js
   data: noOpObj,
   format: 'object',
 }
@@ -49,6 +51,14 @@ const checkExists = async (location, error = true, type) => {
       ? throwNoFile(location, `Could not load ${type} file!`)
       : false
 }
+
+/**
+ * TODO: add caching of loaded files
+ * Should be for all file types based on location
+ * When getContentSync || getContent is called
+ * The response should be cached based on the format
+ * Then return the cached version if it exists
+ */
 
 /**
  * Gets the content of a file from the passed in location synchronously
