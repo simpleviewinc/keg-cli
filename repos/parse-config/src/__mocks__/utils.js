@@ -83,7 +83,7 @@ const mergeFiles = jest.fn(async (files, loader = jest.fn()) => {
   return {}
 })
 
-const loadTemplate = jest.fn((content, data, pattern) => {
+const loadTemplate = jest.fn((args, content, loader) => {
   return content.includes('# Yml string')
     ? ymlObj
     : content.includes('# ENV String')

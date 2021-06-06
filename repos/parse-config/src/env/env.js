@@ -2,52 +2,54 @@ const { writeFile } = require('fs-extra')
 const { throwError } = require('../error')
 const { parse, stringify } = require('./envParser')
 const { limbo, isStr, noOpObj, noPropArr } = require('@keg-hub/jsutils')
-const { getContent, loadTemplate, mergeFiles, removeFile } = require('../utils')
-
-/**
- * Parses the env content to replaces any template values from the data object
- * Then converts it into a JS Object with the `env.safeLoad` call
- * @function
- * @param {string} content - Content of the loaded env file
- *
- * @returns {Object} - Parse ENV file as a JS Object
- */
-const loadTemplateEnv = (content, data, pattern) => {
-  return loadTemplate(content, data, pattern, parse)
-}
+const {
+  getContent,
+  getContentSync,
+  loadTemplate,
+  mergeFiles,
+  removeFile
+} = require('../utils')
 
 /**
  * Loads a ENV file from a path and parses it synchronously
  * @function
- * @param {string} location - Path to the ENV file
- * @param {string} data - Data to file the ENV file with, if it's a template
- * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} error - If an error should be thrown when env file does not exist
+ * @param {Object} args.data - Data to file the file with, if it's a template
+ * @param {string} args.format - Type that should be returned ( string || Object )
+ * @param {boolean} args.fill - Should the content be treated as a template
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {string} args.location - Path to the ENV file
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {boolean} [args.error=true] - Should errors be thrown
  *
- * @returns {Object} - Parse ENV file
+ * @returns {Object|string} - Parse ENV file
  */
-const loadEnvSync = ({ location, data, pattern, error = true }) => {
+const loadEnvSync = args => {
+  const { location, error=true } = args
   // Load the env file content
   const content = getContentSync(location, error, `ENV`)
-  // Treat it as a template and try to fill it
-  return content ? loadTemplateEnv(content, data, pattern) : {}
+
+  return loadTemplate(args, content, parse)
 }
 
 /**
  * Loads a ENV file from a path and parses it
  * @function
- * @param {string} location - Path to the ENV file
- * @param {string} data - Data to file the ENV file with, if it's a template
- * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} error - If an error should be thrown when env file does not exist
+ * @param {Object} args.data - Data to file the file with, if it's a template
+ * @param {string} args.format - Type that should be returned ( string || Object )
+ * @param {boolean} args.fill - Should the content be treated as a template
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {string} args.location - Path to the ENV file
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {boolean} [args.error=true] - Should errors be thrown
  *
- * @returns {Object} - Parse ENV file
+ * @returns {Object|string} - Parse ENV file
  */
-const loadEnv = async ({ location, data, pattern, error = true }) => {
+const loadEnv = async args => {
+  const { location, error = true } = args
   // Load the env file content
   const content = await getContent(location, error, `ENV`)
-  // Load the env file
-  return content ? loadTemplateEnv(content, data, pattern) : {}
+
+  return loadTemplate(args, content, parse)
 }
 
 /**
@@ -101,13 +103,17 @@ module.exports = {
   loadEnv,
   loadEnvSync,
   mergeEnv,
+  parseEnv: parse,
   removeEnv,
+  stringifyEnv: stringify,
   writeEnv,
   env: {
     load: loadEnv,
     loadSync: loadEnvSync,
     merge: mergeEnv,
+    parse,
     remove: removeEnv,
+    stringify,
     write: writeEnv,
   },
 }

@@ -11,49 +11,45 @@ const {
 } = require('../utils')
 
 /**
- * Parses the yml content to replaces any template values from the data object
- * Then converts it into a JS Object with the `yaml.safeLoad` call
- * @function
- * @param {string} content - Content of the loaded yml file
- *
- * @returns {Object} - Parse YML file as a JS Object
- */
-const loadTemplateYml = (content, data, pattern) => {
-  return loadTemplate(content, data, pattern, yaml.safeLoad)
-}
-
-/**
  * Loads a YML file from a path and parses it synchronously
  * @function
- * @param {string} location - Path to the YML file
- * @param {string} data - Data to file the YML file with, if it's a template
- * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} error - If an error should be thrown when yml file does not exist
+ * @param {Object} args.data - Data to file the file with, if it's a template
+ * @param {string} args.format - Type that should be returned ( string || Object )
+ * @param {boolean} args.fill - Should the content be treated as a template
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {string} args.location - Path to the ENV file
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {boolean} [args.error=true] - Should errors be thrown
  *
- * @returns {Object} - Parse YML file
+ * @returns {Object|string} - Parse YML file
  */
-const loadYmlSync = ({ location, data = noOpObj, pattern, error = true }) => {
+const loadYmlSync = args => {
+  const { location, error=true } = args
   // Load the yaml file content
   const content = getContentSync(location, error, `Yml`)
-  // Treat it as a template and try to fill it
-  return content ? loadTemplateYml(content, data, pattern) : {}
+
+  return loadTemplate(args, content, yaml.safeLoad)
 }
 
 /**
  * Loads a YML file from a path and parses it
  * @function
- * @param {string} location - Path to the YML file
- * @param {string} data - Data to file the YML file with, if it's a template
- * @param {RegEx} pattern - Pattern to match against template values
- * @param {boolean} error - If an error should be thrown when yml file does not exist
+ * @param {Object} args.data - Data to file the file with, if it's a template
+ * @param {string} args.format - Type that should be returned ( string || Object )
+ * @param {boolean} args.fill - Should the content be treated as a template
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {string} args.location - Path to the ENV file
+ * @param {RegEx} args.pattern - Pattern to match against template values
+ * @param {boolean} [args.error=true] - Should errors be thrown
  *
- * @returns {Object} - Parse YML file
+ * @returns {Object|string} - Parse YML file
  */
-const loadYml = async ({ location, data = noOpObj, pattern, error = true }) => {
+const loadYml = async args => {
+  const { location, error=true } = args
   // Load the yaml file content
   const content = await getContent(location, error, `Yml`)
-  // Treat it as a template and try to fill it
-  return content ? loadTemplateYml(content, data, pattern) : {}
+
+  return loadTemplate(args, content, yaml.safeLoad)
 }
 
 /**

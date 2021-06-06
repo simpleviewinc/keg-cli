@@ -1,6 +1,6 @@
 const { execTemplate } = require('../template')
 const { throwError, throwNoFile } = require('../error')
-const { noOp, deepMerge, isStr, limbo } = require('@keg-hub/jsutils')
+const { noOp, noOpObj, deepMerge, isStr, limbo } = require('@keg-hub/jsutils')
 const {
   pathExistsSync,
   pathExists,
@@ -126,18 +126,28 @@ const mergeFiles = async ({ files, loader = noOp, ...args }) => {
 }
 
 /**
- * Treats the passed in content as a template and tries to fill it using the data object
- * Then calls the loader function to load the content as an object
- * @type {function}
- * @param {string} content - Text content to be filled
- * @param {Object} data - Data to file the file with, if it's a template
- * @param {RegEx} pattern - Pattern to match against template values
- * @param {function} loader - Callback function to load the content after it's filled
+ * Parses the env content to replaces any template values from the data object
+ * Then converts it into a JS Object with the `env.safeLoad` call
+ * @function
+ * @param {Object} [args.data={}] - Data to file the file with, if it's a template
+ * @param {string} [args.format] - Type that should be returned ( string || Object )
+ * @param {boolean} [args.fill=true] - Should the content be treated as a template
+ * @param {RegEx} [args.pattern] - Pattern to match against template values
+ * @param {string} [content] - Text content to be filled
+ * @param {function} loader - Callback function to parse the content after it's filled
  *
- * @returns {Object|*} - Response from the loader callback
+ * @returns {Object} - Parse ENV file as a JS Object
  */
-const loadTemplate = (content, data, pattern, loader) => {
-  return loader(execTemplate(stripBom(content), data, pattern))
+const loadTemplate = (args, content, loader) => {
+  const { data=noOpObj, fill=true, format, pattern } = args
+
+  if(!content) return format === 'string' ? '' : {}
+ 
+  const cleaned = stripBom(content)
+  const template = fill ? execTemplate(cleaned, data, pattern) : cleaned
+
+  // Treat it as a template and try to fill it fill === true
+  return format === 'string' ? template : loader(template)
 }
 
 module.exports = {

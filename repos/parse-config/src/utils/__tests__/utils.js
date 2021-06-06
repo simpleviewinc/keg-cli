@@ -113,31 +113,53 @@ describe('utils', () => {
   })
 
   describe('loadTemplate', () => {
-    it(`should load a template and replace the values`, async () => {
+    it(`should load a template and replace the values`, () => {
       const data = { test: { array: ['item3'], key: 'item3', value: '3' } }
-      const filled = await loadTemplate(
+      const filled = loadTemplate(
+        { data },
         utilValues.ymlStr,
-        data,
-        undefined,
         yaml.safeLoad
       )
       expect(filled).toEqual(utilValues.ymlObj)
     })
 
-    it(`should call the loader function`, async () => {
+    it(`should return a filled template as a string when format is 'string'`, () => {
+      const data = { test: { array: ['item3'], key: 'item3', value: '3' } }
+      const filled = loadTemplate(
+        { data, format: 'string' },
+        utilValues.ymlStr,
+        yaml.safeLoad
+      )
+      expect(typeof filled).toEqual('string')
+      expect(filled.includes('- item3')).toBe(true)
+      expect(filled.includes('item3: 3')).toBe(true)
+    })
+
+    it(`should call the loader function`, () => {
       const loader = jest.fn()
-      await loadTemplate(utilValues.ymlStr, {}, null, loader)
+      loadTemplate({}, utilValues.ymlStr, loader)
       expect(loader).toHaveBeenCalled()
     })
 
-    it(`should throw if a loader function is not passed as the last argument`, async () => {
+    it(`should throw if content exists and a function is not passed as the last argument`, () => {
       try {
-        await loadTemplate(utilValues.ymlStr, {}, null)
+        loadTemplate({}, utilValues.ymlStr, null)
       }
       catch (err) {
         expect(err.message.trim()).toBe(`loader is not a function`)
       }
     })
+
+    it(`should return an empty string when no content and fill === 'string'`, () => {
+      const resp = loadTemplate({ format: 'string' }, false)
+      expect(resp).toEqual('')
+    })
+
+    it(`should return an empty object when no content and fill !== 'string'`, () => {
+      const resp = loadTemplate({}, false)
+      expect(resp).toEqual({})
+    })
+
   })
 
   describe('mergeFiles', () => {

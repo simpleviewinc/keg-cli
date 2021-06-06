@@ -17,11 +17,9 @@ const data = {}
 const { env } = require('../env')
 
 describe('ENV files', () => {
-  beforeAll(() => {
-    resetUtils()
-  })
-
+ 
   beforeEach(() => {
+    resetUtils()
     writeFileMock.mockClear()
   })
 
@@ -54,6 +52,42 @@ describe('ENV files', () => {
       const location = `/some/invalid/env/path`
       try {
         await env.load({ location, data })
+      }
+      catch (err) {
+        expect(err.message.trim()).toEqual(
+          `Could not load file from ${location}`
+        )
+      }
+    })
+  })
+
+  describe('loadEnvSync', () => {
+    it('should call utils.getContentSync', async () => {
+      await env.loadSync({ location: `/some/env/path.env`, data })
+      expect(utils.getContentSync).toHaveBeenCalled()
+    })
+
+    it('should call utils.loadTemplate', async () => {
+      await env.loadSync({ location: `/some/env/path.env`, data })
+      expect(utils.loadTemplate).toHaveBeenCalled()
+    })
+
+    it('should not throw when the path is valid', async () => {
+      try {
+        const content = await env.loadSync({ location: `/some/env/path.env`, data })
+        expect(content).toEqual(utilValues.envObj)
+      }
+      catch (err) {
+        throw new Error(
+          `env.load should not throw with a valid path, but it did!`
+        )
+      }
+    })
+
+    it('should throw when the path is invalid', async () => {
+      const location = `/some/invalid/env/path`
+      try {
+        await env.loadSync({ location, data })
       }
       catch (err) {
         expect(err.message.trim()).toEqual(
