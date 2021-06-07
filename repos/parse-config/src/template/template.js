@@ -91,7 +91,7 @@ const execTemplate = (tmp, data, pattern) => {
 const fillTemplate = async ({
   location,
   template: tmp,
-  data = {},
+  data = noOpObj,
   pattern,
 }) => {
   const [ err, toFill ] = tmp

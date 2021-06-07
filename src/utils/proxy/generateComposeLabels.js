@@ -1,7 +1,7 @@
 const { KEG_ENVS } = require('KegConst/envs')
-const { kegLabels, proxyLabels } = require('KegConst/docker/labels')
-const { get, eitherArr } = require('@keg-hub/jsutils')
 const { fillTemplate } = require('KegUtils/template')
+const { get, eitherArr } = require('@keg-hub/jsutils')
+const { kegLabels, proxyLabels } = require('KegConst/docker/labels')
 
 /**
  * Build the host url label used by keg-proxy
