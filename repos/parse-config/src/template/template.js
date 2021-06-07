@@ -1,6 +1,7 @@
 const { throwError } = require('../error')
 const { readFile, readFileSync } = require('fs-extra')
-const { template, limbo } = require('@keg-hub/jsutils')
+const { template, limbo, noOpObj } = require('@keg-hub/jsutils')
+const { getKegGlobalConfig } = require('@keg-hub/cli-utils')
 
 /**
  * Default template replace pattern
@@ -32,6 +33,29 @@ const setTemplateRegex = pattern => {
 }
 
 /**
+ * Merges multiple data sources to use as fill values when filling a template
+ * Sources include Keg-CLI global config, process.env, custom data object argument
+ * @function
+ * @param {Object} data - Custom data with values for filling templates
+ *
+ * @returns {Object} - Merge data object
+ */
+const buildFillData = (data=noOpObj) => {
+  const globalConfig = getKegGlobalConfig() || noOpObj
+  // Add the globalConfig, and the process.envs as the data objects
+  // This allows values in ENV templates from globalConfig || process.env
+  return {
+    ...deepMerge(globalConfig, data),
+    envs: deepMerge(
+      globalConfig.envs,
+      process.env,
+      data.envs,
+      data.ENVS
+    )
+  }
+}
+
+/**
  * Sets the correct template pattern, then fills the template, then resets the template pattern
  * @function
  *
@@ -46,7 +70,7 @@ const execTemplate = (tmp, data, pattern) => {
   setTemplateRegex(pattern)
 
   // Fill the template with the data object
-  const filled = template(tmp, data)
+  const filled = template(tmp, buildFillData(data))
 
   // Reset the template regex pattern after the template is filled
   setTemplateRegex()

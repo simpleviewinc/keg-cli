@@ -12,11 +12,6 @@ const {
 const defLoaderArgs = {
   error: true,
   fill: true,
-  // TODO: update data to include the global config and envs
-  // Add cli-utils, and load the global config
-  // Also add any other data matched to the keg-cli default data object
-  // See src/libs/fileSys/parseTemplate.js
-  // May need to move it to ../template/template.js
   data: noOpObj,
   format: 'object',
 }
@@ -27,10 +22,11 @@ const defLoaderArgs = {
  * @function
  * @param {string} content - Content of the loaded env file
  *
- * @returns {Object} - stripped string
+ * @returns {string} - stripped string
  */
-const stripBom = content =>
+const stripBom = content => (
   content.charCodeAt(0) === 0xfeff ? content.slice(1) : content
+)
 
 /**
  * Checks it the passed in location exists on th local file system

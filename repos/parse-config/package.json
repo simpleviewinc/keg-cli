@@ -31,6 +31,7 @@
     "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js --maxWorkers=50%"
   },
   "dependencies": {
+    "@keg-hub/cli-utils": "^0.3.0",
     "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
     "fs-extra": "9.1.0",
