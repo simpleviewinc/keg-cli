@@ -2,7 +2,6 @@ const path = require('path')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
-const { copyFileSync } = require('KegFileSys/fileSys')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 

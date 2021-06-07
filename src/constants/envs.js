@@ -1,6 +1,6 @@
 const path = require('path')
 const { env } = require('KegPConf')
-const { copyFileSync } = require('../libs/fileSys')
+const { copyFileSync } = require('KegFileSys')
 const { Logger } = require('../../repos/cli-utils/src/logger')
 const { CLI_ROOT, GLOBAL_CONFIG_FOLDER, DEFAULT_ENV } = require('../constants')
 

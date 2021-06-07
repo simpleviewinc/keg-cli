@@ -1,6 +1,6 @@
 const path = require('path')
 const { Logger } = require('KegLog')
-const { writeFile } = require('KegFileSys/fileSys')
+const { writeFile } = require('KegFileSys')
 const { DEFAULT_ENV, GLOBAL_CONFIG_FOLDER } = require('KegConst/constants')
 const { generalError } = require('../error/generalError')
 const { NODE_ENV } = process.env

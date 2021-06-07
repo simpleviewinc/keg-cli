@@ -4,7 +4,7 @@ const { Logger } = require('KegLog')
 const { ask } = require('KegRepos/ask-it')
 const packConf = require('KegRoot/package.json')
 const { capitalize } = require('@keg-hub/jsutils')
-const { readFile } = require('KegFileSys/fileSys')
+const { readFile } = require('KegFileSys')
 const { saveDefaultsEnv } = require('./saveDefaultsEnv')
 const { CLI_ROOT, DEFAULT_ENV, GLOBAL_CONFIG_FOLDER } = require('KegConst/constants')
 

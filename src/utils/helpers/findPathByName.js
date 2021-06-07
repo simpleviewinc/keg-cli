@@ -1,4 +1,4 @@
-const { getFolderContent } = require('KegFileSys/fileSys')
+const { getFolderContent } = require('KegFileSys')
 const { isArr, exists } = require('@keg-hub/jsutils')
 
 /**
