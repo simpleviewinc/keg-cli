@@ -1,3 +1,9 @@
+/**
+ * Sometimes this file is called directly with out using the keg-cli entry point
+ * So we call module-alias/register here to ensure the alias still work
+*/
+require('module-alias/register')
+
 const Tasks = require('KegTasks')
 const { findTask, executeTask } = require('KegUtils/task')
 const { throwExitError } = require('KegUtils/error')

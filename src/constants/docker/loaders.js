@@ -1,7 +1,6 @@
 const path = require('path')
-const { yml, env } = require('KegPConf')
-const { get } = require('@keg-hub/jsutils')
-const { deepMerge } = require('@keg-hub/jsutils')
+const { yml, env:envParse } = require('KegPConf')
+const { get, deepMerge } = require('@keg-hub/jsutils')
 const { GLOBAL_CONFIG_FOLDER } = require('../constants')
 const { cliRootDir, containersPath } = require('./values')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
@@ -66,7 +65,7 @@ const loadEnvFiles = args => {
   // Then merge and return them
   return deepMerge(
     ...envPaths.reduce((envs, location) => {
-      envs.push(env.loadSync({ location, data: extraData }))
+      envs.push(envParse.loadSync({ location, data: extraData, error: false }))
       return envs
     }, [])
   )

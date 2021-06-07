@@ -104,6 +104,7 @@
       "^KegMutagen(.*)$": "<rootDir>/repos/mutagen-lib$1",
       "^KegProc(.*)$": "<rootDir>/src/libs/process$1",
       "^KegPackage(.*)$": "<rootDir>/package.json",
+      "^KegPConf(.*)$": "<rootDir>/repos/parse-config$1",
       "^KegRepos(.*)$": "<rootDir>/repos$1",
       "^KegRoot(.*)$": "<rootDir>$1",
       "^KegRunTask(.*)$": "<rootDir>/src/runTask$1",
