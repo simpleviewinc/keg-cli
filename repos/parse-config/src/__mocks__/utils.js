@@ -91,12 +91,25 @@ const loadTemplate = jest.fn((args, content, loader) => {
       : {}
 })
 
+const resolveArgs = jest.fn((args) => {
+  const def = {
+    error: true,
+    fill: true,
+    data: {},
+    format: 'object',
+  }
+  return typeof args === 'string'
+    ? { ...def, location: args }
+    : { ...def, ...args }
+})
+
 const utils = {
   getContent,
   getContentSync,
   loadTemplate,
   mergeFiles,
   removeFile,
+  resolveArgs,
   stripBom,
 }
 

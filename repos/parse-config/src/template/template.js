@@ -1,7 +1,7 @@
 const { throwError } = require('../error')
 const { readFile, readFileSync } = require('fs-extra')
-const { template, limbo, noOpObj } = require('@keg-hub/jsutils')
 const { getKegGlobalConfig } = require('@keg-hub/cli-utils')
+const { deepMerge, template, limbo, noOpObj } = require('@keg-hub/jsutils')
 
 /**
  * Default template replace pattern
