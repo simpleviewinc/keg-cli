@@ -1,7 +1,6 @@
 const { throwError } = require('../error')
-const { readFile, readFileSync } = require('fs-extra')
-const { getKegGlobalConfig } = require('@keg-hub/cli-utils')
-const { deepMerge, template, limbo, noOpObj } = require('@keg-hub/jsutils')
+const { deepMerge, template, noOpObj } = require('@keg-hub/jsutils')
+const { getKegGlobalConfig, fileSys } = require('@keg-hub/cli-utils')
 
 /**
  * Default template replace pattern
@@ -96,7 +95,7 @@ const fillTemplate = async ({
 }) => {
   const [ err, toFill ] = tmp
     ? [ null, tmp ]
-    : await limbo(readFile(location, { encoding: 'utf8' }))
+    : await fileSys.readFile(location)
 
   return err ? throwError(err) : execTemplate(toFill, data, pattern)
 }
@@ -111,7 +110,11 @@ const fillTemplate = async ({
  * @returns {string} - Template with the content filled from the passed in data
  */
 const fillTemplateSync = ({ location, template: tmp, data = {}, pattern }) => {
-  return execTemplate(tmp || readFileSync(location, { encoding: 'utf8' }), data, pattern)
+  return execTemplate(
+    tmp || fileSys.readFileSync(location),
+    data,
+    pattern
+  )
 }
 
 module.exports = {

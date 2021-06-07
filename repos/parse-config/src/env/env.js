@@ -1,5 +1,5 @@
-const { writeFile } = require('fs-extra')
 const { throwError } = require('../error')
+const { fileSys } = require('@keg-hub/cli-utils')
 const { parse, stringify } = require('./envParser')
 const { limbo, isStr, noOpObj, noPropArr } = require('@keg-hub/jsutils')
 const {
@@ -98,7 +98,7 @@ const removeEnv = async location => {
  */
 const writeEnv = async (location, data) => {
   const content = isStr(data) ? data : stringify(data)
-  const [err] = await limbo(writeFile(location, content))
+  const [err] = await fileSys.writeFile(location, content)
   return err ? throwError(err.stack) : true
 }
 

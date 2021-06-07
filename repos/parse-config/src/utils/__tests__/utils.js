@@ -64,7 +64,9 @@ describe('utils', () => {
         expect(
           err.message.includes('File path does not exist at /invalid/file/path')
         ).toBe(true)
-        expect(err.message.includes('Could not load undefined file')).toBe(true)
+        expect(
+          err.message.includes(`no such file or directory, access '/invalid/file/path'`)
+        ).toBe(true)
       }
     })
 

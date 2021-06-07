@@ -34,7 +34,6 @@
     "@keg-hub/cli-utils": "^0.3.0",
     "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
-    "fs-extra": "9.1.0",
     "js-yaml": "3.14.0",
     "write-yaml-file": "4.0.0"
   },

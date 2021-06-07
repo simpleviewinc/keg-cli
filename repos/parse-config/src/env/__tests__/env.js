@@ -1,14 +1,19 @@
 jest.resetAllMocks()
 jest.clearAllMocks()
 
-const fs = require('fs-extra')
+const cliUtils = require('@keg-hub/cli-utils')
 const writeFileMock = jest.fn(async (location, data) => {
-  const throwError = () => {
-    throw Error(`Invalid file path`)
-  }
-  return location.endsWith('.env') ? true : throwError()
+  return location.endsWith('.env')
+    ? [null, true]
+    : [new Error(`Invalid file path`), false]
 })
-jest.setMock('fs-extra', { ...fs, writeFile: writeFileMock })
+jest.setMock('@keg-hub/cli-utils', {
+  ...cliUtils,
+  fileSys: {
+    ...cliUtils.fileSys,
+    writeFile: writeFileMock
+  }
+})
 
 const { utils, resetUtils, utilValues } = require('../../__mocks__')
 jest.setMock('../../utils', utils)

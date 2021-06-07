@@ -1,13 +1,15 @@
 const { execTemplate } = require('../template')
+const { fileSys } = require('@keg-hub/cli-utils')
 const { throwError, throwNoFile } = require('../error')
-const { noOp, noOpObj, deepMerge, isStr, limbo } = require('@keg-hub/jsutils')
+const { noOp, noOpObj, deepMerge, isStr } = require('@keg-hub/jsutils')
+
 const {
-  pathExistsSync,
   pathExists,
-  remove,
-  readFileSync,
+  pathExistsSync,
   readFile,
-} = require('fs-extra')
+  readFileSync,
+  removeFile:remove,
+} = fileSys
 
 const defLoaderArgs = {
   error: true,
@@ -39,12 +41,12 @@ const stripBom = content => (
  * @returns {boolean} - True if the file exists
  */
 const checkExists = async (location, error = true, type) => {
-  const exists = await pathExists(location)
+  const [err, exists] = await pathExists(location)
 
   return exists
     ? true
     : error
-      ? throwNoFile(location, `Could not load ${type} file!`)
+      ? throwNoFile(location, err ? err.stack : `Could not load ${type} file!`)
       : false
 }
 
@@ -89,7 +91,7 @@ const getContent = async (location, error = true, type) => {
   if (!exists) return null
 
   // Get the content of the file
-  const [ err, content ] = await limbo(readFile(location, { encoding: 'utf8' }))
+  const [err, content] = await readFile(location)
 
   return !err
     ? content
@@ -112,7 +114,7 @@ const removeFile = async (location, type) => {
       `Remove ${type} file requires a file location, instead got: ${location}`
     )
 
-  const [err] = await limbo(remove(location))
+  const [err] = await remove(location)
   return err ? throwError(err) : true
 }
 
