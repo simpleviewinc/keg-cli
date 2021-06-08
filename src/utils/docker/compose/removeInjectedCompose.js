@@ -2,7 +2,7 @@ const path = require('path')
 const { Logger } = require('KegLog')
 const { GLOBAL_INJECT_FOLDER } = require('KegConst/constants')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
-const { removeFile, pathExists } = require('KegFileSys/fileSys')
+const { removeFile, pathExists } = require('KegFileSys')
 const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
 const { getProxyDomainFromBranch } = require('KegUtils/proxy/getProxyDomainFromBranch')
 

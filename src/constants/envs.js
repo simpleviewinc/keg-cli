@@ -1,6 +1,7 @@
 const path = require('path')
+const { env } = require('KegPConf')
+const { copyFileSync } = require('KegFileSys')
 const { Logger } = require('../../repos/cli-utils/src/logger')
-const { copyFileSync, loadENV } = require('../libs/fileSys')
 const { CLI_ROOT, GLOBAL_CONFIG_FOLDER, DEFAULT_ENV } = require('../constants')
 
 /**
@@ -48,9 +49,9 @@ const getDefaultENVs = cliRootDir => {
     __DEFAULT_ENVS = {
       // Join the local cli default envs with the users global envs
       // This ensures all needed envs get loaded
-      ...loadENV({ envPath: cliDefaultEnvs }),
+      ...env.loadSync({ location: cliDefaultEnvs }),
       // Add the user's global envs last to ensure they override the cli defaults
-      ...loadENV({ envPath: globalDefEnv }),
+      ...env.loadSync({ location: globalDefEnv }),
     }
 
   }
@@ -60,7 +61,7 @@ const getDefaultENVs = cliRootDir => {
     // Copy the local default.env file to the global defaults env directory
     copyFileSync(cliDefaultEnvs, globalDefEnv)
     // Load the default envs
-    __DEFAULT_ENVS = loadENV({ envPath: globalDefEnv })
+    __DEFAULT_ENVS = env.loadSync({ location: globalDefEnv })
   }
 
   return __DEFAULT_ENVS

@@ -1,6 +1,4 @@
-const path = require('path')
-const { DOCKER } = require('KegConst/docker')
-const { yml } = require('KegFileSys/yml')
+const { yml } = require('KegPConf')
 const { throwNoComposeService } = require('../../error/throwNoComposeService')
 const { getContainerConst } = require('../getContainerConst')
 
@@ -13,12 +11,12 @@ const { getContainerConst } = require('../getContainerConst')
  * @returns {Object} - Loaded docker-compose.yml config file
  */
 const loadComposeConfig = async ({ composePath, context, skipThrow }) => {
-  const loadPath = composePath ||
+  const location = composePath ||
     (context && getContainerConst(context, `ENV.KEG_COMPOSE_DEFAULT`))
 
-  const composeConfig = loadPath && await yml.load(loadPath) || null
+  const composeConfig = location && await yml.load({ location }) || null
 
-  return composeConfig || (!skipThrow && throwNoComposeService(loadPath))
+  return composeConfig || (!skipThrow && throwNoComposeService(location))
 }
 
 module.exports = {

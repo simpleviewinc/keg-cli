@@ -1,9 +1,7 @@
 const path = require('path')
-const { KEG_ENVS } = require('../envs')
-const { deepMerge } = require('@keg-hub/jsutils')
+const { yml, env:envLoader } = require('KegPConf')
+const { get, deepMerge } = require('@keg-hub/jsutils')
 const { GLOBAL_CONFIG_FOLDER } = require('../constants')
-const { loadYmlSync } = require('../../libs/fileSys/yml')
-const { checkLoadEnv } = require('../../libs/fileSys/env')
 const { cliRootDir, containersPath } = require('./values')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
@@ -66,8 +64,9 @@ const loadEnvFiles = args => {
   // Try to load each of the envPaths if then exists
   // Then merge and return them
   return deepMerge(
-    ...envPaths.reduce((envs, envPath) => {
-      return envs.concat([ checkLoadEnv(envPath, extraData) ])
+    ...envPaths.reduce((envs, location) => {
+      envs.push(envLoader.loadSync({ location, data: extraData, error: false }))
+      return envs
     }, [])
   )
 
@@ -152,10 +151,17 @@ const loadValuesFiles = args => {
   // Try to load each of the envPaths if it exists, then merge and return them
   return deepMerge(
     ...ymlPaths.reduce((ymls, ymlPath) => {
-      const loadedYml = ymlPath && loadYmlSync(ymlPath, false, extraData)
-      return loadedYml
-        ? ymls.concat([ loadPath ? loadedYml[loadPath] : loadedYml ])
-        : ymls
+      const loadedYml = ymlPath &&
+        yml.loadSync({
+          error: false,
+          data: extraData,
+          location: ymlPath,
+        })
+
+      loadedYml &&
+        ymls.push(loadPath ? get(loadedYml, loadPath) : loadedYml)
+
+      return ymls
     }, [])
   )
 
