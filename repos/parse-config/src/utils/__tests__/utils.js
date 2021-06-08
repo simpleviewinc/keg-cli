@@ -22,6 +22,7 @@ const {
   loadTemplate,
   mergeFiles,
   removeFile,
+  resolveArgs,
 } = require('../utils')
 
 const testYmlData = {
@@ -209,4 +210,25 @@ describe('utils', () => {
       }
     })
   })
+
+  describe('resolveArgs', () => {
+    it(`Should return an object of defaults merged with passed in object`, async () => {
+      const resolved = resolveArgs({ test: 'value' })
+      expect(resolved.test).toBe('value')
+      expect(resolved.error).toBe(true)
+      expect(resolved.format).toBe('object')
+      expect(typeof resolved.data).toBe('object')
+      expect(resolved.location).toBe(undefined)
+    })
+
+    it(`Should set the location property when passed in value is a string`, async () => {
+      const resolved = resolveArgs('some/location/string')
+      expect(resolved.error).toBe(true)
+      expect(resolved.format).toBe('object')
+      expect(typeof resolved.data).toBe('object')
+      expect(resolved.location).toBe('some/location/string')
+    })
+  })
+  
+
 })
