@@ -4,15 +4,15 @@ jest.clearAllMocks()
 const cliUtils = require('@keg-hub/cli-utils')
 const writeFileMock = jest.fn(async (location, data) => {
   return location.endsWith('.env')
-    ? [null, true]
-    : [new Error(`Invalid file path`), false]
+    ? [ null, true ]
+    : [ new Error(`Invalid file path`), false ]
 })
 jest.setMock('@keg-hub/cli-utils', {
   ...cliUtils,
   fileSys: {
     ...cliUtils.fileSys,
-    writeFile: writeFileMock
-  }
+    writeFile: writeFileMock,
+  },
 })
 
 const { utils, resetUtils, utilValues } = require('../../__mocks__')
@@ -22,7 +22,6 @@ const data = {}
 const { env } = require('../env')
 
 describe('ENV files', () => {
- 
   beforeEach(() => {
     resetUtils()
     writeFileMock.mockClear()
@@ -79,7 +78,10 @@ describe('ENV files', () => {
 
     it('should not throw when the path is valid', async () => {
       try {
-        const content = await env.loadSync({ location: `/some/env/path.env`, data })
+        const content = await env.loadSync({
+          location: `/some/env/path.env`,
+          data,
+        })
         expect(content).toEqual(utilValues.envObj)
       }
       catch (err) {

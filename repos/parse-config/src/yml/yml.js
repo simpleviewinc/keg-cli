@@ -8,7 +8,7 @@ const {
   loadTemplate,
   mergeFiles,
   removeFile,
-  resolveArgs
+  resolveArgs,
 } = require('../utils')
 
 /**

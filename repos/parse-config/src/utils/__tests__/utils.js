@@ -21,7 +21,7 @@ const {
   getContentSync,
   loadTemplate,
   mergeFiles,
-  removeFile
+  removeFile,
 } = require('../utils')
 
 const testYmlData = {
@@ -65,7 +65,9 @@ describe('utils', () => {
           err.message.includes('File path does not exist at /invalid/file/path')
         ).toBe(true)
         expect(
-          err.message.includes(`no such file or directory, access '/invalid/file/path'`)
+          err.message.includes(
+            `no such file or directory, access '/invalid/file/path'`
+          )
         ).toBe(true)
       }
     })
@@ -108,7 +110,7 @@ describe('utils', () => {
       }
       catch (err) {
         throw new Error(
-          `Utils.getContentSync should not throw when second argument is false,\nError: ${err.stack}`,
+          `Utils.getContentSync should not throw when second argument is false,\nError: ${err.stack}`
         )
       }
     })
@@ -117,11 +119,7 @@ describe('utils', () => {
   describe('loadTemplate', () => {
     it(`should load a template and replace the values`, () => {
       const data = { test: { array: ['item3'], key: 'item3', value: '3' } }
-      const filled = loadTemplate(
-        { data },
-        utilValues.ymlStr,
-        yaml.safeLoad
-      )
+      const filled = loadTemplate({ data }, utilValues.ymlStr, yaml.safeLoad)
       expect(filled).toEqual(utilValues.ymlObj)
     })
 
@@ -161,7 +159,6 @@ describe('utils', () => {
       const resp = loadTemplate({}, false)
       expect(resp).toEqual({})
     })
-
   })
 
   describe('mergeFiles', () => {

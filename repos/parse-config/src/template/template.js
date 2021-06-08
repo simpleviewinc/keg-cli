@@ -39,18 +39,13 @@ const setTemplateRegex = pattern => {
  *
  * @returns {Object} - Merge data object
  */
-const buildFillData = (data=noOpObj) => {
+const buildFillData = (data = noOpObj) => {
   const globalConfig = getKegGlobalConfig() || noOpObj
   // Add the globalConfig, and the process.envs as the data objects
   // This allows values in ENV templates from globalConfig || process.env
   return {
     ...deepMerge(globalConfig, data),
-    envs: deepMerge(
-      globalConfig.envs,
-      process.env,
-      data.envs,
-      data.ENVS
-    )
+    envs: deepMerge(globalConfig.envs, process.env, data.envs, data.ENVS),
   }
 }
 
@@ -93,9 +88,7 @@ const fillTemplate = async ({
   data = noOpObj,
   pattern,
 }) => {
-  const [ err, toFill ] = tmp
-    ? [ null, tmp ]
-    : await fileSys.readFile(location)
+  const [ err, toFill ] = tmp ? [ null, tmp ] : await fileSys.readFile(location)
 
   return err ? throwError(err) : execTemplate(toFill, data, pattern)
 }
@@ -110,11 +103,7 @@ const fillTemplate = async ({
  * @returns {string} - Template with the content filled from the passed in data
  */
 const fillTemplateSync = ({ location, template: tmp, data = {}, pattern }) => {
-  return execTemplate(
-    tmp || fileSys.readFileSync(location),
-    data,
-    pattern
-  )
+  return execTemplate(tmp || fileSys.readFileSync(location), data, pattern)
 }
 
 module.exports = {

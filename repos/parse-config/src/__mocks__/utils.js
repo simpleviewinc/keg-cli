@@ -91,7 +91,7 @@ const loadTemplate = jest.fn((args, content, loader) => {
       : {}
 })
 
-const resolveArgs = jest.fn((args) => {
+const resolveArgs = jest.fn(args => {
   const def = {
     error: true,
     fill: true,

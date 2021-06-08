@@ -8,7 +8,7 @@ const {
   pathExistsSync,
   readFile,
   readFileSync,
-  removeFile:remove,
+  removeFile: remove,
 } = fileSys
 
 const defLoaderArgs = {
@@ -26,9 +26,8 @@ const defLoaderArgs = {
  *
  * @returns {string} - stripped string
  */
-const stripBom = content => (
+const stripBom = content =>
   content.charCodeAt(0) === 0xfeff ? content.slice(1) : content
-)
 
 /**
  * Checks it the passed in location exists on th local file system
@@ -41,7 +40,7 @@ const stripBom = content => (
  * @returns {boolean} - True if the file exists
  */
 const checkExists = async (location, error = true, type) => {
-  const [err, exists] = await pathExists(location)
+  const [ err, exists ] = await pathExists(location)
 
   return exists
     ? true
@@ -91,7 +90,7 @@ const getContent = async (location, error = true, type) => {
   if (!exists) return null
 
   // Get the content of the file
-  const [err, content] = await readFile(location)
+  const [ err, content ] = await readFile(location)
 
   return !err
     ? content
@@ -157,10 +156,10 @@ const mergeFiles = async ({ files, loader = noOp, ...args }) => {
  * @returns {Object} - Parse ENV file as a JS Object
  */
 const loadTemplate = (args, content, loader) => {
-  const { data=noOpObj, fill=true, format, pattern } = args
+  const { data = noOpObj, fill = true, format, pattern } = args
 
-  if(!content) return format === 'string' ? '' : {}
- 
+  if (!content) return format === 'string' ? '' : {}
+
   const cleaned = stripBom(content)
   const template = fill ? execTemplate(cleaned, data, pattern) : cleaned
 
