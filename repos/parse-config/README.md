@@ -1,5 +1,5 @@
 # Parse-Config
-* Helper package for parsing / loading config files with `.yml`, `.env` extensions
+* Helper package for parsing / loading config files with `.yml` and `.env` extensions
 * Includes simple template system for dynamically setting config values
 
 ## Install
