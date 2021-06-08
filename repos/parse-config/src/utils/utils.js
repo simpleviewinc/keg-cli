@@ -179,7 +179,7 @@ const loadTemplate = (args, content, loader) => {
 const resolveArgs = args => {
   return !isStr(args)
     ? deepMerge(defLoaderArgs, args)
-    : defLoaderArgs(defLoaderArgs, { location: args })
+    : deepMerge(defLoaderArgs, { location: args })
 }
 
 module.exports = {
