@@ -1,15 +1,15 @@
 const path = require('path')
-const { deepFreeze, reduceObj, exists } = require('@keg-hub/jsutils')
+const { env } = require('KegPConf')
 const { cliRootDir } = require('./values')
-const { loadENV } = require('KegFileSys/env')
+const { deepFreeze, reduceObj } = require('@keg-hub/jsutils')
 
 const envType = process.env.KEG_DOCKER_MACHINE
   ? `machine`
   : `desktop`
 
 // Load the docker-machine ENVs from same file as setup script
-const machineEnvs = loadENV({
-  envPath: path.join(cliRootDir, `scripts/docker/docker-${envType}.env`),
+const machineEnvs = env.loadSync({
+  location: path.join(cliRootDir, `scripts/docker/docker-${envType}.env`),
 })
 
 /*

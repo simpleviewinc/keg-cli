@@ -1,5 +1,6 @@
 module.exports = {
   ...require('./env'),
-  ...require('./fileSys'),
+  ...require('./rc'),
+  ...require('./template'),
   ...require('./yml'),
 }

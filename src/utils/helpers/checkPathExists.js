@@ -1,4 +1,4 @@
-const { pathExists } = require('KegFileSys/fileSys')
+const { pathExists } = require('KegFileSys')
 const { generalError } = require('../error/generalError')
 
 /**
