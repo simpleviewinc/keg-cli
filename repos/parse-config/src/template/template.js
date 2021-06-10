@@ -36,11 +36,12 @@ const setTemplateRegex = pattern => {
  * Sources include Keg-CLI global config, process.env, custom data object argument
  * @function
  * @param {Object} data - Custom data with values for filling templates
+ * @param {Boolean} expectKegConfig - if true, throws if global keg config is not found
  *
  * @returns {Object} - Merge data object
  */
-const buildFillData = (data = noOpObj) => {
-  const globalConfig = getKegGlobalConfig() || noOpObj
+const buildFillData = (data = noOpObj, expectKegConfig=false) => {
+  const globalConfig = getKegGlobalConfig(expectKegConfig) || noOpObj
   // Add the globalConfig, and the process.envs as the data objects
   // This allows values in ENV templates from globalConfig || process.env
   return {
