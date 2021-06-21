@@ -32,7 +32,7 @@ class Sync {
       ...args,
       isList: true,
       opts: [ `sync`, `list` ].concat(opts),
-    })
+    }) || []
   }
 
   /**
