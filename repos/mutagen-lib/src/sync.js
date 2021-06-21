@@ -23,7 +23,7 @@ class Sync {
   * @param {string} args.format - Output format type ( text || json )
   * @param {boolean} args.log - Should the command being run be logged
   *
-  * @returns {*} - response local the mutagen CLI
+  * @returns {Array} - response local the mutagen CLI
   */
   list = async (args={}) => {
     const { opts=[] } = args
@@ -32,7 +32,7 @@ class Sync {
       ...args,
       isList: true,
       opts: [ `sync`, `list` ].concat(opts),
-    })
+    }) || []
   }
 
   /**
