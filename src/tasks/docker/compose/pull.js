@@ -50,7 +50,7 @@ const composePull = async args => {
       options: { env: contextEnvs },
       loading: {
         title: `- Downloading Image`,
-        offMatch: [ `status:` ]
+        offMatch: [ `Pulled` ]
       },
     },
     { log: false },
@@ -64,12 +64,11 @@ const composePull = async args => {
   // So check for truthy value, which means the command failed
   exitCode && throwComposeFailed(dockerCmd, location, error)
 
-  const isNewImage = checkPulledNewImage(data, error)
-
-  Logger.empty()
-  isNewImage
-    ? Logger.highlight(`Pulled new image`, `${ imgNameContext.full }`, `from provider!`)
-    : Logger.highlight(`Local image`, `${ imgNameContext.full }`, `is up to date!`)
+  // const isNewImage = checkPulledNewImage(data, error)
+  // Logger.empty()
+  // isNewImage
+  //   ? Logger.highlight(`Pulled new image`, `${ imgNameContext.full }`, `from provider!`)
+  //   : Logger.highlight(`Local image`, `${ imgNameContext.full }`, `is up to date!`)
 
   // Get the docker image object that was just pulled
   const imageRef = await docker.image.get(imgNameContext.full)
@@ -77,7 +76,7 @@ const composePull = async args => {
   // Return the state of the image being pulled
   return {
     imageRef,
-    isNewImage,
+    isNewImage: true,
     imgNameContext,
     containerContext,
   }

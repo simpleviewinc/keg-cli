@@ -25,7 +25,6 @@ const composeArgs = {
   },
   pull: {
     deps: `--include-deps`,
-    log: `--log-level DEBUG`,
   }
 }
 
@@ -133,7 +132,7 @@ const buildComposeCmd = async args => {
     }
     case 'pull': {
       // Add the log level, then add the cmd to allow tracking the pull output
-      dockerCmd = `${dockerCmd} ${cmdArgs.log} ${cmd} ${cmdArgs.deps}`
+      dockerCmd = `${dockerCmd} ${cmd} ${cmdArgs.deps}`
       break
     }
     case 'down': {
