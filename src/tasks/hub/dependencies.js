@@ -10,7 +10,7 @@ const { updateVersionInDependencies } = require('KegUtils/version/updateVersionI
  *
  * @returns {string} - Cleaned Version number
  */
-const cleanVersion = ver => semver.clean(ver.replace('^', ''))
+const cleanVersion = ver => semver.coerce(ver).version
 
 /**
  * Loops over a repos dependencies and compares it with all other repo dependencies
@@ -167,7 +167,7 @@ const displayMismatches = formatted => {
 const compareVersions = (repos, display, depFilters) => {
   const allDependencies = { cache: {}, versions: {} }
   mapObj(repos, (repo, { package }) => buildDepMap(allDependencies, package, repo, depFilters))
-  
+
   const mismatched = diffDepVersions(allDependencies.versions)
   const formatted = formatMismatches(mismatched)
 
@@ -249,12 +249,13 @@ module.exports = {
       context: {
         alias: [ 'ctx', 'filter', 'ftr', 'scope', 'scp' ],
         description: 'Filter results based on a repo(s) name',
-        example: 'keg hub dependencies --scope cli',
-        default: 'all'
+        example: 'keg hub dependencies --scope cli,re-theme',
+        type: 'array',
+        default: ['all']
       },
       dependencies: {
         alias: [ 'deps', 'dep'],
-        description: 'File the dependencies that will be checked',
+        description: 'Specify the dependencies that will be checked',
         example: 'keg hub dependencies --dependencies expo,rollup',
         type: 'array',
         default: [],
