@@ -4,6 +4,8 @@ const { Remote } = require('./remote')
 const { Branch } = require('./branch')
 const { Logger } = require('@keg-hub/cli-utils')
 const { gitSSHEnv, buildCmdOpts } = require('./utils/helpers')
+const { getKegGlobalConfig } = require('@keg-hub/cli-utils')
+const globalConfig = getKegGlobalConfig()
 
 
 class Git {
@@ -39,13 +41,26 @@ class Git {
   * @returns {void}
   */
   reset = async cmdOpts => {
-    await gitCmd(`git clean -f .`, buildCmdOpts(cmdOpts, args))
-    return gitCmd(`git reset --hard`, buildCmdOpts(cmdOpts, args))
+    await gitCmd(`git clean -f .`, buildCmdOpts(cmdOpts))
+    return gitCmd(`git reset --hard`, buildCmdOpts(cmdOpts))
+  }
+
+  /**
+  * Initializes a directory for a git repo
+  * @memberof Git
+  * @param {Object} cmdOpts - Options to pass to the spawnCmd
+  *
+  * @returns {boolean} - True if command is scuccessful, false otherwise
+  */
+  init = async cmdOpts => {
+    const [ err, resp ] = await limbo(gitCmd(`git init`, buildCmdOpts(cmdOpts)))
+    return err ? false : true
   }
 
 }
 
-const git = new Git({})
+
+const git = new Git(globalConfig.cli.git)
 
 module.exports = {
   Git,

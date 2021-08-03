@@ -1,6 +1,6 @@
 const { Logger } = require('@keg-hub/cli-utils')
 const { PATTERNS } = require('../constants/constants')
-const { checkCall, reduceObj, isStr, deepMerge } = require('@keg-hub/jsutils')
+const { checkCall, reduceObj, isStr, deepMerge, noOpObj } = require('@keg-hub/jsutils')
 
 const { NEWLINES_MATCH, WHITESPACE_MATCH } = PATTERNS
 
@@ -141,11 +141,12 @@ const formatRemotes = (remotes='') => {
  * Adds the location to the cmdOptions
  * @function
  * @param {Object} cmdOpts - Options to pass to the spawnCmd
- * @param {Object} args - Extra options to pass to the spawnCmd
+ * @param {Object} opts - Extra options to pass to the spawnCmd
  *
  * @returns {Object} - Joined cmd options
  */
-const buildCmdOpts = (cmdOpts, { location }) => {
+const buildCmdOpts = (cmdOpts, opts=noOpObj) => {
+  const { location } = opts
   const options = GIT_SSH_COMMAND
     ? deepMerge(cmdOpts.options, { env: { ...GIT_SSH_COMMAND } })
     : cmdOpts.options
@@ -168,10 +169,18 @@ const ensureGitRemote = async (git, { action, remote, location }) => {
   return remote || 'origin'
 }
 
-const ensureGitBranch = async (git, args) => {
-  const { branch, location, remote, to } = args
+/**
+ * Gets a branch name from the passed in params or the current location
+ * @function
+ * @param {string} git - Instance of the Git class
+ *
+ * @returns {string|boolean} - 
+ Branch name or false if not found
+ */
+const ensureGitBranch = async (git, opts) => {
+  const { branch, location, remote, to } = opts
 
-  const useBranch = args.to || args.branch
+  const useBranch = opts.to || opts.branch
   const useCurrent = !useBranch
 
   const branches = await git.branch.list(location)
@@ -192,6 +201,7 @@ const ensureGitBranch = async (git, args) => {
 }
 
 module.exports = {
+  GIT_SSH_COMMAND,
   buildCmdOpts,
   formatRemotes,
   gitSSHEnv,

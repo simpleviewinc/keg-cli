@@ -31,4 +31,20 @@ describe('branch', () => {
 
   })
 
+  describe('get', () => {
+    it('should return a branch object for the passed in location', async done => {
+      const { current, ...res } = await git.branch.get(cliRoot, 'master')
+      expect(res).toMatchSnapshot()
+      done()
+    })
+
+    it('should return null when the branch can not be found', async done => {
+      const res = await git.branch.get(cliRoot, 'branch-does-not-exists-4321')
+      expect(res).toBe(null)
+      
+      done()
+    })
+
+  })
+
 })

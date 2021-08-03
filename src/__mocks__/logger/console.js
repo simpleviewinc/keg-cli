@@ -15,7 +15,7 @@ const overrides = [
 // TODO: Need to fix. Console methods are overwritten, but original is not called!
 
 // Replace the original method with a jest.fn, and call the original method inside
-const replacer = method => jest.fn((...data) => originals[method](...data))
+const replacer = method => jest.fn((...data) => originals[method].apply(console, data)
 
 // Loop over the console methods to be overridden
 // Store the original, and override the console with the replacer

@@ -482,13 +482,13 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@keg-hub/args-parse@6.2.1":
-  version "6.2.1"
-  resolved "https://registry.npmjs.org/@keg-hub/args-parse/-/args-parse-6.2.1.tgz#9397a927ff3e19440b45ba39ecd2b2e5a1b4691e"
-  integrity sha512-NnAux727E5kKqBGrFM1rY5+XUn5Rn7JPLoEjzhyDjNZmJx4oGEen/uBKHGn2zPDmTzes5UAnsPIW1rn2qV0lFg==
+"@keg-hub/args-parse@6.3.1":
+  version "6.3.1"
+  resolved "https://registry.npmjs.org/@keg-hub/args-parse/-/args-parse-6.3.1.tgz#25a097f0e8828bfacc2383a2da60df889b78aeab"
+  integrity sha512-EVBnJMPan2fliRhykaHDClTkPF9r5hSYpm9pfXLjlokIHWHcV+xHevsAxS6UZRZ06xzwTlnHVcMPcDQEP6GRsw==
   dependencies:
-    "@keg-hub/ask-it" "0.0.1"
-    "@keg-hub/jsutils" "6.2.1"
+    "@keg-hub/ask-it" "0.0.2"
+    "@keg-hub/jsutils" "8.4.0"
     app-root-path "3.0.0"
 
 "@keg-hub/ask-it@0.0.1":
@@ -509,16 +509,17 @@
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/cli-utils@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.2.1.tgz#8f156425a5d26bbec2392e88b624d76668443c89"
-  integrity sha512-htMJsJvp+aYOHDe19YS3rfPYEJNvj7HtqzzF6xrNdPIbztobXm4J7ufIfEFg3vYd0SanFScHabEGam9zytj8ug==
+"@keg-hub/cli-utils@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.3.0.tgz#ac0e64b4dc9dd489f58a91e944e9181b9a7b33a2"
+  integrity sha512-xkw2Fl//ySyw+5hp+GXloiAsY63sc0ajPBszIMyN5mvEls9HjX6LoU4nX62Q3dTxm+PzLO7kwCuCeUIe6ZuJcA==
   dependencies:
-    "@keg-hub/args-parse" "6.2.1"
+    "@keg-hub/args-parse" "6.3.1"
     "@keg-hub/ask-it" "0.0.1"
-    "@keg-hub/jsutils" "8.5.0"
+    "@keg-hub/jsutils" "8.6.0"
     "@keg-hub/spawn-cmd" "0.1.2"
     app-root-path "3.0.0"
+    axios "0.21.1"
     colors "1.4.0"
     fs-extra "9.0.1"
     jest-cli "26.6.3"
@@ -529,20 +530,15 @@
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-0.0.1.tgz#6be5fd8398324c51a320f9f8460dbcdcf9faec24"
   integrity sha512-1oAyR0FuHb6ICHd1sacvGhm0O4/w/BDT+RNQO13Lcy1hh7QgAibOG7ylioPFkOQWBFN1nCMdgW9xRVe3peEUVQ==
 
-"@keg-hub/jsutils@6.2.1":
-  version "6.2.1"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-6.2.1.tgz#0d9dbf562e313eb7690d36a2b8e9147b1e08d52a"
-  integrity sha512-aCZ86nB+f6awWbDIPd6VPaePQjm8AYNXvGrwe2Ip06F6oVJZ7tiOIBwFHeK/gAKqmw1wnxl4B0z21vQeINd6dw==
-
 "@keg-hub/jsutils@8.4.0":
   version "8.4.0"
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.4.0.tgz#e2dd2794ccc60f8c2e5ee1aa12ec6f8d9217c209"
   integrity sha512-dKduqKAHh2AqKymyHR0boje7x8kPkTK8vkFI46OUS+Ar9tZjjMgX8CoQuOoCzvpc/pbCaINgbSQCfrcOPidQQg==
 
-"@keg-hub/jsutils@8.5.0":
-  version "8.5.0"
-  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.5.0.tgz#cc81b730b6875d889e968100bd1302e0fb22d8f4"
-  integrity sha512-aF0mLfc1o0fRdoEaAopEkwCHfEKSz+Kjfb5goSELBkPJyulRzPz+6OTRk7XDV6VXtiq8kGJomGDAsBLW7htk4Q==
+"@keg-hub/jsutils@8.6.0":
+  version "8.6.0"
+  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.6.0.tgz#c6a4511b5439ffe73ff50aa9319f17d1d7701e2a"
+  integrity sha512-J6o5lOL4p3idqxJkh+VHmppNFuQhC2IbwUrJiMFjXJbKLsylPQVOKZvRJ7ICHidc9fLw9Qvyd7BIgwo0Nn4iAg==
 
 "@keg-hub/spawn-cmd@0.1.2":
   version "0.1.2"
@@ -813,6 +809,13 @@ aws4@^1.8.0:
   version "1.11.0"
   resolved "https://registry.npmjs.org/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
+
+axios@0.21.1:
+  version "0.21.1"
+  resolved "https://registry.npmjs.org/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+  dependencies:
+    follow-redirects "^1.10.0"
 
 babel-jest@^26.6.3:
   version "26.6.3"
@@ -1552,6 +1555,11 @@ find-up@^4.0.0, find-up@^4.1.0:
   dependencies:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
+
+follow-redirects@^1.10.0:
+  version "1.14.1"
+  resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
+  integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
 
 for-in@^1.0.2:
   version "1.0.2"

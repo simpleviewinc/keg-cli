@@ -1,4 +1,5 @@
 const { Logger } = require('@keg-hub/cli-utils')
+const { buildCmdOpts } = require('./utils/helpers')
 const { PATTERNS } = require('./constants/constants')
 const { executeCmd, spawnCmd } = require('./utils/process')
 const { isArr, isStr, toStr, isObj } = require('@keg-hub/jsutils')
@@ -31,7 +32,7 @@ const ensureGit = cmd => (
  *
  * @returns {string} - Response from the git cli command
  */
-const gitCmd = (cmd, cmdOpts, log) => spawnCmd(ensureGit(cmd), cmdOpts, log)
+const gitCmd = (cmd, cmdOpts, log) => spawnCmd(ensureGit(cmd), buildCmdOpts(cmdOpts), log)
 
 /**
  * Calls the git cli from the command line and returns the response
@@ -56,7 +57,7 @@ const gitCli = async (args={}, cmdOpts={}, location) => {
   const cmdToRun = ensureGit(`${ options } ${ useForce }`.trim())
 
   log && Logger.spacedMsg(`Running command: `, cmdToRun)
-  const { error, data } = await executeCmd(cmdToRun, cmdOpts, location)
+  const { error, data } = await executeCmd(cmdToRun, buildCmdOpts(cmdOpts), location)
 
   return error ? cliError(error, skipError) : data
 
