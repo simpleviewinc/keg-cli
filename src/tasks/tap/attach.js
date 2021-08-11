@@ -41,6 +41,11 @@ module.exports = {
         alias: [ 'opts' ],
         description: 'Extra docker exec command options',
         default: '-it'
+      },
+      prefix: {
+        alias: [ 'type' ],
+        description: 'The container prefix type. For accessing containers with added prefixes',
+        example: 'keg tap att --prefix package',
       }
     }
   }

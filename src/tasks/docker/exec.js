@@ -1,8 +1,21 @@
 const docker = require('KegDocCli')
-const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
-const { throwRequired } = require('KegUtils/error')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
+const { throwRequired, throwContainerNotFound } = require('KegUtils/error')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
+
+
+const checkForContainer = async (containerName, prefix) => {
+  const containers = await docker.container.list()
+  !containers.length && throwContainerNotFound(containerName)
+
+  return containers.find(cont => {
+    const match = [ 'id', 'name', 'image' ].find(prop => cont[prop] === containerName)
+    return match || !prefix
+      ? match
+      : cont.name.replace(`${prefix}-`, '').indexOf(containerName) === 0
+  })
+}
 
 /**
  * Execute a docker command on a running container
@@ -15,7 +28,7 @@ const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
  */
 const dockerExec = async args => {
   const { params, task, __internal={} } = args
-  const { cmd, detach, options, workdir, context } = params
+  const { cmd, detach, options, workdir, context, prefix:prefixType } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
@@ -28,12 +41,15 @@ const dockerExec = async args => {
     params: { ...params, context }
   })
 
+  // TODO: find better way to get container name from tap alias || internal apps
+  // Best option is to find the docker-compose.yml service name from the getServiceName helper
   const { contextEnvs, location, prefix, image, container, id:containerId } = execContext
 
   // Get the name of the container to run the docker exec cmd on
-  const containerName = containerId || container && container.name || prefix || image
+  const containerName = containerId || container && container.name || image
+  const containerRef = await checkForContainer(containerName, prefixType)
 
-  const execArgs = { cmd, container: containerName, opts: options, location }
+  const execArgs = { cmd, container: containerRef.id, opts: options, location }
   workdir && (execArgs.workdir = workdir)
   detach && (execArgs.detach = detach)
 
@@ -94,6 +110,12 @@ module.exports = {
       tap: {
         description: 'Tap name when "context" options is set to "tap"',
         example: 'keg docker exec --context tap --tap my-tap',
+      },
+      prefix: {
+        alias: [ 'type' ],
+        allowed: [ 'package', 'img' ],
+        description: 'The container prefix type. For accessing containers with added prefixes',
+        example: 'keg docker exec --context tap --tap my-tap --prefix package',
       }
     }
   }
