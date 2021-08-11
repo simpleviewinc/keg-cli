@@ -193,6 +193,9 @@ module.exports = {
         example: `keg docker package --no-push`,
         default: true,
       },
+      log: {
+        default: true,
+      }
     })
   }
 }
