@@ -1,4 +1,4 @@
-const { fromImage, pullImage, tagVariable } = require('./singleOptions')
+const { fromImage, tagVariable } = require('./singleOptions')
 const { dockerOptions } = require('./dockerOptions')
 const { contextOptions } = require('./contextOptions')
 
