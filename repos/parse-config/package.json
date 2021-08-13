@@ -1,0 +1,49 @@
+{
+  "name": "@keg-hub/parse-config",
+  "version": "0.0.3",
+  "description": "Utils to allow loading non-javascript files into a node environment",
+  "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/parse-config",
+  "main": "index.js",
+  "author": "Lance Tipton",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "env",
+    "yml",
+    "yaml",
+    "rc",
+    "file-loader",
+    "keg-hub",
+    "keg-cli",
+    "node",
+    "cli"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "exit 0",
+    "clean:full": "yarn clean && yarn install",
+    "clean": "yarn clean:lock && yarn cache clean && rimraf node_modules && npm cache clean --force",
+    "clean:lock": "rimraf ./yarn.lock && rimraf ./package.lock",
+    "format:eslint": "eslint --config ./configs/eslintrc.config.js . --fix --quiet",
+    "format:prettier": "prettier --config ./configs/prettier.config.js --ignore-path .eslintignore --write '**/*.{js,jsx}'",
+    "format": "yarn format:prettier && yarn format:eslint",
+    "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js --maxWorkers=50%"
+  },
+  "dependencies": {
+    "@keg-hub/cli-utils": "^0.3.0",
+    "@keg-hub/jsutils": "8.6.0",
+    "@keg-hub/spawn-cmd": "0.1.2",
+    "js-yaml": "3.14.0",
+    "write-yaml-file": "4.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "10.1.0",
+    "eslint": "7.4.0",
+    "eslint-plugin-jest": "23.18.0",
+    "jest": "26.6.3",
+    "prettier": "2.0.5",
+    "rimraf": "3.0.2"
+  }
+}

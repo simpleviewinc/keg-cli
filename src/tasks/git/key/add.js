@@ -6,7 +6,7 @@ const {
 const { throwRequired } = require('KegUtils/error')
 const { getSetting } = require('KegUtils/globalConfig')
 const { encrypt } = require('KegCrypto')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 
 /**

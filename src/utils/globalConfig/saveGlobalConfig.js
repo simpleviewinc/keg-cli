@@ -3,7 +3,7 @@ const { isObj, checkCall } = require('@keg-hub/jsutils')
 const { throwExitError } = require('../error/throwExitError')
 const { __updateGlobalConfig } = require('./globalConfigCache')
 const { validateGlobalConfig } = require('./validateGlobalConfig')
-const { ensureDirSync, writeFile } = require('KegFileSys/fileSys')
+const { ensureDirSync, writeFile } = require('KegFileSys')
 const { GLOBAL_CONFIG_FOLDER, GLOBAL_CONFIG_FILE } = require('../../constants/constants')
 const { NODE_ENV } = process.env
 

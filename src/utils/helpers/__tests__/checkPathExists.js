@@ -3,7 +3,7 @@ jest.setMock('../../error/generalError', { generalError })
 
 let existsMock = []
 const pathExists = jest.fn(() => { return existsMock })
-jest.setMock('KegFileSys/fileSys', { pathExists })
+jest.setMock('KegFileSys', { pathExists })
 
 const { checkPathExists } = require('../checkPathExists')
 

@@ -1,4 +1,4 @@
-const { spawnCmd } = require('@keg-hub/spawn-cmd')
+const { spawnCmd } = require('KegRepos/spawn-cmd')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
 const { throwNoConfigPath } = require('KegUtils/error/throwNoConfigPath')
 

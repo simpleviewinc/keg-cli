@@ -1,4 +1,4 @@
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const docker = require('KegDocCli')
 const { checkCall, get } = require('@keg-hub/jsutils')
 const { throwNoContainers } = require('../error/throwNoContainers')
