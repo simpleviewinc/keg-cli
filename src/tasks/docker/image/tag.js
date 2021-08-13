@@ -4,6 +4,7 @@ const { Logger } = require('KegLog')
 const { DOCKER } = require('KegConst/docker')
 const { throwRequired, generalError } = require('KegUtils/error')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
+const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 
 /**
  * Tag options for tag and remove tag tasks
@@ -11,21 +12,30 @@ const { buildContainerContext } = require('KegUtils/builders/buildContainerConte
  */
 const tagOpts = {
   context: {
-    alias: [ 'name' ],
-    allowed: DOCKER.IMAGES,
+    alias: ['name'],
     description: 'Context or name of the image to tag',
     example: 'keg docker image tag --context core',
     enforced: true,
   },
-  log: {
-    description: 'Log the docker tag command',
-    example: 'keg docker image tag --log false',
-    default: true
-  },
   tag: {
     description: 'Tag to add to the image',
     example: 'keg docker image tag --tag my-tag',
-    required: true
+    enforced: true
+  },
+  name: {
+    description: 'New name for the image. Overrides provider option',
+    example: 'keg docker image tag my-tag --name new-image-name',
+  },
+  provider: {
+    alias: ['pro'],
+    description: 'Include the provider information when tagging the image',
+    example: 'keg docker image tag --no-full',
+    default: true
+  },
+  log: {
+    description: 'Log the docker tag command',
+    example: 'keg docker image tag --no-log',
+    default: true
   },
 }
 
@@ -41,16 +51,16 @@ const tagOpts = {
  * @returns {void}
  */
 const dockerTag = async args => {
-  const { command, __internal={}, globalConfig, options, params, task, tasks } = args
-  const { context, tag, remove, log } = params
+  const { command, params, task } = args
+  const { context, remove, name, log } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
 
-  // Get the context data for the command to be run
-  const { image } = __internal.containerContext
-    ? __internal.containerContext
-    : await buildContainerContext({ globalConfig, task, params })
+  // Don't pass the provider to imageNameContext method
+  // Otherwise it will be included when parsing the image name
+  const { provider, ...imgContextParams } = params
+  const { providerImage, tag, image } = await getImgNameContext(imgContextParams)
 
   // If remove is passed, then call the removeTag method
   // Otherwise call the tag method
@@ -58,7 +68,12 @@ const dockerTag = async args => {
 
   // If we have an image, call the tag method, otherwise throw no image error
   image
-    ? await tagMethod({ tag, item: image, log })
+    ? await tagMethod({
+        log,
+        item: image,
+        provider: name ? false : provider,
+        tag: name ? `${name}:${tag}` : tag,
+      })
     : generalError(`Could not find image to tag for context "${ context }"`)
 
   log && Logger.info(`Finished updating docker image tags for "${ context }"`)
