@@ -71,8 +71,8 @@ const dockerTag = async args => {
     ? await tagMethod({
         log,
         item: image,
-        provider: name ? false : provider,
-        tag: name ? `${name}:${tag}` : tag,
+        provider: name ? true : provider,
+        tag: remove ? tag : name ? `${name}:${tag}` : `${image}:${tag}`,
       })
     : generalError(`Could not find image to tag for context "${ context }"`)
 
