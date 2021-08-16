@@ -1,9 +1,9 @@
 {
-  "name": "git-lib",
-  "version": "0.0.0",
+  "name": "@keg-hub/git-lib",
+  "version": "0.0.1",
   "description": "Wrapper around the git command line executable",
   "main": "index.js",
-  "repository": "https://github.com/simpleviewinc/keg-cli",
+  "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/git-lib",
   "author": "Lance Tipton",
   "license": "MIT",
   "private": false,
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@keg-hub/ask-it": "0.0.2",
-    "@keg-hub/cli-utils": "0.1.0",
+    "@keg-hub/cli-utils": "0.2.1",
     "@keg-hub/jsutils": "8.5.0",
     "@keg-hub/spawn-cmd": "0.1.2",
     "rimraf": "3.0.2"

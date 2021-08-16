@@ -1,13 +1,13 @@
 const path = require('path')
-const { isStr } = require('@keg-hub/jsutils')
+const { env } = require('KegPConf')
 const { Logger } = require('KegLog')
-const { parseContent } = require('KegFileSys/env')
-const { readFile } = require('KegFileSys/fileSys')
+const { isStr } = require('@keg-hub/jsutils')
+const { readFile } = require('KegFileSys')
 const { saveDefaultsEnv } = require('./saveDefaultsEnv')
 const { removeDefaultEnv } = require('./removeDefaultEnv')
 const { generalError } = require('../error/generalError')
 const { DEFAULT_ENV, GLOBAL_CONFIG_FOLDER } = require('KegConst/constants')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 
 /**
  * Adds an ENV to the Global Defaults.env file
@@ -33,9 +33,9 @@ const addDefaultEnv = async ({ key, value, force, log }) => {
   envErr && generalError(envErr)
 
   // Load the contents of the Global ENV file
-  const globalEnvs = parseContent({
-    file: globalEnvsPath,
-    fill: false
+  const globalEnvs = await env.load({
+    fill: false,
+    location: globalEnvsPath,
   })
 
   const alreadyExists = globalEnvs[addKey]

@@ -1,6 +1,6 @@
 {
   "name": "@keg-hub/cli-utils",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Utility methods for writing Custom Tasks consumed by the Keg-CLI",
   "main": "index.js",
   "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/cli-utils",
@@ -31,20 +31,21 @@
     "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js"
   },
   "dependencies": {
-    "@keg-hub/args-parse": "6.2.1",
+    "axios": "0.21.1",
+    "@keg-hub/args-parse": "6.3.1",
     "@keg-hub/ask-it": "0.0.1",
-    "@keg-hub/jsutils": "8.5.0",
+    "@keg-hub/jsutils": "8.6.0",
     "@keg-hub/spawn-cmd": "0.1.2",
     "app-root-path": "3.0.0",
     "colors": "1.4.0",
     "fs-extra": "9.0.1",
-    "jest-cli": "26.6.3",
     "module-alias": "2.2.2"
   },
   "resolutions": {
-    "@keg-hub/jsutils": "8.5.0"
+    "@keg-hub/jsutils": "8.6.0"
   },
   "devDependencies": {
+    "jest-cli": "26.6.3",
     "babel-eslint": "10.1.0",
     "eslint": "7.4.0",
     "eslint-plugin-jest": "23.18.0",

@@ -37,17 +37,33 @@ const ensureArray = (data=noPropArr) => (
  * @param {string} cwd - Directory where the child process should be run from
  * @param {boolean} asExec - Run command with execCmd instead of spawnCmd
  *
- * @returns {*} - Response from spawnCmd
+ * @returns {Object|undefined} - Object is exec is true, undefined if false
  */
-const runCmd = (cmd, args=noPropArr, options=noOpObj, cwd, asExec) => {
-  const { exec, ...opts } = options
-  const runProc = (exec || asExec) ? execCmd : spawnCmd
+const runCmd = async (cmd, args=noPropArr, options=noOpObj, cwd, asExec) => {
+  const {
+    exec,
+    onStdOut,
+    onStdErr,
+    onError,
+    onExit,
+    ...opts
+  } = options
 
-  return runProc(cmd, {
-    args: ensureArray(args),
-    options: { ...opts, env: { ...process.env, ...opts.env } },
-    cwd: cwd || getAppRoot(),
-  })
+  return (exec || asExec)
+    ? await execCmd(
+        `${cmd} ${ensureArray(args).join(' ')}`,
+        { ...opts, env: { ...process.env, ...opts.env } },
+        cwd || getAppRoot()
+      )
+    : await spawnCmd(cmd, {
+        onStdOut,
+        onStdErr,
+        onError,
+        onExit,
+        args: ensureArray(args),
+        options: { ...opts, env: { ...process.env, ...opts.env } },
+        cwd: cwd || getAppRoot(),
+      })
 }
 
 /**

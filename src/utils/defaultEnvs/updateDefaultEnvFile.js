@@ -1,10 +1,10 @@
 const path = require('path')
+const { env } = require('KegPConf')
 const { Logger } = require('KegLog')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const packConf = require('KegRoot/package.json')
 const { capitalize } = require('@keg-hub/jsutils')
-const { parseContent } = require('KegFileSys/env')
-const { readFile } = require('KegFileSys/fileSys')
+const { readFile } = require('KegFileSys')
 const { saveDefaultsEnv } = require('./saveDefaultsEnv')
 const { CLI_ROOT, DEFAULT_ENV, GLOBAL_CONFIG_FOLDER } = require('KegConst/constants')
 
@@ -112,15 +112,15 @@ const updateDefaultEnvFile = async (params={}) => {
   let globalEnvStr = globalEnvString
 
   // Load the contents of the Global ENV file
-  const globalEnvs = parseContent({
-    file: globalEnvsPath,
-    fill: false
+  const globalEnvs = await env.load({
+    fill: false,
+    location: globalEnvsPath,
   })
 
   // Load the local Keg-CLI defaults ENV file
-  const localEnvs = parseContent({
-    file: path.join(CLI_ROOT, 'scripts/setup/', DEFAULT_ENV),
-    fill: false
+  const localEnvs = await env.load({
+    fill: false,
+    location: path.join(CLI_ROOT, 'scripts/setup/', DEFAULT_ENV),
   })
 
   const stats = { conflict: [], add: [] }

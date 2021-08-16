@@ -1,8 +1,8 @@
 const homeDir = require('os').homedir()
 const { DOCKER } = require('KegConst/docker')
+const { fillTemplate } = require('KegUtils/template')
 const { kegLabels } = require('KegConst/docker/labels')
 const { isArr, isStr, get, exists } = require('@keg-hub/jsutils')
-const { fillTemplate } = require('KegUtils/template/fillTemplate')
 
 const kegHubRepos = `keg-hub/repos/`
 

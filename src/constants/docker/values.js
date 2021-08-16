@@ -3,7 +3,7 @@ const { KEG_ENVS } = require('../envs')
 const cliRootDir = path.join(__dirname, '../../../')
 const { deepFreeze, keyMap, isStr } = require('@keg-hub/jsutils')
 const { defineProperty } = require('../../utils/helpers/defineProperty')
-const { getFoldersSync, pathExistsSync } = require('../../libs/fileSys/fileSys')
+const { getFoldersSync, pathExistsSync } = require('KegFileSys')
 
 /**
  * All folders in the CONTAINERS_PATH that have a Dockerfile

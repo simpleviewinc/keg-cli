@@ -84,5 +84,14 @@
     * @optional
     * @type *Boolean*
     * @cli-option `N/A`
+* **KEG_BASE_IMAGE**
+  * The base image to build a tap image
+  * Should be the full url of the image if using a provider other then the `dockerhub.io` default
+  * Typically it should look similar to `ghcr.io/simpleviewinc/tap:master`
+  * Setting it to `node:12.19-alpine` would pull the image from `dockerhub.io`, which is the default
+  * Definition
+    * @required
+    * @type *String*
+    * @cli-option `--from` (docker build task only)
 
 * *more coming soon...*

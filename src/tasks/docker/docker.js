@@ -79,6 +79,7 @@ module.exports = {
       ...require('./destroy'),
       ...require('./exec'),
       ...require('./image'),
+      ...require('./inspect'),
       ...require('./log'),
       ...require('./machine'),
       ...require('./package'),

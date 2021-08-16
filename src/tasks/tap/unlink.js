@@ -1,5 +1,5 @@
 const { Logger } = require('KegLog')
-const { ask } = require('@keg-hub/ask-it')
+const { ask } = require('KegRepos/ask-it')
 const { constants: { GLOBAL_CONFIG_PATHS } } = require('KegRepos/cli-utils')
 const { removeGlobalConfigProp } = require('KegUtils')
 const { getTapPath } = require('KegRepos/cli-utils')

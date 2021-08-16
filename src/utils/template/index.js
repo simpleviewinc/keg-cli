@@ -1,3 +1,3 @@
 module.exports = {
-  ...require('./fillTemplate'),
+  ...require('./template'),
 }
