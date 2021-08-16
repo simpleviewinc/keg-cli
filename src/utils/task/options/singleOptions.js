@@ -10,7 +10,6 @@ const pullImage = (task, action) => ({
   alias: [ 'pl' ],
   description: `Pull the most recent image before building. Gets image name and tag through the 'from' option, or KEG_IMAGE_FROM env!`,
   example: `keg ${task} ${action} --no-pull`,
-  default: true
 })
 
 const tagVariable = (task, action) => ({
