@@ -7,6 +7,22 @@ ARG NODE_IMAGE_FROM=node:$KEG_NODE_VERSION
 ARG KEG_BASE_IMAGE=ghcr.io/simpleviewinc/keg-base:develop
 FROM $KEG_BASE_IMAGE as keg-base
 
+ARG KEG_COPY_LOCAL
+ENV KEG_COPY_LOCAL=$KEG_COPY_LOCAL
+
+# Copy over the local keg-core code
+COPY . /keg-temp/keg-core
+
+# Check if we should replace the git version with the local version
+# Afterwards, remove the temp folder to keep image size down
+RUN if [ "$KEG_COPY_LOCAL" ]; then \
+      if [ -d "/keg-hub/repos/keg-core" ]; then \
+        rm -rf /keg-hub/repos/keg-core; \
+      fi; \
+      mv /keg-temp/keg-core /keg-hub/repos/keg-core; \
+    fi; \
+    rm -rf /keg-temp/keg-core
+
 # Run the build script keg-core
 RUN /keg-setup/build.sh core
 
@@ -22,36 +38,19 @@ ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin
 # Copy over required items from the keg-base image
 COPY --from=keg-base /usr/local/share/.config/yarn /usr/local/share/.config/yarn
 COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/run.sh /keg/tap-run.sh
-
-# Remove the local copy from the host machine, once the build.sh is merged upstream
-# For now, we have to copy it from the current host, so this is commented out
-# COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/build.sh /keg/tap-build.sh
-# Add this to line 35's Run block => chmod a+x /keg/tap-build.sh; \
+COPY --from=keg-base /keg-hub/repos/keg-cli/containers/tap/build.sh /keg/tap-build.sh
 
 # Copy over the keg-core code with the latest changes
 COPY --from=keg-base /keg-hub/repos/keg-core /keg-hub/repos/keg-core
 
 # Install the dependecies with yarn install, then remove the .npmrc
 RUN chmod a+x /keg/tap-run.sh; \
+    chmod a+x /keg/tap-build.sh; \
     apk add git bash; \
     echo fs.inotify.max_user_watches=1048576 | sudo tee -a /etc/sysctl.conf; \
     sudo sysctl -p; \
     rm -rf /var/cache/apk/*; \
     /bin/sed -i '1s|.*|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
-
-# ----------------- TODO: -----------------
-
-# Remove the local copy from the host machine, once the build.sh is merged upstream
-# For now, we have to copy it from the current host, so this is commented out
-
-
-# Temporary until containers/tap exists upstream
-# Remove this once that happends
-
-COPY ./build.sh /keg/tap-build.sh
-RUN chmod a+x /keg/tap-build.sh
-
-# ----------------- TODO: -----------------
 
 # Set the current directory to keg-core repo
 WORKDIR /keg
