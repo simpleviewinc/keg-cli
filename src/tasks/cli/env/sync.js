@@ -36,27 +36,27 @@ module.exports = {
     alias: [],
     action: syncEnv,
     description: 'Set env values for the Global Keg-CLI env file',
-    example: 'keg cli env sync ',
+    example: 'keg cli env sync',
     options: {
       merge: {
         description: 'Merge the Keg-CLI global ENVs with the User global ENVs ( true )',
-        example: 'keg config sync --no-merge',
+        example: 'keg cli env sync --no-merge',
         default: true,
       },
       conflict: {
         allowed: [ 'global', 'local' ],
         description: 'Which config should be used when in conflict ( global )',
-        example: 'keg config sync --conflict local',
+        example: 'keg cli env sync --conflict local',
         default: 'global',
       },
       confirm: {
         description: 'Confirm before setting the value.',
-        example: 'keg config sync --no-confirm',
+        example: 'keg cli env sync --no-confirm',
         default: true,
       },
       log: {
         description: 'Confirm before setting the value.',
-        example: 'keg config sync --no-log',
+        example: 'keg cli env sync --no-log',
         default: true,
       }
     },
