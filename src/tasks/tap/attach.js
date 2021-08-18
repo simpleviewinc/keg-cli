@@ -41,6 +41,21 @@ module.exports = {
         alias: [ 'opts' ],
         description: 'Extra docker exec command options',
         default: '-it'
+      },
+      tag: {
+        alias: [ 'tg' ],
+        description: 'Tag on the image that should be attached to',
+        example: 'keg tap att tag=my-tag',
+      },
+      prefix: {
+        alias: [ 'type' ],
+        description: 'The container prefix type. For accessing containers with added prefixes',
+        example: 'keg tap att --prefix package',
+      },
+      name: {
+        alias: ['branch'],
+        description: 'Partial name of the container to help filter the found containers',
+        example: 'keg tap att --prefix img --name feature-branch',
       }
     }
   }

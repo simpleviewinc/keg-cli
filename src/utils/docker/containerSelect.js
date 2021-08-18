@@ -11,8 +11,8 @@ const { KEG_ENVS } = require('KegConst/envs')
  *
  * @returns {Object} the selected containers
  */
-const containerSelect = async (filter, throwError=true) => {
-  const containers = await docker.container.list()
+const containerSelect = async (filter, throwError=true, containers) => {
+  containers = containers || await docker.container.list()
 
   // If no containers available, then check if we should call throwError
   // Otherwise just return null

@@ -1,8 +1,10 @@
 const docker = require('KegDocCli')
-const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
-const { throwRequired } = require('KegUtils/error')
+const { Logger } = require('KegLog')
+const { findContainer } = require('KegUtils/docker/findContainer')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
+const { throwRequired, throwContainerNotFound } = require('KegUtils/error')
+const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
 
 /**
  * Execute a docker command on a running container
@@ -15,7 +17,16 @@ const { KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
  */
 const dockerExec = async args => {
   const { params, task, __internal={} } = args
-  const { cmd, detach, options, workdir, context } = params
+  const {
+    cmd,
+    detach,
+    name,
+    options,
+    workdir,
+    context,
+    prefix:prefixType,
+    tag
+  } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
@@ -28,14 +39,28 @@ const dockerExec = async args => {
     params: { ...params, context }
   })
 
+  // TODO: find better way to get container name from tap alias || internal apps
   const { contextEnvs, location, prefix, image, container, id:containerId } = execContext
 
   // Get the name of the container to run the docker exec cmd on
-  const containerName = containerId || container && container.name || prefix || image
+  const containerName = containerId || container && container.name || image
+  const containerRef = await findContainer({
+    tag,
+    name,
+    context,
+    prefix: prefixType,
+    selector: containerName,
+  })
 
-  const execArgs = { cmd, container: containerName, opts: options, location }
+  !containerRef && throwContainerNotFound(containerName)
+
+  const execArgs = { cmd, container: containerRef.id, opts: options, location }
   workdir && (execArgs.workdir = workdir)
   detach && (execArgs.detach = detach)
+
+  Logger.empty()
+  Logger.pair(`Running docker exec on container`, containerRef.name)
+  Logger.empty()
 
   // Run the exec command on the container
   await docker.container
@@ -94,6 +119,22 @@ module.exports = {
       tap: {
         description: 'Tap name when "context" options is set to "tap"',
         example: 'keg docker exec --context tap --tap my-tap',
+      },
+      tag: {
+        alias: [ 'tg' ],
+        description: 'Tag on the image that should be attached to',
+        example: 'keg docker exec tag=my-tag',
+      },
+      prefix: {
+        alias: [ 'type' ],
+        allowed: [ 'package', 'img' ],
+        description: 'The container prefix type. For accessing containers with added prefixes',
+        example: 'keg docker exec --context tap --tap my-tap --prefix package',
+      },
+      name: {
+        alias: ['branch'],
+        description: 'Partial name of the container to help filter the found containers',
+        example: 'keg docker exec --context tap --tap my-tap --prefix package --name feature-branch',
       }
     }
   }
