@@ -9,7 +9,7 @@ const { isBool } = require('@keg-hub/jsutils')
  * @returns {Array} - Array of Promises of each sync action
  */
 const buildExecParams = ({ detach }, action={}) => {
-  const { workdir, location, ...actionParams } = action
+  const { workdir, location, name, ...actionParams } = action
   const detachMode = isBool(detach) ? detach : actionParams.detach
 
   return {
