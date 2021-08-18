@@ -9,7 +9,7 @@ keg_cli_5_2_0_update(){
 
   keg_message "Running update for version 5.2.0..."
 
-  keg config sync --conflict local --no-confirm
+  keg cli env sync --conflict local --no-confirm
 
   echo ""
   keg_message "5.2.0 Update Complete!"
