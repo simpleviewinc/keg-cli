@@ -7,6 +7,22 @@ ARG NODE_IMAGE_FROM=node:$KEG_NODE_VERSION
 ARG KEG_BASE_IMAGE=ghcr.io/simpleviewinc/keg-base:develop
 FROM $KEG_BASE_IMAGE as keg-base
 
+ARG KEG_COPY_LOCAL
+ENV KEG_COPY_LOCAL=$KEG_COPY_LOCAL
+
+# Copy over the local keg-core code
+COPY . /keg-temp/keg-core
+
+# Check if we should replace the git version with the local version
+# Afterwards, remove the temp folder to keep image size down
+RUN if [ "$KEG_COPY_LOCAL" ]; then \
+      if [ -d "/keg-hub/repos/keg-core" ]; then \
+        rm -rf /keg-hub/repos/keg-core; \
+      fi; \
+      mv /keg-temp/keg-core /keg-hub/repos/keg-core; \
+    fi; \
+    rm -rf /keg-temp/keg-core
+
 # Run the build script keg-core
 RUN /keg-setup/build.sh core
 
