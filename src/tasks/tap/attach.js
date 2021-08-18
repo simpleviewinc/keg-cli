@@ -46,6 +46,11 @@ module.exports = {
         alias: [ 'type' ],
         description: 'The container prefix type. For accessing containers with added prefixes',
         example: 'keg tap att --prefix package',
+      },
+      name: {
+        alias: ['branch'],
+        description: 'Partial name of the container to help filter the found containers',
+        example: 'keg tap att --prefix img --name feature-branch',
       }
     }
   }
