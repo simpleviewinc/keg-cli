@@ -17,7 +17,16 @@ const { buildContainerContext } = require('KegUtils/builders/buildContainerConte
  */
 const dockerExec = async args => {
   const { params, task, __internal={} } = args
-  const { cmd, detach, name, options, workdir, context, prefix:prefixType } = params
+  const {
+    cmd,
+    detach,
+    name,
+    options,
+    workdir,
+    context,
+    prefix:prefixType,
+    tag
+  } = params
 
   // Ensure we have a content to build the container
   !context && throwRequired(task, 'context', task.options.context)
@@ -35,7 +44,13 @@ const dockerExec = async args => {
 
   // Get the name of the container to run the docker exec cmd on
   const containerName = containerId || container && container.name || image
-  const containerRef = await findContainer(context, containerName, prefixType, name)
+  const containerRef = await findContainer({
+    tag,
+    name,
+    context,
+    prefix: prefixType,
+    selector: containerName,
+  })
 
   !containerRef && throwContainerNotFound(containerName)
 
@@ -104,6 +119,11 @@ module.exports = {
       tap: {
         description: 'Tap name when "context" options is set to "tap"',
         example: 'keg docker exec --context tap --tap my-tap',
+      },
+      tag: {
+        alias: [ 'tg' ],
+        description: 'Tag on the image that should be attached to',
+        example: 'keg docker exec tag=my-tag',
       },
       prefix: {
         alias: [ 'type' ],

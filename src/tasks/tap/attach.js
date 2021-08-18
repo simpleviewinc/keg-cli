@@ -42,6 +42,11 @@ module.exports = {
         description: 'Extra docker exec command options',
         default: '-it'
       },
+      tag: {
+        alias: [ 'tg' ],
+        description: 'Tag on the image that should be attached to',
+        example: 'keg tap att tag=my-tag',
+      },
       prefix: {
         alias: [ 'type' ],
         description: 'The container prefix type. For accessing containers with added prefixes',
