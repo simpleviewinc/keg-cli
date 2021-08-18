@@ -47,7 +47,7 @@ const pickContainer = (exactMatch, possible) => {
  
 /**
  * Gets a container object from the passed in args
- * If multiple 
+ * If multiple are found, it asks the user to select one
  * @function
  * @param {string} context - The current tap/app context of the task
  * @param {string} selector - Name or ID of the container to find
