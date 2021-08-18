@@ -1,3 +1,4 @@
+const { exists, noOpObj } = require('@keg-hub/jsutils')
 const { checkImageExists } = require('../docker/checkImageExists')
 const { getImagePullPolicy } = require('../getters/getImagePullPolicy')
 
@@ -7,10 +8,13 @@ const { getImagePullPolicy } = require('../getters/getImagePullPolicy')
  * @param {string} params.context - Context or name of the container to check
  * @param {string} params.image - Name of image to check for
  * @param {string} params.tag - Tag of image to check for
+ * @param {string} params.pull - Should the image should be pulled (skipped is property undefined)
  *
  * @returns {boolean} - Should the docker image be pulled
  */
-const shouldPullImage = params => {
+const shouldPullImage = (params=noOpObj) => {
+  if(exists(params.pull)) return params.pull
+
   const pullPolicy = getImagePullPolicy(params.context || params.image)
 
   // If should never pull image and the image exists return false

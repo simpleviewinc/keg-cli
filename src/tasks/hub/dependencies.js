@@ -1,8 +1,15 @@
 const semver = require('semver')
+const semverCompareLoose = require('semver/functions/compare-loose')
 const { Logger } = require('KegLog')
 const { getHubRepos } = require('KegUtils/hub/getHubRepos')
-const { reduceObj, mapObj, get, set, isEmptyColl } = require('@keg-hub/jsutils')
 const { updateVersionInDependencies } = require('KegUtils/version/updateVersionInDependencies')
+const {
+  reduceObj,
+  mapObj,
+  get,
+  set,
+  isEmptyColl,
+} = require('@keg-hub/jsutils')
 
 /**
  * Cleans the version number so it can be compared
@@ -10,7 +17,10 @@ const { updateVersionInDependencies } = require('KegUtils/version/updateVersionI
  *
  * @returns {string} - Cleaned Version number
  */
-const cleanVersion = ver => semver.clean(ver.replace('^', ''))
+const cleanVersion = ver => semver.clean(
+  semver.coerce(ver).version || semver.parse(ver).version || ver,
+  { loose: true }
+)
 
 /**
  * Loops over a repos dependencies and compares it with all other repo dependencies
@@ -28,11 +38,15 @@ const loopDependency = (repo, depFilters, allDependencies, dependencies, type) =
     if(depFilters && !depFilters.includes(dependency)) return updated
 
     !updated.cache[dependency]
-      ? (updated.cache[dependency] = { [repo]: { version, type } })
+      ? (updated.cache[dependency] = { [repo]: { [type]: version } })
       : (updated.versions[dependency] = {
-          ...updated.cache[dependency],
-          ...updated.versions[dependency],
-          [repo]: { version, type }
+            ...get(updated, `cache.${dependency}`),
+            ...get(updated, `versions.${dependency}`),
+          [repo]: {
+            ...get(updated, `cache.${dependency}.${repo}`),
+            ...get(updated, `versions.${dependency}.${repo}`),
+            [type]: version
+          }
         })
 
     return updated
@@ -85,28 +99,41 @@ const diffDepVersions = versions => {
     mapObj(mapped, (repo, meta) => {
       mapObj(mapped, (altRepo, altMeta) => {
         if(altRepo === repo) return
-        
-        try {
 
-          semver.neq(
-            semver.coerce(meta.version),
-            semver.coerce(altMeta.version)
-          ) && ( mismatch[depName] = {
-            ...mismatch[depName],
-            [repo]: meta,
-            [altRepo]: altMeta,
-          })
+        mapObj(meta, (type, version) => {
+          const altVersion = altMeta[type]
+          if(!altVersion) return
 
-        }
-        catch(err){
-          console.log(
-            `\n`,
-            `Error - ${err.message}\n`,
-            `Dependency - ${depName}\n`,
-            `Repo - ${repo} | Version - ${meta.version}\n`,
-            `Other Repo - ${altRepo} | Other Version - ${altMeta.version}\n`,
-          )
-        }
+          try {
+            const cleanVer = cleanVersion(version)
+            const cleanAlt = cleanVersion(altVersion)
+            // Internal semver compare method
+            // 0 if they are equal
+            // 1 if first arg is greater
+            // -1 if section arg is greater
+            semverCompareLoose(cleanVer, cleanAlt) !== 0 &&
+              (mismatch[depName] = {
+                ...get(mismatch, depName),
+                [repo]: {
+                  ...get(mismatch, `depName.${repo}`),
+                  [type]: cleanVer
+                },
+                [altRepo]: {
+                  ...get(mismatch, `depName.${altRepo}`),
+                  [type]: cleanAlt
+                },
+              })
+          }
+          catch(err){
+            Logger.error(
+              `\n`,
+              `Error - ${err.message}\n`,
+              `Dependency - ${depName}\n`,
+              `Repo - ${repo} | Version - ${meta.version}\n`,
+              `Other Repo - ${altRepo} | Other Version - ${altMeta.version}\n`,
+            )
+          }
+        })
       })
     })
 
@@ -123,10 +150,12 @@ const diffDepVersions = versions => {
 const formatMismatches = mismatched => {
   return reduceObj(mismatched, (depName, mapped, toRender) => {
     mapObj(mapped, (repo, meta) => {
-      const version = cleanVersion(meta.version)
-      toRender[depName] = toRender[depName] || {}
-      toRender[depName][version] = toRender[depName][version] || []
-      toRender[depName][version].push(repo)
+      mapObj(meta, (type, version) => {
+        const locator = version.replace(/\./g, '#')
+        const versions = get(toRender, `${depName}.${type}.${locator}`, [])
+        versions.push(repo)
+        set(toRender, `${depName}.${type}.${locator}`, versions)
+      })
     })
 
     return toRender
@@ -143,14 +172,15 @@ const displayMismatches = formatted => {
   if(isEmptyColl(formatted))
     return Logger.info(`\nNo mismatched dependency versions found!\n`)
 
-
   Logger.header(`Mismatched Dependencies`)
 
   mapObj(formatted, (depName, mapped) => {
-    Logger.pair(`  Dependency:`, depName)
+    mapObj(mapped, (type, versions) => {
+      Logger.pair(`  ${type}:`, depName)
 
-    mapObj(mapped, (version, repos) => {
-      Logger.pair(`    ${version}:`, repos.join(', '))
+      mapObj(versions, (locator, repos) => {
+        Logger.pair(`    ${locator.replace(/\#/g, '.')}:`, repos.join(', '))
+      })
     })
 
     Logger.empty()
@@ -167,7 +197,7 @@ const displayMismatches = formatted => {
 const compareVersions = (repos, display, depFilters) => {
   const allDependencies = { cache: {}, versions: {} }
   mapObj(repos, (repo, { package }) => buildDepMap(allDependencies, package, repo, depFilters))
-  
+
   const mismatched = diffDepVersions(allDependencies.versions)
   const formatted = formatMismatches(mismatched)
 
@@ -188,19 +218,22 @@ const updateVersion = (repos, diff) => {
 
   if(isEmptyColl(formatted)) return null
 
-  mapObj(formatted, (depName, versions) => {
-    const versArr = mapObj(versions, (ver) => cleanVersion(ver))
-    const version = semver.sort(versArr).pop()
-    
-    const needUpdate = reduceObj(versions, (current, repoNames, toUpdate) => {
-      return current === version
-        ? toUpdate
-        : toUpdate.concat(repoNames.map(name => repos[name]))
-    }, [])
-    
-    return [ depName, needUpdate, version ]
+  mapObj(formatted, (depName, types) => {
+    return mapObj(types, (type, versions) => {
+      const versArr = mapObj(versions, (locator) => cleanVersion(locator.replace(/\#/g, '.')))
+      const version = semver.sort(versArr).pop()
+
+      const needUpdate = reduceObj(versions, (locator, repoNames, toUpdate) => {
+        const current = locator.replace(/\#/g, '.')      
+        return current === version
+          ? toUpdate
+          : toUpdate.concat(repoNames.map(name => repos[name]))
+      }, [])
+
+      return [ depName, needUpdate, version ]
+    })
+    .map(args => updateVersionInDependencies(...args))
   })
-  .map(args => updateVersionInDependencies(...args))
 
   Logger.empty()
   Logger.success(`The package.json dependency versions have been updated across keg-hub repos!`)
@@ -249,12 +282,13 @@ module.exports = {
       context: {
         alias: [ 'ctx', 'filter', 'ftr', 'scope', 'scp' ],
         description: 'Filter results based on a repo(s) name',
-        example: 'keg hub dependencies --scope cli',
-        default: 'all'
+        example: 'keg hub dependencies --scope cli,re-theme',
+        type: 'array',
+        default: ['all']
       },
       dependencies: {
         alias: [ 'deps', 'dep'],
-        description: 'File the dependencies that will be checked',
+        description: 'Specify the dependencies that will be checked',
         example: 'keg hub dependencies --dependencies expo,rollup',
         type: 'array',
         default: [],

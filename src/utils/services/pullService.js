@@ -10,18 +10,21 @@ const { spawnProc } = require('KegProc')
  * Checks if the base image should be pulled
  * @function
  * @param {Object} serviceArgs - Parsed option arguments passed to the current task
+ * @param {boolean} serviceArgs.pull - Should the image should be pulled (skipped is property undefined)
  * @param {Object} serviceArgs.force - Override default setting 
  * @param {boolean} internalForce - Internal Keg-CLI argument to force pulling the image
  * @param {boolean} paramForce - Force pull from params
  *
  * @returns {boolean} - Should the keg-base image be pulled
  */
-const checkPullImage = async ({ force, ...params }, internalForce) => {
-  return exists(force)
-    ? force
-    : exists(internalForce)
-      ? internalForce
-      : await shouldPullImage(params)
+const checkPullImage = async ({ force, pull, ...params }, internalForce) => {
+  return exists(pull)
+    ? pull
+    : exists(force)
+      ? force
+      : exists(internalForce)
+        ? internalForce
+        : await shouldPullImage(params)
 }
 
 /**
@@ -33,7 +36,7 @@ const checkPullImage = async ({ force, ...params }, internalForce) => {
 const pullService = async (serviceArgs, pullService='docker') => {
 
   // Check if the image should be pulled
-  const shouldPull = checkPullImage(
+  const shouldPull = await checkPullImage(
     serviceArgs.params,
     get(serviceArgs, '__internal.forcePull'),
   )

@@ -2,7 +2,7 @@ const path = require('path')
 const { Logger } = require('KegLog')
 const { executeCmd } = require('KegProc')
 const { readFileSync } = require('KegFileSys')
-const { isFunc, pickKeys, checkCall } = require('@keg-hub/jsutils')
+const { isFunc, pickKeys, checkCall, eitherArr } = require('@keg-hub/jsutils')
 const { getRepoPath } = require('../getters/getRepoPath')
 const { generalError } = require('../error/generalError')
 
@@ -111,7 +111,8 @@ const buildRepo = (paths, args) => {
  * @returns {Array} - Formatted repo information
  */
 const buildRepos = (repos, rootRepoPath, searchPath, args) => {
-  const { context:filter, tap } = args
+  const { context, tap } = args
+  const filter = eitherArr(context, [context])
 
   // TODO: Add getTapConfig utility function
   // Use that to get the publish config for the tap
@@ -147,7 +148,8 @@ const buildRepos = (repos, rootRepoPath, searchPath, args) => {
 
   const builtRepos = []
   return repos.reduce((repos, repo) => {
-    const repoData = filter !== 'all' && !repo.includes(filter)
+    const include = filter.find(name => repo.includes(name))
+    const repoData = filter[0] !== 'all' && !include
       ? false
       : buildRepo({ repo, rootRepoPath, searchPath, pathError: !Boolean(tap) }, args)
     

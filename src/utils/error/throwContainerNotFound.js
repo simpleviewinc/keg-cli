@@ -13,7 +13,7 @@ const throwContainerNotFound = (context) => {
 
   Logger.empty()
 
-  Logger.error(`  Container not found!`)
+  Logger.error(`Container not found!`)
   Logger.highlight(`Ensure container context`, `"${context}"`, `exists!`)
 
   Logger.empty()
