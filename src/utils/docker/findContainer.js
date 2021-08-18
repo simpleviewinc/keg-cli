@@ -26,6 +26,12 @@ const hasContextMatch = (cont, context, selector) => {
   return imgContext || labelContext
 }
 
+
+const hasTagMatch = (cont, tag) => {
+// Check if we have a tag match from the image name
+  return tag === cont.image.split(':').pop()
+}
+
 /**
  * Returns a matching container from all possible matches
  * @function
@@ -70,11 +76,17 @@ const findContainer = async ({ context, selector, prefix, name='', tag }) => {
     // If there's an exact match then use that
     if(match && !prefix && !name && !tag) return (exactMatch = cont)
 
-    // If not context match, then just return
-    if(!hasContextMatch(cont, context, selector)) return null
+    // If no context match, then just return
+    if(!hasContextMatch(cont, context, selector)) return
 
-    // Check if we have a tag match from the image name
-    if(tag && tag !== cont.image.split(':').pop()) return
+    // Check for tag match, and add to possible if it exists
+    // We could have multiple tag matches, without a prefix or name
+    // So don't set exactMatch if there's a tag match
+    const tagMatch = tag && hasTagMatch(cont, tag)
+    if(tagMatch && !prefix && !name) return possible.push(cont)
+
+    // It a tag was passed, but the tag does not match, then return
+    if(tag && !tagMatch) return
 
     // If a context matches, then check for a prefix match
     const prefixMatch = prefix && cont.name.indexOf(prefix) === 0
