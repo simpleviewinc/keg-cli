@@ -25,7 +25,7 @@ keg_setup_repo(){
   # Install dependecies
   if [ "$1" ] && [ -d "$1" ]; then
     cd $1
-    yarn install --pure-lockfile
+    yarn install --pure-lockfile --ignore-engines --ignore-optiona
   fi
 
   # Build the repo
