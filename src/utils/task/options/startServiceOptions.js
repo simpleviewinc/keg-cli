@@ -72,7 +72,6 @@ const startServiceOptions = (task='', action='') => {
       alias: [ 'rec', `create` ],
       description: 'Force recreate all the docker containers for the tap service',
       example: 'keg ${ task } ${ action } --recreate',
-      default: false
     },
     sync: {
       alias: [ 'syncs', 'sy' ],
