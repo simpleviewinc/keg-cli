@@ -8,9 +8,7 @@
     "token": ""
   },
   "cli": {
-    "paths": {
-      "customTasks": ""
-    },
+    "paths": {},
     "git": {
       "orgName": "simpleviewinc",
       "orgUrl": "https://github.com/simpleviewinc",
