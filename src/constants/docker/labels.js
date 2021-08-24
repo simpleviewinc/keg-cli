@@ -10,9 +10,9 @@ const kegLabels = [
     'com.keg.env.cmd=${KEG_EXEC_CMD}'
   ],
   [
-    'KEG_PROXY_PORT',
-    'contextEnvs.KEG_PROXY_PORT',
-    'com.keg.env.port=${KEG_PROXY_PORT}'
+    'TAP_PROXY_PORT',
+    'contextEnvs.TAP_PROXY_PORT',
+    'com.keg.env.port=${TAP_PROXY_PORT}'
   ],
   [
     'KEG_CONTEXT_PATH',
@@ -58,9 +58,9 @@ const proxyLabels = [
     'traefik.http.routers.{{ proxyDomain }}.rule=Host(`{{ proxyDomain }}.${KEG_PROXY_HOST}`)',
   ],
   [
-    'KEG_PROXY_PORT',
-    'contextEnvs.KEG_PROXY_PORT',
-    'traefik.http.services.{{ proxyDomain }}.loadbalancer.server.port=${KEG_PROXY_PORT}'
+    'TAP_PROXY_PORT',
+    'contextEnvs.TAP_PROXY_PORT',
+    'traefik.http.services.{{ proxyDomain }}.loadbalancer.server.port=${TAP_PROXY_PORT}'
   ]
 ]
 

@@ -3,11 +3,11 @@ const asENV = item => ('${' + item +  '}')
 
 const proxyLabels = (type, proxyHost) => {
   return `      - traefik.http.routers.${type}.rule=Host(\`${proxyHost}\`)
-      - traefik.http.services.${type}.loadbalancer.server.port=${asENV('KEG_PROXY_PORT')}`
+      - traefik.http.services.${type}.loadbalancer.server.port=${asENV('TAP_PROXY_PORT')}`
 }
 
 const kegShared = `      - com.keg.env.cmd=${asENV('KEG_EXEC_CMD')}
-      - com.keg.env.port=${asENV('KEG_PROXY_PORT')}
+      - com.keg.env.port=${asENV('TAP_PROXY_PORT')}
       - com.keg.path.context=${asENV('KEG_CONTEXT_PATH')}
       - com.keg.path.container=${asENV('DOC_APP_PATH')}
       - com.keg.path.compose=${asENV('KEG_COMPOSE_DEFAULT')}

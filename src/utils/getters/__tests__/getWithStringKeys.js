@@ -15,7 +15,7 @@ const testObj = {
     }
   },
   env: [
-    'KEG_PROXY_PORT=6701',
+    'TAP_PROXY_PORT=6701',
     { 'test.dot.sub': { 'another.level': 'found-value' }}
   ]
 }

@@ -32,7 +32,6 @@ module.exports = deepMerge(defaultConfig, {
       cli: path.join(kegRepos, 'keg-cli'),
       containers: path.join(kegRepos, 'keg-cli/containers'),
       core: path.join(kegRepos, 'keg-core'),
-      proxy: path.join(kegRepos, 'keg-proxy'),
       resolver: path.join(kegRepos, 'tap-resolver'),
     },
     settings: {
@@ -50,6 +49,9 @@ module.exports = deepMerge(defaultConfig, {
       retheme: {
         path: path.join(kegRepos, 're-theme')
       },
+      proxy: {
+        path: path.join(kegRepos, 'tap-proxy')
+      }
     }
   },
   publish: {

@@ -33,7 +33,7 @@ const testArgs = {
   },
   envExistsNoMatchValue: {
     description: 'It returns true when the ENV value exists and not match value is passed',
-    inputs: ['core', 'KEG_PROXY_PORT'],
+    inputs: ['core', 'TAP_PROXY_PORT'],
     outputs: true
   },
   envMatchesMatchValue: {

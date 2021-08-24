@@ -24,7 +24,7 @@ const { PACKAGE } = CONTAINER_PREFIXES
  * @param {Array} proxyPort - Specific proxy port passed from the command line
  * @param {Array} ports - Ports passed from the command line
  * @param {Object} inspectContext - Docker image inspect meta data
- * @param {Object} KEG_PROXY_PORT - KEG_PROXY_PORT context env
+ * @param {Object} TAP_PROXY_PORT - TAP_PROXY_PORT context env
  *
  * @returns {string} - Keg proxy port to use
  */
@@ -225,7 +225,7 @@ const dockerPackageRun = async args => {
   const foundProxyPort = getKegProxyPort(
     ports,
     proxyPort,
-    contextEnvs.KEG_PROXY_PORT,
+    contextEnvs.TAP_PROXY_PORT,
     inspectContext
   )
   
@@ -234,7 +234,7 @@ const dockerPackageRun = async args => {
     inspectContext,
     // If we find a proxy port, then add it as an env with the others
     // This way the keg proxy label can be added to it
-    (proxyPort ? { ...contextEnvs, KEG_PROXY_PORT: foundProxyPort } : contextEnvs),
+    (proxyPort ? { ...contextEnvs, TAP_PROXY_PORT: foundProxyPort } : contextEnvs),
     `${parsed.image}-${parsed.tag}`,
   )
 
