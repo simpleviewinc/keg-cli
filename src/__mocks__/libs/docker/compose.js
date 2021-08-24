@@ -3,7 +3,6 @@ const asENV = item => ('${' + item +  '}')
 
 const proxyLabels = (type, proxyHost) => {
   return `      - traefik.http.routers.${type}.rule=Host(\`${proxyHost}\`)
-      - traefik.http.routers.${type}.entrypoints=${asENV('KEG_PROXY_ENTRY')}
       - traefik.http.services.${type}.loadbalancer.server.port=${asENV('KEG_PROXY_PORT')}`
 }
 

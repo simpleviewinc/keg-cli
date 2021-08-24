@@ -75,7 +75,6 @@ const injectedTest = {
     KEG_PROXY_PORT: 19006,
     API_PORT: 5005,
     KEG_PROXY_HOST: 'tap-injected-test.local.kegdev.xyz',
-    KEG_PROXY_ENTRY: 'keg',
     KEG_EXEC_CMD: 'dev',
     IMAGE: 'tap-injected-test',
     CONTAINER_NAME: 'tap-injected-test',
