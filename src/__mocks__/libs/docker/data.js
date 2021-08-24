@@ -231,14 +231,6 @@ const dockerObjLabels = {
     'com.keg.path.docker': 'keg-cli/containers/core/Dockerfile',
     'com.keg.proxy.domain': 'core'
   },
-  proxy: {
-    'com.keg.env.context': 'keg-proxy',
-    'com.keg.path.container': '/keg/tap',
-    'com.keg.path.compose': 'keg-cli/containers/proxy/docker-compose.yml',
-    'com.keg.path.values': 'keg-cli/containers/proxy/values.yml',
-    'com.keg.path.docker': 'keg-cli/containers/proxy/Dockerfile',
-    'com.keg.proxy.domain': 'proxy'
-  },
   tap: {
     'com.keg.env.context': 'tap',
     'com.keg.env.cmd': 'tap:start',

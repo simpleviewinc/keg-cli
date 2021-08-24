@@ -18,8 +18,12 @@ const { getOptsWithProxyRule } = require('KegUtils/docker/getOptsWithProxyRule')
 const { CONTAINER_PREFIXES, KEG_DOCKER_EXEC, KEG_EXEC_OPTS } = require('KegConst/constants')
 const { PACKAGE } = CONTAINER_PREFIXES
 
+
+// TODO: {TAP-PROXY} Update to pull setting for tap proxy from global config
+// Remove labels from proxy port code
+// 
 /**
- * Search for the keg-proxy-port to use for registering with the keg-proxy
+ * Search for the tap-proxy-port to use for registering with the tap-proxy
  * @function
  * @param {Array} proxyPort - Specific proxy port passed from the command line
  * @param {Array} ports - Ports passed from the command line

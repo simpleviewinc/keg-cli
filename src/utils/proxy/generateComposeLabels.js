@@ -3,8 +3,11 @@ const { fillTemplate } = require('KegUtils/template')
 const { get, eitherArr } = require('@keg-hub/jsutils')
 const { kegLabels, proxyLabels } = require('KegConst/docker/labels')
 
+
+// TODO: {TAP-PROXY} Update to use envs || task options || globalConfig
+// Remove all label requirements
 /**
- * Build the host url label used by keg-proxy
+ * Build the host url label used by tap-proxy
  * @param {Object} data - Data to generate the labels from
  * @param {Array} labelData - Constant label data defined in keg-cli/constants/docker/labels
  * @param {string} composeService - The docker-compose service the label will be added to

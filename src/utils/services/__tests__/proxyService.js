@@ -20,10 +20,12 @@ describe('proxyService', () => {
 
   afterAll(() => jest.resetAllMocks())
 
-  it('It checks if the keg-proxy container exists', async () => {
+  // TODO: {TAP-PROXY} Update to use tap-proxy from globalConfig settings
+  // Remove hard coded tap-proxy references, replace with value from globalConfig settings
+  it('It checks if the proxy container exists', async () => {
     await proxyService({ globalConfig, params: {} })
     expect(docker.container.get).toHaveBeenCalled()
-    expect(docker.container.get.mock.calls[0][0]).toBe('keg-proxy')
+    expect(docker.container.get.mock.calls[0][0]).toBe('tap-proxy')
   })
 
   it(`calls task to start the proxy if it does not exist`, async () => {
@@ -33,10 +35,10 @@ describe('proxyService', () => {
   })
 
   it(`does not call the proxy start task when the container already exists`, async () => {
-    global.testDocker.containers[`keg-proxy`] = { state: 'running' }
+    global.testDocker.containers[`tap-proxy`] = { state: 'running' }
     await proxyService({ globalConfig, params: {} })
     expect(internalTaskMock).not.toHaveBeenCalled()
-    delete global.testDocker.containers[`keg-proxy`]
+    delete global.testDocker.containers[`tap-proxy`]
   })
 
 })

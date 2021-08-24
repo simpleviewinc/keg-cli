@@ -64,7 +64,7 @@ const runOptions = (task, action, options) => {
       },
       proxyPort: {
         alias: [ 'pp', 'proxy', 'pport' ],
-        description: `Port to register with the keg-proxy`,
+        description: `Port to register with the tap-proxy`,
         example: `keg docker package run --proxyPort 8080`,
       },
       log: {

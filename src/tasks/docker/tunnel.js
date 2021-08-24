@@ -100,7 +100,9 @@ const getHostFromLabel = (container={}) => {
 const getHostHeader = async host => {
   if(host) return buildCustomHostHeader(host)
 
-  const container = await containerSelect(containers => containers.filter(container => container.name !== 'keg-proxy'))
+  // TODO: {TAP-PROXY} Update to pull setting for tap proxy from global config
+  // Replace 'tap-proxy' with the setting value
+  const container = await containerSelect(containers => containers.filter(container => container.name !== 'tap-proxy'))
 
   return addHostHeaderProto(getHostFromLabel(container) || getHostFromName(container.name))
 }

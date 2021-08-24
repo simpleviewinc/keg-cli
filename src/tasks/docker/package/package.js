@@ -66,7 +66,7 @@ const getImgTags = async (params, location) => {
 
   // Check if the image already exist
   // So we can ask if it should be replaced
-  // Also clean it so it can be used as a url with keg-proxy
+  // Also clean it so it can be used as a url with a tap-proxy
   const cleanedTag = imgNameContext.tag
     .toLowerCase()
     .replace(/[&\/\\#, +()$~%.'"*?<>{}]/g, '-')

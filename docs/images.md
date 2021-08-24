@@ -71,7 +71,7 @@
   * This allows for images in PR's to be `auto-updated` as needed
     * This can be done through a github action whenever changes are pushed to that branch with an open PR
     * We would no longer have to manually commit, and push images for our PR requests
-  * This also allows for them to work consistently with the `keg-proxy`
+  * This also allows for them to work consistently with the `tap-proxy`
     * Which uses the branch name within the dynamically built url
   * Other tags can be added, but they should only be used for reference if needed
 

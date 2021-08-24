@@ -78,7 +78,7 @@
     * @type *Boolean*
     * @cli-option `N/A`
 * **KEG_USE_PROXY**
-  * Disables keg-proxy container check when executing a task
+  * Disables tap-proxy container check when executing a task
   * Must explicitly set to `false`
   * Definition
     * @optional

@@ -3,9 +3,10 @@ const { limbo, isArr } = require('@keg-hub/jsutils')
 const { generalError } = require('KegUtils/error/generalError')
 const { getSetting } = require('KegUtils/globalConfig/getSetting')
 
+// TODO: {TAP-PROXY} Check if this can be removed as it's not part of tap-proxy
 /**
- * Gets a list of all containers registered to the keg-proxy
- * @param {string} env - The env the keg-proxy was started in
+ * Gets a list of all containers registered to the tap-proxy
+ * @param {string} env - The env the tap-proxy was started in
  * @param {string} host - Domain when the proxy is running
  *
  * @returns {Array} - List of container routes from traefik

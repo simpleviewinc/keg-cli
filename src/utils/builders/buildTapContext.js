@@ -37,9 +37,8 @@ const buildTapContext = async ({ globalConfig, cmdContext, tap, envs }) => {
         ...envs,
         KEG_CONTEXT_PATH: tapPath,
         ...(tapUrl && { GIT_APP_URL: tapUrl }),
-        // May want to override the container name here
-        // This way we can have more then one tap docker container running at a time
-        // But we can't do this until keg-proxy is setup
+        // Update to allow this to be a task option
+        // It is currently set via ENV CONTAINER_NAME, but should be an option as well
         // CONTAINER_NAME: tap
       }
 

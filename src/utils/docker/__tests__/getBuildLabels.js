@@ -43,7 +43,7 @@ const args = {
     globalConfig,
     params: {
       context: 'proxy',
-      image: 'keg-proxy',
+      image: 'tap-proxy',
     },
     cmd: 'up',
     proxyDomain: 'proxy',
@@ -73,7 +73,7 @@ describe('getBuildLabels', () => {
     expect(labels).toBe(dockerLabels.core)
   })
 
-  it('Should return the default labels when no labels are passed in for keg-proxy', () => {
+  it('Should return the default labels when no labels are passed in for tap-proxy', () => {
     const labels = getBuildLabels(args.proxy)
     expect(labels).toBe(dockerLabels.proxy)
   })
