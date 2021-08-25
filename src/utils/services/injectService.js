@@ -233,7 +233,11 @@ const buildInjectedParams = async ({ app, taskData, injectPath }, containerPaths
   // Get the locationContext values
   const { locationContext:locContext } = require('KegConst/docker/values')
   // Build and add image / container name params
-  const injectedParams = buildOverrideParams(app, get(taskData, 'task.options'))
+  const injectedParams = buildOverrideParams(
+    app,
+    get(taskData, 'task.options'),
+    containerPaths.serviceName
+  )
 
   // Add the __injected object to the params with the proper location set
   // Adds some extra params to update the context and image / container names
@@ -289,6 +293,5 @@ const injectService = async args => {
 }
 
 module.exports = {
-  checkContainerPaths,
   injectService
 }

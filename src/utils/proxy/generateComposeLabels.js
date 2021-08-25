@@ -69,7 +69,7 @@ const buildLabels = (generated, data, labelData) => {
 const generateComposeLabels = data => {
   return kegLabels.reduce((labels, item) => {
     return buildLabels(labels, data, item)
-  }, {})
+  }, '')
 }
 
 

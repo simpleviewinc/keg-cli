@@ -17,7 +17,7 @@ const getTapObj  = async ({ globalConfig }) => {
   const tapObj = get(globalConfig, `${ TAP_LINKS }.${ tapName }`)
 
   return !isObj(tapObj)
-    ? missingTapProxyErr()
+    ? throwMissingTapProxy()
     : { ...tapObj, name: tapName }
 }
 
