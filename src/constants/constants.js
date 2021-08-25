@@ -59,7 +59,7 @@ module.exports = deepFreeze({
 
   // Sets the command to open an IDE
   GLOBAL_CONFIG_EDITOR_CMD: 'cli.settings.editorCmd',
-
+  GLOBAL_CONFIG_TAP_PROXY: 'tapAsProxy',
 
   // Keg Default .env file
   DEFAULT_ENV: `defaults.env`,
