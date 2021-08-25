@@ -46,23 +46,6 @@ const kegLabels = [
   ],
 ]
 
-const proxyLabels = [
-  [
-    '',
-    '',
-    'traefik.enable=true',
-  ],
-  [
-    'KEG_PROXY_HOST',
-    'contextEnvs.KEG_PROXY_HOST',
-    'traefik.http.routers.{{ proxyDomain }}.rule=Host(`{{ proxyDomain }}.${KEG_PROXY_HOST}`)',
-  ],
-  [
-    'TAP_PROXY_PORT',
-    'contextEnvs.TAP_PROXY_PORT',
-    'traefik.http.services.{{ proxyDomain }}.loadbalancer.server.port=${TAP_PROXY_PORT}'
-  ]
-]
 
 const kegLabelKeys = kegLabels.reduce((map, meta) => {
   const key = meta[2].split('=').shift()
@@ -74,5 +57,4 @@ const kegLabelKeys = kegLabels.reduce((map, meta) => {
 module.exports = {
   kegLabels,
   kegLabelKeys,
-  proxyLabels,
 }

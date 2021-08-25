@@ -283,18 +283,10 @@ const package = {
 const proxyOpts = {
   core: [
     '--option-core',
-    '--label traefik.enable=true',
-    '--label traefik.http.routers.core.rule=Host(`core-test-core.local.kegdev.xyz`)',
-    '--label traefik.http.services.core.loadbalancer.server.port=19006',
-    '--label traefik.http.routers.core.entrypoints=keg',
     '--network keg-hub-net'
   ],
   tap: [
     '--option-tap',
-    '--label traefik.enable=true',
-    '--label traefik.http.routers.tap.rule=Host(`tap-test-tap.local.kegdev.xyz`)',
-    '--label traefik.http.services.tap.loadbalancer.server.port=19006',
-    '--label traefik.http.routers.tap.entrypoints=keg',
     '--network keg-hub-net'
   ]
 }

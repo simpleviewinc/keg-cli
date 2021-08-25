@@ -1,7 +1,7 @@
 const { KEG_ENVS } = require('KegConst/envs')
 const { fillTemplate } = require('KegUtils/template')
 const { get, eitherArr } = require('@keg-hub/jsutils')
-const { kegLabels, proxyLabels } = require('KegConst/docker/labels')
+const { kegLabels } = require('KegConst/docker/labels')
 
 
 // TODO: {TAP-PROXY} Update to use envs || task options || globalConfig
@@ -67,11 +67,6 @@ const buildLabels = (generated, data, labelData) => {
  * @returns {string} - Updated generated labels with new labels added to it
  */
 const generateComposeLabels = data => {
-
-  const genLabels = proxyLabels.reduce((labels, item) => {
-    return buildLabels(labels, data, item)
-  }, '')
-
   return kegLabels.reduce((labels, item) => {
     return buildLabels(labels, data, item)
   }, genLabels)
