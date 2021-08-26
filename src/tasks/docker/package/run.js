@@ -4,7 +4,6 @@ const { DOCKER } = require('KegConst/docker')
 const { KEG_ENVS } = require('KegConst/envs')
 const { logVirtualUrl } = require('KegUtils/log')
 const { isUrl, get, pickKeys } = require('@keg-hub/jsutils')
-const { kegLabelKeys } = require('KegConst/docker/labels')
 const { generalError } = require('KegUtils/error/generalError')
 const { removeLabels } = require('KegUtils/docker/removeLabels')
 const { parsePackageUrl } = require('KegUtils/package/parsePackageUrl')
@@ -30,39 +29,17 @@ const { PACKAGE } = CONTAINER_PREFIXES
  *
  * @returns {string} - Keg proxy port to use
  */
-const getKegProxyPort = (ports, proxyPort, kegProxyPort, { labels, ports:imgPorts }) => {
+const getKegProxyPort = (ports, proxyPort, kegProxyPort, { ports:imgPorts }) => {
   // If it's a defined env, just use it
   // Otherwise search for the keg port label
   return proxyPort ||
     kegProxyPort ||
-    labels[kegLabelKeys.KEG_ENV_PORT] ||
     get(imgPorts, '0') ||
     ports && ports.length && ports[0].split(':').pop()
 }
 
 
 // TODO: {TAP-PROXY} Find a way to get the subdomain for an image / package / not installed locally 
-/**
- * Checks if the proxy host label already exists
- * <br>If it does not, it will try to build them based on the ENVs
- * <br>Logs out the proxy url for accessing the container in the browser
- * @function
- * @param {Array} optsWLabels - Options to pass to the docker run command
- * @param {Object} imgLabels - Labels already on the docker image
- * @param {Object} args - Contains values used to create the proxy labels
- * @param {string} args.proxyDomain - The subdomain for the proxy url
- * @param {string} args.contextEnvs - Environment variables of the image
- *
- * @returns {Array} - Built options array with the proxy labels added if needed
- */
-const checkProxyUrl = (optsWLabels, imgLabels, args) => {
-  const subdomain = imgLabels && imgLabels[kegLabelKeys.KEG_PROXY_DOMAIN]
-  // Log out the proxy url for easy access
-  logVirtualUrl(`${subdomain}.${KEG_ENVS.KEG_PROXY_HOST}`)
-
-  return []
-}
-
 /**
  * Builds a docker container so it can be run
  * @function
@@ -73,7 +50,7 @@ const checkProxyUrl = (optsWLabels, imgLabels, args) => {
  *
  * @returns {Array} - Opts array with the labels to be overwritten
  */
-const setupLabels = async (opts, inspectContext, contextEnvs, proxyDomain,) => {
+const setupLabels = async (opts, inspectContext, contextEnvs, proxyDomain) => {
   let optsWLabels = [ ...opts ]
   const imgInspect = inspectContext.inspectRef
 
@@ -83,12 +60,13 @@ const setupLabels = async (opts, inspectContext, contextEnvs, proxyDomain,) => {
   // Clear out the docker-compose labels, so it does not think it controls this container
   optsWLabels = await removeLabels(imgInspect, 'com.docker.compose', optsWLabels)
 
+  // TODO: {TAP-PROXY} Find a way to get the subdomain for an image / package / not installed locally like from inpect.Config.Env
   // Check if the proxy labels should be added based on the proxy url label
-  return checkProxyUrl(optsWLabels, inspectContext.labels, {
-    proxyDomain,
-    contextEnvs,
-  })
+  const subdomain = get(imgInspect, 'Config.Env.KEG_PROXY_DOMAIN')
+  // Log out the proxy url for easy access
+  logVirtualUrl(`${subdomain}.${KEG_ENVS.KEG_PROXY_HOST}`)
 
+  return optsWLabels
 }
 
 /**
@@ -188,7 +166,15 @@ const dockerPackageRun = async args => {
     inspectContext,
     // If we find a proxy port, then add it as an env with the others
     // This way the keg proxy label can be added to it
-    (proxyPort ? { ...contextEnvs, TAP_PROXY_PORT: foundProxyPort } : contextEnvs),
+    (
+      proxyPort
+        ? {
+              TAP_PROXY_PORT: foundProxyPort,
+              KEG_PROXY_PORT: foundProxyPort,
+              ...contextEnvs 
+            }
+        : contextEnvs
+    ),
     `${parsed.image}-${parsed.tag}`,
   )
 

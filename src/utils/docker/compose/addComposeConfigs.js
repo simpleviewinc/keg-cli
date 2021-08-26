@@ -58,7 +58,7 @@ const addInjectedTemplate = async (dockerCmd, data={}, composeData) => {
     return dockerCmd
   }
 
-  // Join the composeData and the generated labels together, and write the injected compose file
+  // Write the injected compose file
   await writeInjectedCompose(injectedCompose, {
     ...composeData,
     generatedLabels: ''

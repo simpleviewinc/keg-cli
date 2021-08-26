@@ -8,7 +8,7 @@ const { throwNoGitBranch } = require('KegUtils/error/throwNoGitBranch')
  * @param {Object} contextName - Name of the service to build the proxy domain for
  * @param {Object} contextPath - Path of the service on the host machine, to allow getting the current branch
  *
- * @returns {Object} - Name to use for the proxy config labels
+ * @returns {Object} - Name to use for the proxy subdomain
  */
 const getProxyDomainFromBranch = async (contextName, contextPath) => {
   // Get the branch name of the application based on the buildContextPath

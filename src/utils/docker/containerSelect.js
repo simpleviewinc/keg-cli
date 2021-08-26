@@ -1,9 +1,8 @@
-const { ask } = require('KegRepos/ask-it')
 const docker = require('KegDocCli')
+const { ask } = require('KegRepos/ask-it')
+const { KEG_ENVS } = require('KegConst/envs')
 const { checkCall, get } = require('@keg-hub/jsutils')
 const { throwNoContainers } = require('../error/throwNoContainers')
-const { kegLabelKeys } = require('KegConst/docker/labels')
-const { KEG_ENVS } = require('KegConst/envs')
 
 /**
  * Prompts user to select a container from the current docker containers
@@ -26,8 +25,7 @@ const containerSelect = async (filter, throwError=true, containers) => {
 
   // Get a string of each container to print to terminal
   // TODO: [TAP-PROXY] - Update to get the domain from ENV instead of a label
-  const items = filtered.map(cont => `${cont.name} | ${ cont.image } | {TODO -Add domain here} | ${ cont.id }`)
-  // const items = filtered.map(cont => `${cont.name} | ${ cont.image } | ${ get(cont, ['labelsObj', kegLabelKeys.KEG_PROXY_DOMAIN], KEG_ENVS.KEG_PROXY_HOST) } | ${ cont.id }`)
+  const items = filtered.map(cont => `${cont.name} | ${ cont.image } | {TODO - Add domain here} | ${ cont.id }`)
 
   const index = await ask.promptList(
     items,

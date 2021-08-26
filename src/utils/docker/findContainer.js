@@ -1,7 +1,6 @@
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { checkCall } = require('@keg-hub/jsutils')
-const { kegLabelKeys } = require('KegConst/docker/labels')
 const { throwContainerNotFound } = require('KegUtils/error')
 const { containerSelect } = require('KegUtils/docker/containerSelect')
 
@@ -20,10 +19,12 @@ const hasContextMatch = (cont, context, selector) => {
   const imgMatch = imgContext !== selector && imgContext !== context 
 
   // Get the context from the label added by the keg-cli
-  const labelContext = (cont.labelsObj[kegLabelKeys.KEG_ENV_CONTEXT] || '').trim()
-  const labelMatch = labelContext !== selector && labelContext !== context
-
-  return imgContext || labelContext
+  // TODO: [TAP-PROXY] - Update to use ENVs and not labels
+  // const labelContext = (cont.labelsObj[contextEnvs.KEG_ENV_CONTEXT] || '').trim()
+  // const labelMatch = labelContext !== selector && labelContext !== context
+  // return imgContext || labelContext
+  
+  return imgContext
 }
 
 
