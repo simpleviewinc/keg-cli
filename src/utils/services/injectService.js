@@ -293,5 +293,6 @@ const injectService = async args => {
 }
 
 module.exports = {
+  checkContainerPaths,
   injectService
 }

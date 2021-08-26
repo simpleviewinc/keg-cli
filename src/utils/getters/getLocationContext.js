@@ -14,6 +14,8 @@ const { LOCATION_CONTEXT } = DOCKER
  * @returns {string} - The location where a command should be executed
  */
 const getInjectedLocation = (task, __injected) => {
+  // TODO: [TAP-PROXY] Why is location set to the <tap>/container folder and not the root?
+
   // If there's an injectedLocation, use that as the location
   return task.name ==='build'
     // If we are building the external app, we want to use the injectionPath

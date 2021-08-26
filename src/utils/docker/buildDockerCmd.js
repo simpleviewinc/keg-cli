@@ -1,6 +1,5 @@
 const { buildTags } = require('./tags/buildTags')
 const { getBuildArgs } = require('./getBuildArgs')
-const { getBuildLabels } = require('./getBuildLabels')
 const { getDockerCmdArgs } = require('./getDockerCmdArgs')
 
 /**
@@ -20,9 +19,6 @@ const createBuildCmd = async (args, dockerCmd) => {
 
   // Add any build tags
   dockerCmd = await buildTags(args, params, dockerCmd)
-
-  // Add any build labels
-  dockerCmd = getBuildLabels(args, dockerCmd)
 
   // Add the build args for the github key and tap git url
   dockerCmd = await getBuildArgs(globalConfig, params, dockerCmd)

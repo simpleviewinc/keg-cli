@@ -47,6 +47,7 @@ module.exports = {
       profile: {
         description: 'Profile name in the global config of the docker registry credentials to use',
         example: 'keg docker provider login --profile docker-hub',
+        default: 'default'
       }
     }
   }

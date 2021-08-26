@@ -6,7 +6,6 @@ const { getContainerConst } = require('../getContainerConst')
 const { GLOBAL_INJECT_FOLDER } = require('KegConst/constants')
 const { generalError } = require('KegUtils/error/generalError')
 const { writeFile, mkDir, pathExists } = require('KegFileSys')
-const { generateComposeLabels } = require('KegUtils/proxy/generateComposeLabels')
 
 /**
  * Writes the injected compose file to the global injected folder
@@ -62,9 +61,7 @@ const addInjectedTemplate = async (dockerCmd, data={}, composeData) => {
   // Join the composeData and the generated labels together, and write the injected compose file
   await writeInjectedCompose(injectedCompose, {
     ...composeData,
-    generatedLabels: composeData.proxyDomain
-      ? generateComposeLabels({ ...data, ...composeData })
-      : ''
+    generatedLabels: ''
   })
 
   return dockCmdWithCompose

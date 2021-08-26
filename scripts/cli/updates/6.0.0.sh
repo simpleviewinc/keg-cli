@@ -12,6 +12,10 @@ keg_cli_6_0_0_update(){
   keg cli env unset --key KEG_PROXY_ENTRY --force --no-confirm
   keg config set --key cli.settings.tapAsProxy --value proxy --no-confirm
   
+  # TODO: Add script to convert to use profiles
+  # globalConfig.docker.<profile-name> 
+  # Create a default profile, but allow others to be used 
+  
   echo ""
   keg_message "6.0.0 Update Complete!"
   echo ""

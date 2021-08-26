@@ -1,10 +1,10 @@
 const docker = require('KegDocCli')
+const { getTapObj } = require('KegUtils/globalConfig/getTapObj')
 const { startTapProxy } = require('KegUtils/proxy/startTapProxy')
 const { runInternalTask } = require('KegUtils/task/runInternalTask')
-const { getTapObj } = require('KegUtils/globalConfig/getTapObj')
+const { checkContainerPaths } = require('KegUtils/services/injectService')
 const { getContainerConst } = require('KegUtils/docker/getContainerConst')
 const { checkEnvConstantValue } = require('KegUtils/helpers/checkEnvConstantValue')
-
 /**
  * Checks if the proxy container exists, and if not, starts it
  * @function
@@ -23,11 +23,12 @@ const proxyService = async args => {
   if(startProxy === false) return false
 
   const tapObj = await getTapObj(args)
+  const { serviceName } = await checkContainerPaths(tapObj.name, tapObj.path)
 
   // Make call to check if the tap-proxy container exists
   const proxyContainer = await docker.container.get(
-    tapObj.name,
-    container => container.name === tapObj.name,
+    serviceName,
+    container => (container.name === serviceName),
     'json'
   )
 

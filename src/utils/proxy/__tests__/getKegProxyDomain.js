@@ -48,10 +48,10 @@ const proxyDomainMocks = {
   'tap-injected-test': 'injected-proxy-value'
 }
 
-const domainFromLabel = jest.fn((itemRef, type) => {
+const domainFromEnv = jest.fn((itemRef, type) => {
   return `${itemRef}-${type}`
 })
-jest.setMock('../getProxyDomainFromLabel', { getProxyDomainFromLabel: domainFromLabel })
+jest.setMock('../getProxyDomainFromEnv', { getProxyDomainFromEnv: domainFromEnv })
 
 const domainFromBranch = jest.fn((context, path) => {
   return proxyDomainMocks[context]
@@ -64,30 +64,30 @@ describe('getKegProxyDomain', () => {
 
   beforeEach(() => {
     domainFromBranch.mockClear()
-    domainFromLabel.mockClear()
+    domainFromEnv.mockClear()
   })
 
   afterAll(() => jest.resetAllMocks())
 
   it('Should get the domain from git when id || rootId is NOT passed', async () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
     const proxyDomain = await getKegProxyDomain(args.core, args.core.contextEnvs)
     expect(domainFromBranch).toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
   })
 
   it('Should get the domain from label when id || rootId is passed', async () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
     const proxyDomain = await getKegProxyDomain(args.coreNoId, args.coreNoId.contextEnvs)
-    expect(domainFromLabel).toHaveBeenCalled()
+    expect(domainFromEnv).toHaveBeenCalled()
     expect(domainFromBranch).not.toHaveBeenCalled()
   })
 
   it('Should get the domain from label with image and tag and no id', async () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
 
     const rootId = args.coreNoId.contextEnvs.rootId
     const proxyDomain = await getKegProxyDomain({
@@ -101,13 +101,13 @@ describe('getKegProxyDomain', () => {
 
     expect(proxyDomain).toBe('keg-core:develop-container')
 
-    expect(domainFromLabel).toHaveBeenCalled()
+    expect(domainFromEnv).toHaveBeenCalled()
     expect(domainFromBranch).not.toHaveBeenCalled()
   })
 
   it('Should set the type as image, when rootId exists', async () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
 
     const rootId = args.coreNoId.contextEnvs.rootId
     const proxyDomain = await getKegProxyDomain({
@@ -121,19 +121,19 @@ describe('getKegProxyDomain', () => {
 
     expect(proxyDomain).toBe('keg-core:develop-image')
 
-    expect(domainFromLabel).toHaveBeenCalled()
+    expect(domainFromEnv).toHaveBeenCalled()
     expect(domainFromBranch).not.toHaveBeenCalled()
   })
 
   it('Should use the __injected tap value when it exists', async () => {
     expect(domainFromBranch).not.toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
     const proxyDomain = await getKegProxyDomain(args.injected, args.injected.contextEnvs)
 
     expect(proxyDomain).toBe(proxyDomainMocks[injectedTest.params.__injected.tap])
 
     expect(domainFromBranch).toHaveBeenCalled()
-    expect(domainFromLabel).not.toHaveBeenCalled()
+    expect(domainFromEnv).not.toHaveBeenCalled()
   })
 
 })

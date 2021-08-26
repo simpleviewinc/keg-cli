@@ -1,23 +1,7 @@
 const { getProxyDomainFromBranch } = require('./getProxyDomainFromBranch')
-const { getProxyDomainFromLabel } = require('./getProxyDomainFromLabel')
+const { getProxyDomainFromEnv } = require('./getProxyDomainFromEnv')
 const { get, noOpObj } = require('@keg-hub/jsutils')
 
-/**
- * Gets the proxyDomain from the docker image labels based on passed in params
- * @function
- * @param {Object} params - Parameters passed to the task from the cmd line
- * @param {Object} contextData - Data derived from the current context and command
- *
- * @returns {string} - The found proxyDomain
- */
-const getDomainLabel = (params, contextData) => {
-  const { image, tag } = params
-  const { id, rootId } = contextData
-  const fromLabel = Boolean((image && tag) || id)
-  const labelRef = fromLabel && (id || (tag && image ? `${image}:${tag}` : image))
-
-  return getProxyDomainFromLabel(labelRef, rootId ? 'image' : 'container')
-}
 
 /**
  * Gets the proxyDomain from the local git branch of the passed in context
@@ -55,7 +39,7 @@ const getKegProxyDomain = ({ params=noOpObj, contextData=noOpObj }, contextEnvs)
   // If it has a rootId then we are getting the proxyDomain for a docker image
   // Of a docker image will have a rootId
   return contextData.rootId || contextData.id || (params.image && params.tag)
-    ? getDomainLabel(params, contextData)
+    ? getProxyDomainFromEnv(params, contextData)
     : getDomainBranch(params, contextEnvs, contextData)
 }
 

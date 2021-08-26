@@ -25,7 +25,9 @@ const containerSelect = async (filter, throwError=true, containers) => {
   const filtered = checkCall(filter, containers) || containers
 
   // Get a string of each container to print to terminal
-  const items = filtered.map(cont => `${cont.name} | ${ cont.image } | ${ get(cont, ['labelsObj', kegLabelKeys.KEG_PROXY_DOMAIN], KEG_ENVS.KEG_PROXY_HOST) } | ${ cont.id }`)
+  // TODO: [TAP-PROXY] - Update to get the domain from ENV instead of a label
+  const items = filtered.map(cont => `${cont.name} | ${ cont.image } | {TODO -Add domain here} | ${ cont.id }`)
+  // const items = filtered.map(cont => `${cont.name} | ${ cont.image } | ${ get(cont, ['labelsObj', kegLabelKeys.KEG_PROXY_DOMAIN], KEG_ENVS.KEG_PROXY_HOST) } | ${ cont.id }`)
 
   const index = await ask.promptList(
     items,

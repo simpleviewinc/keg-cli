@@ -7,10 +7,10 @@ const { error } = require('@keg-hub/cli-utils')
  *
  * @returns {string} - Value of the passed in key
  */
-const getGitConfigItem = async key => {
+const configItem = async key => {
   const { err, data, exitCode } = key
     ? await executeCmd(`git config ${ key }`)
-    : error.throwError(`The "getGitConfigItem" method requires a key as the first argument`)
+    : error.throwError(`The "configItem" method requires a key as the first argument`)
 
   return err || exitCode > 0
     ? error.throwError(err || `Failed to get git config value for key "${ key }"`)
@@ -19,5 +19,5 @@ const getGitConfigItem = async key => {
 
 
 module.exports = {
-  getGitConfigItem
+  configItem
 }
