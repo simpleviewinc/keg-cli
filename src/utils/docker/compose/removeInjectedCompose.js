@@ -4,7 +4,7 @@ const { GLOBAL_INJECT_FOLDER } = require('KegConst/constants')
 const { getRepoPath } = require('KegUtils/getters/getRepoPath')
 const { removeFile, pathExists } = require('KegFileSys')
 const { getGlobalConfig } = require('KegUtils/globalConfig/getGlobalConfig')
-const { getProxyDomainFromBranch } = require('KegUtils/proxy/getProxyDomainFromBranch')
+const { domainFromBranch } = require('KegUtils/proxy/domainFromBranch')
 
 /**
  * Removes an injected compose file from the global injected folder
@@ -21,7 +21,7 @@ const removeInjected = async (injected, globalConfig) => {
 
   globalConfig = globalConfig || getGlobalConfig()
   const repoPath = getRepoPath(injected, globalConfig)
-  const proxyDomain = repoPath && await getProxyDomainFromBranch(injected, repoPath)
+  const proxyDomain = repoPath && await domainFromBranch(injected, repoPath)
 
   proxyDomain && await removeInjectedCompose(proxyDomain, false)
 }

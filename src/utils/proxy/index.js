@@ -1,6 +1,6 @@
 module.exports = {
-  ...require('./getProxyDomainFromBranch'),
-  ...require('./getProxyDomainFromEnv')
+  ...require('./domainFromBranch'),
+  ...require('./domainFromImgEnv'),
   ...require('./getTapProxyName'),
   ...require('./startTapProxy'),
 }

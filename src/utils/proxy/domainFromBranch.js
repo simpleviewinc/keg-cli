@@ -10,7 +10,7 @@ const { throwNoGitBranch } = require('KegUtils/error/throwNoGitBranch')
  *
  * @returns {Object} - Name to use for the proxy subdomain
  */
-const getProxyDomainFromBranch = async (contextName, contextPath) => {
+const domainFromBranch = async (contextName, contextPath) => {
   // Get the branch name of the application based on the buildContextPath
   // buildContextPath should be the root of the application being built
   // I.E. keg-hub/taps/<tap-name> || keg-hub/repos/<repo-name> ( internal applications )
@@ -30,5 +30,5 @@ const getProxyDomainFromBranch = async (contextName, contextPath) => {
 }
 
 module.exports = {
-  getProxyDomainFromBranch
+  domainFromBranch
 }

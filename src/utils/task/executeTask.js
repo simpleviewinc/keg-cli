@@ -1,5 +1,6 @@
 const { showHelp } = require('KegLog')
-const { isFunc } = require('@keg-hub/jsutils')
+const { KegEvent } = require('KegEvent')
+const { isFunc, deepClone } = require('@keg-hub/jsutils')
 const { throwNoAction } = require('KegUtils/error')
 const { parseArgs } = require('KegUtils/helpers/parseArgs')
 const { hasHelpArg } = require('KegUtils/helpers/hasHelpArg')
@@ -17,13 +18,21 @@ const { hasHelpArg } = require('KegUtils/helpers/hasHelpArg')
  * @returns {Any} - response from the task.action function
  */
 const executeTask = async (args) => {
-  const { globalConfig, task, options } = args
+  const { globalConfig, task, options, command } = args
 
   // Check is the help should be printed
   if(hasHelpArg(options[ options.length -1 ])) return showHelp({ task, options })
 
   // Get the params for the task if they have not already been parsed
   const params = args.params || await parseArgs(args, globalConfig)
+
+  // Store the original input in the KegEvent store under cli.input
+  KegEvent.register(`cli.input`, val => val, {
+    task,
+    command,
+    options: [...options],
+    params: deepClone(params),
+  })
 
   return isFunc(task.action)
     ? task.action({ ...args, params })

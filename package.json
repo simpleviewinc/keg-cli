@@ -66,6 +66,7 @@
     "KegConst": "src/constants",
     "KegCrypto": "src/libs/crypto",
     "KegDocCli": "src/libs/docker",
+    "KegEvent": "repos/cli-core/eventDispatch",
     "KegFileSys": "repos/cli-utils/src/fileSys",
     "KegGitCli": "repos/git-lib",
     "KegPConf": "repos/parse-config",

@@ -4,15 +4,15 @@ const { getKegProxyDomain } = require('KegUtils/proxy/getKegProxyDomain')
 const { getImgNameContext } = require('KegUtils/getters/getImgNameContext')
 
 /**
- * Builds context data needed to create the injected docker-compose file
+ * Builds context args needed to create the injected docker-compose file
  * @function
- * @param {Object} data - Data to fill the compose template with
+ * @param {Object} args - Data to fill the compose template with (Sames args passed to a task)
  * @param {Object} imgNameContext - Data to fill the compose template with
  
  *
  * @returns {Object} - Build compose context data
  */
-const getComposeContextData = async (data, imgNameContext) => {
+const getComposeContextData = async (args, imgNameContext) => {
 
   const composeContext = {}
 
@@ -21,7 +21,7 @@ const getComposeContextData = async (data, imgNameContext) => {
   // Otherwise used the imageNameContext.full image url
   // This allows the ENV to be dynamic if it's defined,
   // Or use the image url when it's not
-  composeContext.imageFrom = get(data, 'contextEnvs.KEG_IMAGE_FROM')
+  composeContext.imageFrom = get(args, 'contextEnvs.KEG_IMAGE_FROM')
     ? '${KEG_IMAGE_FROM}'
     : imgNameContext.full
 
@@ -31,41 +31,41 @@ const getComposeContextData = async (data, imgNameContext) => {
 
   // The the docker image name for the service being started
   composeContext.service = get(
-    data, `contextEnvs.KEG_COMPOSE_SERVICE`,
-    get(data, `params.__injected.image`,
-      get(data, `contextEnvs.IMAGE`,
-        get(data, `contextEnvs.CONTAINER_NAME`, imgNameContext.image)
+    args, `contextEnvs.KEG_COMPOSE_SERVICE`,
+    get(args, `params.__injected.image`,
+      get(args, `contextEnvs.IMAGE`,
+        get(args, `contextEnvs.CONTAINER_NAME`, imgNameContext.image)
       )
     )
   )
 
   // Get the root path where the docker container should be built from
   composeContext.buildContextPath = get(
-    data, `params.__injected.injectPath`,
-    get(data, `contextEnvs.KEG_CONTEXT_PATH`, '${KEG_CONTEXT_PATH}')
+    args, `params.__injected.injectPath`,
+    get(args, `contextEnvs.KEG_CONTEXT_PATH`, '${KEG_CONTEXT_PATH}')
   )
 
   // Get the path to the Dockerfile
   composeContext.dockerPath = get(
-    data, `params.__injected.dockerPath`,
-    get(data, `contextEnvs.KEG_DOCKER_FILE`, '${KEG_DOCKER_FILE}')
+    args, `params.__injected.dockerPath`,
+    get(args, `contextEnvs.KEG_DOCKER_FILE`, '${KEG_DOCKER_FILE}')
   )
 
   // Get the shared docker network
   composeContext.dockerNetwork = get(
-    data, `contextEnvs.KEG_DOCKER_NETWORK`,
+    args, `contextEnvs.KEG_DOCKER_NETWORK`,
     get(DOCKER, `KEG_DOCKER_NETWORK`, '${KEG_DOCKER_NETWORK}')
   )
 
   // The the docker container name for the service being started
   composeContext.container = get(
-    data, `params.__injected.container`,
-    get(data, `params.container`,
-      get(data, `contextEnvs.CONTAINER_NAME`, composeContext.service)
+    args, `params.__injected.container`,
+    get(args, `params.container`,
+      get(args, `contextEnvs.CONTAINER_NAME`, composeContext.service)
     )
   )
 
-  composeContext.proxyDomain = await getKegProxyDomain(data, data.contextEnvs)
+  composeContext.proxyDomain = await getKegProxyDomain(args, imgNameContext)
 
   return composeContext
 }

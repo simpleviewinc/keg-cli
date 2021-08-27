@@ -7,15 +7,12 @@
  *
  * @returns {string} - The found proxyDomain
  */
-const getProxyDomainFromEnv = async (params, contextData) => {
+const domainFromImgEnv = async (imgNameContext) => {
   const { image, tag } = params
   const { id, rootId } = contextData
-  // const fromLabel = Boolean((image && tag) || id)
-  // const labelRef = fromLabel && (id || (tag && image ? `${image}:${tag}` : image))
-  // TODO: [TAP-PROXY] - Update to pull an ENV with proxy domain value
-  // abelRef, rootId ? 'image' : 'container'
+  
 }
 
 module.exports = {
-  getProxyDomainFromEnv
+  domainFromImgEnv
 }
