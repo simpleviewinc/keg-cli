@@ -2,7 +2,7 @@ const { pullService } = require('./pullService')
 const { proxyService } = require('./proxyService')
 const { composeService } = require('./composeService')
 const { getServiceArgs } = require('./getServiceArgs')
-const { get, set, deepMerge } = require('@keg-hub/jsutils')
+const { get, set, deepMerge, exists } = require('@keg-hub/jsutils')
 const { checkEnvConstantValue } = require('KegUtils/helpers/checkEnvConstantValue')
 
 /**
@@ -42,12 +42,16 @@ const startService = async (args, exArgs) => {
   checkEnvConstantValue(cmdContext, 'KEG_AUTO_SYNC', false)
     && (internalOpts.skipDockerSyncs = true)
 
+  // Check if the recreate param was explicitly passed. If it was, then we use that
+  // Otherwise use the isNewImage value
+  const recreate = get(args, `params.recreate`)
+
   // Call the compose service to start the application
   // Pass in recreate, base on if a new image was pulled
   // Set 'pull' param to false, because we already did that above
   return await composeService(deepMerge(serviceArgs, {
     __internal: internalOpts,
-    params: { pull: false, recreate: isNewImage },
+    params: { pull: false, recreate: exists(recreate) ? recreate : isNewImage },
   }))
 
 }

@@ -58,7 +58,7 @@ const injectedTest = {
     GIT_RESOLVER_URL: 'https://github.com/simpleviewinc/.git',
     GIT_PROXY_URL: 'https://github.com/simpleviewinc/.git',
     KEG_IMAGE_FROM: 'tap-injected-test:develop',
-    KEG_NODE_VERSION: '14.7-alpine',
+    KEG_NODE_VERSION: '14.17-alpine',
     DOC_CLI_PATH: '/keg/keg-cli',
     DOC_CORE_PATH: '/keg/tap/node_modules/keg-core',
     DOC_COMPONENTS_PATH: '/keg/tap/node_modules/keg-core/node_modules/@keg-hub/keg-components',
