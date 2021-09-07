@@ -1,10 +1,10 @@
-const path = require('path')
 const docker = require('KegDocCli')
 const { Logger } = require('KegLog')
 const { get } = require('@keg-hub/jsutils')
 const { DOCKER } = require('KegConst/docker')
+const { throwRequired } = require('KegUtils/error')
+const { error: { throwNoTapLoc } } = require('KegRepos/cli-utils')
 const { buildContainerContext } = require('KegUtils/builders/buildContainerContext')
-const { throwRequired, generalError } = require('KegUtils/error')
 
 /**
  * Ensures the required options were passed to the task
