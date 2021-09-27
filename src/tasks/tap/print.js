@@ -32,13 +32,11 @@ const packageNames = [ 'package', 'pkg', 'p']
  * @throws {Error}
  */ 
 const throwMissingConfigError = (tap, searchPath) => {
-  const reason = tap
-    ? `Expected path parameter to start with one of: [${configNames.toString()}] or [${packageNames.toString()}]`
-    : 'Verify your current path is a linked tap.\n'
-
   generalError(`
-    Could not find object to print from search path "${searchPath}"
-    ${reason}
+    Could not find object to print with search path "${searchPath}"
+    Verify that:
+      - Your search path parameter starts with one of: [${configNames.toString()}] or [${packageNames.toString()}] (default='config')
+      ${ !tap ? '- Your current path is a linked tap.' : '' }
   `)
 }
 
