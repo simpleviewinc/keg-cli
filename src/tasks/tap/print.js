@@ -25,28 +25,40 @@ const configNames = [ 'config', 'cfg', 'c' ]
 // accepted names for the package.json
 const packageNames = [ 'package', 'pkg', 'p']
 
+/** 
+ * Helper for printConfig when it cannot find a config to print
+ * @param {string} tap - tap alias
+ * @param {string} searchPath - config or package search path
+ * @throws {Error}
+ */ 
+const throwMissingConfigError = (tap, searchPath) => {
+  generalError(`
+    Could not find object to print with search path "${searchPath}"
+    Verify that:
+      - Your search path parameter starts with one of: [${configNames.toString()}] or [${packageNames.toString()}] (default='config')
+      ${ !tap ? '- Your current path is a linked tap.' : '' }
+  `)
+}
+
 /**
- * Prints out a tap's config or package.json (see options)
+ * Prints out a tap's config or package.json (see options), using the specified tap or the tap in your current directory  
  * @param {Object} args - arguments passed from the runTask method
  */
 const printConfig = args => {
   const { params } = args
   const { tap, path, verbose } = params
 
-  !tap && generalError('Cannot print config without a tap parameter.')
+  // find tap using these parameters
+  const searchParams = { name: tap, path: !tap && process.cwd() }
 
   const [ fileType, subPath ] = splitPath(path)
   const [ config, foundPath ] = configNames.includes(fileType)
-    ? getTapConfig({ name: tap })
+    ? getTapConfig(searchParams)
     : packageNames.includes(fileType)
-      ? getTapPackage({ name: tap })
+      ? getTapPackage(searchParams)
       : []
 
-  !config && 
-    generalError(`
-      Could not find object to print from path "${path}". 
-      Expected path to start with one of: [${configNames.toString()}] or [${packageNames.toString()}]
-    `)
+  !config && throwMissingConfigError(tap, path)
 
   const value = get(config, subPath, config)
 
@@ -65,8 +77,9 @@ module.exports = {
   print: {
     name: 'print',
     action: printConfig,
-    description: `Prints out the tap config or package json`,
+    description: `Prints out the tap config or package json, using the specified tap or the tap in your current directory`,
     alias: ['prnt', 'prn'],
+    example: 'keg tap print config.keg.alias',
     options: {
       path: {
         description: 'Optional path to a value within the config you want to read. Needs to start with either "config" for the tap config or "package" for package.json',
