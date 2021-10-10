@@ -19,5 +19,6 @@ const getGitConfigItem = async key => {
 
 
 module.exports = {
-  getGitConfigItem
+  getGitConfigItem,
+  configItem: getGitConfigItem,
 }
