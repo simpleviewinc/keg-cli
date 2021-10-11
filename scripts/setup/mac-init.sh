@@ -4,7 +4,7 @@ set -e
 trap 'echo "Finished with exit code $?"' EXIT
 
 # Github Repos
-KEG_CLI_URL=github.com/simpleviewinc/keg-cli.git
+KEG_CLI_URL=github.com/lancetipton/keg-cli.git
 
 # Check if the keg root dir has been set. If not, then set it
 if [[ -z "$KEG_ROOT_DIR" ]]; then

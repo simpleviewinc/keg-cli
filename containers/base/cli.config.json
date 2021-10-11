@@ -4,14 +4,14 @@
   "displayName": "Keg CLI",
   "docker": {
     "providerUrl": "ghcr.io",
-    "namespace": "simpleviewinc",
+    "namespace": "lancetipton",
     "user": "keg-public",
     "token": ""
   },
   "cli": {
     "git": {
-      "orgName": "simpleviewinc",
-      "orgUrl": "https://github.com/simpleviewinc",
+      "orgName": "lancetipton",
+      "orgUrl": "https://github.com/lancetipton",
       "provider": "https://github.com",
       "publicToken": "",
       "repos": {

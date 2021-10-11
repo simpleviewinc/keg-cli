@@ -26,7 +26,6 @@
   * The cli will attempt to load the following `yml` file in this order
     * `containers/< container >/values.yml`
     * `containers/< container >/values_< env >.yml`
-      * The `_` is used to follow the [SV-Kubernetes](https://github.com/simpleviewinc/sv-kubernetes) format 
     * `containers/< container >/values-< env >.yml` ( Uses `-` instead of `_` )
     * `~/.kegConfig/values_< env >.yml`
     * `~/.kegConfig/values-< env >.yml` ( Uses `-` instead of `_` )

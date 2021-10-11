@@ -15,8 +15,8 @@ env:
   # --- DOCKER ENV CONTEXT --- #
   DOC_APP_PATH: /keg-hub
 
-  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:develop
-  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/keg-base:develop
+  KEG_BASE_IMAGE: ghcr.io/lancetipton/keg-base:develop
+  KEG_IMAGE_FROM: ghcr.io/lancetipton/keg-base:develop
 
   # Image ENVs
   IMAGE: keg-base

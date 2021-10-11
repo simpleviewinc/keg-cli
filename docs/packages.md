@@ -5,7 +5,7 @@ Creates an exact copy the a docker container at the time of its instantiation
 * The goal is to create a docker image the matches the **exact environment** in which the container was created
 * This allows team members to share code and applications quickly and easily without out the worry of environment difference between developer machines or setups
   * The only real requirement is that the machine can run a docker container
-  * Installing the [Keg-CLI](https://github.com/simpleviewinc/keg-cli) is **NOT** required but helpful
+  * Installing the [Keg-CLI](https://github.com/lancetipton/keg-cli) is **NOT** required but helpful
     * It automates most of the steps, but technically everything can be done without it
 
 ## How it Works

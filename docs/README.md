@@ -17,11 +17,11 @@
       * `keg <name of task> -h` 
 
 ## Core Repos
-  * [keg-cli](https://github.com/simpleviewinc/keg-cli) - Commands to run the keg, and taps
-  * [keg-components](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/keg-components) - A cross-platform component library for React / React-Native
-  * [keg-core](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/keg-core) - Main keg repo, which contains code to run taps
-  * [tap-resolver](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/tap-resolver) - Allows resolving tap files through aliases
-  * [re-theme](https://github.com/simpleviewinc/keg-hub/tree/develop/repos/re-theme) - Manages cross-platform styles for web and native
+  * [keg-cli](https://github.com/lancetipton/keg-cli) - Commands to run the keg, and taps
+  * [keg-components](https://github.com/lancetipton/keg-hub/tree/develop/repos/keg-components) - A cross-platform component library for React / React-Native
+  * [keg-core](https://github.com/lancetipton/keg-hub/tree/develop/repos/keg-core) - Main keg repo, which contains code to run taps
+  * [tap-resolver](https://github.com/lancetipton/keg-hub/tree/develop/repos/tap-resolver) - Allows resolving tap files through aliases
+  * [re-theme](https://github.com/lancetipton/keg-hub/tree/develop/repos/re-theme) - Manages cross-platform styles for web and native
 
 ## Taps
 * Taps can be installed anywhere on the local machine
