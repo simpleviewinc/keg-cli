@@ -1,3 +1,4 @@
+const { inDocker } = require('./inDocker')
 const { getAppRoot } = require('../appRoot')
 const { Logger } = require('../logger/logger')
 const { isArr, noOpObj, noPropArr, camelCase, isStr, exists } = require('@keg-hub/jsutils')
@@ -88,6 +89,20 @@ const shortcutCmds = Array.from([
 }, {})
 
 /**
+ * Converts the passed in envs Object into an array of docker argument envs
+ * @param {Object} envs - Key value pair of envs
+ *
+ * @returns {Array} - Formatted array of envs matching docker cli requirements
+ */
+const envToStr = envs => Object.keys(envs)
+  .reduce((acc, key) => {
+    acc.push(`--env`)
+    acc.push(`${key}=${envs[key]}`)
+
+    return acc
+  }, [])
+
+/**
  * Helper to call the docker exec command directly
  * @param {String} containerName - name of container to run command within
  * @param {Array<string>} args - docker exec args
@@ -95,15 +110,53 @@ const shortcutCmds = Array.from([
  * @example
  * dockerExec('<container-name>', 'yarn install')
  */
-const dockerExec = (containerName, args, ...opts) => {
-  const allArgs = [ 'exec', '-it', containerName, ...ensureArray(args) ]
-  return runCmd('docker', allArgs, ...opts)
+const dockerExec = (containerName, args, opts=noOpObj, ...extra) => {
+  const { envs=noOpObj } = opts
+  const allArgs = [
+    'exec',
+    '-it',
+    ...envToStr(envs),
+    containerName,
+    ...ensureArray(args)
+  ]
+
+  return runCmd('docker', allArgs, opts, ...extra)
 }
+
+/**
+ * Runs a command inside the docker container
+ * @param {String} containerName - name of container to run command within
+ * @param {Array<string>} args - docker exec args
+ * @param  {Array<string>} extra.opts - docker exec opts
+ * @param  {Array<string>} extra.envs - docker exec envs
+ * @example
+ * dockerExec('keg-herkin', 'npx playwright install firefox')
+ */
+const containerExec = (_, args, options=noOpObj, ...extra) => {
+  const cmd = args.shift()
+  const { opts=[], envs={} } = options
+
+  return runCmd(
+    cmd,
+    ensureArray(args),
+    {...options, ...opts, envs},
+    ...extra
+  )
+}
+
+/**
+ * Checks if inside a docker container.
+ * If we are, then cont add call docker executable directly
+ * Instead call the command directly inside the container
+ */
+const dockerCmd = (...args) => inDocker() ? containerExec(...args) : dockerExec(...args)
 
 module.exports = {
   execCmd,
   runCmd,
   spawnCmd,
+  dockerCmd,
+  inDocker,
   dockerExec,
   ...shortcutCmds,
 }

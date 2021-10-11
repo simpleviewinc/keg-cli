@@ -1,7 +1,7 @@
 const { testArray } = require('./testArray')
 const { kegCmd, kegCmdAsync } = require('./kegCmd')
 const { checkHelperMethod } = require('./checkHelperMethod')
-const { eitherArr } = require('@keg-hub/jsutils')
+
 /**
  * Calls the runTasks method for a taskGroup
  * @param {string} parentName - Name of the parent task group
