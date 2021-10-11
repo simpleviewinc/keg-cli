@@ -11,7 +11,7 @@ RUN apk add --update --no-cache git py-pip make g++; \
 # ---- Setup keg-hub within the container ---- #
 
 # Get the git keg-hub url and branch to pull down
-ARG GIT_HUB_URL=https://github.com/simpleviewinc/keg-hub.git
+ARG GIT_HUB_URL=https://github.com/lancetipton/keg-hub.git
 ARG GIT_HUB_BRANCH=develop
 
 # Pull down the keg-hub repo from github
@@ -20,7 +20,7 @@ RUN git clone --single-branch --branch $GIT_HUB_BRANCH $GIT_HUB_URL /keg-hub
 # ---- Setup the keg-cli in the container ---- #
 
 # Get the git keg-hub url and branch to pull down
-ARG GIT_CLI_URL=https://github.com/simpleviewinc/keg-cli.git
+ARG GIT_CLI_URL=https://github.com/lancetipton/keg-cli.git
 ARG GIT_CLI_BRANCH=master
 
 # Pull down the keg-cli

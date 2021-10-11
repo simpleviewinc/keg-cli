@@ -18,7 +18,7 @@ keg_setup_keg_hub(){
   local CUR_CLI_PATH=$(pwd)
   
   # Clone keg-hub into the root directory
-  git clone --branch $HUB_BRANCH https://github.com/simpleviewinc/keg-hub.git $KEG_ROOT_DIR
+  git clone --branch $HUB_BRANCH https://github.com/lancetipton/keg-hub.git $KEG_ROOT_DIR
   
   echo "::debug::Creating Keg-CLI symlink ..."
   ln -s $CUR_CLI_PATH $KEG_ROOT_DIR/repos/keg-cli

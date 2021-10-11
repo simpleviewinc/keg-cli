@@ -39,10 +39,10 @@ env:
   KEG_EXEC_CMD: tap:start
 
   # Image to use when build keg-core
-  KEG_BASE_IMAGE: ghcr.io/simpleviewinc/keg-base:develop
+  KEG_BASE_IMAGE: ghcr.io/lancetipton/keg-base:develop
 
   # Image to use when running keg-core
-  KEG_IMAGE_FROM: ghcr.io/simpleviewinc/tap:develop
+  KEG_IMAGE_FROM: ghcr.io/lancetipton/tap:develop
 
   # --- DOCKER ENV CONTEXT --- #
 

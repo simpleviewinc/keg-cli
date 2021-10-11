@@ -52,12 +52,12 @@
       * In most cases this would be the `develop` tagged version
 
 ### Important ENVS
-  * `KEG_BASE_IMAGE`: ghcr.io/simpleviewinc/tap:develop
+  * `KEG_BASE_IMAGE`: ghcr.io/lancetipton/tap:develop
     * Docker will use this image as the *base* image of your tap
     * this occurs when **building** the image
     * Should be `tap:develop` in most cases
       * This is default, but can be over written (i.e. Keg-Herkin)
-  * `KEG_IMAGE_FROM`: ghcr.io/simpleviewinc/<tap-name>:develop
+  * `KEG_IMAGE_FROM`: ghcr.io/lancetipton/<tap-name>:develop
     * When you build a tap, the output is a docker image
     * That image can be used when **running** a tap
     * Docker Compose will use this image when starting the container

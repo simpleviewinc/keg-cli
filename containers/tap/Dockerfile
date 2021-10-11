@@ -4,7 +4,7 @@ ARG KEG_NODE_VERSION
 ARG NODE_IMAGE_FROM=node:$KEG_NODE_VERSION
 
 # Add a FROM for the keg-base image to we can copy content from it
-ARG KEG_BASE_IMAGE=ghcr.io/simpleviewinc/keg-base:develop
+ARG KEG_BASE_IMAGE=ghcr.io/lancetipton/keg-base:develop
 FROM $KEG_BASE_IMAGE as keg-base
 
 # Run the build script keg-core

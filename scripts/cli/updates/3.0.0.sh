@@ -40,8 +40,8 @@ keg_cli_3_0_0_update(){
   keg cli env set --key GIT_CLI_BRANCH --value master --confirm false
 
   # Update default image envs
-  keg cli env set --key KEG_BASE_IMAGE --value \"ghcr.io/simpleviewinc/keg-base:{{ cli.settings.docker.defaultTag }}\" --confirm false
-  keg cli env set --key KEG_IMAGE_FROM --value \"ghcr.io/simpleviewinc/keg-base:{{ cli.settings.docker.defaultTag }}\" --confirm false
+  keg cli env set --key KEG_BASE_IMAGE --value \"ghcr.io/lancetipton/keg-base:{{ cli.settings.docker.defaultTag }}\" --confirm false
+  keg cli env set --key KEG_IMAGE_FROM --value \"ghcr.io/lancetipton/keg-base:{{ cli.settings.docker.defaultTag }}\" --confirm false
   keg cli env set --key KEG_IMAGE_TAG --value \"{{ cli.settings.docker.defaultTag }}\" --confirm false
 
   # Update the globalConfig
@@ -50,13 +50,13 @@ keg_cli_3_0_0_update(){
   keg config set --key cli.settings.docker.defaultLocalBuild --value false --confirm false
 
   keg config set --key version --value 3.0.0 --confirm false
-  keg config set --key cli.git.orgUrl --value \"https://github.com/simpleviewinc\" --confirm false
+  keg config set --key cli.git.orgUrl --value \"https://github.com/lancetipton\" --confirm false
   keg config set --key cli.git.repos.hub --value keg-hub --confirm false
   keg config set --key cli.git.repos.cli --value keg-cli --confirm false
   
   # Update the docker config to use the new settings
   keg config set --key docker.providerUrl --value ghcr.io --confirm false
-  keg config set --key docker.namespace --value simpleviewinc --confirm false
+  keg config set --key docker.namespace --value lancetipton --confirm false
 
   # Run a sync after the envs have been updated
   keg config sync --confirm false

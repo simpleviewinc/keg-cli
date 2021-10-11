@@ -1,12 +1,6 @@
-**Ticket**: [<your_ticket_id>](https://jira.simpleviewtools.com/browse/<your_ticket_id>)
-
 ## Context
 
 * Why was this ticket created?
-
-## Goal
-
-* What do you intend to achieve by completing this task?
 
 ## Updates
 

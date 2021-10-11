@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Wrapper around the git command line executable",
   "main": "index.js",
-  "repository": "https://github.com/simpleviewinc/keg-cli/tree/master/repos/git-lib",
+  "repository": "https://github.com/lancetipton/keg-cli/tree/master/repos/git-lib",
   "author": "Lance Tipton",
   "license": "MIT",
   "private": false,
