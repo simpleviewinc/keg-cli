@@ -69,7 +69,7 @@ const sharedOptions = (action, taskOps = noOpObj, include = noOpArr, groups) => 
   const shared = groupNames
     ? groupNames.reduce((joined, group) => ({
         ...joined,
-        ...(__SHARED_OPTS.groups[groupName] || noOpObj),
+        ...(__SHARED_OPTS.groups[group] || noOpObj),
       }), {})
     : __SHARED_OPTS.all
 
