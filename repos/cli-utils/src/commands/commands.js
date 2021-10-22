@@ -125,12 +125,12 @@ const dockerExec = (containerName, args, opts=noOpObj, ...extra) => {
 
 /**
  * Runs a command inside the docker container
- * @param {String} containerName - name of container to run command within
+ * @param {String} containerName - name of container to run command within ( **Ignored** )
  * @param {Array<string>} args - docker exec args
  * @param  {Array<string>} extra.opts - docker exec opts
  * @param  {Array<string>} extra.envs - docker exec envs
  * @example
- * dockerExec('keg-herkin', 'npx playwright install firefox')
+ * dockerExec('*', 'npx playwright install firefox')
  */
 const containerExec = (_, args, options=noOpObj, ...extra) => {
   const cmd = args.shift()
