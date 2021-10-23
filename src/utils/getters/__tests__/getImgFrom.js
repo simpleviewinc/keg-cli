@@ -20,7 +20,7 @@ const testArgs = {
   context: {
     description: 'It should return KEG_BASE_FROM env for the passed in context',
     inputs: [ { context: 'core' }, {} ],
-    outputs: 'ghcr.io/simpleviewinc/keg-core:develop'
+    outputs: 'ghcr.io/lancetipton/keg-core:develop'
   },
   contextEnvs: {
     description: 'It should return KEG_BASE_FROM env from passed in ENVs over the context',
