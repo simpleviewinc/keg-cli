@@ -1,6 +1,6 @@
 {
   "name": "@keg-hub/ask-it",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Node CLI helper for asking questions",
   "main": "src/index.js",
   "repository": {
