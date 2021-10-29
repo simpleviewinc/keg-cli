@@ -8,7 +8,7 @@ const testYmlJsonPath = path.join(__dirname, './ymlJsonTemplateTest.yml')
 
 const testYmlData = {
   test: [ 'baz', 'foo' ],
-  bar: { 'sub-content': { more: ['item:item'] } },
+  bar: { 'sub-content': { more: ['"item:item"'] } },
 }
 
 const testYmlStr = `
@@ -18,7 +18,7 @@ test:
 bar:
   sub-content:
     more:
-      - 'item:item'
+      - '"item:item"'
 `.trim()
 
 const removeYmlTest = async () => {

@@ -1,6 +1,6 @@
 {
   "name": "@keg-hub/parse-config",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Utils to allow loading non-javascript files into a node environment",
   "repository": "https://github.com/lancetipton/keg-cli/tree/master/repos/parse-config",
   "main": "index.js",

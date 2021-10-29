@@ -37,7 +37,7 @@ test:
 bar:
   sub-content:
     more:
-      - 'item:item'
+      - '"item:item"'
 `.trim()
 
 describe('utils', () => {

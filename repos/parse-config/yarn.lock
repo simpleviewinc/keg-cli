@@ -509,7 +509,7 @@
     colors "1.4.0"
     inquirer "7.0.6"
 
-"@keg-hub/cli-utils@^0.3.0":
+"@keg-hub/cli-utils@0.3.0":
   version "0.3.0"
   resolved "https://registry.npmjs.org/@keg-hub/cli-utils/-/cli-utils-0.3.0.tgz#ac0e64b4dc9dd489f58a91e944e9181b9a7b33a2"
   integrity sha512-xkw2Fl//ySyw+5hp+GXloiAsY63sc0ajPBszIMyN5mvEls9HjX6LoU4nX62Q3dTxm+PzLO7kwCuCeUIe6ZuJcA==
@@ -540,12 +540,28 @@
   resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.6.0.tgz#c6a4511b5439ffe73ff50aa9319f17d1d7701e2a"
   integrity sha512-J6o5lOL4p3idqxJkh+VHmppNFuQhC2IbwUrJiMFjXJbKLsylPQVOKZvRJ7ICHidc9fLw9Qvyd7BIgwo0Nn4iAg==
 
+"@keg-hub/jsutils@8.7.0":
+  version "8.7.0"
+  resolved "https://registry.npmjs.org/@keg-hub/jsutils/-/jsutils-8.7.0.tgz#ee05638b2b6df0c251cdf28634694ac198f9211f"
+  integrity sha512-ipbvP/yDZIYnneG8bAFjBGwR7QOGT3U5Dp5Y6Y1kPHbe6LFEoKhBVt6x9f5MavluGgofjulNpmwDcomCl+zbeA==
+
 "@keg-hub/spawn-cmd@0.1.2":
   version "0.1.2"
   resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.2.tgz#30bd37e03a3c2cb98235fa300ef06c0505404392"
   integrity sha512-6Q4jFxbnTbX4eAnaMcIgGfUstQ8/UIVVD/MaT89IOZ2yNjQYMxbhompDSr7P38RVekIiEWZZE2W/VA8IAA8/Cg==
   dependencies:
     "@keg-hub/jsutils" "8.4.0"
+    app-root-path "3.0.0"
+    cross-spawn "7.0.3"
+    shell-exec "1.0.2"
+    tree-kill "1.2.2"
+
+"@keg-hub/spawn-cmd@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.npmjs.org/@keg-hub/spawn-cmd/-/spawn-cmd-0.1.3.tgz#52feae73d86a087ae7c5f11d82950049e6518578"
+  integrity sha512-lEzc7Cv+1DKK3c1t3araAUpVdv0RZgYmBVVHOYdBBsHVbwc1hh51/+n56O/gjgGHFndDXRCGp6tOuYzwMR53jg==
+  dependencies:
+    "@keg-hub/jsutils" "8.7.0"
     app-root-path "3.0.0"
     cross-spawn "7.0.3"
     shell-exec "1.0.2"
@@ -802,6 +818,11 @@ argparse@^1.0.7:
   integrity sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==
   dependencies:
     sprintf-js "~1.0.2"
+
+argparse@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
+  integrity sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==
 
 arr-diff@^4.0.0:
   version "4.0.0"
@@ -1817,7 +1838,7 @@ globals@^12.1.0:
   dependencies:
     type-fest "^0.8.1"
 
-graceful-fs@^4.1.11, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.3, graceful-fs@^4.2.4:
+graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4:
   version "4.2.6"
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"
   integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
@@ -2585,21 +2606,20 @@ js-tokens@^4.0.0:
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@3.14.0:
-  version "3.14.0"
-  resolved "https://registry.npmjs.org/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
-  integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
-  dependencies:
-    argparse "^1.0.7"
-    esprima "^4.0.0"
-
-js-yaml@^3.13.1:
+js-yaml@3.14.1, js-yaml@^3.13.1:
   version "3.14.1"
   resolved "https://registry.npmjs.org/js-yaml/-/js-yaml-3.14.1.tgz#dae812fdb3825fa306609a8717383c50c36a0537"
   integrity sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
+
+js-yaml@^4.0.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
+  integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
+  dependencies:
+    argparse "^2.0.1"
 
 jsdom@^16.4.0:
   version "16.6.0"
@@ -2744,7 +2764,7 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-make-dir@^3.0.0, make-dir@^3.0.2:
+make-dir@^3.0.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/make-dir/-/make-dir-3.1.0.tgz#415e967046b3a7f1d185277d84aa58203726a13f"
   integrity sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==
@@ -3112,11 +3132,6 @@ picomatch@^2.0.4, picomatch@^2.2.3:
   version "2.3.0"
   resolved "https://registry.npmjs.org/picomatch/-/picomatch-2.3.0.tgz#f1f061de8f6a4bf022892e2d128234fb98302972"
   integrity sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==
-
-pify@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npmjs.org/pify/-/pify-5.0.0.tgz#1f5eca3f5e87ebec28cc6d54a0e4aaf00acc127f"
-  integrity sha512-eW/gHNMlxdSP6dmG6uJip6FXN0EQBwm2clYYd8Wul42Cwu/DK8HEftzsapcNdYe2MfLiIwZqsDk2RDEsTE79hA==
 
 pirates@^4.0.1:
   version "4.0.1"
@@ -3999,16 +4014,7 @@ wrappy@1:
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-write-file-atomic@^2.4.3:
-  version "2.4.3"
-  resolved "https://registry.npmjs.org/write-file-atomic/-/write-file-atomic-2.4.3.tgz#1fd2e9ae1df3e75b8d8c367443c692d4ca81f481"
-  integrity sha512-GaETH5wwsX+GcnzhPgKcKjJ6M2Cq3/iZp1WyY/X1CSqrW+jVNM9Y7D8EC2sM4ZG/V8wZlSniJnCKWPmBYAucRQ==
-  dependencies:
-    graceful-fs "^4.1.11"
-    imurmurhash "^0.1.4"
-    signal-exit "^3.0.2"
-
-write-file-atomic@^3.0.0:
+write-file-atomic@^3.0.0, write-file-atomic@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npmjs.org/write-file-atomic/-/write-file-atomic-3.0.3.tgz#56bd5c5a5c70481cd19c571bd39ab965a5de56e8"
   integrity sha512-AvHcyZ5JnSfq3ioSyjrBkH9yW4m7Ayk8/9My/DD9onKeu/94fwrMocemO2QAJFAlnnDN+ZDS+ZjAR5ua1/PV/Q==
@@ -4018,16 +4024,13 @@ write-file-atomic@^3.0.0:
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
 
-write-yaml-file@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.npmjs.org/write-yaml-file/-/write-yaml-file-4.0.0.tgz#31c90fc0554ca3cea9e8a957e11869f1a3742c14"
-  integrity sha512-lllTLncHf3r8JjI2TrlN5smKleOdVv6Zzj2txKmXSljMIEAyiTW8wzmd+iES1UwqkgfflI3obkeJOfuGMJjAaA==
+write-yaml-file@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.npmjs.org/write-yaml-file/-/write-yaml-file-4.2.0.tgz#86fca0a297666bf59c40dcd96e16dbdfd17228c2"
+  integrity sha512-LwyucHy0uhWqbrOkh9cBluZBeNVxzHjDaE9mwepZG3n3ZlbM4v3ndrFw51zW/NXYFFqP+QWZ72ihtLWTh05e4Q==
   dependencies:
-    graceful-fs "^4.2.3"
-    js-yaml "^3.13.1"
-    make-dir "^3.0.2"
-    pify "^5.0.0"
-    write-file-atomic "^2.4.3"
+    js-yaml "^4.0.0"
+    write-file-atomic "^3.0.3"
 
 write@1.0.3:
   version "1.0.3"
