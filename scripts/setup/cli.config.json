@@ -14,7 +14,7 @@
       "orgName": "lancetipton",
       "orgUrl": "https://github.com/lancetipton",
       "provider": "https://github.com",
-      "publicToken": "c9ee22e12f21993e6cbe0add9319bf59:b15873b3f06436e89b0cb652f4bc07590876a22017946b1dad13d5772349e32d5df307096f379f262d3afaaf6d2c4b73",
+      "publicToken": "",
       "repos": {
         "hub": "keg-hub",
         "cli": "keg-cli"
@@ -51,50 +51,6 @@
         "build": true,
         "publish": true,
         "commit": true
-      }
-    },
-    "keg": {
-      "name": "keg",
-      "dependent": true,
-      "order": {
-        "0": "@keg-hub/re-theme",
-        "1": "@keg-hub/keg-components",
-        "2": "@keg-hub/keg-core"
-      }
-    },
-    "retheme": {
-      "name": "retheme",
-      "dependent": false,
-      "order": {
-        "0": "@keg-hub/re-theme"
-      }
-    },
-    "components": {
-      "name": "components",
-      "dependent": false,
-      "order": {
-        "0": "@keg-hub/keg-components"
-      }
-    },
-    "core": {
-      "name": "core",
-      "dependent": false,
-      "order": {
-        "0": "@keg-hub/keg-core"
-      }
-    },
-    "jsutils": {
-      "name": "jsutils",
-      "dependent": false,
-      "order": {
-        "0": "@keg-hub/jsutils"
-      }
-    },
-    "resolver": {
-      "name": "resolver",
-      "dependent": false,
-      "order": {
-        "0": "@keg-hub/tap-resolver"
       }
     },
     "spawn-cmd": {

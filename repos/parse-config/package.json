@@ -32,11 +32,11 @@
     "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js --maxWorkers=50%"
   },
   "dependencies": {
-    "@keg-hub/cli-utils": "^0.3.0",
-    "@keg-hub/jsutils": "8.6.0",
+    "@keg-hub/cli-utils": "0.3.0",
+    "@keg-hub/jsutils": "8.7.0",
     "@keg-hub/spawn-cmd": "0.1.2",
-    "js-yaml": "3.14.0",
-    "write-yaml-file": "4.0.0"
+    "js-yaml": "3.14.1",
+    "write-yaml-file": "4.2.0"
   },
   "devDependencies": {
     "babel-eslint": "10.1.0",

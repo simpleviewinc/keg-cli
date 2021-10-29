@@ -1,4 +1,15 @@
-#!/usr/bin/env bash
+#! /usr/bin/env bash
+
+KEG_IS_ZSH=""
+KEG_SHELL_TYPE="$(ps -o comm= $$)"
+
+# Check for the shell type
+# Could be run in bash || zsh
+if [[ "$KEG_SHELL_TYPE" == "/bin/zsh" ]]; then
+  KEG_IS_ZSH="true"
+else
+  unset KEG_IS_ZSH
+fi
 
 # Opening to the keg cli
 # For navigation commands calls node script to load the path from keg.config.json
@@ -10,16 +21,22 @@ keg(){
   # Works when the Keg-CLI installed in the keg-hub/repos and is symlinked into the /usr/local/bin
   if [[ -z "$KEG_CLI_PATH" ]]; then
     # Get the KEG-CLI path based on the keg root directory
-    local SOURCE="${BASH_SOURCE[0]}"
+    local SOURCE
+    if [[ "$KEG_IS_ZSH" ]]; then
+      SOURCE="${(%):-%x}"
+    else
+      SOURCE="$BASH_SOURCE"
+    fi
+
     # Resolve $SOURCE until the file is no longer a symlink
     while [ -h "$SOURCE" ]; do
-      KEG_CLI_PATH="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+      KEG_CLI_PATH="$(dirname "$SOURCE")"
       SOURCE="$(readlink "$SOURCE")"
       # If $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
       [[ $SOURCE != /* ]] && SOURCE="$KEG_CLI_PATH/$SOURCE"
     done
-    KEG_CLI_PATH="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
+    KEG_CLI_PATH="$(dirname "$SOURCE")"
     export KEG_CLI_PATH
   fi
 
@@ -61,19 +78,29 @@ keg(){
     else
       CMD_OUTPUT="$(node $KEG_CLI_PATH/scripts/cli/getConfigPath.js $@)"
     fi
+    
+    local OUTPUT_ARR=""
+    local MOVE_MESSAGE=""
+    local MOVE_TO_PATH=""
 
-    # Convert the ouput to an array
-    IFS=$'\n'
-    local OUTPUT_ARR=($CMD_OUTPUT)
-    unset IFS
-
-    # Get the second line containing the path to move to
-    local MOVE_TO_PATH="${OUTPUT_ARR[1]}"
+    if [[ "$KEG_IS_ZSH" ]]; then
+      OUTPUT_ARR=("${(f)CMD_OUTPUT}")
+      MOVE_MESSAGE="${OUTPUT_ARR[1]}"
+      MOVE_TO_PATH="${OUTPUT_ARR[2]}"
+    else
+      # Convert the ouput to an array
+      IFS=$'\n'
+      OUTPUT_ARR=($CMD_OUTPUT)
+      unset IFS
+      # Get the second line containing the path to move to
+      MOVE_MESSAGE="${OUTPUT_ARR[0]}"
+      MOVE_TO_PATH="${OUTPUT_ARR[1]}"
+    fi
 
     # If we have a path to move to
     # Do the move, then return so we don't run any other code
     if [[ "$MOVE_TO_PATH" ]]; then
-      echo "${OUTPUT_ARR[0]}"
+      echo "$MOVE_MESSAGE"
       cd $MOVE_TO_PATH
       echo ""
       return 0

@@ -38,8 +38,8 @@ ENV PATH=$PATH:/usr/local/share/.config/yarn/global/node_modules/.bin:/keg-setup
 
 # Install git, docker-cli and bash for the new stage
 RUN apk add git docker-cli bash; \
-    echo fs.inotify.max_user_watches=1048576 | sudo tee -a /etc/sysctl.conf; \
-    sudo sysctl -p; \
+    echo fs.inotify.max_user_watches=1048576 | tee -a /etc/sysctl.conf; \
+    sysctl -p; \
     rm -rf /var/cache/apk/*; \
     /bin/sed -i '1s|.*|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd; \
     mkdir -p /root/.kegConfig; \

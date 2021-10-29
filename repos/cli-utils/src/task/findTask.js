@@ -1,5 +1,5 @@
-const { noOpArr, isArr } = require('@keg-hub/jsutils')
 const { throwExitError } = require('../error')
+const { noOpArr, isArr, isObj } = require('@keg-hub/jsutils')
 
 /**
  * Maps task alias to a task name, relative to the options
@@ -32,8 +32,8 @@ const getTaskAlias = (task, tasks) => {
  */
 const findTaskFromOptions = (task, options) => {
   const opt = options.shift()
-  const subTasks = task.tasks
-  const subTask = opt && (subTasks[opt] || getTaskAlias(opt, subTasks))
+  const subTasks = isObj(task) && task.tasks
+  const subTask = opt && subTasks && (subTasks[opt] || getTaskAlias(opt, subTasks))
 
   return !subTask
     ? { task: task, options: opt ? [ opt, ...options ] : options }

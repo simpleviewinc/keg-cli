@@ -23,8 +23,10 @@
   "dependencies": {
     "@keg-hub/ask-it": "0.0.2",
     "@keg-hub/cli-utils": "0.2.1",
-    "@keg-hub/jsutils": "8.5.0",
-    "@keg-hub/spawn-cmd": "0.1.2",
+    "@keg-hub/jsutils": "8.7.0",
+    "@keg-hub/spawn-cmd": "0.1.2"
+  },
+  "devDependencies": {
     "rimraf": "3.0.2"
   }
 }
