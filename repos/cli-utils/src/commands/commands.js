@@ -156,7 +156,6 @@ module.exports = {
   runCmd,
   spawnCmd,
   dockerCmd,
-  inDocker,
   dockerExec,
   ...shortcutCmds,
 }

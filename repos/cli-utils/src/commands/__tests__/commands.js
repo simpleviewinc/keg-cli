@@ -8,10 +8,18 @@ jest.setMock('@keg-hub/spawn-cmd', { spawnCmd: spawnCmdMock, asyncCmd: asyncCmdM
 const errorLogMock = jest.fn()
 jest.setMock('../../logger/logger', { Logger: { error: errorLogMock }})
 
+let testInDocker = false
+const inDockerdMock = jest.fn(() => {
+  return testInDocker
+})
+jest.setMock('../inDocker', { inDocker: inDockerdMock })
+
 const {
   runCmd,
   execCmd,
   spawnCmd,
+  inDocker,
+  dockerCmd,
   dockerExec,
   ...shortcutCmds
 } = require('../commands')
@@ -22,6 +30,7 @@ describe('commands', () => {
     spawnCmdMock.mockClear()
     asyncCmdMock.mockClear()
     errorLogMock.mockClear()
+    inDockerdMock.mockClear()
   })
 
   describe('runCmd', () => {
@@ -87,6 +96,24 @@ describe('commands', () => {
       expect(callOpts.env.TEST_OPT_ENV).toBe('option.env')
     })
 
+  })
+
+  describe('dockerCmd', () => {
+    it(`Should call inDocker method`, async () => {
+      await dockerCmd('container-id', [ 'yarn', 'install' ], {}, process.cwd(), true)
+      expect(inDockerdMock).toHaveBeenCalled()
+    })
+
+    it(`Should include container-id method when not in docker`, async () => {
+      await dockerCmd('container-id', [ 'yarn', 'install' ], {}, process.cwd(), true)
+      expect(asyncCmdMock.mock.calls[0][0]).toBe(`docker exec -it container-id yarn install`)
+    })
+
+    it(`Should not include container-id method when is in docker`, async () => {
+      testInDocker = true
+      await dockerCmd('container-id', [ 'yarn', 'install'], {}, process.cwd(), true)
+      expect(asyncCmdMock.mock.calls[0][0]).toBe(`yarn install`)
+    })
   })
 
   Object.entries(shortcutCmds).map(([ key, method ]) => {
